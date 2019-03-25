@@ -6,18 +6,18 @@
 </template>
 
 <script>
-import Documentation from './components/misc/Documentation.vue'
+import Documentation from "./components/misc/Documentation.vue";
 export default {
-  name: 'app',
+  name: "app",
   components: {
     Documentation
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

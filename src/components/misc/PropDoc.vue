@@ -5,18 +5,24 @@
     <slot name="pre-use"></slot>
     <div class="use">
       <div class="description" v-html="merged.description" v-if="merged.description"></div>
-      <div class="token" v-if="merged.token"><pre><code data-lang="vue">{{ merged.token }}</code></pre></div>
+      <div class="token" v-if="merged.token">
+        <pre><code data-lang="vue">{{ merged.token }}</code></pre>
+      </div>
     </div>
     <slot name="pre-props"></slot>
     <section class="props" v-if="merged.props">
       <div class="proprow labels">
-        <div class="propcol name required">name <span>(required)</span></div>
+        <div class="propcol name required">name
+          <span>(required)</span>
+        </div>
         <div class="propcol type">type</div>
         <div class="propcol default">default</div>
         <div class="propcol notes">notes</div>
       </div>
       <div class="proprow" v-for="(propinfo, propname) in merged.props">
-        <div class="propcol name" :class="{ required: propinfo.required }"><span>{{ propname }}</span></div>
+        <div class="propcol name" :class="{ required: propinfo.required }">
+          <span>{{ propname }}</span>
+        </div>
         <div class="propcol type">{{ propinfo.type }}</div>
         <div class="propcol default">
           <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
@@ -32,10 +38,10 @@
   </article>
 </template>
 <script>
-import marked from 'marked';
+import marked from "marked";
 
 export default {
-  name: 'propDoc',
+  name: "propDoc",
   props: {
     component: {
       type: Object,
@@ -52,7 +58,7 @@ export default {
   data() {
     return {
       merged: this.process(this.component, this.documentation),
-      typesForCodeTag: ['array', 'object', 'function']
+      typesForCodeTag: ["array", "object", "function"]
     };
   },
   getDoc(component, documentation, ignoreMixins) {
@@ -64,7 +70,8 @@ export default {
       if (m.token) m.token = this.sanitize(m.token);
       if (m.description) m.description = marked(m.description);
       if (!(ignoreMixins || this.ignoreMixins)) {
-        if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
+        if (m.mixins)
+          m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
       }
       if (m.props) m.props = this.processProps(m.props);
       return m;
@@ -74,8 +81,8 @@ export default {
       const match = text.match(/^[ \t]*(?=\S)/gm);
       if (!match) return text;
       const indent = Math.min.apply(Math, match.map(x => x.length));
-      const re = new RegExp(`^[ \\t]{${indent}}`, 'gm');
-      return indent > 0 ? text.replace(re, '') : text;
+      const re = new RegExp(`^[ \\t]{${indent}}`, "gm");
+      return indent > 0 ? text.replace(re, "") : text;
     },
     getPropsFromMixins(mixins) {
       return mixins.reduce((map, mixin) => {
@@ -94,7 +101,7 @@ export default {
           required: v.required || false,
           default: this.getDefault(v.default, v.type, objInfo),
           // defaultTypeStr - this will be sets from the function which is on line above (getDefault)
-          note: v.note || ''
+          note: v.note || ""
         });
 
         map[k] = objInfo;
@@ -109,12 +116,15 @@ export default {
       const typeStr = this.getType(type);
       const dTypeStr = getTypeString(d);
 
-      if (typeof (d) === 'undefined') return 'undefined';
+      if (typeof d === "undefined") return "undefined";
 
       // if default is function
-      if (dTypeStr === 'function') {
+      if (dTypeStr === "function") {
         // if there are types object or array and not function
-        if (['array', 'object'].some(i => typeStr.includes(i)) && !typeStr.includes('function')) {
+        if (
+          ["array", "object"].some(i => typeStr.includes(i)) &&
+          !typeStr.includes("function")
+        ) {
           // get result from function
           const dResult = d();
 
@@ -122,7 +132,7 @@ export default {
           return JSON.stringify(dResult, null, 2);
         }
 
-        objInfo.defaultTypeStr = 'function';
+        objInfo.defaultTypeStr = "function";
         // if not array or object then just get function in text format
         return d.toString();
       }
@@ -134,13 +144,13 @@ export default {
     // works for all types
     getType(t) {
       // for null and undefined
-      if (t == undefined) return 'any';
+      if (t == undefined) return "any";
 
-      if (getTypeString(t) === 'function') {
+      if (getTypeString(t) === "function") {
         return getTypeString(t());
       }
       if (Array.isArray(t)) {
-        return t.map(this.getType).join('|');
+        return t.map(this.getType).join("|");
       }
 
       return getTypeString(t);
@@ -149,12 +159,15 @@ export default {
       return Object.assign({}, a, b);
     },
     hasMixins(component) {
-      return typeof (component.mixins) !== 'undefined';
+      return typeof component.mixins !== "undefined";
     }
   }
 };
 
 function getTypeString(variable) {
-  return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
+  return Object.prototype.toString
+    .call(variable)
+    .slice(8, -1)
+    .toLowerCase();
 }
 </script>

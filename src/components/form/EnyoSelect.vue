@@ -1,29 +1,26 @@
 <template>
   <div>
     <multiselect
-    v-bind="filteredProps"
-    :value="internalValue"
-    @input="updateSelected"
-    :searchable="searchable"
-    :internal-search="false"
-    @search-changed="loadRemoteEntities"
-    :loading="isLoading"
-    :options="internalOptions"
-    :label="label"
+      v-bind="filteredProps"
+      :value="internalValue"
+      @input="updateSelected"
+      :searchable="searchable"
+      :internal-search="false"
+      @search-changed="loadRemoteEntities"
+      :loading="isLoading"
+      :options="internalOptions"
+      :label="label"
     >
-    <span slot="noResult">
-      {{ noResult }}
-    </span>
-  </multiselect>
-</div>
+      <span slot="noResult">{{ noResult }}</span>
+    </multiselect>
+  </div>
 </template>
 <script>
-
-import multiselectMixin from 'vue-multiselect';
-import selectMixin from 'src/mixins/selectMixin';
+import multiselectMixin from "vue-multiselect";
+import selectMixin from "src/mixins/selectMixin";
 
 export default {
-  name: 'enyo-select',
+  name: "enyo-select",
   props: {
     options: {
       type: Array,
@@ -38,11 +35,11 @@ export default {
     searchable: {
       type: [String, Boolean, Number],
       default: false
-    },
+    }
   },
   model: {
-    prop: 'vModelValue',
-    event: 'input'
+    prop: "vModelValue",
+    event: "input"
   },
   mixins: [multiselectMixin, selectMixin],
   data() {
@@ -69,17 +66,16 @@ export default {
       delete props.input;
       delete props.value;
       return props;
-    },
-
+    }
   },
-  methods: {
-
-  },
+  methods: {},
 
   created() {
-  // Check if the component is loaded globally
+    // Check if the component is loaded globally
     if (!this.$root.$options.components.multiselect) {
-      console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
+      console.error(
+        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
+      );
     }
   },
 
@@ -99,5 +95,4 @@ export default {
 .multiselect__tag {
   background: $primary-bg !important;
 }
-
 </style>

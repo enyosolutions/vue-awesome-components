@@ -1,57 +1,74 @@
 <template>
-  <card :headerClass="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')">
+  <card
+    :headerClass="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
+  >
     <template slot="header">
-      <h4 class="card-title ajax-table-header"
-      >
-      <slot name="table-title"
-
-      >{{ title || $t('app.labels.' + entity)}}</slot>
-      <div class="btn-group btn-group-sm float-right">
-        <slot name="table-top-actions">
-        </slot>
-        <div class="dropdown" v-if="canHideColumns">
-          <button class="btn btn-secondary btn-simple dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Columns
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height:100vh; overflow: auto;">
-            <button type="button" v-for="col in formattedColumns" class="dropdown-item" href="#" :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}" @click="toggleColumn(col.field)" :disabled="col.field === 'ACTIONS'">{{ col.label }}</button>
+      <h4 class="card-title ajax-table-header">
+        <slot name="table-title">{{ title || $t('app.labels.' + entity)}}</slot>
+        <div class="btn-group btn-group-sm float-right">
+          <slot name="table-top-actions"></slot>
+          <div class="dropdown" v-if="canHideColumns">
+            <button
+              class="btn btn-secondary btn-simple dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >Columns</button>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton"
+              style="max-height:100vh; overflow: auto;"
+            >
+              <button
+                type="button"
+                v-for="col in formattedColumns"
+                class="dropdown-item"
+                href="#"
+                :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}"
+                @click="toggleColumn(col.field)"
+                :disabled="col.field === 'ACTIONS'"
+              >{{ col.label }}</button>
+            </div>
           </div>
-        </div>
-        <button
-        v-if="opts.actions.filter"
-        type="button"
-        class="btn btn-simple"
-        @click="toggleFilter()"
-        :class="{'btn-primary': filterable, 'btn-default': !filterable}"
-        >
-        <i class="fa fa-filter"></i>
-        {{ $t('common.buttons.filters') }}
-      </button>
-      <div class="dropdown">
-        <button
-        v-if="opts.actions && (opts.actions.refresh)"
-        class="btn btn-simple btn-secondary" @click="getItems()">
-          <i class="fa fa-refresh"></i>
-          {{ $t('common.buttons.refresh') }}
-        </button>
-        <button
-        class="btn btn-secondary btn-simple dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton"
-        data-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-        v-if="opts.actions && (opts.actions.export || opts.actions.import)"
-        >
-        <i class="fa fa-plus"></i>
-        {{ $t('table.more') }}
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <slot name="table-top-more-actions"></slot>
-        <upload-button
-        v-if="opts.actions && opts.actions.import"
-        name="import"
-        :options="{
+          <button
+            v-if="opts.actions.filter"
+            type="button"
+            class="btn btn-simple"
+            @click="toggleFilter()"
+            :class="{'btn-primary': filterable, 'btn-default': !filterable}"
+          >
+            <font-awesome-icon icon="filter" class="font-awesome"></font-awesome-icon>
+            {{ $t('common.buttons.filters') }}
+          </button>
+          <div class="dropdown">
+            <button
+              v-if="opts.actions && (opts.actions.refresh)"
+              class="btn btn-simple"
+              @click="getItems()"
+            >
+              <font-awesome-icon icon="sync-alt" class="font-awesome"></font-awesome-icon>
+              {{ $t('common.buttons.refresh') }}
+            </button>
+            <button
+              class="btn btn-secondary btn-simple dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              v-if="opts.actions && (opts.actions.export || opts.actions.import)"
+            >
+              <font-awesome-icon icon="plus" class="font-awesome"></font-awesome-icon>
+              {{ $t('table.more') }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <slot name="table-top-more-actions"></slot>
+              <upload-button
+                v-if="opts.actions && opts.actions.import"
+                name="import"
+                :options="{
         upload: true,
         targetUrl: opts.uploadUrl || this.url + '/import',
         method: 'POST',
@@ -60,34 +77,45 @@
         maxSize: 1,
         label: $t('common.buttons.import'),
         class: 'btn btn-success btn-simple btn-block',
-        icon: 'fa fa-upload'
+        icon: 'file-upload'
       }"
-      @uploaded="importResponse"
-      ></upload-button>
-      <button
-      class="btn btn-success btn-simple btn-block"
-      v-if="opts.actions && opts.actions.export"
-      @click="exportCallBack"
-      >
-      <i class="fa fa-file-excel-o"></i>
-      {{ $t('common.buttons.excel') }}
-    </button>
-  </div>
-</div>
-</div>
-</h4>
+                @uploaded="importResponse"
+              ></upload-button>
+              <button
+                class="btn btn-success btn-simple btn-block"
+                v-if="opts.actions && opts.actions.export"
+                @click="exportCallBack"
+              >
+                <font-awesome-icon icon="file-excel" class="font-awesome"></font-awesome-icon>
+                {{ $t('common.buttons.excel') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </h4>
       <p class="card-category">
-        <slot name="table-subtitle">
-        </slot>
+        <slot name="table-subtitle"></slot>
       </p>
     </template>
     <div class="table-responsive">
-      <vue-good-table :mode="mode" @on-page-change="onPageChange" @on-sort-change="onSortChange" @on-column-filter="onColumnFilter" @on-per-page-change="onPerPageChange" :totalRows="totalCount" styleClass="vgt-table table striped" :columns="displayedColumns" :rows="data" :filter-options="{
+      <vue-good-table
+        :mode="mode"
+        @on-page-change="onPageChange"
+        @on-sort-change="onSortChange"
+        @on-column-filter="onColumnFilter"
+        @on-per-page-change="onPerPageChange"
+        :totalRows="totalCount"
+        styleClass="vgt-table table striped"
+        :columns="displayedColumns"
+        :rows="data"
+        :filter-options="{
   enabled: opts && opts.actions && opts.actions.filter
-}" :search-options="{
+}"
+        :search-options="{
 enabled: opts && opts.actions && opts.actions.search,
 placeholder: this.$t('table.searchInput'),
-}" :pagination-options="{
+}"
+        :pagination-options="{
 enabled: opts && opts.pagination,
 nextLabel: this.$t('table.next'),
 prevLabel: this.$t('table.prev'),
@@ -96,72 +124,114 @@ ofLabel: this.$t('table.of'),
 pageLabel: this.$t('table.page'),
 allLabel: this.$t('table.all'),
 perPage: perPage
-}">
+}"
+      >
         <div slot="table-actions">
-          <date-range-picker v-if="opts.actions && opts.actions.filter && opts.actions.dateFilter && filterable" class="form-group vgt-date-range" :placeholder="$t('common.field.start')" :startDate="defaultStartDate" :endDate="defaultEndDate" @update="onDateFilter" :locale-data="datePicker.locale" :opens="'left'">
-          </date-range-picker>
+          <date-range-picker
+            v-if="opts.actions && opts.actions.filter && opts.actions.dateFilter && filterable"
+            class="form-group vgt-date-range"
+            :placeholder="$t('common.field.start')"
+            :startDate="defaultStartDate"
+            :endDate="defaultEndDate"
+            @update="onDateFilter"
+            :locale-data="datePicker.locale"
+            :opens="'left'"
+          ></date-range-picker>
         </div>
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field === 'ACTIONS'" class="text-right">
             <slot name="table-row-actions" :item="props.row">
-                <button
+              <button
                 v-if="opts && opts.customActions"
-                  v-for="action in opts.customActions"
-                  @click="$emit('customAction',{action, item: props.row})"
-                  class="btn btn-xs btn-simple"
-                  :class="action.class"
-                  :data-title="action.title || action.label"
-                  >
-                  {{ action.label ? $t(action.label) : '' }}
-                  <i :class="action.icon" v-if="action.icon"></i>
-                </button>
+                v-for="action in opts.customActions"
+                @click="$emit('customAction',{action, item: props.row})"
+                class="btn btn-xs btn-simple"
+                :class="action.class"
+                :data-title="action.title || action.label"
+              >
+                {{ action.label ? $t(action.label) : '' }}
+                <i
+                  :class="action.icon"
+                  v-if="action.icon"
+                ></i>
+              </button>
             </slot>
             <button
-            v-if="opts && opts.actions && opts.actions.view"
-            @click="$emit('view', props.row)"
-            class="btn-secondary btn btn-xs btn-simple btn-icon"
+              v-if="opts && opts.actions && opts.actions.view"
+              @click="$emit('view', props.row)"
+              class="btn btn-xs btn-simple btn-icon"
             >
-            <i class="fa fa-eye"></i>
-          </button>
-          <button
-            v-if="opts && opts.actions && opts.actions.edit"
-            @click="$emit('edit', props.row)"
-            class="btn-info btn btn-xs btn-simple btn-icon"
+              <font-awesome-icon icon="eye" class="font-awesome"></font-awesome-icon>
+            </button>
+            <button
+              v-if="opts && opts.actions && opts.actions.edit"
+              @click="$emit('edit', props.row)"
+              class="btn btn-xs btn-simple btn-icon"
             >
-            <i class="fa fa-pencil"></i>
-          </button>
-          <button
-            v-if="opts && opts.actions && opts.actions.delete"
-            @click="deleteItem(props.row)"
-            class="btn-danger btn btn-xs btn-simple btn-icon"
+              <font-awesome-icon icon="pencil-alt" class="font-awesome-pencil"></font-awesome-icon>
+            </button>
+            <button
+              v-if="opts && opts.actions && opts.actions.delete"
+              @click="deleteItem(props.row)"
+              class="btn btn-xs btn-simple btn-icon"
             >
-            <i class="fa fa-times"></i>
-          </button>
-
-      </span>
-                <span v-else-if="props.column.type === 'image'" @click="clickOnLine(props.row)"  class="pointer">
-        <img :src="props.formattedRow[props.column.field]" alt="image" class="ajax-table-img">
-      </span>
-                <div class="text-avoid-overflow" v-else-if="props.column.type === 'url'">
-                  <a :href="props.formattedRow[props.column.field]" target="_blank" class="ajax-table-href">{{ props.formattedRow[props.column.field] }}</a>
-                </div>
-                <div class="text-avoid-overflow" v-else-if="props.column.type === 'relation'">
-                  <router-link :to="'/app' + props.column.relation + '/' +  props.formattedRow[props.column.field]" class="ajax-table-href"><span class="badge badge-info">{{
-          props.column.listName ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
-        : props.formattedRow[props.column.field] }}</span></router-link>
-                </div>
-                <span v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'" @click="clickOnLine(props.row)"  class="pointer">
-        {{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}
-      </span>
-                <span v-else-if="props.column.type === 'list-of-data'" @click="clickOnLine(props.row)"  class="pointer">
-        {{ getDataValue(props.formattedRow[props.column.field], props.column.listName) }}
-      </span>
-                <div v-else-if="props.column.type === 'object'" @click="clickOnLine(props.row)" class="pointer text-avoid-overflow">
-                  | <template class="label label-info" v-for="(value, key) of props.formattedRow[props.column.field]">
-                    <label>{{ key }}:</label> <label class="text-primary"> {{ value }} </label> |
-                  </template>
-                </div>
-                <div v-else @click="clickOnLine(props.row)" class="pointer text-avoid-overflow">{{ props.formattedRow[props.column.field] }}</div>
+              <font-awesome-icon icon="times"></font-awesome-icon>
+            </button>
+          </span>
+          <span
+            v-else-if="props.column.type === 'image'"
+            @click="clickOnLine(props.row)"
+            class="pointer"
+          >
+            <img :src="props.formattedRow[props.column.field]" alt="image" class="ajax-table-img">
+          </span>
+          <div class="text-avoid-overflow" v-else-if="props.column.type === 'url'">
+            <a
+              :href="props.formattedRow[props.column.field]"
+              target="_blank"
+              class="ajax-table-href"
+            >{{ props.formattedRow[props.column.field] }}</a>
+          </div>
+          <div class="text-avoid-overflow" v-else-if="props.column.type === 'relation'">
+            <router-link
+              :to="'/app' + props.column.relation + '/' +  props.formattedRow[props.column.field]"
+              class="ajax-table-href"
+            >
+              <span class="badge badge-info">
+                {{
+                props.column.listName ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
+                : props.formattedRow[props.column.field] }}
+              </span>
+            </router-link>
+          </div>
+          <span
+            v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
+            @click="clickOnLine(props.row)"
+            class="pointer"
+          >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
+          <span
+            v-else-if="props.column.type === 'list-of-data'"
+            @click="clickOnLine(props.row)"
+            class="pointer"
+          >{{ getDataValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
+          <div
+            v-else-if="props.column.type === 'object'"
+            @click="clickOnLine(props.row)"
+            class="pointer text-avoid-overflow"
+          >|
+            <template
+              class="label label-info"
+              v-for="(value, key) of props.formattedRow[props.column.field]"
+            >
+              <label>{{ key }}:</label>
+              <label class="text-primary">{{ value }}</label> |
+            </template>
+          </div>
+          <div
+            v-else
+            @click="clickOnLine(props.row)"
+            class="pointer text-avoid-overflow"
+          >{{ props.formattedRow[props.column.field] }}</div>
         </template>
         <div slot="emptystate">{{ $t('table.empty') }}</div>
       </vue-good-table>
@@ -169,16 +239,19 @@ perPage: perPage
   </card>
 </template>
 <script>
-import Card from '@/components/card/Card.vue';
-import swal from 'sweetalert2/dist/sweetalert2.js';
-import DateRangePicker from 'vue2-daterange-picker';
-import qs from 'qs';
-import apiErrors from '@/mixins/api-errors';
+import Card from "@/components/card/Card.vue";
+import swal from "sweetalert2/dist/sweetalert2.js";
+import DateRangePicker from "vue2-daterange-picker";
+import { VueGoodTable } from "vue-good-table";
+import qs from "qs";
+import moment from "moment";
+import apiErrors from "@/mixins/api-errors";
+import "vue-good-table/dist/vue-good-table.css";
 
-import _ from 'lodash';
+import _ from "lodash";
 
 export default {
-  name: 'ajax-table',
+  name: "ajax-table",
   token: `
   <AjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
     <template slot="table-actions"></template>
@@ -190,9 +263,10 @@ export default {
     <!-- END OF ARRAY -->
   </AjaxTable>
   `,
-    components: {
+  components: {
     Card,
     DateRangePicker,
+    VueGoodTable
   },
   mixins: [apiErrors],
   props: {
@@ -213,7 +287,7 @@ export default {
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     defaultOptions: {
       type: Object,
@@ -225,28 +299,31 @@ export default {
           search: true,
           filter: true,
           create: true,
+          edit: true,
           view: true,
           delete: true,
           export: false,
           import: false,
           dateFilter: true,
-          refresh: true,
-        },
-      }),
+          refresh: true
+        }
+      })
     },
     mode: {
-      default: 'locale',
+      default: "locale",
       type: String
     },
-    store: Array,
+    store: Array
   },
   data() {
     return {
       totalCount: 0,
       filterable: false,
       columnsState: {},
-      defaultStartDate: moment().subtract(7, 'days').format('YYYY-MM-DD'),
-      defaultEndDate: moment().format('YYYY-MM-DD'),
+      defaultStartDate: moment()
+        .subtract(7, "days")
+        .format("YYYY-MM-DD"),
+      defaultEndDate: moment().format("YYYY-MM-DD"),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
         filters: {},
@@ -254,18 +331,18 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === 'remote' ? this.perPage : 1000 // how many items I'm showing per page
+        perPage: this.mode === "remote" ? this.perPage : 1000 // how many items I'm showing per page
       },
       data: [],
       datePicker: {
         locale: {
-          direction: 'ltr', // direction of text
-          format: 'DD-MM-YYYY', // fomart of the dates displayed
-          separator: ' - ', // separator between the two ranges
-          applyLabel: 'Appliquer',
-          cancelLabel: 'Annuler',
-          weekLabel: 'W',
-          customRangeLabel: 'Custom Range',
+          direction: "ltr", // direction of text
+          format: "DD-MM-YYYY", // fomart of the dates displayed
+          separator: " - ", // separator between the two ranges
+          applyLabel: "Appliquer",
+          cancelLabel: "Annuler",
+          weekLabel: "W",
+          customRangeLabel: "Custom Range",
           daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
           firstDay: 1 // ISO first day of week - see moment documenations for details
@@ -273,20 +350,18 @@ export default {
       }
     };
   },
-  created() {
-  },
+  created() {},
   computed: {
     opts() {
       return _.merge(this.defaultOptions, this.options);
     },
     formattedColumns() {
       if (!this.columns) {
-        console.error('AJAXTABLE MISSING COLUMNS');
+        console.error("AJAXTABLE MISSING COLUMNS");
         return [];
       }
       const newcolumns = this.columns.map(col => {
         const newCol = {};
-
 
         if (_.isString(col)) {
           newCol.field = col;
@@ -299,25 +374,25 @@ export default {
           col.label = _.startCase(col.field);
         }
 
-        if (col.type && col.type === 'datetime') {
-          col.formatFn = function (value) {
+        if (col.type && col.type === "datetime") {
+          col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format('lll');
+            return moment(value).format("lll");
           };
         }
 
-        if (col.type && col.type === 'date') {
-          col.formatFn = function (value) {
+        if (col.type && col.type === "date") {
+          col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format('DD-MM-YYYY');
+            return moment(value).format("DD-MM-YYYY");
           };
         }
 
-        if (col.type && col.type === 'object') {
+        if (col.type && col.type === "object") {
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
             // y - row2 value for column
@@ -326,11 +401,11 @@ export default {
             // rowY - row object for row2
             const x1 = JSON.stringify(x);
             const y1 = JSON.stringify(y);
-            return (x1 < y1 ? -1 : (x1 > y1 ? 1 : 0));
+            return x1 < y1 ? -1 : x1 > y1 ? 1 : 0;
           };
         }
 
-        if (col.type && col.type === 'relation') {
+        if (col.type && col.type === "relation") {
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
             // y - row2 value for column
@@ -339,27 +414,35 @@ export default {
             // rowY - row object for row2
             const x1 = x.toString();
             const y1 = y.toString();
-            return (x < y ? -1 : (x > y ? 1 : 0));
+            return x < y ? -1 : x > y ? 1 : 0;
           };
         }
 
-
         let filterDropdownItems;
-        if (col.type && (col.type === 'list-of-value' || col.type === 'lov')) {
+        if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
-            filterDropdownItems = filterDropdownItems.map(e => ({ value: e.code, text: e.label || e.code || e }));
+            filterDropdownItems = filterDropdownItems.map(e => ({
+              value: e.code,
+              text: e.label || e.code || e
+            }));
           }
         }
 
-        if (col.type && (col.type === 'list-of-data')) {
+        if (col.type && col.type === "list-of-data") {
           filterDropdownItems = this.$store.state.data[col.listName];
-          filterDropdownItems = filterDropdownItems.map(e => ({ value: e.code, text: e.label || e.code || e }));
+          filterDropdownItems = filterDropdownItems.map(e => ({
+            value: e.code,
+            text: e.label || e.code || e
+          }));
         }
 
         if (col.enum) {
           filterDropdownItems = col.enum;
-          filterDropdownItems = filterDropdownItems.map(e => ({ value: e, text: _.startCase(e) }));
+          filterDropdownItems = filterDropdownItems.map(e => ({
+            value: e,
+            text: _.startCase(e)
+          }));
         }
 
         col.filterOptions = { enabled: this.filterable, filterDropdownItems };
@@ -371,8 +454,15 @@ export default {
           this.$set(this.columnsState, col.field, idx < 8);
         });
       }
-      if (!newcolumns.find(col => col.field === 'ACTIONS') && !this.opts.actions.noActions) {
-        newcolumns.push({ field: 'ACTIONS', label: 'Actions', filterOptions: { enabled: false } });
+      if (
+        !newcolumns.find(col => col.field === "ACTIONS") &&
+        !this.opts.actions.noActions
+      ) {
+        newcolumns.push({
+          field: "ACTIONS",
+          label: "Actions",
+          filterOptions: { enabled: false }
+        });
         this.columnsState.ACTIONS = true;
       }
       return newcolumns;
@@ -384,10 +474,14 @@ export default {
     displayedColumns() {
       this.columnsState;
       if (this.canHideColumns) {
-        const cols = this.formattedColumns.filter(col => this.columnsState[col.field]);
+        const cols = this.formattedColumns.filter(
+          col => this.columnsState[col.field]
+        );
 
         if (!this.columnsState.ACTIONS) {
-          const actions = this.formattedColumns.find(col => col.field === 'ACTIONS');
+          const actions = this.formattedColumns.find(
+            col => col.field === "ACTIONS"
+          );
           if (actions) {
             cols.push(actions);
           }
@@ -395,33 +489,31 @@ export default {
         return cols;
       }
       return this.formattedColumns;
-    },
-
+    }
   },
   mounted() {
-    if ((this.refresh && this.store)) {
+    if (this.refresh && this.store) {
       return;
     }
     this.refreshTableData();
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   watch: {
-    tableNeedsRefresh: 'refreshTableData',
+    tableNeedsRefresh: "refreshTableData",
     params() {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
     },
-    entity: 'entityChanged',
-    store: (changed) => {},
-    rows: 'refreshTableData'
+    entity: "entityChanged",
+    store: changed => {},
+    rows: "refreshTableData"
   },
   methods: {
     refreshTableData(changed) {
-      console.log('my url ', this.url);
+      console.log("my url ", this.url);
       if (this.url) {
         this.data = [];
-        console.log('this.serverParams', this.serverParams);
+        console.log("this.serverParams", this.serverParams);
         this.serverParams = _.merge({}, this.serverParams, this.params);
         this.getItems();
       } else {
@@ -438,10 +530,9 @@ export default {
     },
 
     tableRefreshCompleted() {
-      this.$emit('update:tableNeedsRefresh', false);
-      this.$emit('afterRefresh');
+      this.$emit("update:tableNeedsRefresh", false);
+      this.$emit("afterRefresh");
     },
-
 
     /** GET ENTITY ITEMS */
     getItems() {
@@ -452,7 +543,7 @@ export default {
       }
 
       if (!this.url) {
-        console.log('[AJAXTABLE] no refresh url or refresh function');
+        console.log("[AJAXTABLE] no refresh url or refresh function");
         return;
       }
 
@@ -466,7 +557,7 @@ export default {
     },
 
     deleteItem(item) {
-      this.$emit('delete', item);
+      this.$emit("delete", item);
     },
 
     toggleFilter() {
@@ -477,25 +568,30 @@ export default {
         this.serverParams.filters = {};
         this.getItems();
       }
-      this.columns = this.columns.map((col) => {
-        if (col.filterOptions) { col.filterOptions.enabled = this.filterable; }
+      this.columns = this.columns.map(col => {
+        if (col.filterOptions) {
+          col.filterOptions.enabled = this.filterable;
+        }
         return col;
       });
     },
 
-    editItem(item) {
-
-    },
+    editItem(item) {},
 
     clickOnLine(item) {
-      this.opts && this.opts.actions && this.opts.actions.view && this.$emit('view', item);
+      this.opts &&
+        this.opts.actions &&
+        this.opts.actions.view &&
+        this.$emit("view", item);
     },
 
     getLovValue(item, listName, params) {
       if (!item || !this.$store.state.listOfValues[listName]) {
         return item;
       }
-      const value = this.$store.state.listOfValues[listName].find(elm => elm._id === item || elm.code === item);
+      const value = this.$store.state.listOfValues[listName].find(
+        elm => elm._id === item || elm.code === item
+      );
       if (!value) {
         return item;
       }
@@ -507,7 +603,9 @@ export default {
       if (!item || !this.$store.state.data[listName]) {
         return item;
       }
-      const value = this.$store.state.data[listName].find(elm => elm._id === item || elm.code === item);
+      const value = this.$store.state.data[listName].find(
+        elm => elm._id === item || elm.code === item
+      );
       if (!value) {
         return item;
       }
@@ -519,7 +617,12 @@ export default {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
     },
     updateParams(newProps) {
-      this.serverParams = Object.assign({}, this.params, this.serverParams, newProps);
+      this.serverParams = Object.assign(
+        {},
+        this.params,
+        this.serverParams,
+        newProps
+      );
     },
 
     // sort functions for unkown types
@@ -529,12 +632,11 @@ export default {
       // col - column being sorted
       // rowX - row object for row1
       // rowY - row object for row2
-      return (x < y ? -1 : (x > y ? 1 : 0));
+      return x < y ? -1 : x > y ? 1 : 0;
     },
 
-
     onPageChange(params) {
-      if (this.mode !== 'remote') {
+      if (this.mode !== "remote") {
         return;
       }
       this.updateParams({ page: params.currentPage - 1 });
@@ -542,7 +644,7 @@ export default {
     },
 
     onPerPageChange(params) {
-      if (this.mode !== 'remote') {
+      if (this.mode !== "remote") {
         return;
       }
       this.updateParams({ perPage: params.currentPerPage });
@@ -550,7 +652,7 @@ export default {
     },
 
     onSortChange(params) {
-      if (this.mode !== 'remote') {
+      if (this.mode !== "remote") {
         return;
       }
       const sort = {};
@@ -560,7 +662,7 @@ export default {
     },
 
     onColumnFilter(params) {
-      if (this.mode !== 'remote') {
+      if (this.mode !== "remote") {
         return;
       }
       this.updateParams({ filters: _.cloneDeep(params.columnFilters) });
@@ -568,17 +670,21 @@ export default {
     },
 
     onDateFilter(value) {
-      console.log('new value', value);
+      console.log("new value", value);
       if (!value) {
         return;
       }
-      this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
-      this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
+      this.serverParams.range.startDate = value.startDate
+        .toISOString()
+        .slice(0, 10);
+      this.serverParams.range.endDate = value.endDate
+        .toISOString()
+        .slice(0, 10);
       this.getItems();
     },
 
     hasValue(item, column) {
-      return item[column.toLowerCase()] !== 'undefined';
+      return item[column.toLowerCase()] !== "undefined";
     },
     itemValue(item, column) {
       return item[column.toLowerCase()];
@@ -587,9 +693,9 @@ export default {
     exportCallBack() {
       this.$http
         .get(this.exportUrl || `/crud/${this.entity}/export`, {})
-        .then((res) => {
+        .then(res => {
           if (res.data.url) {
-            const link = document.createElement('a');
+            const link = document.createElement("a");
             link.download = `${this.entity}_export`;
             link.href = res.data.url;
             link.click();
@@ -598,10 +704,8 @@ export default {
         })
         .catch(this.apiErrorCallback);
     }
-
   }
 };
-
 </script>
 <style lang='scss'>
 .ajax-table-img {
@@ -624,7 +728,7 @@ export default {
 
 .daterangepicker.dropdown-menu {
   visibility: visible;
-  opacity: 1
+  opacity: 1;
 }
 
 .ajax-table-header.card-header.colored-header {
@@ -635,4 +739,12 @@ export default {
   }
 }
 
+// font-awesome icons
+.font-awesome-pencil {
+  color: #17a2b8;
+}
+
+.font-awesome {
+  color: #6c757d;
+}
 </style>
