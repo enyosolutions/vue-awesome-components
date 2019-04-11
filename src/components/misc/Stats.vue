@@ -37,12 +37,10 @@
   </div>
 </template>
 <script>
-
-import _ from 'lodash';
+import _ from "lodash";
 export default {
-  name: 'stats',
-  components: {
-  },
+  name: "stats",
+  components: {},
   props: {
     url: String,
     entity: String,
@@ -50,7 +48,7 @@ export default {
       type: Boolean,
       default: false
     },
-    store: Array,
+    store: Array
   },
   data() {
     return {
@@ -74,25 +72,32 @@ export default {
     // EventBus.$off(this.entity + ':updated', this.getItems.bind(this))
   },
   watch: {
-    statsNeedsRefresh: 'getStats',
-    url: 'getStats',
-    entity: 'getStats',
+    statsNeedsRefresh: "getStats",
+    url: "getStats",
+    entity: "getStats"
   },
   methods: {
-    getStats: _.debounce(function () {
-      this.$http
-        .get(this.url, {})
-        .then(res => {
-          if (res && res.data && res.data.body) {
-            this.stats = res.data.body;
-          }
-        })
-        .catch(err => console.error(err));
-      this.refreshCompleted();
-    }, 100, this),
+    getStats: _.debounce(
+      function() {
+        this.$http
+          .get(this.url, {})
+          .then(res => {
+            if (res && res.data && res.data.body) {
+              this.stats = res.data.body;
+            }
+          })
+          .catch(err => {
+            // eslint-disable-next-line
+            console.error(err);
+          });
+        this.refreshCompleted();
+      },
+      100,
+      this
+    ),
 
     refreshCompleted() {
-      this.$emit('update:statsNeedsRefresh', false);
+      this.$emit("update:statsNeedsRefresh", false);
       // this.$emit('afterRefresh')
     }
   }

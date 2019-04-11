@@ -24,6 +24,7 @@
               <button
                 type="button"
                 v-for="col in formattedColumns"
+                v-bind:key="col"
                 class="dropdown-item"
                 href="#"
                 :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}"
@@ -141,20 +142,22 @@ perPage: perPage
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field === 'ACTIONS'" class="text-right">
             <slot name="table-row-actions" :item="props.row">
-              <button
-                v-if="opts && opts.customActions"
-                v-for="action in opts.customActions"
-                @click="$emit('customAction',{action, item: props.row})"
-                class="btn btn-xs btn-simple"
-                :class="action.class"
-                :data-title="action.title || action.label"
-              >
-                {{ action.label ? $t(action.label) : '' }}
-                <i
-                  :class="action.icon"
-                  v-if="action.icon"
-                ></i>
-              </button>
+              <span v-if="opts && opts.customActions">
+                <button
+                  v-for="action in opts.customActions"
+                  v-bind:key="action"
+                  @click="$emit('customAction',{action, item: props.row})"
+                  class="btn btn-xs btn-simple"
+                  :class="action.class"
+                  :data-title="action.title || action.label"
+                >
+                  {{ action.label ? $t(action.label) : '' }}
+                  <i
+                    :class="action.icon"
+                    v-if="action.icon"
+                  ></i>
+                </button>
+              </span>
             </slot>
             <button
               v-if="opts && opts.actions && opts.actions.view"
@@ -218,13 +221,14 @@ perPage: perPage
             v-else-if="props.column.type === 'object'"
             @click="clickOnLine(props.row)"
             class="pointer text-avoid-overflow"
-          >|
+          >
+            |
             <template
               class="label label-info"
               v-for="(value, key) of props.formattedRow[props.column.field]"
             >
-              <label>{{ key }}:</label>
-              <label class="text-primary">{{ value }}</label> |
+              <label v-bind:key="key">{{ key }}:</label>
+              <label class="text-primary" v-bind:key="key">{{ value }}</label> |
             </template>
           </div>
           <div
@@ -240,7 +244,7 @@ perPage: perPage
 </template>
 <script>
 import Card from "@/components/card/Card.vue";
-import swal from "sweetalert2/dist/sweetalert2.js";
+// import swal from "sweetalert2/dist/sweetalert2.js";
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import qs from "qs";
@@ -357,6 +361,7 @@ export default {
     },
     formattedColumns() {
       if (!this.columns) {
+        // eslint-disable-next-line
         console.error("AJAXTABLE MISSING COLUMNS");
         return [];
       }
@@ -393,6 +398,7 @@ export default {
         }
 
         if (col.type && col.type === "object") {
+          // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
             // y - row2 value for column
@@ -406,14 +412,15 @@ export default {
         }
 
         if (col.type && col.type === "relation") {
+          // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
             // y - row2 value for column
             // col - column being sorted
             // rowX - row object for row1
             // rowY - row object for row2
-            const x1 = x.toString();
-            const y1 = y.toString();
+            // const x1 = x.toString();
+            // const y1 = y.toString();
             return x < y ? -1 : x > y ? 1 : 0;
           };
         }
@@ -463,6 +470,7 @@ export default {
           label: "Actions",
           filterOptions: { enabled: false }
         });
+        // eslint-disable-next-line
         this.columnsState.ACTIONS = true;
       }
       return newcolumns;
@@ -505,15 +513,16 @@ export default {
       this.getItems();
     },
     entity: "entityChanged",
-    store: changed => {},
+    // store: changed => {},
     rows: "refreshTableData"
   },
   methods: {
+    // eslint-disable-next-line
     refreshTableData(changed) {
-      console.log("my url ", this.url);
+      // console.log("my url ", this.url);
       if (this.url) {
         this.data = [];
-        console.log("this.serverParams", this.serverParams);
+        // console.log("this.serverParams", this.serverParams);
         this.serverParams = _.merge({}, this.serverParams, this.params);
         this.getItems();
       } else {
@@ -543,7 +552,7 @@ export default {
       }
 
       if (!this.url) {
-        console.log("[AJAXTABLE] no refresh url or refresh function");
+        // console.log("[AJAXTABLE] no refresh url or refresh function");
         return;
       }
 
@@ -553,7 +562,10 @@ export default {
           this.data = res.data.body;
           this.totalCount = res.data.totalCount;
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          // eslint-disable-next-line
+          console.error(err);
+        });
     },
 
     deleteItem(item) {
@@ -576,7 +588,7 @@ export default {
       });
     },
 
-    editItem(item) {},
+    // editItem(item) {},
 
     clickOnLine(item) {
       this.opts &&
@@ -585,7 +597,7 @@ export default {
         this.$emit("view", item);
     },
 
-    getLovValue(item, listName, params) {
+    getLovValue(item, listName) {
       if (!item || !this.$store.state.listOfValues[listName]) {
         return item;
       }
@@ -599,7 +611,7 @@ export default {
       return value.label || value.code || value;
     },
 
-    getDataValue(item, listName, params) {
+    getDataValue(item, listName) {
       if (!item || !this.$store.state.data[listName]) {
         return item;
       }
@@ -626,6 +638,7 @@ export default {
     },
 
     // sort functions for unkown types
+    // eslint-disable-next-line
     sortFn(x, y, col, rowX, rowY) {
       // x - row1 value for column
       // y - row2 value for column
@@ -670,7 +683,7 @@ export default {
     },
 
     onDateFilter(value) {
-      console.log("new value", value);
+      // console.log("new value", value);
       if (!value) {
         return;
       }

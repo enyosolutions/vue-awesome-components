@@ -1,4 +1,3 @@
-
 export default {
   props: {
     options: {
@@ -29,6 +28,7 @@ export default {
   },
 
   watch: {
+    // eslint-disable-next-line
     vModelValue(newValue, oldValue) {
       this.setIncomingValue(newValue);
     }
@@ -53,7 +53,7 @@ export default {
 
   },
   methods: {
-  // Sets the value from the the the v-model attribute
+    // Sets the value from the the the v-model attribute
     setIncomingValue(value) {
       if (Array.isArray(value)) {
         this.internalValue = this.internalOptions && this.internalOptions.filter(option => {
@@ -69,7 +69,7 @@ export default {
     },
 
     // Sends up the value selected by the multiselect component
-    updateSelected(value /* , id */) {
+    updateSelected(value /* , id */ ) {
       this.internalValue = value;
       if (!value || typeof (value) === 'string' || typeof (value) === 'number') {
         this.$emit('input', value);
@@ -82,14 +82,22 @@ export default {
     },
 
     loadRemoteEntities(searchString = undefined) {
-      console.log('LOADING remote entities');
+      // console.log('LOADING remote entities');
       if (this.dataUrl) {
         this.isLoading = true;
-        const promise = this.$http.get(this.dataUrl, { params: { listOfValues: true, search: searchString } });
+        const promise = this.$http.get(this.dataUrl, {
+          params: {
+            listOfValues: true,
+            search: searchString
+          }
+        });
         promise.then(res => {
           this.apiOptions = res.data.body;
           this.isLoading = false;
-        }).catch(err => console.error(err));
+        }).catch(err => {
+          // eslint-disable-next-line
+          console.error(err)
+        });
         return promise;
       }
       return Promise.resolve();
@@ -97,8 +105,9 @@ export default {
   },
 
   created() {
-  // Check if the component is loaded globally
+    // Check if the component is loaded globally
     if (!this.$root.$options.components.multiselect) {
+      // eslint-disable-next-line
       console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
     }
   },
