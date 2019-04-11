@@ -22,7 +22,11 @@ import { faFileUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import VueGoodTablePlugin from "vue-good-table";
 import _ from "lodash";
-import VueFormGenerator from "vue-form-generator";
+
+import EnyoVueComponents from "./plugin";
+
+
+
 
 // Importing jQuery
 import "jquery";
@@ -45,9 +49,13 @@ library.add(faFileUpload);
 
 // Vue Use and Components
 Vue.use(VueGoodTablePlugin);
+
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+Vue.component('datetime', Datetime);
+
 Vue.use(VueFormGenerator, { fields: _.values(VueFormGenerator.fieldsLoader) });
 Vue.component("vue-form-generator", VueFormGenerator, []);
+
 
 Vue.use(VueI18n);
 

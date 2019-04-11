@@ -22,7 +22,7 @@
 
 
 import VueFormGenerator from 'vue-form-generator';
-import selectMixin from 'src/mixins/selectMixin';
+import selectMixin from '@/src/mixins/selectMixin';
 
 export default {
   mixins: [selectMixin, VueFormGenerator.abstractField],

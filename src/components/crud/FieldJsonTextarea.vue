@@ -15,11 +15,9 @@ import moment from 'moment';
 import _ from 'lodash';
 
 // You need a specific loader for CSS files
-import Base64Upload from 'vue-base64-upload';
 
 export default {
   mixins: [VueFormGenerator.abstractField],
-  components: { Base64Upload },
   data() {
     return {
       innerValue: '',
