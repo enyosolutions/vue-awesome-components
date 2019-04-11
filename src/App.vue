@@ -46,7 +46,7 @@
     </ul>
     </div>
     <hr>
-    <Documentation msg="Welcome to Your Enyo vue components App"/>
+    <Documentation title="Enyo vue components list"/>
 
     <hr />
 

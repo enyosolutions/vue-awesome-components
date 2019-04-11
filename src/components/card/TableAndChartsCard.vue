@@ -64,8 +64,7 @@ series: [selectProp(dataSource, chartRowKey)]}" :headerClasses="'ajax-table-head
 </template>
 <script>
 import ChartCard from './ChartCard.vue';
-import StatsCard from './StatsCard.vue';
-import Card from './Card.vue';
+import _ from 'lodash';
 
 
 export default {
@@ -112,9 +111,7 @@ export default {
     needsRefresh: Boolean,
   },
   components: {
-    Card,
     ChartCard,
-    StatsCard,
   },
   data() {
     return {

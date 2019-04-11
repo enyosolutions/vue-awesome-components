@@ -1,14 +1,14 @@
 <template>
   <div class="content">
-    <div class="container-fluid">
+    <div class="container">
       <h1>Documentation</h1>
 
       <div>
-        <h2>{{ msg }}</h2>
+        <h2>{{ title }}</h2>
       </div>
 
-      <ul class="list-group">
-        <li class="list-group-item active">Components</li>
+      <ul class="list-group col-md-6 offset-md-3">
+        <li class="list-group-item dark ">Components</li>
         <li class="list-group-item" v-for="(component, index) in components" :key="index">
           <a :href="'#' + component.name">{{ component.name }}</a>
         </li>
@@ -39,11 +39,13 @@ import CrudComponent from "@/components/crud/CrudComponent.vue";
 import PropDoc from "@/components/misc/PropDoc.vue";
 
 export default {
+  props: {
+    title: String,
+  },
   components: {
     PropDoc,
     Card,
   },
-
   data() {
     return {
       components: [
