@@ -31,7 +31,7 @@
     "sails": "^1.1.0",
     "sockjs": "^0.3.19",
     "sweetalert2": "^8.2.6",
-    "vue": "^2.6.9",
+    "vue": "2.6.7",
     "vue-base64-file-upload": "^1.0.4",
     "vue-base64-upload": "^1.0.1",
     "vue-datetime": "^1.0.0-beta.10",

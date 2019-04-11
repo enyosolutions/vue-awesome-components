@@ -121,7 +121,7 @@
                           v-if="viewMode==='edit'"
                           class="btn btn-primary ml-auto"
                         >{{ $t('common.buttons.save') }}</button>
-                        
+
                         <button
                           type="button"
                           v-if="viewMode === 'view'"
@@ -187,16 +187,13 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
 import apiErrors from "@/mixins/api-errors";
 import _ from "lodash";
 import swal from "sweetalert2/dist/sweetalert2.js";
-import Card from "@/components/card/Card.vue";
 import AjaxTable from "@/components/table/AjaxTable.vue";
 import { VueGoodTable } from "vue-good-table";
 import "vue-good-table/dist/vue-good-table.css";
 
-import VueFormGenerator from "vue-form-generator";
 
 const defaultOptions = {
   mode: "local",
@@ -336,10 +333,8 @@ There are 3 ways of using the Crud Component.
     }
   },
   components: {
-    Card,
     AjaxTable,
     VueGoodTable
-    // 'vue-form-generator': VueFormGenerator
   },
   mixins: [apiErrors],
   created() {
@@ -501,7 +496,7 @@ There are 3 ways of using the Crud Component.
 
     exportCurrentArrayToExcel() {
       let CsvString = "";
-      Results.forEach((RowItem, RowIndex) => {
+      this.items.forEach((RowItem, RowIndex) => {
         RowItem.forEach((ColItem, ColIndex) => {
           CsvString += `${ColItem},`;
         });
