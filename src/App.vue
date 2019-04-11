@@ -1,16 +1,16 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <Documentation msg="Welcome to Your Vue.js App"/>
+    <Documentation msg="Welcome to Your Enyo vue components App"/>
   </div>
 </template>
 
 <script>
-import Documentation from "./components/misc/Documentation.vue";
+/// import Documentation from "@/components/misc/Documentation.vue";
 export default {
   name: "app",
   components: {
-    Documentation
+    // Documentation
   }
 };
 </script>

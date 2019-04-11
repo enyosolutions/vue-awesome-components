@@ -4,8 +4,8 @@
       <h2>Documentation</h2>
 
       <div>
-        <h2>Qjqx table</h2>
-        <crud-component name="contact" :schema="ticketSchema.schema"/>
+        <h2>Ajax table</h2>
+        <crud-component name="contact" :schema="ticketSchema"/>
         <AjaxTable
           :columns="['col1', 'col2']"
           :rows="[{col1: 'qq', col2:'err'},{col1: 'qq2', col2:'err2'},{col1: 'qq3', col2:'err3'}, ]"
@@ -85,7 +85,7 @@ import StatsCard from "@/components/card/StatsCard.vue";
 
 import CrudComponent from "@/components/crud/CrudComponent.vue";
 import PropDoc from "@/components/misc/PropDoc.vue";
-import ticketSchema from "@/Ticket";
+import ticketSchema from "@/fixtures/ticket";
 export default {
   components: {
     PropDoc,
