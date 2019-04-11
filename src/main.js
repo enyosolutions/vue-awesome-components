@@ -28,7 +28,6 @@ import VueFormGenerator from "vue-form-generator";
 import "jquery";
 import "bootstrap";
 import $ from "jquery";
-import "jquery-confirm";
 
 // Importing Bootstrap
 
