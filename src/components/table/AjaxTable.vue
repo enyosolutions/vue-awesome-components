@@ -243,7 +243,8 @@ perPage: perPage
   </enyo-card>
 </template>
 <script>
-import EnyoCard from "@/components/card/EnyoCard.vue";
+// import EnyoCard from "@/components/card/EnyoCard.vue";
+import EnyoCard from "../card/EnyoCard.vue";
 // import swal from "sweetalert2/dist/sweetalert2.js";
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";

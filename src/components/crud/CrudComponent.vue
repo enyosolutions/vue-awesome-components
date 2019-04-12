@@ -191,7 +191,8 @@
 import apiErrors from "@/mixins/api-errors";
 import _ from "lodash";
 import swal from "sweetalert2/dist/sweetalert2.js";
-import AjaxTable from "@/components/table/AjaxTable.vue";
+// import AjaxTable from "@/components/table/AjaxTable.vue";
+import AjaxTable from "../table/AjaxTable.vue";
 // import { VueGoodTable } from "vue-good-table";
 import "vue-good-table/dist/vue-good-table.css";
 
