@@ -21,7 +21,7 @@
                 v-if="innerOptions.actions && innerOptions.actions.create"
                 @click="createFunction()"
               >
-                <font-awesome-icon icon="plus" class="font-awesome-pencil"></font-awesome-icon>
+                <i class="enyo-fa-plus"></i>
                 {{ $t('common.labels.createNew') }} {{ title }}
               </button>
             </slot>
