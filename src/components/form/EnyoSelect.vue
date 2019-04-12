@@ -17,7 +17,7 @@
 </template>
 <script>
 import multiselectMixin from "vue-multiselect";
-import selectMixin from "src/mixins/selectMixin";
+import selectMixin from "@/mixins/selectMixin";
 
 export default {
   name: "enyo-select",
@@ -73,6 +73,7 @@ export default {
   created() {
     // Check if the component is loaded globally
     if (!this.$root.$options.components.multiselect) {
+      // eslint-disable-next-line
       console.error(
         "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
       );
@@ -90,9 +91,10 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "../../../src/assets/sass/theme/_variables.scss";
+// @TODO: Fix after finding where is the scss
+// @import "../../../src/assets/sass/theme/_variables.scss";
 
-.multiselect__tag {
-  background: $primary-bg !important;
-}
+// .multiselect__tag {
+//   background: $primary-bg !important;
+// }
 </style>

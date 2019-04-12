@@ -4,7 +4,7 @@ export default {
       this.$notifications.clear();
       if (err && !err.response) {
         // network error
-        console.log(err);
+        // console.log(err);
         this.$notify({
           title: this.$t('common.messages.network_error'),
           type: 'warning'
@@ -30,7 +30,8 @@ export default {
       if (err.data) {
         if (err.data.message) {
           return err.data.message;
-        } if (err.data.errors) {
+        }
+        if (err.data.errors) {
           if (err.data.errors[0] && err.data.errors[0].message) {
             return err.data.errors[0].message;
           }

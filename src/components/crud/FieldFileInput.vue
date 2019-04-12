@@ -4,13 +4,12 @@
   </div>
 </template>
 <script>
-/* global $ */
-import VueFormGenerator from 'vue-form-generator';
-import { defaults } from 'lodash';
-import moment from 'moment';
+import VueFormGenerator from "vue-form-generator";
+// import { defaults } from "lodash";
+// import moment from "moment";
 
 // You need a specific loader for CSS files
-import Base64Upload from 'vue-base64-upload';
+import Base64Upload from "vue-base64-upload";
 
 export default {
   mixins: [VueFormGenerator.abstractField],
@@ -18,7 +17,7 @@ export default {
   data() {
     return {
       refresh: new Date(),
-      oldValue: ''
+      oldValue: ""
     };
   },
   mounted() {
@@ -34,31 +33,22 @@ export default {
   computed: {},
   methods: {
     onChangeImage(file) {
-      console.log('Field File input', Object.keys(file));
+      // console.log('Field File input', Object.keys(file));
       this.value = file.base64;
-    },
-
+    }
   },
 
-  mounted() {
-
-  },
-
-  beforeDestroy() {
-
-  }
+  beforeDestroy() {}
 };
-
 </script>
 <style lang="scss">
 .field-file-input {
   cursor: pointer;
 
-  >* {
+  > * {
     cursor: pointer;
     width: 100%;
     height: auto;
   }
 }
-
 </style>

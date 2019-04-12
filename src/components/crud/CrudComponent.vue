@@ -187,13 +187,13 @@
   </div>
 </template>
 <script>
+/* global $ */
 import apiErrors from "@/mixins/api-errors";
 import _ from "lodash";
 import swal from "sweetalert2/dist/sweetalert2.js";
 import AjaxTable from "@/components/table/AjaxTable.vue";
-import { VueGoodTable } from "vue-good-table";
+// import { VueGoodTable } from "vue-good-table";
 import "vue-good-table/dist/vue-good-table.css";
-
 
 const defaultOptions = {
   mode: "local",
@@ -307,7 +307,7 @@ There are 3 ways of using the Crud Component.
       note:
         "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
     },
-    crudNeedsRefresh: false,
+    crudNeedsRefresh: { type: Boolean, default: false },
     nestedSchemas: {
       type: Array,
       required: false,
@@ -333,8 +333,8 @@ There are 3 ways of using the Crud Component.
     }
   },
   components: {
-    AjaxTable,
-    VueGoodTable
+    AjaxTable
+    // VueGoodTable
   },
   mixins: [apiErrors],
   created() {
@@ -354,6 +354,7 @@ There are 3 ways of using the Crud Component.
     }
   },
   beforeRouteEnter(to, from, next) {
+    // eslint-disable-next-line
     next(vm => {
       //    vm.loadModel();
     });
@@ -408,8 +409,8 @@ There are 3 ways of using the Crud Component.
     }
   },
   methods: {
-     refreshComponent() {
-      console.log('refresh component watcher');
+    refreshComponent() {
+      // console.log("refresh component watcher");
       if (this.modelName) {
         this.loadModel();
       }
@@ -419,7 +420,7 @@ There are 3 ways of using the Crud Component.
       this.nestedCrudNeedsRefresh = true;
 
       setTimeout(() => {
-        this.$emit('update:crudNeedsRefresh', false);
+        this.$emit("update:crudNeedsRefresh", false);
       }, 100);
     },
 
@@ -443,6 +444,7 @@ There are 3 ways of using the Crud Component.
       }
     },
     callbackFunctionForBAse64(e) {
+      // eslint-disable-next-line
       console.log("Base 64 done", e);
     },
 
@@ -496,7 +498,9 @@ There are 3 ways of using the Crud Component.
 
     exportCurrentArrayToExcel() {
       let CsvString = "";
+      // eslint-disable-next-line
       this.items.forEach((RowItem, RowIndex) => {
+        // eslint-disable-next-line
         RowItem.forEach((ColItem, ColIndex) => {
           CsvString += `${ColItem},`;
         });
@@ -524,14 +528,14 @@ There are 3 ways of using the Crud Component.
       }
 
       if (!this.innerModel && !this.schema) {
-        console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
+        // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
         return;
       }
       this.innerSchema = this.schema || this.innerModel.schema;
       this.innerOptions.columns = this.formatColumns(
         this.innerSchema.properties
       );
-      console.log(JSON.stringify(this.innerOptions));
+      // console.log(JSON.stringify(this.innerOptions));
       this.innerOptions.url =
         this.innerOptions.url ||
         (this.options && this.options.url) ||
@@ -558,7 +562,7 @@ There are 3 ways of using the Crud Component.
         return [];
       }
       if (prefix && schema.$schema) {
-        console.warn("possible recursive parseSchema call", schema);
+        // console.warn("possible recursive parseSchema call", schema);
         return;
       }
       const formSchema = [];
@@ -688,7 +692,7 @@ There are 3 ways of using the Crud Component.
         case "object":
           return "string";
         default:
-          console.error("type not known ", type, property);
+          // console.error("type not known ", type, property);
           return type;
       }
     },
@@ -763,16 +767,19 @@ There are 3 ways of using the Crud Component.
 
     createItem() {
       if (!this.innerOptions.url) {
+        // eslint-disable-next-line
         console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
+          // eslint-disable-next-line
           console.error("CRUDCOMPONENT ERROR:: validation errors", error);
           return;
         }
       } else {
+        // eslint-disable-next-line
         console.warn(
           "Unable to find the reference to the scham form on ",
           this.$route.path
@@ -780,7 +787,7 @@ There are 3 ways of using the Crud Component.
       }
       return this.$http
         .post(this.innerOptions.url, this.currentItem)
-        .then(res => {
+        .then(() => {
           swal({
             title: this.$t("common.messages.successfullyCreated", {
               title: this.type
@@ -794,21 +801,24 @@ There are 3 ways of using the Crud Component.
         })
         .catch(this.apiErrorCallback);
 
-      return false;
+      // return false;
     },
 
     editItem() {
       if (!this.innerOptions.url) {
+        // eslint-disable-next-line
         console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
-          console.error("CRUDCOMPONENT ERROR:: validation errors", error);
+          // eslint-disable-next-line
+          console.error("CRUDCOMPONENT ERROR:: validation errors", errors);
           return;
         }
       } else {
+        // eslint-disable-next-line
         console.warn(
           "Unable to find the reference to the schema form on ",
           this.$route.path
@@ -820,7 +830,7 @@ There are 3 ways of using the Crud Component.
           `${this.innerOptions.url}/${this.currentItem._id}`,
           this.currentItem
         )
-        .then(res => {
+        .then(() => {
           swal({
             title: this.$t("common.messages.successfullyModified", {
               title: this.type
@@ -875,12 +885,15 @@ There are 3 ways of using the Crud Component.
         if (result.value) {
           this.$http
             .delete(`${this.innerOptions.url}/${item._id}`)
-            .then(res => {
+            .then(() => {
               this.tableNeedsRefresh = true;
               this.statsNeedsRefresh = true;
               this.$forceUpdate();
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+              // eslint-disable-next-line
+              console.error(err);
+            });
         }
       });
     },
@@ -896,7 +909,7 @@ There are 3 ways of using the Crud Component.
     },
 
     customAction({ action, item }) {
-      console.log(item);
+      // console.log(item);
       return action.action(item, this);
     },
 
@@ -993,4 +1006,3 @@ body.modal-open .bootstrap-datetimepicker-widget {
   }
 }
 </style>
-

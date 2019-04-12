@@ -1,35 +1,30 @@
 <template>
   <div>
     <enyo-select
-    :id="fieldOptions.id"
-    :options="internalOptions"
-    :value="internalValue"
-    :multiple="fieldOptions.multiple"
-    :track-by="fieldOptions.trackBy || null"
-    :label="fieldOptions.label || null"
-    :max="schema.max || null"
-    :searchable="schema.searchable || false"
-    :disabled="disabled"
-
-    v-model="myModel"
-
-    @input="updateSelected"
-    >
-  </enyo-select>
-</div>
+      :id="fieldOptions.id"
+      :options="internalOptions"
+      :value="internalValue"
+      :multiple="fieldOptions.multiple"
+      :track-by="fieldOptions.trackBy || null"
+      :label="fieldOptions.label || null"
+      :max="schema.max || null"
+      :searchable="schema.searchable || false"
+      :disabled="disabled"
+      v-model="myModel"
+      @input="updateSelected"
+    ></enyo-select>
+  </div>
 </template>
 <script>
-
-
-import VueFormGenerator from 'vue-form-generator';
-import selectMixin from '@/src/mixins/selectMixin';
+import VueFormGenerator from "vue-form-generator";
+import selectMixin from "@/mixins/selectMixin";
 
 export default {
   mixins: [selectMixin, VueFormGenerator.abstractField],
   props: [], // 'schema', 'disabled', 'value' are in the abstract field
   data() {
     return {
-      myModel: '',
+      myModel: ""
     };
   },
   computed: {
@@ -39,9 +34,9 @@ export default {
 
     customLabel() {
       if (
-        typeof this.schema.fieldOptions !== 'undefined'
-          && typeof this.schema.fieldOptions.customLabel !== 'undefined'
-          && typeof this.schema.fieldOptions.customLabel === 'function'
+        typeof this.schema.fieldOptions !== "undefined" &&
+        typeof this.schema.fieldOptions.customLabel !== "undefined" &&
+        typeof this.schema.fieldOptions.customLabel === "function"
       ) {
         return this.schema.fieldOptions.customLabel;
       }
@@ -51,24 +46,25 @@ export default {
 
     dataUrl() {
       return this.url || this.fieldOptions.url;
-    },
+    }
   },
   watch: {
+    // eslint-disable-next-line
     vModelValue(newValue, oldValue) {
-      console.log('send new vMODELVALUE down !', newValue);
+      // console.log("send new vMODELVALUE down !", newValue);
       this.setIncomingValue(newValue);
     },
-
+    // eslint-disable-next-line
     value(newValue, oldValue) {
-      console.log('send new value down from VFG !', newValue);
+      // console.log("send new value down from VFG !", newValue);
       this.setIncomingValue(newValue);
-    },
+    }
   },
 
   methods: {
     addTag(newTag, id) {
       const { onNewTag } = this.fieldOptions;
-      if (typeof onNewTag === 'function') {
+      if (typeof onNewTag === "function") {
         onNewTag(newTag, id, this.options, this.value);
       }
     },
@@ -76,37 +72,45 @@ export default {
     // Sets the value from the the the v-model attribute
     setIncomingValue(value) {
       if (Array.isArray(value)) {
-        this.internalValue = this.internalOptions && this.internalOptions.filter(option => {
-          const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
-          return value.indexOf(searchKey) > -1;
-        });
+        this.internalValue =
+          this.internalOptions &&
+          this.internalOptions.filter(option => {
+            const searchKey =
+              typeof option === "string" ? option : option[this.trackBy];
+            return value.indexOf(searchKey) > -1;
+          });
         return;
       }
-      this.internalValue = this.internalOptions && this.internalOptions.find(option => {
-        const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
-        return searchKey == value;
-      });
-    // this.myModel = this.internalValue;
+      this.internalValue =
+        this.internalOptions &&
+        this.internalOptions.find(option => {
+          const searchKey =
+            typeof option === "string" ? option : option[this.trackBy];
+          return searchKey == value;
+        });
+      // this.myModel = this.internalValue;
     },
 
     updateSelected(value) {
-      console.log('send new value up !', value);
+      // console.log("send new value up !", value);
       this.internalValue = value;
-      if (!value || typeof (value) === 'string' || typeof (value) === 'number') {
-        this.$emit('input', value);
+      if (!value || typeof value === "string" || typeof value === "number") {
+        this.$emit("input", value);
         this.value = value;
       } else if (Array.isArray(value)) {
-        const valueArray = value.map(item => (this.trackBy && item[this.trackBy] ? item[this.trackBy] : item));
-        this.$emit('input', valueArray);
+        const valueArray = value.map(item =>
+          this.trackBy && item[this.trackBy] ? item[this.trackBy] : item
+        );
+        this.$emit("input", valueArray);
         this.value = valueArray;
       } else {
-        this.$emit('input', value[this.trackBy]);
+        this.$emit("input", value[this.trackBy]);
         this.value = value[this.trackBy];
       }
     },
     onSearchChange(searchQuery, id) {
       const { onSearch } = this.fieldOptions;
-      if (typeof onSearch === 'function') {
+      if (typeof onSearch === "function") {
         onSearch(searchQuery, id, this.options);
       }
     },
@@ -124,14 +128,18 @@ export default {
     }
   },
   created() {
-  // Check if the component is loaded globally
+    // Check if the component is loaded globally
     if (!this.$root.$options.components.multiselect) {
-      console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
+      // eslint-disable-next-line
+      console.error(
+        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
+      );
     }
-    console.log('this props', this.$props);
+    // console.log("this props", this.$props);
   },
   mounted() {
-    console.log('field Enyo select mounted', this.myModel, this.vModelValue);
+    // console.log("field Enyo select mounted", this.myModel, this.vModelValue);
+    // eslint-disable-next-line
     App.select = this;
     this.setIncomingValue(this.vModelValue);
     this.loadRemoteEntities().then(ok => {

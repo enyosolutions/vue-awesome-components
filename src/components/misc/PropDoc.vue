@@ -12,14 +12,15 @@
     <slot name="pre-props"></slot>
     <section class="props" v-if="merged.props">
       <div class="proprow labels">
-        <div class="propcol name required">name
+        <div class="propcol name required">
+          name
           <span>(required)</span>
         </div>
         <div class="propcol type">type</div>
         <div class="propcol default">default</div>
         <div class="propcol notes">notes</div>
       </div>
-      <div class="proprow" v-for="(propinfo, propname) in merged.props">
+      <div class="proprow" v-for="(propinfo, propname) in merged.props" v-bind:key="propinfo">
         <div class="propcol name" :class="{ required: propinfo.required }">
           <span>{{ propname }}</span>
         </div>
