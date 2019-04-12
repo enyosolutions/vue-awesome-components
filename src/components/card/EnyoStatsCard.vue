@@ -1,5 +1,5 @@
 <template>
-  <card class="card-stats" :class="className">
+  <enyo-card class="card-stats" :class="className">
     <div class="row">
       <div class="col-5" v-if="$slots.header">
         <div class="icon-big text-center">
@@ -15,13 +15,13 @@
     <div slot="footer" class="stats" v-if="$slots.footer">
       <slot name="footer"></slot>
     </div>
-  </card>
+  </enyo-card>
 </template>
 <script>
-import Card from './Card.vue';
+import Card from "./EnyoCard.vue";
 
 export default {
-  name: 'stats-card',
+  name: "enyo-stats-card",
   props: {
     className: String
   },
@@ -29,8 +29,6 @@ export default {
     Card
   }
 };
-
 </script>
 <style>
-
 </style>

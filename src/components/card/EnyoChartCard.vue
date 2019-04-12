@@ -16,7 +16,7 @@
 import chartist from "chartist";
 
 export default {
-  name: "chart-card",
+  name: "enyo-chart-card",
   components: {
     // Card
   },

@@ -1,75 +1,126 @@
 <template>
-  <div class="card-table-and-chart" :class="{'card-stats-fullscreen': fullscreen, [className]: className}">
-    <AjaxTable v-if="currentState === 'table'" :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh || internalRefreshRequested" :options="tableOptions">
+  <div
+    class="card-table-and-chart"
+    :class="{'card-stats-fullscreen': fullscreen, [className]: className}"
+  >
+    <AjaxTable
+      v-if="currentState === 'table'"
+      :title="title"
+      :columns="tableColumns"
+      :rows="dataSource"
+      :tableNeedsRefresh="needsRefresh || internalRefreshRequested"
+      :options="tableOptions"
+    >
       <template slot="table-top-actions">
         <button type="button" @click="setTab('bar')" class="btn btn-simple btn-primary">Barres</button>
         <button type="button" @click="setTab('line')" class="btn btn-simple btn-primary">Graphe</button>
         <button type="button" @click="setTab('pie')" class="btn btn-simple btn-primary">Camembert</button>
-        <button type="button" @click="toggleFullscreen()" class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0">
+        <button
+          type="button"
+          @click="toggleFullscreen()"
+          class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
+        >
           <i v-if="fullscreen" class="fa fa-times"></i>
           <i v-if="!fullscreen" class="fa fa-search-plus"></i>
         </button>
       </template>
       <!-- END OF ARRAY -->
     </AjaxTable>
-    <chart-card v-if="currentState === 'bar'" chartType="Bar" :chartData="{labels: selectProp(dataSource, chartColKey), series: [selectProp(dataSource, chartRowKey)]}" :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')">
+    <enyo-chart-card
+      v-if="currentState === 'bar'"
+      chartType="Bar"
+      :chartData="{labels: selectProp(dataSource, chartColKey), series: [selectProp(dataSource, chartRowKey)]}"
+      :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')"
+    >
       <template slot="header">
-        <h4 class="mt-0 mb-0">{{ title }}
-
-        <div class="btn-group btn-group-sm float-right">
-          <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
-          <button type="button" @click="setTab('line')" class="btn btn-simple btn-primary">Graphe</button>
-          <button type="button" @click="setTab('pie')" class="btn btn-simple btn-primary">Camembert</button>
-          <button type="button" @click="toggleFullscreen()" class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0">
-            <i v-if="fullscreen" class="fa fa-times"></i>
-            <i v-if="!fullscreen" class="fa fa-search-plus"></i>
-          </button>
-        </div>
+        <h4 class="mt-0 mb-0">
+          {{ title }}
+          <div class="btn-group btn-group-sm float-right">
+            <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
+            <button type="button" @click="setTab('line')" class="btn btn-simple btn-primary">Graphe</button>
+            <button
+              type="button"
+              @click="setTab('pie')"
+              class="btn btn-simple btn-primary"
+            >Camembert</button>
+            <button
+              type="button"
+              @click="toggleFullscreen()"
+              class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
+            >
+              <i v-if="fullscreen" class="fa fa-times"></i>
+              <i v-if="!fullscreen" class="fa fa-search-plus"></i>
+            </button>
+          </div>
         </h4>
       </template>
-    </chart-card>
-    <chart-card v-if="currentState === 'line'" chartType="Line" :chartData="{labels: selectProp(dataSource, chartColKey),
-series: [selectProp(dataSource, chartRowKey)]}" :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')">
+    </enyo-chart-card>
+    <enyo-chart-card
+      v-if="currentState === 'line'"
+      chartType="Line"
+      :chartData="{labels: selectProp(dataSource, chartColKey),
+series: [selectProp(dataSource, chartRowKey)]}"
+      :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')"
+    >
       <template slot="header">
-        <h4 class="mt-0 mb-0">{{ title }}
-      <div class="btn-group btn-group-sm float-right">
-        <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
-        <button type="button" @click="setTab('bar')" class="btn btn-simple btn-primary">Barres</button>
-        <button type="button" @click="setTab('pie')" class="btn btn-simple btn-primary">Camembert</button>
-        <button type="button" @click="toggleFullscreen()" class="btn btn-simple btn-primary card-stats-fullscreen-button  pr-0">
-          <i v-if="fullscreen" class="fa fa-times"></i>
-          <i v-if="!fullscreen" class="fa fa-search-plus"></i>
-        </button>
-      </div>
-      </h4>
+        <h4 class="mt-0 mb-0">
+          {{ title }}
+          <div class="btn-group btn-group-sm float-right">
+            <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
+            <button type="button" @click="setTab('bar')" class="btn btn-simple btn-primary">Barres</button>
+            <button
+              type="button"
+              @click="setTab('pie')"
+              class="btn btn-simple btn-primary"
+            >Camembert</button>
+            <button
+              type="button"
+              @click="toggleFullscreen()"
+              class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
+            >
+              <i v-if="fullscreen" class="fa fa-times"></i>
+              <i v-if="!fullscreen" class="fa fa-search-plus"></i>
+            </button>
+          </div>
+        </h4>
       </template>
-    </chart-card>
-    <chart-card v-if="currentState === 'pie'" chartType="Pie" :chartData="{labels: selectProp(dataSource, chartColKey),
-    series: [selectProp(dataSource, chartRowKey)]}" :responsiveOptions="pieResponsiveOptions" :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')">
+    </enyo-chart-card>
+    <enyo-chart-card
+      v-if="currentState === 'pie'"
+      chartType="Pie"
+      :chartData="{labels: selectProp(dataSource, chartColKey),
+    series: [selectProp(dataSource, chartRowKey)]}"
+      :responsiveOptions="pieResponsiveOptions"
+      :headerClasses="'ajax-table-header '+ (chartOptions.headerStyle ? 'colored-header bg-' + chartOptions.headerStyle : '')"
+    >
       <template slot="header">
-        <h4 class="mt-0 mb-0">{{ title }}
-             <div class="btn-group btn-group-sm float-right">
-               <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
-               <button type="button" @click="setTab('bar')" class="btn btn-simple btn-primary">Barres</button>
-               <button type="button" @click="setTab('line')" class="btn btn-simple btn-primary">Graphe</button>
-               <button type="button" @click="toggleFullscreen()" class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0">
-                 <i v-if="fullscreen" class="fa fa-times"></i>
-                 <i v-if="!fullscreen" class="fa fa-search-plus"></i>
-               </button>
-             </div>
-             </h4>
+        <h4 class="mt-0 mb-0">
+          {{ title }}
+          <div class="btn-group btn-group-sm float-right">
+            <button type="button" @click="setTab('table')" class="btn btn-simple btn-primary">Liste</button>
+            <button type="button" @click="setTab('bar')" class="btn btn-simple btn-primary">Barres</button>
+            <button type="button" @click="setTab('line')" class="btn btn-simple btn-primary">Graphe</button>
+            <button
+              type="button"
+              @click="toggleFullscreen()"
+              class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
+            >
+              <i v-if="fullscreen" class="fa fa-times"></i>
+              <i v-if="!fullscreen" class="fa fa-search-plus"></i>
+            </button>
+          </div>
+        </h4>
       </template>
-    </chart-card>
+    </enyo-chart-card>
   </div>
 </template>
 <script>
-import ChartCard from './ChartCard.vue';
-import _ from 'lodash';
-
+import EnyoChartCard from "./EnyoChartCard.vue";
+import _ from "lodash";
 
 export default {
-  name: 'table-and-charts-card',
-  introduction: 'A component that display graphs to go along an ajaxTable list',
+  name: "table-and-charts-card",
+  introduction: "A component that display graphs to go along an ajaxTable list",
   token: `
   <table-and-charts-card
   :title="'Visites par ' + $t('common.labels.' + activeTab)"
@@ -81,37 +132,40 @@ export default {
   :chart-col-key="activeTab"
 
   ></table-and-charts-card>`,
-  description: '',
+  description: "",
   props: {
     tableColumns: { type: Array, required: true },
     title: String,
-    initialState: { type: String, default: 'table' },
+    initialState: { type: String, default: "table" },
     chartOptions: {
       type: Object,
       default() {
-        return { headerStyle: 'primary' };
-      },
+        return { headerStyle: "primary" };
+      }
     },
     tableOptions: {
       type: Object,
       default() {
-        return { headerStyle: 'primary', actions: { noActions: true, filter: false } };
-      },
+        return {
+          headerStyle: "primary",
+          actions: { noActions: true, filter: false }
+        };
+      }
     },
     chartRowKey: {
       type: String,
-      default: () => 'value',
+      default: () => "value"
     },
     chartColKey: {
       type: String,
-      default: () => 'date',
+      default: () => "date"
     },
     dataSource: { type: Array, required: true },
     className: String,
-    needsRefresh: Boolean,
+    needsRefresh: Boolean
   },
   components: {
-    ChartCard,
+    EnyoChartCard
   },
   data() {
     return {
@@ -119,16 +173,22 @@ export default {
       internalRefreshRequested: false,
       fullscreen: false,
       pieResponsiveOptions: [
-        ['screen and (min-width: 640px)', {
-          chartPadding: 30,
-          labelOffset: 100,
-          labelDirection: 'explode',
-        }],
-        ['screen and (min-width: 1024px)', {
-          labelOffset: 80,
-          chartPadding: 20
-        }]
-      ],
+        [
+          "screen and (min-width: 640px)",
+          {
+            chartPadding: 30,
+            labelOffset: 100,
+            labelDirection: "explode"
+          }
+        ],
+        [
+          "screen and (min-width: 1024px)",
+          {
+            labelOffset: 80,
+            chartPadding: 20
+          }
+        ]
+      ]
     };
   },
   methods: {
@@ -147,7 +207,6 @@ export default {
     }
   }
 };
-
 </script>
 <style lang='scss'>
 .card-stats-fullscreen {
@@ -172,5 +231,4 @@ export default {
     top: 0px;
   }
 }
-
 </style>

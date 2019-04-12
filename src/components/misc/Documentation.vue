@@ -8,19 +8,19 @@
       </div>
 
       <ul class="list-group col-md-6 offset-md-3">
-        <li class="list-group-item dark ">Components</li>
+        <li class="list-group-item dark">Components</li>
         <li class="list-group-item" v-for="(component, index) in components" :key="index">
           <a :href="'#' + component.name">{{ component.name }}</a>
         </li>
       </ul>
-      <hr/>
+      <hr>
       <div class="row">
         <div class="col-md-12">
-          <card v-for="(component, index) in components" :key="index">
+          <enyo-card v-for="(component, index) in components" v-bind:key="index">
             <div :id="component.name">
               <prop-doc :component="component"></prop-doc>
             </div>
-          </card>
+          </enyo-card>
         </div>
       </div>
     </div>
@@ -30,21 +30,21 @@
 import TableAndChartsCard from "@/components/card/TableAndChartsCard.vue";
 import AjaxTable from "@/components/table/AjaxTable.vue";
 
-import Card from "@/components/card/Card.vue";
-import Stats from "@/components/misc/Stats.vue";
-import ChartCard from "@/components/card/ChartCard.vue";
-import StatsCard from "@/components/card/StatsCard.vue";
+import EnyoCard from "@/components/card/EnyoCard.vue";
+import EnyoStats from "@/components/misc/EnyoStats.vue";
+import EnyoChartCard from "@/components/card/EnyoChartCard.vue";
+import EnyoStatsCard from "@/components/card/EnyoStatsCard.vue";
 
 import CrudComponent from "@/components/crud/CrudComponent.vue";
 import PropDoc from "@/components/misc/PropDoc.vue";
 
 export default {
   props: {
-    title: String,
+    title: String
   },
   components: {
     PropDoc,
-    Card,
+    EnyoCard
   },
   data() {
     return {
@@ -52,9 +52,9 @@ export default {
         CrudComponent,
         AjaxTable,
         TableAndChartsCard,
-        Stats,
-        ChartCard,
-        StatsCard
+        EnyoStats,
+        EnyoChartCard,
+        EnyoStatsCard
       ]
       // components: [CrudComponent, AjaxTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };

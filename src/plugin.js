@@ -9,8 +9,8 @@ import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 import EnyoSelect from './components/form/EnyoSelect.vue';
 import UploadButton from './components/form/UploadButton.vue';
 
-import Card from './components/card/Card.vue';
-import Stats from './components/misc/Stats.vue';
+import EnyoCard from './components/card/EnyoCard.vue';
+import EnyoStats from './components/misc/EnyoStats.vue';
 
 import AjaxTable from './components/table/AjaxTable.vue';
 import axios from 'axios';
@@ -23,8 +23,8 @@ import {
 
 const GlobalComponents = {
   install(Vue) {
-    Vue.component('enyo-card', Card);
-    Vue.component('enyo-stats-card', Stats);
+    Vue.component('enyo-card', EnyoCard);
+    Vue.component('enyo-stats', EnyoStats);
     Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
 
     Vue.component('datetime', Datetime); //todo better re

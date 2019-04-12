@@ -1,5 +1,5 @@
 <template>
-  <card
+  <enyo-card
     :headerClass="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
   >
     <template slot="header">
@@ -240,10 +240,10 @@ perPage: perPage
         <div slot="emptystate">{{ $t('table.empty') }}</div>
       </vue-good-table>
     </div>
-  </card>
+  </enyo-card>
 </template>
 <script>
-import Card from "@/components/card/Card.vue";
+import EnyoCard from "@/components/card/EnyoCard.vue";
 // import swal from "sweetalert2/dist/sweetalert2.js";
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
@@ -268,7 +268,7 @@ export default {
   </AjaxTable>
   `,
   components: {
-    Card,
+    EnyoCard,
     DateRangePicker,
     VueGoodTable
   },

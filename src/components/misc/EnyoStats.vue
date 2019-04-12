@@ -39,7 +39,7 @@
 <script>
 import _ from "lodash";
 export default {
-  name: "stats",
+  name: "enyo-stats",
   components: {},
   props: {
     url: String,

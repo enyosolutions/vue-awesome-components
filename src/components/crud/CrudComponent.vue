@@ -5,11 +5,11 @@
         <div class="col-12">
           <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ titlePlural }}</h1>
           <div class="row" v-if="innerOptions.stats">
-            <stats
+            <enyo-stats
               :url="innerOptions.url + '/stats'"
               :entity="name"
               :statsNeedsRefresh.sync="statsNeedsRefresh"
-            ></stats>
+            ></enyo-stats>
           </div>
           <!--
             <EnyoSelect v-model="mySelect2" url="/page" :options="[]" label="content" track-by="_id"  :multiple="true" :somevar="'test'"></EnyoSelect>
