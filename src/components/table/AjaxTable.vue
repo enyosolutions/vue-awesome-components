@@ -40,7 +40,7 @@
             @click="toggleFilter()"
             :class="{'btn-primary': filterable, 'btn-default': !filterable}"
           >
-            <font-awesome-icon icon="filter" class="font-awesome"></font-awesome-icon>
+            <i class="font-awesome enyo-fa-filter"></i>
             {{ $t('common.buttons.filters') }}
           </button>
           <div class="dropdown">
@@ -49,7 +49,7 @@
               class="btn btn-simple"
               @click="getItems()"
             >
-              <font-awesome-icon icon="sync-alt" class="font-awesome"></font-awesome-icon>
+              <i class="font-awesome enyo-fa-arrows-cw"></i>
               {{ $t('common.buttons.refresh') }}
             </button>
             <button
@@ -61,7 +61,7 @@
               aria-expanded="false"
               v-if="opts.actions && (opts.actions.export || opts.actions.import)"
             >
-              <font-awesome-icon icon="plus" class="font-awesome"></font-awesome-icon>
+              <i class="font-awesome enyo-fa-plus"></i>
               {{ $t('table.more') }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -87,7 +87,7 @@
                 v-if="opts.actions && opts.actions.export"
                 @click="exportCallBack"
               >
-                <font-awesome-icon icon="file-excel" class="font-awesome"></font-awesome-icon>
+                <i class="font-awesome enyo-fa-file-excel"></i>
                 {{ $t('common.buttons.excel') }}
               </button>
             </div>
@@ -164,21 +164,21 @@ perPage: perPage
               @click="$emit('view', props.row)"
               class="btn btn-xs btn-simple btn-icon"
             >
-              <font-awesome-icon icon="eye" class="font-awesome"></font-awesome-icon>
+              <i class="font-awesome enyo-fa-eye"></i>
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.edit"
               @click="$emit('edit', props.row)"
               class="btn btn-xs btn-simple btn-icon"
             >
-              <font-awesome-icon icon="pencil-alt" class="font-awesome-pencil"></font-awesome-icon>
+              <i class="font-awesome-pencil enyo-fa-pencil"></i>
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.delete"
               @click="deleteItem(props.row)"
               class="btn btn-xs btn-simple btn-icon"
             >
-              <font-awesome-icon icon="times"></font-awesome-icon>
+              <i class="font-awesome enyo-fa-cancel"></i>
             </button>
           </span>
           <span
