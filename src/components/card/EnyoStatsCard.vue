@@ -18,7 +18,7 @@
   </enyo-card>
 </template>
 <script>
-import Card from "./EnyoCard.vue";
+import EnyoCard from "./EnyoCard.vue";
 
 export default {
   name: "enyo-stats-card",
@@ -26,7 +26,7 @@ export default {
     className: String
   },
   components: {
-    Card
+    EnyoCard
   }
 };
 </script>

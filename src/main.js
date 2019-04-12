@@ -9,17 +9,24 @@ import axios from "axios";
 import Datetime from 'vue-datetime';
 import VueFormGenerator from 'vue-form-generator';
 import VueGoodTablePlugin from "vue-good-table";
+
 // Importing Lodash
 import _ from "lodash";
 // Importing jQuery
 import "jquery";
 import $ from "jquery";
 
+import EnyoCard from './components/card/EnyoCard.vue';
+
+import AjaxTable from './components/table/AjaxTable.vue';
+
 
 // Vue Use and Components
 Vue.use(VueGoodTablePlugin);
 
 Vue.component('datetime', Datetime);
+Vue.component('enyo-card', EnyoCard);
+Vue.component('ajax-table', AjaxTable);
 
 Vue.use(VueFormGenerator, {
   fields: _.values(VueFormGenerator.fieldsLoader)
