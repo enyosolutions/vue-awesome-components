@@ -195,6 +195,10 @@ perPage: perPage
               class="ajax-table-href"
             >{{ props.formattedRow[props.column.field] }}</a>
           </div>
+          <div v-else-if="props.column.type === 'html'" 
+          @click="clickOnLine(props.row)" 
+           class="pointer" v-html="props.formattedRow[props.column.field]">
+          </div>
           <div class="text-avoid-overflow" v-else-if="props.column.type === 'relation'">
             <router-link
               :to="'/app' + props.column.relation + '/' +  props.formattedRow[props.column.field]"
