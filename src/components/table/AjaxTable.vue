@@ -280,6 +280,10 @@ export default {
   mixins: [apiErrors],
   props: {
     columns: Array,
+    columnsDisplayed: {
+      type: Number,
+      default: 8
+    },
     rows: Array,
     url: String,
     params: Object,
@@ -461,9 +465,9 @@ export default {
         return col;
       });
       const isInitialLoad = Object.keys(this.columnsState).length < 1;
-      if (isInitialLoad && newcolumns.length > 8) {
+      if (isInitialLoad && newcolumns.length > this.columnsDisplayed) {
         newcolumns.forEach((col, idx) => {
-          this.$set(this.columnsState, col.field, idx < 8);
+          this.$set(this.columnsState, col.field, idx < this.columnsDisplayed);
         });
       }
       if (
@@ -482,7 +486,7 @@ export default {
     },
 
     canHideColumns() {
-      return this.formattedColumns.length > 8;
+      return this.formattedColumns.length > this.columnsDisplayed;
     },
     displayedColumns() {
       this.columnsState;
