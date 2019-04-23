@@ -1,6 +1,6 @@
 {
-  "name": "enyo-vue-components",
-  "version": "0.1.0",
+  "name": "vue-enyo-components",
+  "version": "0.1.1",
   "private": true,
   "main": "src/plugin.js",
   "scripts": {
