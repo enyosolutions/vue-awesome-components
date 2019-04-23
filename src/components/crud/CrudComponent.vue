@@ -149,6 +149,7 @@
           <!-- END OF create MODAL -->
           <AjaxTable
             :columns="innerOptions.columns"
+            :columnsDisplayed="innerOptions.columnsDisplayed"
             :entity="name"
             :mode="innerOptions.mode"
             :url="innerOptions.url"
@@ -206,6 +207,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   modalMode: "slide", // fade | slide
+  columnsDisplayed: 8,
   customActions: [], // {key, label, action: function(item, context{}}
   actions: {
     noActions: false,
@@ -954,12 +956,16 @@ There are 3 ways of using the Crud Component.
   min-height: 150px;
 }
 
+.input-group .form-control {
+  z-index: 0 !important;
+}
+
+
 .vue-form-generator .input-group {
   z-index: 100;
 }
 .vue-form-generator .multiselect {
   width: 100%;
-  z-index: 20;
 }
 
 .vdatetime.form-group {
@@ -1006,4 +1012,20 @@ body.modal-open .bootstrap-datetimepicker-widget {
     }
   }
 }
+
+.input-group {
+  z-index: inherit!important;
+}
+
+.multiselect__content-wrapper{
+  z-index: 16!important
+}
+
+.multiselect__select:before {
+  z-index: 15;
+  position: absolute;
+  top: 15px !important;
+  right: 12px;
+}
+
 </style>
