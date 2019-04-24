@@ -14,7 +14,7 @@ import VueEnyoComponents from 'vue-enyo-components';
 And for the styling you'll also need :
 
 ```
-import VueEnyoComponents from 'vue-enyo-components/';
+import VueEnyoComponents from 'vue-enyo-components/build/style.css';
 
 ```
 
