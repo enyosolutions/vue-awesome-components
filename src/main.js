@@ -1,6 +1,6 @@
 // Import the styles directly. (Or you could add them via script tags.)
 import "bootstrap/dist/css/bootstrap.css";
-import "./assets/css/fontello.css";
+import "./main.scss";
 
 import Vue from "vue";
 import VueI18n from "vue-i18n";

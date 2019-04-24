@@ -1,8 +1,21 @@
-# enyo-vue-components
+# vue-enyo-components
 
-## Project setup
+## install
 ```
-yarn install
+yarn add vue-enyo-components
+```
+
+Add in your main.js 
+```
+import VueEnyoComponents from 'vue-enyo-components';
+
+```
+
+And for the styling you'll also need :
+
+```
+import VueEnyoComponents from 'vue-enyo-components/';
+
 ```
 
 ### Compiles and hot-reloads for development
