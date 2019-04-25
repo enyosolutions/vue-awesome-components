@@ -191,10 +191,8 @@
 /* global $ */
 import apiErrors from "@/mixins/api-errors";
 import _ from "lodash";
-import swal from "sweetalert2/dist/sweetalert2.js";
-// import AjaxTable from "@/components/table/AjaxTable.vue";
+import Swal from "sweetalert2/dist/sweetalert2.js";
 import AjaxTable from "../table/AjaxTable.vue";
-// import { VueGoodTable } from "vue-good-table";
 import "vue-good-table/dist/vue-good-table.css";
 
 const defaultOptions = {
@@ -458,7 +456,7 @@ There are 3 ways of using the Crud Component.
         (!e.improperData || e.improperData.length === 0) &&
         (!e.properData || e.properData.length === 0)
       ) {
-        swal({
+        Swal.fire({
           title: this.$t("common.messages.no_data_imported", {
             title: this.name
           }),
@@ -791,7 +789,7 @@ There are 3 ways of using the Crud Component.
       return this.$http
         .post(this.innerOptions.url, this.currentItem)
         .then(() => {
-          swal({
+          Swal.fire({
             title: this.$t("common.messages.successfullyCreated", {
               title: this.type
             }),
@@ -820,12 +818,6 @@ There are 3 ways of using the Crud Component.
           console.error("CRUDCOMPONENT ERROR:: validation errors", errors);
           return;
         }
-      } else {
-        // eslint-disable-next-line
-        console.warn(
-          "Unable to find the reference to the schema form on ",
-          this.$route.path
-        );
       }
 
       this.$http
@@ -834,7 +826,7 @@ There are 3 ways of using the Crud Component.
           this.currentItem
         )
         .then(() => {
-          swal({
+          Swal.fire({
             title: this.$t("common.messages.successfullyModified", {
               title: this.type
             }),
@@ -874,7 +866,7 @@ There are 3 ways of using the Crud Component.
     },
 
     deleteFunction(item) {
-      swal({
+      Swal.fire({
         title: this.$t("common.messages.are_you_sure"),
         text: this.$t("common.messages.wont_be_able_recover"),
         type: "warning",

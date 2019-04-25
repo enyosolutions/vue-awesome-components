@@ -164,7 +164,7 @@ perPage: perPage
               @click="$emit('view', props.row)"
               class="btn btn-xs btn-simple btn-icon"
             >
-              <i class="font-awesome enyo-fa-eye"></i>
+              <i class="font-awesome enyo-fa-eye text-info"></i>
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.edit"
@@ -178,7 +178,7 @@ perPage: perPage
               @click="deleteItem(props.row)"
               class="btn btn-xs btn-simple btn-icon"
             >
-              <i class="font-awesome enyo-fa-cancel"></i>
+              <i class="font-awesome enyo-fa-cancel text-danger"></i>
             </button>
           </span>
           <span
@@ -195,8 +195,8 @@ perPage: perPage
               class="ajax-table-href"
             >{{ props.formattedRow[props.column.field] }}</a>
           </div>
-          <div v-else-if="props.column.type === 'html'" 
-          @click="clickOnLine(props.row)" 
+          <div v-else-if="props.column.type === 'html'"
+          @click="clickOnLine(props.row)"
            class="pointer" v-html="props.formattedRow[props.column.field]">
           </div>
           <div class="text-avoid-overflow" v-else-if="props.column.type === 'relation'">
@@ -247,9 +247,7 @@ perPage: perPage
   </enyo-card>
 </template>
 <script>
-// import EnyoCard from "@/components/card/EnyoCard.vue";
 import EnyoCard from "../card/EnyoCard.vue";
-// import swal from "sweetalert2/dist/sweetalert2.js";
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import qs from "qs";
