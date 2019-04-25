@@ -7,7 +7,11 @@ yarn add vue-enyo-components
 
 Add in your main.js 
 ```
-import VueEnyoComponents from 'vue-enyo-components';
+import VueEnyoComponents from 'vue-enyo-components/plugin';
+
+// or to import separately the components you need
+
+import {EnyoCard, EnyoAjaxTable} from 'vue-enyo-components';
 
 ```
 
