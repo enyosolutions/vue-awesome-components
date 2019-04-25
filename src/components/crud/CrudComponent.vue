@@ -56,12 +56,12 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <slot name="create-form" :currentItem="currentItem">
+                      <slot name="create-form" :selectedItem="selectedItem">
                         <template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
                             ref="form"
                             :schema.sync="formSchema"
-                            :model="currentItem"
+                            :model="selectedItem"
                             :options="formOptions"
                           ></VueFormGenerator>
                         </template>
@@ -99,14 +99,57 @@
                       </button>
                     </div>
                     <div class="modal-body" :class="{'view-mode': viewMode === 'view'}">
-                      <slot name="edit-form" :currentItem="currentItem">
-                        <template v-if="formSchema && formSchema.fields">
-                          <VueFormGenerator
-                            :schema.sync="formSchema"
-                            :model="currentItem"
-                            :options="formOptions"
-                          ></VueFormGenerator>
+                      <ul
+                        class="nav nav-tabs mt-5 mb-4"
+                        v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
+                      >
+                        <li class="nav-item">
+                          <a
+                            class="nav-link active"
+                            data-toggle="tab"
+                            @click="activeNestedTab = 'general'"
+                          >{{ $t('app.labels.' + name) }}</a>
+                        </li>
+                        <li class="nav-item" v-for="ns in nestedSchemas"
+                          :key="ns.$id"
+                        >
+                          <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.name">
+                            <i :class="ns.icon" v-if="ns.icon"></i>
+                            {{ $t(ns.title || ns.name) }}
+                          </a>
+                        </li>
+                      </ul>
+                      <slot name="edit-form" :selectedItem="selectedItem">
+                        <div class="tab-content">
+                          <template v-if="formSchema && formSchema.fields">
+                            <div
+                              class="tab-pane nested-tab fade"
+                              :class="{'active show': activeNestedTab === 'general' }"
+                            >
+                              <VueFormGenerator
+                                :schema.sync="formSchema"
+                                :model="selectedItem"
+                                :options="formOptions"
+                              ></VueFormGenerator>
+                            </div>
+                          </template>
+                          <template  v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem">
+                          <div
+                            class="tab-pane nested-tab fade"
+                            v-for="ns in nestedSchemas"
+                            :key="ns.$id"
+                            :class="{'active show': activeNestedTab===ns.name}"
+                          >
+                            <crud-component
+                              v-bind="ns"
+                              :parent="selectedItem"
+                              :crudNeedsRefresh.sync="nestedCrudNeedsRefresh"
+                            >
+                              <div slot="crud-title"></div>
+                            </crud-component>
+                          </div>
                         </template>
+                        </div>
                       </slot>
                     </div>
                     <div class="modal-footer">
@@ -121,12 +164,11 @@
                           v-if="viewMode==='edit'"
                           class="btn btn-primary ml-auto"
                         >{{ $t('common.buttons.save') }}</button>
-
                         <button
                           type="button"
-                          v-if="viewMode === 'view'"
+                          v-if="viewMode === 'view' && innerOptions.actions && innerOptions.actions.edit  && !innerOptions.noActions"
                           class="btn btn-info btn-simple ml-auto"
-                          @click="goToEditPage(currentItem)"
+                          @click.prevent.stop="goToEditPage(selectedItem)"
                         >
                           <i class="fa fa-pencil"></i>
                           {{ $t('common.buttons.edit') }}
@@ -141,6 +183,107 @@
                     </div>
                   </form>
                 </div>
+               <div class="modal-content" v-if="viewMode==='edit' || viewMode==='view'">
+                 <form @submit.prevent="editItem()">
+                   <div class="modal-header bg-primary text-white">
+                     <h3
+                       class="modal-title mt-0"
+                       v-if="viewMode==='edit'"
+                     >{{ $t('common.buttons.edit') }}</h3>
+                     <h3
+                       class="modal-title mt-0"
+                       v-if="viewMode==='view'"
+                     >{{ $t('common.buttons.view') }}</h3>
+                     <button type="button" class="close" aria-label="Close" @click="closeModal()">
+                       <span aria-hidden="true" class="text-white">&times;</span>
+                     </button>
+                   </div>
+                   <div class="modal-body" :class="{'view-mode': viewMode === 'view'}">
+                     <ul
+                       class="nav nav-tabs mt-5 mb-4"
+                       v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
+                     >
+                       <li class="nav-item">
+                         <a
+                           class="nav-link active"
+                           data-toggle="tab"
+                           @click="activeNestedTab = 'general'"
+                         >{{ $t('app.labels.' + name) }}</a>
+                       </li>
+                       <li class="nav-item" v-for="ns in nestedSchemas"
+                       :key="ns.$id"
+                       >
+                         <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.name">
+                           <i :class="ns.icon" v-if="ns.icon"></i>
+                           {{ $t(ns.title || ns.name) }}
+                         </a>
+                       </li>
+                     </ul>
+                     <slot name="edit-form" :selectedItem="selectedItem">
+                       <div class="tab-content">
+                         <template v-if="formSchema && formSchema.fields">
+                           <div
+                             class="tab-pane nested-tab fade"
+                             :class="{'active show': activeNestedTab === 'general' }"
+                           >
+                             <VueFormGenerator
+                               :schema.sync="formSchema"
+                               :model="selectedItem"
+                               :options="formOptions"
+                             ></VueFormGenerator>
+                           </div>
+                         </template>
+                         <template v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem">
+                         <div
+                           class="tab-pane nested-tab fade"
+
+                           v-for="ns in nestedSchemas"
+                           :key="ns.$id"
+                           :class="{'active show': activeNestedTab===ns.name}"
+                         >
+                           <crud-component
+                             v-bind="ns"
+                             :parent="selectedItem"
+                             :crudNeedsRefresh.sync="nestedCrudNeedsRefresh"
+                           >
+                             <div slot="crud-title"></div>
+                           </crud-component>
+                         </div>
+                       </template>
+                       </div>
+                     </slot>
+                   </div>
+                   <div class="modal-footer">
+                     <slot name="edit-modal-footer">
+                       <button
+                         type="button"
+                         class="btn btn-default btn-simple mr-auto"
+                         @click="closeModal()"
+                       >{{ $t('common.buttons.cancel') }}</button>
+                       <button
+                         type="submit"
+                         v-if="viewMode==='edit'"
+                         class="btn btn-primary ml-auto"
+                       >{{ $t('common.buttons.save') }}</button>
+                       <button
+                         type="button"
+                         v-if="viewMode === 'view' && innerOptions.actions && innerOptions.actions.edit  && !innerOptions.noActions"
+                         class="btn btn-info btn-simple ml-auto"
+                         @click.prevent.stop="goToEditPage(selectedItem)"
+                       >
+                         <i class="fa fa-pencil"></i>
+                         {{ $t('common.buttons.edit') }}
+                       </button>
+                       <button
+                         type="button"
+                         v-if="viewMode==='view'"
+                         class="btn btn-primary ml-2"
+                         @click="closeModal()"
+                       >{{ $t('common.buttons.close') }}</button>
+                     </slot>
+                   </div>
+                 </form>
+               </div>
               </div>
               <!-- // .modal-content -->
               <!-- // .modal-content -->
@@ -160,6 +303,7 @@
             @delete="deleteFunction"
             @customAction="customAction"
             :tableNeedsRefresh.sync="tableNeedsRefresh"
+            :nestedCrudNeedsRefresh.sync="nestedCrudNeedsRefresh"
             :options="{actions: innerOptions.actions, customActions: innerOptions.customActions}"
             name="ajax-table"
           >
@@ -297,6 +441,7 @@ There are 3 ways of using the Crud Component.
   defaultOptions,
   props: {
     name: { type: String, required: true },
+    modelName: { type: String, required: false },
     model: {
       type: Object,
       required: false,
@@ -362,23 +507,18 @@ There are 3 ways of using the Crud Component.
   },
   data() {
     return {
-      mySelect: 3,
-      opts: [
-        { _id: 1, label: "eerr" },
-        { _id: 2, label: "Number 2" },
-        { _id: 3, label: "Number 3" }
-      ],
-      mySelect2: [1, 3, 5],
       $modal: null,
       parentPath: "",
-      currentItem: {},
-      selectedItem: {},
-      viewMode: false,
+      selectedItem: undefined,
+      viewMode: 'view',
       tableNeedsRefresh: false,
       statsNeedsRefresh: false,
+      nestedCrudNeedsRefresh: false,
       innerOptions: {},
       innerSchema: {},
       innerModel: {},
+      innerNestedSchemas: [],
+      activeNestedTab: 'general',
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
@@ -419,6 +559,7 @@ There are 3 ways of using the Crud Component.
       this.tableNeedsRefresh = true;
       this.statsNeedsRefresh = true;
       this.nestedCrudNeedsRefresh = true;
+
 
       setTimeout(() => {
         this.$emit("update:crudNeedsRefresh", false);
@@ -494,6 +635,7 @@ There are 3 ways of using the Crud Component.
       }
       this.tableNeedsRefresh = true;
       this.statsNeedsRefresh = true;
+      this.nestedCrudNeedsRefresh = true;
       this.$forceUpdate();
     },
 
@@ -521,27 +663,34 @@ There are 3 ways of using the Crud Component.
       }
       this.mergeOptions();
       if (this.$store && this.$store.state && !this.model) {
-        this.innerModel = this.$store.state.data.models.find(
-          model => model.name === this.name
-        );
+        this.innerModel = this.$store.state.data.models.find((model) => model.name === this.modelName);
       } else {
         this.innerModel = this.model;
+      }
+      if (this.modelName && !this.name) {
+        this.name = this.modelName;
       }
 
       if (!this.innerModel && !this.schema) {
         // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
         return;
       }
-      this.innerSchema = this.schema || this.innerModel.schema;
-      this.innerOptions.columns = this.formatColumns(
-        this.innerSchema.properties
-      );
-      // console.log(JSON.stringify(this.innerOptions));
-      this.innerOptions.url =
-        this.innerOptions.url ||
-        (this.options && this.options.url) ||
-        (this.innerModel && this.innerModel.url);
 
+      this.innerSchema = this.schema || this.innerModel.schema;
+      this.innerOptions.columns = this.parseColumns(this.innerSchema.properties);
+      this.innerOptions.url = (this.options && this.options.url) || (this.innerModel && this.innerModel.url) || `/crud/${this.modelName}`;
+      if (typeof this.innerOptions.url === 'function') {
+        this.innerOptions.url = this.innerOptions.url(this.parent, this);
+      }
+
+      // if the crud is nested and should display as a form then remote load the data
+      if (this.parent && this.nestedDisplayMode === 'object') {
+        this.nestedViewFunction();
+      }
+
+      if (!this.innerOptions.url) {
+        return;
+      }
       if (this.$route && this.$route.params && this.$route.params.id) {
         this.$http
           .get(`${this.innerOptions.url}/${this.$route.params.id}`)
@@ -590,7 +739,9 @@ There are 3 ways of using the Crud Component.
             const field = {
               type: (prop.field && prop.field.type) || this.getFormtype(prop),
               label: prop.title || prop.description || _.startCase(key),
+              placeholder: prop.description || prop.title || _.startCase(key),
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
+                placeholder: prop.description || prop.title || _.startCase(key),
                 url: prop.relation,
                 trackBy: prop.foreignKey || "code",
                 label: "label"
@@ -736,12 +887,12 @@ There are 3 ways of using the Crud Component.
     },
 
     openModal() {
-      this.$modal.modal("show");
+      this.$modal && this.$modal.modal("show");
     },
 
     closeModal() {
       window.history.replaceState({}, null, `${this.parentPath}`);
-      this.$modal.modal("hide");
+      this.$modal && this.$modal.modal("hide");
     },
 
     goToEditPage(item) {
@@ -787,7 +938,7 @@ There are 3 ways of using the Crud Component.
         );
       }
       return this.$http
-        .post(this.innerOptions.url, this.currentItem)
+        .post(this.innerOptions.url, this.selectedItem)
         .then(() => {
           Swal.fire({
             title: this.$t("common.messages.successfullyCreated", {
@@ -797,6 +948,7 @@ There are 3 ways of using the Crud Component.
           });
           this.tableNeedsRefresh = true;
           this.statsNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
           this.$forceUpdate();
           this.closeModal();
         })
@@ -822,8 +974,8 @@ There are 3 ways of using the Crud Component.
 
       this.$http
         .put(
-          `${this.innerOptions.url}/${this.currentItem._id}`,
-          this.currentItem
+          `${this.innerOptions.url}/${this.selectedItem._id}`,
+          this.selectedItem
         )
         .then(() => {
           Swal.fire({
@@ -833,6 +985,7 @@ There are 3 ways of using the Crud Component.
             type: "success"
           });
           this.tableNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
           this.$forceUpdate();
 
           this.closeModal();
@@ -843,11 +996,11 @@ There are 3 ways of using the Crud Component.
 
     editFunction(item) {
       this.viewMode = "edit";
-      this.currentItem = item;
+      this.selectedItem = item;
       this.$http
         .get(`${this.innerOptions.url}/${item._id}`)
         .then(res => {
-          this.currentItem = res.data.body;
+          this.selectedItem = res.data.body;
           this.openModal();
         })
         .catch(this.apiErrorCallback);
@@ -855,12 +1008,23 @@ There are 3 ways of using the Crud Component.
 
     viewFunction(item) {
       this.viewMode = "view";
-      this.currentItem = item;
+      this.selectedItem = item;
       this.$http
         .get(`${this.innerOptions.url}/${item._id}`)
         .then(res => {
-          this.currentItem = res.data.body;
+          this.selectedItem = res.data.body;
           this.openModal();
+        })
+        .catch(this.apiErrorCallback);
+    },
+
+    nestedViewFunction() {
+      this.viewMode = 'view';
+      this.$http
+        .get(`${this.innerOptions.url}`)
+        .then((res) => {
+          this.selectedItem = res.data.body;
+          this.nestedCrudNeedsRefresh = true;
         })
         .catch(this.apiErrorCallback);
     },
@@ -883,6 +1047,7 @@ There are 3 ways of using the Crud Component.
             .then(() => {
               this.tableNeedsRefresh = true;
               this.statsNeedsRefresh = true;
+              this.nestedCrudNeedsRefresh = true;
               this.$forceUpdate();
             })
             .catch(err => {
@@ -896,7 +1061,7 @@ There are 3 ways of using the Crud Component.
     createFunction() {
       if (!this.innerOptions.createPath) {
         this.viewMode = "create";
-        this.currentItem = {};
+        this.selectedItem = {};
         this.openModal();
         return;
       }
@@ -908,7 +1073,7 @@ There are 3 ways of using the Crud Component.
       return action.action(item, this);
     },
 
-    formatColumns(properties) {
+    parseColumns(properties) {
       const newcolumns = [];
       Object.keys(properties).forEach(key => {
         const newCol = {};
@@ -1018,6 +1183,14 @@ body.modal-open .bootstrap-datetimepicker-widget {
   position: absolute;
   top: 15px !important;
   right: 12px;
+}
+
+
+.nested-tab {
+  .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 </style>

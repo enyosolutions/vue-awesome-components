@@ -49,9 +49,54 @@
 
     <hr>
 
-    <h2>DEMOS</h2>
+    <h2 id="demos" >DEMOS</h2>
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+             Basic crud
+            </button>
+          </h5>
+        </div>
 
-    <crud-component name="contact" :schema="ticketSchema"/>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <crud-component name="contact" :schema="ticketSchema" />
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Crud with custom Actions
+            </button>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+          <div class="card-body">
+           <crud-component name="contact" :schema="ticketSchema" :options="options"/>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+             Crud with nested schemas
+            </button>
+          </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+          <div class="card-body">
+           <crud-component name="users" :schema="userSchema" :options="options" :nestedSchemas="nestedSchemas"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <AjaxTable
       :columns="['col1', 'col2']"
       :rows="[{col1: 'qq', col2:'some data'},{col1: 'qq2', col2:'some moore data'},{col1: 'qq3', col2:'a third data'}, ]"
@@ -62,6 +107,7 @@
 <script>
 import Documentation from "@/components/misc/Documentation.vue";
 import ticketSchema from "@/fixtures/ticket";
+import userSchema from "@/fixtures/user";
 import AjaxTable from "@/components/table/AjaxTable.vue";
 import CrudComponent from "@/components/crud/CrudComponent.vue";
 
@@ -74,7 +120,47 @@ export default {
   },
   data() {
     return {
-      ticketSchema
+      ticketSchema,
+      userSchema,
+      options: {
+        queryParams: {},
+        mode: 'local',
+        stats: false,
+        actions: { create: true, edit: true, delete: true },
+        customActions: [
+          {
+            name: 'validate-ride-comment',
+            label: '',
+            class: 'btn-success',
+            title: 'Valider le commentaire',
+            icon: 'fa fa-check',
+            action: function(item, context) {
+              item.isProviderCommentValid = true;
+              context.editItem(item);
+            },
+          },
+        ],
+      },
+      nestedSchemas: [
+        {
+          name: 'user-view#tickets',
+          label: '',
+          class: '',
+          title: 'Voir les tickets',
+          icon: 'fa fa-car',
+          modelName: 'ticket',
+          schema: ticketSchema,
+          options: {
+            url: function(item) {
+              return item && item._id ? `/user/${item._id}/ride` : '';
+            },
+            mode: 'local',
+            noActions: true,
+            noHeaders: false,
+            actions: {},
+          },
+        },
+        ]
     };
   }
 };

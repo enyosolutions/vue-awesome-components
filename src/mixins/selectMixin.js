@@ -94,9 +94,10 @@ export default {
         promise.then(res => {
           this.apiOptions = res.data.body;
           this.isLoading = false;
-        }).catch(err => {
+        }).catch(() => {
           // eslint-disable-next-line
-          console.error(err)
+          this.apiOptions = [];
+          this.isLoading = false;
         });
         return promise;
       }

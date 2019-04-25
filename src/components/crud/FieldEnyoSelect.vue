@@ -138,9 +138,7 @@ export default {
     // console.log("this props", this.$props);
   },
   mounted() {
-    // console.log("field Enyo select mounted", this.myModel, this.vModelValue);
     // eslint-disable-next-line
-    App.select = this;
     this.setIncomingValue(this.vModelValue);
     this.loadRemoteEntities().then(ok => {
       if (ok) {

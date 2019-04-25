@@ -20,7 +20,7 @@
         <div class="propcol default">default</div>
         <div class="propcol notes">notes</div>
       </div>
-      <div class="proprow" v-for="(propinfo, propname) in merged.props" v-bind:key="propinfo">
+      <div class="proprow" v-for="(propinfo, propname) in merged.props" v-bind:key="propname">
         <div class="propcol name" :class="{ required: propinfo.required }">
           <span>{{ propname }}</span>
         </div>

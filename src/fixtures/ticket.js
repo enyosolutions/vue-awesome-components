@@ -38,10 +38,18 @@ export default {
       },
       userId: {
         type: 'number',
+        relation: '/user',
         title: 'numéro utilisateur',
         description: 'Identifiant utilisateur',
+        foreignKey: '_id',
+        label: 'email',
         field: {
-          required: true,
+          required: false,
+          type: "EnyoSelect",
+          fieldOptions: {
+            trackBy: '_id',
+            label: 'email'
+          }
         },
       },
       subject: {

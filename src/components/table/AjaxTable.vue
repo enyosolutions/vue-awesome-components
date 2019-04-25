@@ -23,8 +23,8 @@
             >
               <button
                 type="button"
-                v-for="col in formattedColumns"
-                v-bind:key="col"
+                v-for="(col, index) in formattedColumns"
+                v-bind:key="index"
                 class="dropdown-item"
                 href="#"
                 :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}"
@@ -108,7 +108,7 @@
         :totalRows="totalCount"
         styleClass="vgt-table table striped"
         :columns="displayedColumns"
-        :rows="data"
+        :rows="data || []"
         :filter-options="{
   enabled: opts && opts.actions && opts.actions.filter
 }"
@@ -144,8 +144,8 @@ perPage: perPage
             <slot name="table-row-actions" :item="props.row">
               <span v-if="opts && opts.customActions">
                 <button
-                  v-for="action in opts.customActions"
-                  v-bind:key="action"
+                  v-for="(action, index) in opts.customActions"
+                  v-bind:key="index"
                   @click="$emit('customAction',{action, item: props.row})"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
@@ -254,8 +254,8 @@ import qs from "qs";
 import moment from "moment";
 import apiErrors from "@/mixins/api-errors";
 import "vue-good-table/dist/vue-good-table.css";
-
 import _ from "lodash";
+
 
 export default {
   name: "ajax-table",
@@ -571,7 +571,7 @@ export default {
         })
         .catch(err => {
           // eslint-disable-next-line
-          console.error(err);
+          console.warn(err);
         });
     },
 

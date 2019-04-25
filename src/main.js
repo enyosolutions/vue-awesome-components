@@ -9,6 +9,12 @@ import axios from "axios";
 import Datetime from 'vue-datetime';
 import VueFormGenerator from 'vue-form-generator';
 import VueGoodTablePlugin from "vue-good-table";
+import Multiselect from 'vue-multiselect'
+
+
+import VueEnyoComponents from "./plugin";
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+
 // Importing Lodash
 import _ from "lodash";
 // Importing jQuery
@@ -19,6 +25,7 @@ import $ from "jquery";
 // Vue Use and Components
 Vue.use(VueGoodTablePlugin);
 
+Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
 
 Vue.use(VueFormGenerator, {
@@ -28,6 +35,7 @@ Vue.component("vue-form-generator", VueFormGenerator, []);
 
 
 Vue.use(VueI18n);
+Vue.use(VueEnyoComponents);
 
 Vue.config.productionTip = false;
 

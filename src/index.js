@@ -13,8 +13,7 @@ import EnyoStats from './components/misc/EnyoStats.vue';
 
 import AjaxTable from './components/table/AjaxTable.vue';
 
-
-export default {
+const EnyoComponents = {
   FieldEnyoSelect,
   FieldFileInput,
   FieldJsonTextarea,
@@ -26,3 +25,4 @@ export default {
   EnyoStats,
   AjaxTable,
 };
+export default EnyoComponents;
