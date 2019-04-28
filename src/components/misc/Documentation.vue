@@ -28,7 +28,9 @@
 </template>
 <script>
 import TableAndChartsCard from "@/components/card/TableAndChartsCard.vue";
+
 import AjaxTable from "@/components/table/AjaxTable.vue";
+import LiveEdit from "@/components/form/LiveEdit.vue";
 
 import EnyoCard from "@/components/card/EnyoCard.vue";
 import EnyoStats from "@/components/misc/EnyoStats.vue";
@@ -44,7 +46,7 @@ export default {
   },
   components: {
     PropDoc,
-    EnyoCard
+    EnyoCard,
   },
   data() {
     return {
@@ -54,7 +56,8 @@ export default {
         TableAndChartsCard,
         EnyoStats,
         EnyoChartCard,
-        EnyoStatsCard
+        EnyoStatsCard,
+        LiveEdit,
       ]
       // components: [CrudComponent, AjaxTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };

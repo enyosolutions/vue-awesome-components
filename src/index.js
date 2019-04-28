@@ -7,6 +7,7 @@ import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoSelect from './components/form/EnyoSelect.vue';
 import UploadButton from './components/form/UploadButton.vue';
+import LiveEdit from './components/form/LiveEdit.vue';
 
 import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoStats from './components/misc/EnyoStats.vue';
@@ -24,5 +25,6 @@ const EnyoComponents = {
   EnyoCard,
   EnyoStats,
   AjaxTable,
+  LiveEdit,
 };
 export default EnyoComponents;
