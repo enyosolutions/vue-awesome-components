@@ -1,5 +1,15 @@
 # vue-enyo-components
 
+## Dependencies
+
+This package depends on certain packages that must be intalled separately.
+
+- bootstrap
+- vue-form-generator https://github.com/vue-generators/vue-form-generator  
+```
+npm install vue-form-generator@3.0.0-beta.4
+```
+
 ## install
 ```
 yarn add vue-enyo-components
