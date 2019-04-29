@@ -3,7 +3,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ titlePlural }}</h1>
+          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ titlePlural }} <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+            v-if="isRefreshing"
+                    style="color:orange;max-width: 50%;margin-top:25%"></i></h1>
           <div class="row" v-if="innerOptions.stats">
             <enyo-stats
               :url="innerOptions.url + '/stats'"
@@ -511,7 +513,7 @@ There are 3 ways of using the Crud Component.
       parentPath: "",
       selectedItem: {},
       viewMode: 'view',
-      isLoading: false,
+      isRefreshing: false,
       tableNeedsRefresh: false,
       statsNeedsRefresh: false,
       nestedCrudNeedsRefresh: false,
@@ -704,7 +706,10 @@ There are 3 ways of using the Crud Component.
             }
             this.$forceUpdate();
           })
-          .catch(this.apiErrorCallback);
+          .catch(this.apiErrorCallback)
+          .finally(()=> {
+                    this.isRefreshing = false;
+                  });
       }
     },
 
@@ -953,7 +958,10 @@ There are 3 ways of using the Crud Component.
           this.$forceUpdate();
           this.closeModal();
         })
-        .catch(this.apiErrorCallback);
+        .catch(this.apiErrorCallback)
+        .finally(()=> {
+                  this.isRefreshing = false;
+                });
 
       // return false;
     },
@@ -991,7 +999,9 @@ There are 3 ways of using the Crud Component.
 
           this.closeModal();
         })
-        .catch(this.apiErrorCallback);
+        .catch(this.apiErrorCallback).finally(()=> {
+          this.isRefreshing = false;
+        });
       return false;
     },
 
@@ -1004,7 +1014,10 @@ There are 3 ways of using the Crud Component.
           this.selectedItem = res.data.body;
           this.openModal();
         })
-        .catch(this.apiErrorCallback);
+        .catch(this.apiErrorCallback)
+        .finally(()=> {
+          this.isRefreshing = false;
+        });
     },
 
     viewFunction(item) {
@@ -1016,7 +1029,10 @@ There are 3 ways of using the Crud Component.
           this.selectedItem = res.data.body;
           this.openModal();
         })
-        .catch(this.apiErrorCallback);
+        .catch(this.apiErrorCallback)
+        .finally(()=> {
+          this.isRefreshing = false;
+        });
     },
 
     nestedViewFunction() {
@@ -1027,7 +1043,10 @@ There are 3 ways of using the Crud Component.
           this.selectedItem = res.data.body;
           this.nestedCrudNeedsRefresh = true;
         })
-        .catch(this.apiErrorCallback);
+        .catch(this.apiErrorCallback)
+        .finally(()=> {
+                  this.isRefreshing = false;
+                });
     },
 
     deleteFunction(item) {
@@ -1054,7 +1073,10 @@ There are 3 ways of using the Crud Component.
             .catch(err => {
               // eslint-disable-next-line
               console.error(err);
-            });
+            })
+            .finally(()=> {
+                      this.isRefreshing = false;
+                    });
         }
       });
     },

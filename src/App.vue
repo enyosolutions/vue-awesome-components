@@ -47,12 +47,12 @@
             <div class="card">
                 <div class="card-header" id="headingOne">
                     <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#liveEdit" aria-expanded="true" aria-controls="collapseOne">
                             Live Edit
                         </button>
                     </h5>
                 </div>
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div id="liveEdit" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
                         Edit field 1 {{ editField1 }}
                         <live-edit v-model="editField1" :editable="false" placeholder="placeholder on edit" :multiline="false">

@@ -33,6 +33,10 @@
               >{{ col.label }}</button>
             </div>
           </div>
+          <div style="text-align: center"
+          v-if="isRefreshing"
+          ><i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+              style="color:orange;max-width: 50%;margin-top:25%"></i></div>
           <button
             v-if="opts.actions.filter"
             type="button"
@@ -49,7 +53,9 @@
               class="btn btn-simple"
               @click="getItems()"
             >
-              <i class="font-awesome enyo-fa-arrows-cw"></i>
+              <i :class="'font-awesome enyo-fa-arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
+
+              ></i>
               {{ $t('common.buttons.refresh') }}
             </button>
             <button
@@ -330,6 +336,7 @@ export default {
     return {
       totalCount: 0,
       filterable: false,
+      isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
         .subtract(7, "days")
@@ -562,7 +569,7 @@ export default {
         // console.log("[AJAXTABLE] no refresh url or refresh function");
         return;
       }
-
+      this.isRefreshing = true;
       this.$http
         .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
         .then(res => {
@@ -572,6 +579,8 @@ export default {
         .catch(err => {
           // eslint-disable-next-line
           console.warn(err);
+        }).finally(()=> {
+          this.isRefreshing = false;
         });
     },
 
