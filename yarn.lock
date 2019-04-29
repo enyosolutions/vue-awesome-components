@@ -2036,6 +2036,11 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+crip-vue-loading@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/crip-vue-loading/-/crip-vue-loading-1.2.5.tgz#488e25ceccae38c7b7048bd2d1cf415ae01397fd"
+  integrity sha512-Gqpe8w0KIeXvl3FeJC2BuP/CZG3HQ48q40rAZQIxoBR2AiklYuG/U2RWAqCHO7GDWTti9zbcaCvqk3D+HFAjJQ==
+
 cross-spawn@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-3.0.1.tgz#1256037ecb9f0c5f79e3d6ef135e30770184b982"

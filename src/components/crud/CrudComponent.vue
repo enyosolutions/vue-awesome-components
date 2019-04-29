@@ -397,7 +397,7 @@ There are 3 ways of using the Crud Component.
    component: CrudComponent,
    beforeEnter: authGuard,
    props: {
-     name: 'contact',
+     modelName: 'contact',
      options: {
        url: '/contact',
        stats: true,
@@ -412,7 +412,7 @@ There are 3 ways of using the Crud Component.
      path: ':id',
      component: CrudComponent,
      props: {
-       name: 'contact',
+       modelName: 'contact',
        options: {
          actions: {
            view: true,
@@ -425,7 +425,7 @@ There are 3 ways of using the Crud Component.
      path: ':id/edit',
      component: CrudComponent,
      props: {
-       name: 'contact',
+       modelName: 'contact',
        options: {
          actions: {
            edit: true,
@@ -440,8 +440,8 @@ There are 3 ways of using the Crud Component.
   `,
   defaultOptions,
   props: {
-    name: { type: String, required: true },
-    modelName: { type: String, required: false },
+    name: { type: String, required: false },
+    modelName: { type: String, required: true },
     model: {
       type: Object,
       required: false,
@@ -509,8 +509,9 @@ There are 3 ways of using the Crud Component.
     return {
       $modal: null,
       parentPath: "",
-      selectedItem: undefined,
+      selectedItem: {},
       viewMode: 'view',
+      isLoading: false,
       tableNeedsRefresh: false,
       statsNeedsRefresh: false,
       nestedCrudNeedsRefresh: false,

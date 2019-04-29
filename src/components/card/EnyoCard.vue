@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div :class="'card ' + className">
     <div class="card-image" v-if="$slots.image">
       <slot name="image"></slot>
     </div>
@@ -19,6 +19,7 @@
 export default {
   name: "enyo-card",
   props: {
+    className: String,
     headerClass: String,
     bodyClass: String,
     footerClass: String

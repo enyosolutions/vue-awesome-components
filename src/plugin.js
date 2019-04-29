@@ -13,7 +13,11 @@ import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoStats from './components/misc/EnyoStats.vue';
 
 import AjaxTable from './components/table/AjaxTable.vue';
+
+
 import axios from 'axios';
+import CripVueLoading from 'crip-vue-loading';
+
 import {
   Datetime
 } from 'vue-datetime';
@@ -44,6 +48,8 @@ const GlobalComponents = {
     if (!Vue.prototype.$http) {
       Vue.prototype.$http = axios.create({});
     }
+
+    Vue.use(CripVueLoading, { axios: Vue.prototype.$http });
 
   }
 };

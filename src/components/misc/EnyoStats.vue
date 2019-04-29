@@ -61,15 +61,11 @@ export default {
     };
   },
   created() {
-    // EventBus.$on(this.entity + ':created', this.getItems.bind(this))
-    // EventBus.$on(this.entity + ':updated', this.getItems.bind(this))
   },
   mounted() {
     this.getStats();
   },
   beforeDestroy() {
-    // EventBus.$off(this.entity + ':created', this.getItems.bind(this))
-    // EventBus.$off(this.entity + ':updated', this.getItems.bind(this))
   },
   watch: {
     statsNeedsRefresh: "getStats",

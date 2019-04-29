@@ -1,6 +1,6 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "private": true,
   "main": "src/index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "@vue/cli-service": "^3.4.0",
     "babel-eslint": "^10.0.1",
     "bootstrap": "^4.3.1",
+    "crip-vue-loading": "^1.2.5",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",

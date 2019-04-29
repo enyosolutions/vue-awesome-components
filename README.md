@@ -5,17 +5,32 @@
 This package depends on certain packages that must be intalled separately.
 
 - bootstrap
-- vue-form-generator https://github.com/vue-generators/vue-form-generator  
+- vue-form-generator https://github.com/vue-generators/vue-form-generator
 ```
 npm install vue-form-generator@3.0.0-beta.4
 ```
+
+
+- `vue-datetime` for the date and time pickers
+```
+npm install vue-datetime
+```
+
+
+
+- `crip-vue-loading` for loading animations https://github.com/tahq69/vue-loading
+```
+npm install crip-vue-loading
+```
+
+
 
 ## install
 ```
 yarn add vue-enyo-components
 ```
 
-Add in your main.js 
+Add in your main.js
 ```
 import VueEnyoComponents from 'vue-enyo-components/plugin';
 
