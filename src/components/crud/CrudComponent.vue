@@ -9,7 +9,7 @@
           <div class="row" v-if="innerOptions.stats">
             <enyo-stats
               :url="innerOptions.url + '/stats'"
-              :entity="name"
+              :entity="modelName"
               :statsNeedsRefresh.sync="statsNeedsRefresh"
             ></enyo-stats>
           </div>
@@ -117,7 +117,7 @@
                         >
                           <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.name">
                             <i :class="ns.icon" v-if="ns.icon"></i>
-                            {{ $t(ns.title || ns.name) }}
+                            {{ $t(ns.title || ns.name || ns.modelName) }}
                           </a>
                         </li>
                       </ul>
@@ -539,10 +539,10 @@ There are 3 ways of using the Crud Component.
   },
   computed: {
     title() {
-      return this.name ? this.$t(`app.labels.${this.name}`) : "";
+      return this.name ? this.$t(`app.labels.${this.modelName || this.name}`) : "";
     },
     titlePlural() {
-      return this.name ? this.$t(`app.labels.${this.name}s`) : "";
+      return this.name ? this.$t(`app.labels.${this.modelName || this.name}s`) : "";
     },
     formSchema() {
       if (!this.innerSchema) {
