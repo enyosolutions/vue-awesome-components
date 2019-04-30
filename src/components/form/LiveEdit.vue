@@ -21,7 +21,7 @@ export default {
     },
     editable: {
       type: Boolean,
-      required: true,
+      required: false,
     },
     multiline: {
       type: Boolean,
