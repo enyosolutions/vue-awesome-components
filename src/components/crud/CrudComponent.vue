@@ -3,9 +3,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ _titlePlural }} <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ _titlePlural }} <i class="fa fa-circle-o-notch fa-spin fa-fw"
             v-if="isRefreshing"
-                    style="color:orange;max-width: 50%;margin-top:25%"></i></h1>
+                    style="color:orange;margin-left:10px"></i></h1>
           <div class="row" v-if="innerOptions.stats">
             <enyo-stats
               :url="innerOptions.url + '/stats'"
@@ -535,7 +535,7 @@ There are 3 ways of using the Crud Component.
     modelName: "loadModel",
     model: "loadModel",
     options: "mergeOptions",
-    crudNeedsRefresh: "refreshComponent"
+    crudNeedsRefresh: "refreshComponent",
   },
   computed: {
     _title() {

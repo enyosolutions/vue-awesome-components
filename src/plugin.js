@@ -8,9 +8,11 @@ import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoSelect from './components/form/EnyoSelect.vue';
 import UploadButton from './components/form/UploadButton.vue';
+import LiveEdit from './components/form/LiveEdit.vue';
 
 import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoStats from './components/misc/EnyoStats.vue';
+
 
 import AjaxTable from './components/table/AjaxTable.vue';
 
@@ -40,6 +42,7 @@ const GlobalComponents = {
 
     Vue.component('upload-button', UploadButton);
     Vue.component('enyo-select', EnyoSelect);
+    Vue.component('live-edit', LiveEdit);
 
     // Vue.component('fieldDateTime', FieldDateTime);
     Vue.component('fieldEnyoSelect', FieldEnyoSelect);

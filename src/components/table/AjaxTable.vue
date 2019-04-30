@@ -36,7 +36,7 @@
           <div style="text-align: center"
           v-if="isRefreshing"
           ><i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-              style="color:orange;max-width: 50%;margin-top:25%"></i></div>
+              style="color:orange;margin-left:10px"></i></div>
           <button
             v-if="opts.actions.filter"
             type="button"
