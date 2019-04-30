@@ -47,10 +47,12 @@ export default {
     saveEdit() {
       this.isEditable = false;
       this.$emit('input', this.modelvalue);
+      this.$emit('change', this.modelvalue);
     },
     clearEdit() {
       this.isEditable = false;
       this.modelvalue = this.originalValue;
+      this.$emit('change', this.modelvalue);
     },
   }
 }
