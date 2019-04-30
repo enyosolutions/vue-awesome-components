@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ titlePlural }} <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+          <h1 class="text-primary">{{ $t('common.labels.manageTitle') }} {{ _titlePlural }} <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
             v-if="isRefreshing"
                     style="color:orange;max-width: 50%;margin-top:25%"></i></h1>
           <div class="row" v-if="innerOptions.stats">
@@ -24,7 +24,7 @@
                 @click="createFunction()"
               >
                 <i class="enyo-fa-plus"></i>
-                {{ $t('common.labels.createNew') }} {{ title }}
+                {{ $t('common.labels.createNew') }} {{ _title }}
               </button>
             </slot>
             <div style="display: inline-block">
@@ -295,7 +295,7 @@
           <AjaxTable
             :columns="innerOptions.columns"
             :columnsDisplayed="innerOptions.columnsDisplayed"
-            :entity="name"
+            :entity="modelName"
             :mode="innerOptions.mode"
             :url="innerOptions.url"
             :params="innerOptions.queryParams"
@@ -538,11 +538,35 @@ There are 3 ways of using the Crud Component.
     crudNeedsRefresh: "refreshComponent"
   },
   computed: {
-    title() {
-      return this.name ? this.$t(`app.labels.${this.modelName || this.name}`) : "";
+    _title() {
+      if (this.title) {
+      return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this.name) {
+        return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : this.name;
+      }
+      if (this.modelName) {
+        return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : this.modelName;
+      }
+      return '';
     },
-    titlePlural() {
-      return this.name ? this.$t(`app.labels.${this.modelName || this.name}s`) : "";
+    _titlePlural() {
+      if (this.titlePlural) {
+      return this.$te(this.titlePlural) ? this.$t(this.titlePlural) : this.titlePlural;
+      }
+
+      if (this.title) {
+      return this.$te(this.title) ? this.$t(this.title + 's') : (this.title + 's');
+      }
+
+      if (this.name) {
+        return this.$te(`app.labels.${this.name}s`) ? this.$t(`app.labels.${this.name}s`) : this.name + 's';
+      }
+      if (this.modelName) {
+        return this.$te(`app.labels.${this.modelName}s`) ? this.$t(`app.labels.${this.modelName}s`) : this.modelName + 's';
+      }
+      return '';
     },
     formSchema() {
       if (!this.innerSchema) {
@@ -602,7 +626,7 @@ There are 3 ways of using the Crud Component.
       ) {
         Swal.fire({
           title: this.$t("common.messages.no_data_imported", {
-            title: this.name
+            title: this._title
           }),
           type: "warning"
         });
@@ -612,7 +636,7 @@ There are 3 ways of using the Crud Component.
       if (e.properData.length > 0) {
         this.$notify({
           title: this.$t("common.messages.successfullyImported", {
-            title: this.name
+            title: this._title
           }),
           type: "success"
         });
@@ -628,7 +652,7 @@ There are 3 ways of using the Crud Component.
           this.$notify({
             title: `${e.improperData.length} ${this.$t(
               "common.messages.not_imported",
-              { title: this.name }
+              { title: this._title }
             )}`,
             message,
             type: "warning",
