@@ -14,17 +14,31 @@ import EnyoStats from './components/misc/EnyoStats.vue';
 
 import AjaxTable from './components/table/AjaxTable.vue';
 
-const EnyoComponents = {
+export {
   FieldEnyoSelect,
-  FieldFileInput,
-  FieldJsonTextarea,
-  CrudComponent,
-  TableAndChartsCard,
-  EnyoSelect,
-  UploadButton,
-  EnyoCard,
-  EnyoStats,
-  AjaxTable,
-  LiveEdit,
+ FieldFileInput,
+ FieldJsonTextarea,
+ CrudComponent,
+ TableAndChartsCard,
+ EnyoSelect,
+ UploadButton,
+ EnyoCard,
+ EnyoStats,
+ AjaxTable,
+ LiveEdit
 };
-module.exports = EnyoComponents;
+
+
+exports = {
+   FieldEnyoSelect,
+   FieldFileInput,
+   FieldJsonTextarea,
+   CrudComponent,
+   TableAndChartsCard,
+   EnyoSelect,
+   UploadButton,
+   EnyoCard,
+   EnyoStats,
+   AjaxTable,
+   LiveEdit
+ };
