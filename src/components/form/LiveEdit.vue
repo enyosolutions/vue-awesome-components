@@ -95,7 +95,7 @@ export default {
     name: 'LiveEdit',
     props: {
         value: {
-            type: [Number, String, Object, Undefined],
+            type: [Number, String, Object],
             required: true,
         },
         type: {
