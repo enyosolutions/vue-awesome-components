@@ -1,13 +1,26 @@
 <template>
-  <div class="card" :class="chartClasses">
-    <div class="card-header" v-if="$slots.header" :class="headerClasses">
-      <slot name="header"></slot>
+  <div
+    class="card"
+    :class="chartClasses"
+  >
+    <div
+      v-if="$slots.header"
+      class="card-header"
+      :class="headerClasses"
+    >
+      <slot name="header" />
     </div>
     <div class="card-body">
-      <div :id="chartId" class="ct-chart"></div>
+      <div
+        :id="chartId"
+        class="ct-chart"
+      />
     </div>
-    <div class="card-footer" v-if="$slots.footer">
-      <slot name="footer"></slot>
+    <div
+      v-if="$slots.footer"
+      class="card-footer"
+    >
+      <slot name="footer" />
     </div>
   </div>
 </template>
@@ -16,7 +29,7 @@
 import chartist from "chartist";
 
 export default {
-  name: "enyo-chart-card",
+  name: "EnyoChartCard",
   components: {
     // Card
   },
@@ -52,15 +65,23 @@ export default {
       animationsClasses: ""
     };
   },
+  computed: {
+    chartClasses() {
+      return `${this.class || ""} ${this.animationsClasses} `;
+    }
+  },
   watch: {
     graphNeedsRefresh: "initChart",
     chartData: "initChart",
     chartOptions: "initChart"
   },
-  computed: {
-    chartClasses() {
-      return `${this.class || ""} ${this.animationsClasses} `;
-    }
+  async mounted() {
+    this.updateChartId();
+    // const Chartist = await import('chartist');
+    this.$Chartist = chartist;
+    setTimeout(() => {
+      this.initChart();
+    }, 100);
   },
   methods: {
     /** *
@@ -230,14 +251,6 @@ export default {
         }
       });
     }
-  },
-  async mounted() {
-    this.updateChartId();
-    // const Chartist = await import('chartist');
-    this.$Chartist = chartist;
-    setTimeout(() => {
-      this.initChart();
-    }, 100);
   }
 };
 </script>

@@ -1,12 +1,12 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint --fix"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -35,8 +35,8 @@
     "babel-eslint": "^10.0.1",
     "bootstrap": "^4.3.1",
     "crip-vue-loading": "^1.2.5",
-    "eslint": "^5.8.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.2.2",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
     "vue": "2.6.7",

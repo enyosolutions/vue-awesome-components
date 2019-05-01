@@ -1,19 +1,32 @@
 <template>
-  <enyo-card class="card-stats" :class="className">
+  <enyo-card
+    class="card-stats"
+    :class="className"
+  >
     <div class="row">
-      <div class="col-5" v-if="$slots.header">
+      <div
+        v-if="$slots.header"
+        class="col-5"
+      >
         <div class="icon-big text-center">
-          <slot name="header"></slot>
+          <slot name="header" />
         </div>
       </div>
-      <div class="col-7" v-if="$slots.content">
+      <div
+        v-if="$slots.content"
+        class="col-7"
+      >
         <div class="numbers">
-          <slot name="content"></slot>
+          <slot name="content" />
         </div>
       </div>
     </div>
-    <div slot="footer" class="stats" v-if="$slots.footer">
-      <slot name="footer"></slot>
+    <div
+      v-if="$slots.footer"
+      slot="footer"
+      class="stats"
+    >
+      <slot name="footer" />
     </div>
   </enyo-card>
 </template>
@@ -21,12 +34,12 @@
 import EnyoCard from "./EnyoCard.vue";
 
 export default {
-  name: "enyo-stats-card",
-  props: {
-    className: String
-  },
+  name: "EnyoStatsCard",
   components: {
     EnyoCard
+  },
+  props: {
+    className: String
   }
 };
 </script>

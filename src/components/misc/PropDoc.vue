@@ -1,30 +1,65 @@
 <template>
-  <article class="propdoc" v-if="merged && merged.name">
-    <h2 class="title">{{ merged.name }}</h2>
-    <h3 class="subtitle" v-if="merged.introduction">{{ merged.introduction }}</h3>
-    <slot name="pre-use"></slot>
+  <article
+    v-if="merged && merged.name"
+    class="propdoc"
+  >
+    <h2 class="title">
+      {{ merged.name }}
+    </h2>
+    <h3
+      v-if="merged.introduction"
+      class="subtitle"
+    >
+      {{ merged.introduction }}
+    </h3>
+    <slot name="pre-use" />
     <div class="use">
-      <div class="description" v-html="merged.description" v-if="merged.description"></div>
-      <div class="token" v-if="merged.token">
+      <div
+        v-if="merged.description"
+        class="description"
+        v-html="merged.description"
+      />
+      <div
+        v-if="merged.token"
+        class="token"
+      >
         <pre><code data-lang="vue">{{ merged.token }}</code></pre>
       </div>
     </div>
-    <slot name="pre-props"></slot>
-    <section class="props" v-if="merged.props">
+    <slot name="pre-props" />
+    <section
+      v-if="merged.props"
+      class="props"
+    >
       <div class="proprow labels">
         <div class="propcol name required">
           name
           <span>(required)</span>
         </div>
-        <div class="propcol type">type</div>
-        <div class="propcol default">default</div>
-        <div class="propcol notes">notes</div>
+        <div class="propcol type">
+          type
+        </div>
+        <div class="propcol default">
+          default
+        </div>
+        <div class="propcol notes">
+          notes
+        </div>
       </div>
-      <div class="proprow" v-for="(propinfo, propname) in merged.props" v-bind:key="propname">
-        <div class="propcol name" :class="{ required: propinfo.required }">
+      <div
+        v-for="(propinfo, propname) in merged.props"
+        :key="propname"
+        class="proprow"
+      >
+        <div
+          class="propcol name"
+          :class="{ required: propinfo.required }"
+        >
           <span>{{ propname }}</span>
         </div>
-        <div class="propcol type">{{ propinfo.type }}</div>
+        <div class="propcol type">
+          {{ propinfo.type }}
+        </div>
         <div class="propcol default">
           <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
           <code
@@ -33,7 +68,9 @@
           >{{ propinfo.default }}</code>
           <span v-else>{{ propinfo.default }}</span>
         </div>
-        <div class="propcol notes">{{ propinfo.note }}</div>
+        <div class="propcol notes">
+          {{ propinfo.note }}
+        </div>
       </div>
     </section>
   </article>
@@ -42,7 +79,7 @@
 import marked from "marked";
 
 export default {
-  name: "propDoc",
+  name: "PropDoc",
   props: {
     component: {
       type: Object,

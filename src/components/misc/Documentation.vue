@@ -8,17 +8,26 @@
       </div>
 
       <ul class="list-group col-md-6 offset-md-3">
-        <li class="list-group-item dark">Components</li>
-        <li class="list-group-item" v-for="(component, index) in components" :key="index">
+        <li class="list-group-item dark">
+          Components
+        </li>
+        <li
+          v-for="(component, index) in components"
+          :key="index"
+          class="list-group-item"
+        >
           <a :href="'#' + component.name">{{ component.name }}</a>
         </li>
       </ul>
       <hr>
       <div class="row">
         <div class="col-md-12">
-          <enyo-card v-for="(component, index) in components" v-bind:key="index">
+          <enyo-card
+            v-for="(component, index) in components"
+            :key="index"
+          >
             <div :id="component.name">
-              <prop-doc :component="component"></prop-doc>
+              <prop-doc :component="component" />
             </div>
           </enyo-card>
         </div>
@@ -41,12 +50,12 @@ import CrudComponent from "@/components/crud/CrudComponent.vue";
 import PropDoc from "@/components/misc/PropDoc.vue";
 
 export default {
-  props: {
-    title: String
-  },
   components: {
     PropDoc,
     EnyoCard,
+  },
+  props: {
+    title: String
   },
   data() {
     return {

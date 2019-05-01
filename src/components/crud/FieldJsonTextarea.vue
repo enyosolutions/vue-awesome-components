@@ -1,8 +1,15 @@
 <template>
   <div class>
-    <textarea class="form-control" v-model="innerValue" @input="saveJson"></textarea>
-    <div v-if="warning" class="text-danger">
-      <i class="fa fa-exclamation-circle"></i>
+    <textarea
+      v-model="innerValue"
+      class="form-control"
+      @input="saveJson"
+    />
+    <div
+      v-if="warning"
+      class="text-danger"
+    >
+      <i class="fa fa-exclamation-circle" />
       {{ $t(warning) }}
     </div>
     <!--
@@ -26,6 +33,13 @@ export default {
       warning: ""
     };
   },
+  computed: {},
+  watch: {
+    // eslint-disable-next-line
+    value(change, old) {
+      this.innerValue = JSON.stringify(this.value, null, 2);
+    }
+  },
   created() {
     const that = this;
     this.saveJson = _.debounce(() => {
@@ -40,18 +54,11 @@ export default {
       }
     }, 300);
   },
-  watch: {
-    // eslint-disable-next-line
-    value(change, old) {
-      this.innerValue = JSON.stringify(this.value, null, 2);
-    }
-  },
-  computed: {},
-  methods: {},
 
   mounted() {},
 
-  beforeDestroy() {}
+  beforeDestroy() {},
+  methods: {}
 };
 </script>
 <style lang="scss">

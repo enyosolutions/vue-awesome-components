@@ -2,6 +2,7 @@
   <div>
     <enyo-select
       :id="fieldOptions.id"
+      v-model="myModel"
       :options="internalOptions"
       :value="internalValue"
       :multiple="fieldOptions.multiple"
@@ -10,9 +11,8 @@
       :max="schema.max || null"
       :searchable="schema.searchable || false"
       :disabled="disabled"
-      v-model="myModel"
       @input="updateSelected"
-    ></enyo-select>
+    />
   </div>
 </template>
 <script>
@@ -59,6 +59,25 @@ export default {
       // console.log("send new value down from VFG !", newValue);
       this.setIncomingValue(newValue);
     }
+  },
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.multiselect) {
+      // eslint-disable-next-line
+      console.error(
+        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
+      );
+    }
+    // console.log("this props", this.$props);
+  },
+  mounted() {
+    // eslint-disable-next-line
+    this.setIncomingValue(this.vModelValue);
+    this.loadRemoteEntities().then(ok => {
+      if (ok) {
+        this.setIncomingValue(this.vModelValue);
+      }
+    });
   },
 
   methods: {
@@ -126,25 +145,6 @@ export default {
     onClose(/* value, id */) {
       // console.log("onClose", value, id);
     }
-  },
-  created() {
-    // Check if the component is loaded globally
-    if (!this.$root.$options.components.multiselect) {
-      // eslint-disable-next-line
-      console.error(
-        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
-      );
-    }
-    // console.log("this props", this.$props);
-  },
-  mounted() {
-    // eslint-disable-next-line
-    this.setIncomingValue(this.vModelValue);
-    this.loadRemoteEntities().then(ok => {
-      if (ok) {
-        this.setIncomingValue(this.vModelValue);
-      }
-    });
   }
 };
 </script>

@@ -1,6 +1,10 @@
 <template>
   <div class="input-group field-file-input">
-    <base64-upload :key="refresh" :imageSrc="value" @change="onChangeImage"></base64-upload>
+    <base64-upload
+      :key="refresh"
+      :image-src="value"
+      @change="onChangeImage"
+    />
   </div>
 </template>
 <script>
@@ -12,17 +16,15 @@ import VueFormGenerator from "vue-form-generator";
 import Base64Upload from "vue-base64-upload";
 
 export default {
-  mixins: [VueFormGenerator.abstractField],
   components: { Base64Upload },
+  mixins: [VueFormGenerator.abstractField],
   data() {
     return {
       refresh: new Date(),
       oldValue: ""
     };
   },
-  mounted() {
-    this.oldValue = this.value;
-  },
+  computed: {},
   watch: {
     value(change, old) {
       if (change !== old) {
@@ -30,15 +32,17 @@ export default {
       }
     }
   },
-  computed: {},
+  mounted() {
+    this.oldValue = this.value;
+  },
+
+  beforeDestroy() {},
   methods: {
     onChangeImage(file) {
       // console.log('Field File input', Object.keys(file));
       this.value = file.base64;
     }
-  },
-
-  beforeDestroy() {}
+  }
 };
 </script>
 <style lang="scss">

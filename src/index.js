@@ -27,4 +27,4 @@ const EnyoComponents = {
   AjaxTable,
   LiveEdit,
 };
-export default EnyoComponents;
+module.exports = EnyoComponents;

@@ -1,50 +1,64 @@
 <template>
   <enyo-card
-    :headerClass="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
+    :header-class="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
   >
     <template slot="header">
       <h4 class="card-title ajax-table-header">
-        <slot name="table-title">{{ title || $t('app.labels.' + entity)}}</slot>
+        <slot name="table-title">
+          {{ title || $t('app.labels.' + entity) }}
+        </slot>
         <div class="btn-group btn-group-sm float-right">
-          <slot name="table-top-actions"></slot>
-          <div class="dropdown" v-if="canHideColumns">
+          <slot name="table-top-actions" />
+          <div
+            v-if="canHideColumns"
+            class="dropdown"
+          >
             <button
+              id="dropdownMenuButton"
               class="btn btn-secondary btn-simple dropdown-toggle"
               type="button"
-              id="dropdownMenuButton"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >Columns</button>
+            >
+              Columns
+            </button>
             <div
               class="dropdown-menu"
               aria-labelledby="dropdownMenuButton"
               style="max-height:100vh; overflow: auto;"
             >
               <button
-                type="button"
                 v-for="(col, index) in formattedColumns"
-                v-bind:key="index"
+                :key="index"
+                type="button"
                 class="dropdown-item"
                 href="#"
                 :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}"
-                @click="toggleColumn(col.field)"
                 :disabled="col.field === 'ACTIONS'"
-              >{{ col.label }}</button>
+                @click="toggleColumn(col.field)"
+              >
+                {{ col.label }}
+              </button>
             </div>
           </div>
-          <div style="text-align: center"
-          v-if="isRefreshing"
-          ><i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-              style="color:orange;margin-left:10px"></i></div>
+          <div
+            v-if="isRefreshing"
+            style="text-align: center"
+          >
+            <i
+              class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+              style="color:orange;margin-left:10px"
+            />
+          </div>
           <button
             v-if="opts.actions.filter"
             type="button"
             class="btn btn-simple"
-            @click="toggleFilter()"
             :class="{'btn-primary': filterable, 'btn-default': !filterable}"
+            @click="toggleFilter()"
           >
-            <i class="font-awesome enyo-fa-filter"></i>
+            <i class="font-awesome enyo-fa-filter" />
             {{ $t('common.buttons.filters') }}
           </button>
           <div class="dropdown">
@@ -53,47 +67,50 @@
               class="btn btn-simple"
               @click="getItems()"
             >
-              <i :class="'font-awesome enyo-fa-arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
-
-              ></i>
+              <i
+                :class="'font-awesome enyo-fa-arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
+              />
               {{ $t('common.buttons.refresh') }}
             </button>
             <button
+              v-if="opts.actions && (opts.actions.export || opts.actions.import)"
+              id="dropdownMenuButton"
               class="btn btn-secondary btn-simple dropdown-toggle"
               type="button"
-              id="dropdownMenuButton"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              v-if="opts.actions && (opts.actions.export || opts.actions.import)"
             >
-              <i class="font-awesome enyo-fa-plus"></i>
+              <i class="font-awesome enyo-fa-plus" />
               {{ $t('table.more') }}
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <slot name="table-top-more-actions"></slot>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton"
+            >
+              <slot name="table-top-more-actions" />
               <upload-button
                 v-if="opts.actions && opts.actions.import"
                 name="import"
                 :options="{
-        upload: true,
-        targetUrl: opts.uploadUrl || this.url + '/import',
-        method: 'POST',
-        headers: {},
-        base64: false,
-        maxSize: 1,
-        label: $t('common.buttons.import'),
-        class: 'btn btn-success btn-simple btn-block',
-        icon: 'file-upload'
-      }"
+                  upload: true,
+                  targetUrl: opts.uploadUrl || url + '/import',
+                  method: 'POST',
+                  headers: {},
+                  base64: false,
+                  maxSize: 1,
+                  label: $t('common.buttons.import'),
+                  class: 'btn btn-success btn-simple btn-block',
+                  icon: 'file-upload'
+                }"
                 @uploaded="importResponse"
-              ></upload-button>
+              />
               <button
-                class="btn btn-success btn-simple btn-block"
                 v-if="opts.actions && opts.actions.export"
+                class="btn btn-success btn-simple btn-block"
                 @click="exportCallBack"
               >
-                <i class="font-awesome enyo-fa-file-excel"></i>
+                <i class="font-awesome enyo-fa-file-excel" />
                 {{ $t('common.buttons.excel') }}
               </button>
             </div>
@@ -101,153 +118,181 @@
         </div>
       </h4>
       <p class="card-category">
-        <slot name="table-subtitle"></slot>
+        <slot name="table-subtitle" />
       </p>
     </template>
     <div class="table-responsive">
       <vue-good-table
         :mode="mode"
+        :total-rows="totalCount"
+        style-class="vgt-table table striped"
+        :columns="displayedColumns"
+        :rows="data || []"
+        :filter-options="{
+          enabled: opts && opts.actions && opts.actions.filter
+        }"
+        :search-options="{
+          enabled: opts && opts.actions && opts.actions.search,
+          placeholder: this.$t('table.searchInput'),
+        }"
+        :pagination-options="{
+          enabled: opts && opts.pagination,
+          nextLabel: this.$t('table.next'),
+          prevLabel: this.$t('table.prev'),
+          rowsPerPageLabel: this.$t('table.rows_per_page'),
+          ofLabel: this.$t('table.of'),
+          pageLabel: this.$t('table.page'),
+          allLabel: this.$t('table.all'),
+          perPage: perPage
+        }"
         @on-page-change="onPageChange"
         @on-sort-change="onSortChange"
         @on-column-filter="onColumnFilter"
         @on-per-page-change="onPerPageChange"
-        :totalRows="totalCount"
-        styleClass="vgt-table table striped"
-        :columns="displayedColumns"
-        :rows="data || []"
-        :filter-options="{
-  enabled: opts && opts.actions && opts.actions.filter
-}"
-        :search-options="{
-enabled: opts && opts.actions && opts.actions.search,
-placeholder: this.$t('table.searchInput'),
-}"
-        :pagination-options="{
-enabled: opts && opts.pagination,
-nextLabel: this.$t('table.next'),
-prevLabel: this.$t('table.prev'),
-rowsPerPageLabel: this.$t('table.rows_per_page'),
-ofLabel: this.$t('table.of'),
-pageLabel: this.$t('table.page'),
-allLabel: this.$t('table.all'),
-perPage: perPage
-}"
       >
         <div slot="table-actions">
           <date-range-picker
             v-if="opts.actions && opts.actions.filter && opts.actions.dateFilter && filterable"
             class="form-group vgt-date-range"
             :placeholder="$t('common.field.start')"
-            :startDate="defaultStartDate"
-            :endDate="defaultEndDate"
-            @update="onDateFilter"
+            :start-date="defaultStartDate"
+            :end-date="defaultEndDate"
             :locale-data="datePicker.locale"
             :opens="'left'"
-          ></date-range-picker>
+            @update="onDateFilter"
+          />
         </div>
-        <template slot="table-row" slot-scope="props">
-          <span v-if="props.column.field === 'ACTIONS'" class="text-right">
-            <slot name="table-row-actions" :item="props.row">
+        <template
+          slot="table-row"
+          slot-scope="props"
+        >
+          <span
+            v-if="props.column.field === 'ACTIONS'"
+            class="text-right"
+          >
+            <slot
+              name="table-row-actions"
+              :item="props.row"
+            >
               <span v-if="opts && opts.customActions">
                 <button
                   v-for="(action, index) in opts.customActions"
-                  v-bind:key="index"
-                  @click="$emit('customAction',{action, item: props.row})"
+                  :key="index"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
                   :data-title="action.title || action.label"
+                  @click="$emit('customAction',{action, item: props.row})"
                 >
                   {{ action.label ? $t(action.label) : '' }}
                   <i
-                    :class="action.icon"
                     v-if="action.icon"
-                  ></i>
+                    :class="action.icon"
+                  />
                 </button>
               </span>
             </slot>
             <button
               v-if="opts && opts.actions && opts.actions.view"
-              @click="$emit('view', props.row)"
               class="btn btn-xs btn-simple btn-icon"
+              @click="$emit('view', props.row)"
             >
-              <i class="font-awesome enyo-fa-eye text-info"></i>
+              <i class="font-awesome enyo-fa-eye text-info" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.edit"
-              @click="$emit('edit', props.row)"
               class="btn btn-xs btn-simple btn-icon"
+              @click="$emit('edit', props.row)"
             >
-              <i class="font-awesome-pencil enyo-fa-pencil"></i>
+              <i class="font-awesome-pencil enyo-fa-pencil" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.delete"
-              @click="deleteItem(props.row)"
               class="btn btn-xs btn-simple btn-icon"
+              @click="deleteItem(props.row)"
             >
-              <i class="font-awesome enyo-fa-cancel text-danger"></i>
+              <i class="font-awesome enyo-fa-cancel text-danger" />
             </button>
           </span>
           <span
             v-else-if="props.column.type === 'image'"
-            @click="clickOnLine(props.row)"
             class="pointer"
+            @click="clickOnLine(props.row)"
           >
-            <img :src="props.formattedRow[props.column.field]" alt="image" class="ajax-table-img">
+            <img
+              :src="props.formattedRow[props.column.field]"
+              alt="image"
+              class="ajax-table-img"
+            >
           </span>
-          <div class="text-avoid-overflow" v-else-if="props.column.type === 'url'">
+          <div
+            v-else-if="props.column.type === 'url'"
+            class="text-avoid-overflow"
+          >
             <a
               :href="props.formattedRow[props.column.field]"
               target="_blank"
               class="ajax-table-href"
             >{{ props.formattedRow[props.column.field] }}</a>
           </div>
-          <div v-else-if="props.column.type === 'html'"
-          @click="clickOnLine(props.row)"
-           class="pointer" v-html="props.formattedRow[props.column.field]">
-          </div>
-          <div class="text-avoid-overflow" v-else-if="props.column.type === 'relation'">
+          <div
+            v-else-if="props.column.type === 'html'"
+            class="pointer"
+            @click="clickOnLine(props.row)"
+            v-html="props.formattedRow[props.column.field]"
+          />
+          <div
+            v-else-if="props.column.type === 'relation'"
+            class="text-avoid-overflow"
+          >
             <router-link
-              :to="'/app' + props.column.relation + '/' +  props.formattedRow[props.column.field]"
+              :to="'/app' + props.column.relation + '/' + props.formattedRow[props.column.field]"
               class="ajax-table-href"
             >
               <span class="badge badge-info">
                 {{
-                props.column.listName ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
-                : props.formattedRow[props.column.field] }}
+                  props.column.listName ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
+                  : props.formattedRow[props.column.field] }}
               </span>
             </router-link>
           </div>
           <span
             v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
-            @click="clickOnLine(props.row)"
             class="pointer"
+            @click="clickOnLine(props.row)"
           >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
           <span
             v-else-if="props.column.type === 'list-of-data'"
-            @click="clickOnLine(props.row)"
             class="pointer"
+            @click="clickOnLine(props.row)"
           >{{ getDataValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
           <div
             v-else-if="props.column.type === 'object'"
-            @click="clickOnLine(props.row)"
             class="pointer text-avoid-overflow"
+            @click="clickOnLine(props.row)"
           >
             |
             <template
-              class="label label-info"
               v-for="(value, key) of props.formattedRow[props.column.field]"
+              class="label label-info"
             >
-              <label v-bind:key="key">{{ key }}:</label>
-              <label class="text-primary" v-bind:key="key">{{ value }}</label> |
+              <label :key="key">{{ key }}:</label>
+              <label
+                :key="key"
+                class="text-primary"
+              >{{ value }}</label> |
             </template>
           </div>
           <div
             v-else
-            @click="clickOnLine(props.row)"
             class="pointer text-avoid-overflow"
-          >{{ props.formattedRow[props.column.field] }}</div>
+            @click="clickOnLine(props.row)"
+          >
+            {{ props.formattedRow[props.column.field] }}
+          </div>
         </template>
-        <div slot="emptystate">{{ $t('table.empty') }}</div>
+        <div slot="emptystate">
+          {{ $t('table.empty') }}
+        </div>
       </vue-good-table>
     </div>
   </enyo-card>
@@ -264,7 +309,7 @@ import _ from "lodash";
 
 
 export default {
-  name: "ajax-table",
+  name: "AjaxTable",
   token: `
   <AjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
     <template slot="table-actions"></template>
@@ -283,21 +328,27 @@ export default {
   },
   mixins: [apiErrors],
   props: {
-    columns: Array,
+    columns: {
+      type: Array,
+      default: () => [],
+    },
     columnsDisplayed: {
       type: Number,
       default: 8
     },
-    rows: Array,
-    url: String,
-    params: Object,
-    headers: Object,
-    entity: String,
-    title: String,
-    refresh: Function,
-    delete: Function,
-    create: Function,
-    tableNeedsRefresh: Boolean,
+    rows: {type: Array, default: () => ([])},
+    url: {type: String, default: ''},
+    params: {type: Object, default: () => ({})},
+    headers: {type: Object, default: () => ({})},
+    entity: {type: String, default: ''},
+    title: {type: String, default: ''},
+    refresh: {type: Function, default: undefined},
+    delete: {type: Function, default: undefined},
+    create: {type: Function, default: undefined},
+    tableNeedsRefresh: {
+      type: Boolean,
+      default: false
+    },
     perPage: {
       type: [String, Number],
       default: 20
@@ -330,7 +381,6 @@ export default {
       default: "locale",
       type: String
     },
-    store: Array
   },
   data() {
     return {
@@ -368,7 +418,6 @@ export default {
       }
     };
   },
-  created() {},
   computed: {
     opts() {
       return _.merge(this.defaultOptions, this.options);
@@ -513,13 +562,6 @@ export default {
       return this.formattedColumns;
     }
   },
-  mounted() {
-    if (this.refresh && this.store) {
-      return;
-    }
-    this.refreshTableData();
-  },
-  beforeDestroy() {},
   watch: {
     tableNeedsRefresh: "refreshTableData",
     params() {
@@ -530,6 +572,14 @@ export default {
     // store: changed => {},
     rows: "refreshTableData"
   },
+  created() {},
+  mounted() {
+    if (this.refresh && this.store) {
+      return;
+    }
+    this.refreshTableData();
+  },
+  beforeDestroy() {},
   methods: {
     // eslint-disable-next-line
     refreshTableData(changed) {

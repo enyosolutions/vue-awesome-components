@@ -4,14 +4,16 @@
       type="button"
       :class="options.class || 'btn btn-info'"
       @click="buttonClick"
-    >{{options.label || 'Upload'}}</button>
+    >
+      {{ options.label || 'Upload' }}
+    </button>
     <input
+      ref="inputButton"
       type="file"
       name="file"
       style="display: none"
-      @change="filesChange"
-      ref="inputButton"
       visbility="hidden"
+      @change="filesChange"
     >
   </div>
 </template>
@@ -19,13 +21,16 @@
 // import apiErrors from '@/mixins/api-errors';
 
 export default {
+  name: "UploadButton",
   inheritAttrs: false,
-  name: "upload-button",
   props: {
     name: String,
     options: Object
   },
   computed: {},
+  mounted() {
+    this.reset();
+  },
   methods: {
     reset() {
       const elem = this.$refs.inputButton;
@@ -109,9 +114,6 @@ export default {
       };
       reader.readAsDataURL(file);
     }
-  },
-  mounted() {
-    this.reset();
   }
 };
 </script>

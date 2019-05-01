@@ -4,32 +4,48 @@
       <div class="filter-box col-md-3 cl-xs-6">
         <div class="card card-success card-statistics">
           <div class="box text-center">
-            <h3 class="font-light text-white mt-1">{{ stats.total }}</h3>
-            <h6 class="text-white">{{ $t('stats.total') }}</h6>
+            <h3 class="font-light text-white mt-1">
+              {{ stats.total }}
+            </h3>
+            <h6 class="text-white">
+              {{ $t('stats.total') }}
+            </h6>
           </div>
         </div>
       </div>
       <div class="filter-box col-md-3 cl-xs-6">
         <div class="card card-warning card-statistics">
           <div class="box text-center">
-            <h3 class="font-light text-white mt-1">{{ stats.today }}</h3>
-            <h6 class="text-white">{{ $t('stats.today') }}</h6>
+            <h3 class="font-light text-white mt-1">
+              {{ stats.today }}
+            </h3>
+            <h6 class="text-white">
+              {{ $t('stats.today') }}
+            </h6>
           </div>
         </div>
       </div>
       <div class="filter-box col-md-3 cl-xs-6">
         <div class="card card-info card-statistics">
           <div class="box text-center">
-            <h3 class="font-light text-white mt-1">{{ stats.week }}</h3>
-            <h6 class="text-white">{{ $t('stats.this_week') }}</h6>
+            <h3 class="font-light text-white mt-1">
+              {{ stats.week }}
+            </h3>
+            <h6 class="text-white">
+              {{ $t('stats.this_week') }}
+            </h6>
           </div>
         </div>
       </div>
       <div class="filter-box col-md-3 cl-xs-6">
         <div class="card card-primary card-statistics">
           <div class="box text-center">
-            <h3 class="font-light text-white mt-1">{{ stats.month }}</h3>
-            <h6 class="text-white">{{ $t('stats.this_month') }}</h6>
+            <h3 class="font-light text-white mt-1">
+              {{ stats.month }}
+            </h3>
+            <h6 class="text-white">
+              {{ $t('stats.this_month') }}
+            </h6>
           </div>
         </div>
       </div>
@@ -39,16 +55,16 @@
 <script>
 import _ from "lodash";
 export default {
-  name: "enyo-stats",
+  name: "EnyoStats",
   components: {},
   props: {
-    url: String,
-    entity: String,
+    url: {type: String, default: ''},
+    entity: {type: String, default: ''},
     statsNeedsRefresh: {
       type: Boolean,
       default: false
     },
-    store: Array
+    store: {type: Array, default: ()=> []}
   },
   data() {
     return {
@@ -60,17 +76,17 @@ export default {
       }
     };
   },
+  watch: {
+    statsNeedsRefresh: "getStats",
+    url: "getStats",
+    entity: "getStats"
+  },
   created() {
   },
   mounted() {
     this.getStats();
   },
   beforeDestroy() {
-  },
-  watch: {
-    statsNeedsRefresh: "getStats",
-    url: "getStats",
-    entity: "getStats"
   },
   methods: {
     getStats: _.debounce(

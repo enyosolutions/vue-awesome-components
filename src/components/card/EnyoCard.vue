@@ -1,23 +1,37 @@
 <template>
   <div :class="'card ' + className">
-    <div class="card-image" v-if="$slots.image">
-      <slot name="image"></slot>
+    <div
+      v-if="$slots.image"
+      class="card-image"
+    >
+      <slot name="image" />
     </div>
-    <div class="card-header" :class="headerClass" v-if="$slots.header">
-      <slot name="header"></slot>
+    <div
+      v-if="$slots.header"
+      class="card-header"
+      :class="headerClass"
+    >
+      <slot name="header" />
     </div>
-    <div class="card-body" :class="bodyClass">
-      <slot></slot>
+    <div
+      class="card-body"
+      :class="bodyClass"
+    >
+      <slot />
     </div>
-    <div class="card-footer" :class="footerClass" v-if="$slots.footer">
+    <div
+      v-if="$slots.footer"
+      class="card-footer"
+      :class="footerClass"
+    >
       <hr>
-      <slot name="footer"></slot>
+      <slot name="footer" />
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: "enyo-card",
+  name: "EnyoCard",
   props: {
     className: String,
     headerClass: String,
