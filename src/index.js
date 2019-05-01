@@ -28,8 +28,7 @@ export {
  LiveEdit
 };
 
-
-exports = {
+const VueEnyoComponents = {
    FieldEnyoSelect,
    FieldFileInput,
    FieldJsonTextarea,
@@ -41,4 +40,6 @@ exports = {
    EnyoStats,
    AjaxTable,
    LiveEdit
- };
+ }
+
+export default VueEnyoComponents;

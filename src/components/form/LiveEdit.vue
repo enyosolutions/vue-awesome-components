@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="isEditable || editable">
+    <template v-if="isEditable">
       <!-- input text -->
       <template v-if="type === 'text' ">
         <input
@@ -95,7 +95,7 @@ export default {
     name: 'LiveEdit',
     props: {
         value: {
-            type: [String, Object],
+            type: [Number, String, Object, Undefined],
             required: true,
         },
         type: {
