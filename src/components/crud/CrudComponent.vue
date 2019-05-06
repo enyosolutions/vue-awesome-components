@@ -1267,6 +1267,14 @@ There are 3 ways of using the Crud Component.
 }
 
 
+.form-element.field-input {
+  label {
+      overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+  }
+}
+
 .vue-form-generator .input-group {
   z-index: 100;
 }
