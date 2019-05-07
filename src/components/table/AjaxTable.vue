@@ -736,7 +736,7 @@ export default {
         return;
       }
       const sort = {};
-      sort[this.columns[params.columnIndex]] = params.sortType;
+      sort[this.columns[params.columnIndex].field] = params.sortType;
       this.updateParams({ sort });
       this.getItems();
     },
