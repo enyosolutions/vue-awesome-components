@@ -495,6 +495,10 @@ export default {
           };
         }
 
+       if (col.type && col.type === "checkbox") {
+          col.sortable = false
+        }
+
         let filterDropdownItems;
         if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
