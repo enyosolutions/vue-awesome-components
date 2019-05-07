@@ -149,6 +149,7 @@
         @on-sort-change="onSortChange"
         @on-column-filter="onColumnFilter"
         @on-per-page-change="onPerPageChange"
+        @on-search="onSearch"
       >
         <div slot="table-actions">
           <date-range-picker
@@ -281,6 +282,12 @@
                 class="text-primary"
               >{{ value }}</label> |
             </template>
+          </div>
+          <div v-else-if="props.column.type === 'checkbox'" class="pointer text-avoid-overflow"
+               @click="clickOnLine(props.row)">
+          <input v-if="props.formattedRow[props.column.field] === true"
+                 class="ajax-table-checkbox" type="checkbox" checked disabled />
+          <input class="ajax-table-checkbox" v-else type="checkbox" disabled />
           </div>
           <div
             v-else
@@ -486,6 +493,10 @@ export default {
             // const y1 = y.toString();
             return x < y ? -1 : x > y ? 1 : 0;
           };
+        }
+
+       if (col.type && col.type === "checkbox") {
+          col.sortable = false
         }
 
         let filterDropdownItems;
@@ -736,8 +747,17 @@ export default {
         return;
       }
       const sort = {};
-      sort[this.columns[params.columnIndex].field] = params.sortType;
+      sort[params[0].field] = params[0].type;
       this.updateParams({ sort });
+      this.getItems();
+    },
+
+    onSearch(params){
+      if (this.mode !== "remote") {
+        return;
+      }
+      let search = params.searchTerm;
+      this.updateParams({ search });
       this.getItems();
     },
 
@@ -790,6 +810,11 @@ export default {
 <style lang='scss'>
 .ajax-table-img {
   max-height: 50px;
+}
+
+.ajax-table-checkbox{
+    height: 18px;
+    width: 18px;
 }
 
 .text-avoid-overflow {
