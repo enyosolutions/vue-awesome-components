@@ -149,6 +149,7 @@
         @on-sort-change="onSortChange"
         @on-column-filter="onColumnFilter"
         @on-per-page-change="onPerPageChange"
+        @on-search="onSearch"
       >
         <div slot="table-actions">
           <date-range-picker
@@ -736,8 +737,17 @@ export default {
         return;
       }
       const sort = {};
-      sort[this.columns[params.columnIndex].field] = params.sortType;
+      sort[params[0].field] = params[0].type;
       this.updateParams({ sort });
+      this.getItems();
+    },
+
+    onSearch(params){
+      if (this.mode !== "remote") {
+        return;
+      }
+      let search = params.searchTerm;
+      this.updateParams({ search });
       this.getItems();
     },
 
