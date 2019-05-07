@@ -609,6 +609,7 @@ export default {
 
     /** GET ENTITY ITEMS */
     getItems() {
+      this.$emit('refresh');
       // if i got a refresh function
       if (this.refresh) {
         this.refresh();
