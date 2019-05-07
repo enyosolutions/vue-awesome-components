@@ -283,6 +283,12 @@
               >{{ value }}</label> |
             </template>
           </div>
+          <div v-else-if="props.column.type === 'checkbox'" class="pointer text-avoid-overflow"
+               @click="clickOnLine(props.row)">
+          <input v-if="props.formattedRow[props.column.field] === true"
+                 class="ajax-table-checkbox" type="checkbox" checked disabled />
+          <input class="ajax-table-checkbox" v-else type="checkbox" disabled />
+          </div>
           <div
             v-else
             class="pointer text-avoid-overflow"
@@ -800,6 +806,11 @@ export default {
 <style lang='scss'>
 .ajax-table-img {
   max-height: 50px;
+}
+
+.ajax-table-checkbox{
+    height: 18px;
+    width: 18px;
 }
 
 .text-avoid-overflow {
