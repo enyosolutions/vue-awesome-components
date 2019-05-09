@@ -877,7 +877,7 @@ There are 3 ways of using the Crud Component.
                 url: prop.relation,
                 trackBy: prop.foreignKey || "code",
                 label: "label",
-                step: prop.field.step
+                step: prop.field && prop.field.step
               },
               values:
                 prop.enum ||
