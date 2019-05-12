@@ -883,7 +883,8 @@ There are 3 ways of using the Crud Component.
                 placeholder: prop.description || prop.title || _.startCase(key),
                 url: prop.relation,
                 trackBy: prop.foreignKey || "code",
-                label: "label"
+                label: "label",
+                step: prop.field && prop.field.step
               },
               values:
                 prop.enum ||
