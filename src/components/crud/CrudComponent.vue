@@ -400,7 +400,14 @@
             :params="innerOptions.queryParams"
             :table-needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :options="{actions: innerOptions.actions, customActions: innerOptions.customActions}"
+            :options="{
+            pagination: innerOptions.pagination,
+            noHeaders: innerOptions.noHeaders,
+            filterInitialyOn: innerOptions.filterInitialyOn,
+            noActions: innerOptions.noActions,
+            actions: innerOptions.actions,
+            customActions: innerOptions.customActions
+          }"
             name="ajax-table"
             @edit="goToEditPage"
             @view="goToViewPage"

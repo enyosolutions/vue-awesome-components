@@ -362,6 +362,7 @@ export default {
       default: () => ({
         pagination: true,
         customActions: [], // {key, label, action: function(item, context{}}
+        filterInitialyOn: false,
         actions: {
           noActions: false,
           search: true,
@@ -385,7 +386,7 @@ export default {
   data() {
     return {
       totalCount: 0,
-      filterable: false,
+      filterable: this.options.filterInitialyOn,
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
