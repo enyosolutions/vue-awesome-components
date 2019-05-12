@@ -500,7 +500,7 @@ export default {
           col.sortable = false
         }
 
-        let filterDropdownItems;
+        let filterDropdownItems = col.filterOptions && col.filterOptions.filterDropdownItems;
         if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
