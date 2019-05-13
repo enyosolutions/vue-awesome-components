@@ -51,12 +51,12 @@ export default {
   watch: {
     // eslint-disable-next-line
     vModelValue(newValue, oldValue) {
-      console.log("send new vMODELVALUE down !", newValue);
+      // console.log("send new vMODELVALUE down !", newValue);
       this.setIncomingValue(newValue);
     },
     // eslint-disable-next-line
     value(newValue, oldValue) {
-      console.log("send new value down from VFG !", newValue);
+      // console.log("send new value down from VFG !", newValue);
       this.setIncomingValue(newValue);
     }
   },
