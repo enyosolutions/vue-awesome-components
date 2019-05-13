@@ -51,12 +51,12 @@ export default {
   watch: {
     // eslint-disable-next-line
     vModelValue(newValue, oldValue) {
-      // console.log("send new vMODELVALUE down !", newValue);
+      console.log("send new vMODELVALUE down !", newValue);
       this.setIncomingValue(newValue);
     },
     // eslint-disable-next-line
     value(newValue, oldValue) {
-      // console.log("send new value down from VFG !", newValue);
+      console.log("send new value down from VFG !", newValue);
       this.setIncomingValue(newValue);
     }
   },
@@ -95,7 +95,7 @@ export default {
           this.internalOptions &&
           this.internalOptions.filter(option => {
             const searchKey =
-              typeof option === "string" ? option : option[this.trackBy];
+              typeof option === "string" ? option : option[this.fieldOptions.trackBy];
             return value.indexOf(searchKey) > -1;
           });
         return;
@@ -104,10 +104,11 @@ export default {
         this.internalOptions &&
         this.internalOptions.find(option => {
           const searchKey =
-            typeof option === "string" ? option : option[this.trackBy];
+            typeof option === "string" ? option : option[this.fieldOptions.trackBy];
           return searchKey == value;
         });
-      // this.myModel = this.internalValue;
+      this.myModel = typeof this.internalValue === "object" ? this.internalValue[this.fieldOptions.trackBy]:
+      this.internalValue;
     },
 
     updateSelected(value) {
@@ -118,13 +119,13 @@ export default {
         this.value = value;
       } else if (Array.isArray(value)) {
         const valueArray = value.map(item =>
-          this.trackBy && item[this.trackBy] ? item[this.trackBy] : item
+          this.fieldOptions.trackBy && item[this.fieldOptions.trackBy] ? item[this.fieldOptions.trackBy] : item
         );
         this.$emit("input", valueArray);
         this.value = valueArray;
       } else {
-        this.$emit("input", value[this.trackBy]);
-        this.value = value[this.trackBy];
+        this.$emit("input", value[this.fieldOptions.trackBy]);
+        this.value = value[this.fieldOptions.trackBy];
       }
     },
     onSearchChange(searchQuery, id) {
