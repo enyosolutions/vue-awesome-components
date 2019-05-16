@@ -1281,6 +1281,7 @@ There are 3 ways of using the Crud Component.
 }
 .vue-form-generator .multiselect {
   width: 100%;
+  margin-top: 10px;
 }
 
 .vdatetime.form-group {
