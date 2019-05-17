@@ -254,6 +254,7 @@ export default {
                 queryParams: {},
                 mode: 'local',
                 stats: false,
+                filterInitialyOn: true,
                 actions: { create: true, edit: true, delete: true },
                 customActions: [{
                     name: 'validate-ride-comment',

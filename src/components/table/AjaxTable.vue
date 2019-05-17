@@ -369,6 +369,7 @@ export default {
       default: () => ({
         pagination: true,
         customActions: [], // {key, label, action: function(item, context{}}
+        filterInitialyOn: false,
         actions: {
           noActions: false,
           search: true,
@@ -392,7 +393,7 @@ export default {
   data() {
     return {
       totalCount: 0,
-      filterable: false,
+      filterable: this.options.filterInitialyOn,
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
@@ -499,7 +500,7 @@ export default {
           col.sortable = false
         }
 
-        let filterDropdownItems;
+        let filterDropdownItems = col.filterOptions && col.filterOptions.filterDropdownItems;
         if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
