@@ -370,6 +370,7 @@ export default {
         pagination: true,
         customActions: [], // {key, label, action: function(item, context{}}
         filterInitialyOn: false,
+        saveSearchDatas: false,
         actions: {
           noActions: false,
           search: true,
@@ -638,6 +639,9 @@ export default {
         .then(res => {
           this.data = res.data.body;
           this.totalCount = res.data.totalCount;
+           if(this.options.saveSearchDatas && this.mode === 'remote'){
+            this.$emit('crud-list-updated', this.data);
+          }
         })
         .catch(err => {
           // eslint-disable-next-line
