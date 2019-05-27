@@ -267,6 +267,7 @@
             pagination: innerOptions.pagination,
             noHeaders: innerOptions.noHeaders,
             filterInitialyOn: innerOptions.filterInitialyOn,
+            saveSearchDatas: innerOptions.saveSearchDatas,
             noActions: innerOptions.noActions,
             actions: innerOptions.actions,
             customActions: innerOptions.customActions
@@ -277,6 +278,7 @@
             @create="createFunction"
             @delete="deleteFunction"
             @customAction="customAction"
+            @crud-list-updated="listUpdated"
           >
             <template slot="table-top-more-actions">
               <upload-button
@@ -1092,7 +1094,9 @@ There are 3 ways of using the Crud Component.
       // console.log(item);
       return action.action(item, this);
     },
-
+    listUpdated(datas){
+      this.$emit('list-updated', datas);
+    },
     parseColumns(properties) {
       const newcolumns = [];
       Object.keys(properties).forEach(key => {
