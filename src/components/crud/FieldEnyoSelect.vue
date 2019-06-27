@@ -98,6 +98,7 @@ export default {
               typeof option === "string" ? option : option[this.fieldOptions.trackBy];
             return value.indexOf(searchKey) > -1;
           });
+        this.myModel = this.internalValue.map(x => x[this.fieldOptions.trackBy])
         return;
       }
       this.internalValue =
