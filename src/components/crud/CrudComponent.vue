@@ -266,7 +266,7 @@
             :options="{
             pagination: innerOptions.pagination,
             noHeaders: innerOptions.noHeaders,
-            filterInitialyOn: innerOptions.filterInitialyOn,
+            filterInitiallyOn: innerOptions.filterInitiallyOn,
             saveSearchDatas: innerOptions.saveSearchDatas,
             noActions: innerOptions.noActions,
             actions: innerOptions.actions,
