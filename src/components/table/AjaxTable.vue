@@ -587,6 +587,8 @@ export default {
   },
   created() {},
   mounted() {
+    this.filterable = this.props.options && this.props.options.filterInitiallyOn;
+  
     if (this.refresh && this.store) {
       return;
     }
