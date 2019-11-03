@@ -4,13 +4,15 @@ import FieldJsonTextarea from './components/crud/FieldJsonTextarea.vue';
 // import FieldDateTime from './components/crud/FieldDateTime.vue';
 import CrudComponent from './components/crud/CrudComponent.vue';
 
-import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoSelect from './components/form/EnyoSelect.vue';
 import UploadButton from './components/form/UploadButton.vue';
 import LiveEdit from './components/form/LiveEdit.vue';
 
 import EnyoCard from './components/card/EnyoCard.vue';
+import EnyoStatsCard from './components/card/EnyoStatsCard.vue';
+import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
+
 import EnyoStats from './components/misc/EnyoStats.vue';
 
 
@@ -35,6 +37,7 @@ const GlobalComponents = {
     // }
 
     Vue.component('enyo-card', EnyoCard);
+    Vue.component('enyo-stats-card', EnyoStatsCard);
     Vue.component('enyo-stats', EnyoStats);
     Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
 
