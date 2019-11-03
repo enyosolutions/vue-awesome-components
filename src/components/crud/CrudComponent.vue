@@ -342,7 +342,7 @@ export default {
   name: "CrudComponent",
   introduction:
     "A component to quickly create a table UI with edit capabilities",
-  description: `This components magically create lists and edit data based on a json schema.
+  description: `This component magically create lists and edit data based on a json schema.
 
   ### Usage.
 
@@ -356,7 +356,20 @@ There are 3 ways of using the Crud Component.
 
   ### Actions
 
-  The crud compoenent allows to define which actions are enabled on a component. There are
+  The crud compoenent allows to define which actions are enabled on a component. There are many default actions that can be configured
+  - create
+  - edit
+  - noActions (globally disable all actions)
+  - search
+  - filter
+  - create
+  - view
+  - delete
+  - export
+  - import
+  - dateFilter
+  - refresh
+  )
 
   ### custom actions
 

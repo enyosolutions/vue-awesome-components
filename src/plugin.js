@@ -1,3 +1,7 @@
+import axios from 'axios';
+import CripVueLoading from 'crip-vue-loading';
+import { directive as vClickOutside } from 'vue-clickaway';
+
 import FieldEnyoSelect from './components/crud/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/FieldJsonTextarea.vue';
@@ -14,13 +18,9 @@ import EnyoStatsCard from './components/card/EnyoStatsCard.vue';
 import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoStats from './components/misc/EnyoStats.vue';
-
-
 import AjaxTable from './components/table/AjaxTable.vue';
 
 
-import axios from 'axios';
-import CripVueLoading from 'crip-vue-loading';
 
 import {
   Datetime
@@ -62,6 +62,8 @@ const GlobalComponents = {
 
     Vue.use(CripVueLoading, { axios: Vue.prototype.$http });
 
+    // DIRECTIVES
+    Vue.directive('click-outside', vClickOutside);
   }
 };
 

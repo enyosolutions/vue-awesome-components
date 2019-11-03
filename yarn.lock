@@ -7110,7 +7110,7 @@ vue-base64-upload@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vue-base64-upload/-/vue-base64-upload-1.0.1.tgz#259d00158e0ae2e7b14d3696f6c155575b11de1d"
 
-vue-clickaway@^2.1.0:
+vue-clickaway@^2.1.0, vue-clickaway@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/vue-clickaway/-/vue-clickaway-2.2.2.tgz#cecf6839575e8b2afc5d3edb3efb616d293dbb44"
   dependencies:
