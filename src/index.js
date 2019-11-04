@@ -17,33 +17,37 @@ import AjaxTable from './components/table/AjaxTable.vue';
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 
 
- export FieldEnyoSelect;
- export FieldFileInput;
- export FieldJsonTextarea;
- export CrudComponent;
- export TableAndChartsCard;
- export EnyoSelect;
- export UploadButton;
- export EnyoCard;
- export EnyoStats;
- export AjaxTable;
- export LiveEdit;
- export apiErrorsMixin;
 
 
 const VueEnyoComponents = {
-   FieldEnyoSelect,
-   FieldFileInput,
-   FieldJsonTextarea,
-   CrudComponent,
-   TableAndChartsCard,
-   EnyoSelect,
-   UploadButton,
-   EnyoCard,
-   EnyoStats,
-   AjaxTable,
-   LiveEdit,
-   apiErrorsMixin,
- }
+ FieldEnyoSelect,
+ FieldFileInput,
+ FieldJsonTextarea,
+ CrudComponent,
+ TableAndChartsCard,
+ EnyoSelect,
+ UploadButton,
+ EnyoCard,
+ EnyoStats,
+ AjaxTable,
+ LiveEdit,
+ apiErrorsMixin,
+}
 
+
+export {
+  FieldEnyoSelect,
+  FieldFileInput,
+  FieldJsonTextarea,
+  CrudComponent,
+  TableAndChartsCard,
+  EnyoSelect,
+  UploadButton,
+  EnyoCard,
+  EnyoStats,
+  AjaxTable,
+  LiveEdit,
+  apiErrorsMixin,
+  VueEnyoComponents
+}
 export default VueEnyoComponents;
