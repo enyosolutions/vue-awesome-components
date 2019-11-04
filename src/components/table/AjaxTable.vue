@@ -310,7 +310,7 @@ import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import qs from "qs";
 import moment from "moment";
-import apiErrors from "@/mixins/api-errors";
+import apiErrors from "../../mixins/apiErrorsMixin";
 import "vue-good-table/dist/vue-good-table.css";
 import _ from "lodash";
 
@@ -588,7 +588,7 @@ export default {
   created() {},
   mounted() {
     this.filterable = this.props.options && this.props.options.filterInitiallyOn;
-  
+
     if (this.refresh && this.store) {
       return;
     }

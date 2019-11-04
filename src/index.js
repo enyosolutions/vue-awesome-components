@@ -14,19 +14,22 @@ import EnyoStats from './components/misc/EnyoStats.vue';
 
 import AjaxTable from './components/table/AjaxTable.vue';
 
-export {
-  FieldEnyoSelect,
- FieldFileInput,
- FieldJsonTextarea,
- CrudComponent,
- TableAndChartsCard,
- EnyoSelect,
- UploadButton,
- EnyoCard,
- EnyoStats,
- AjaxTable,
- LiveEdit
-};
+import apiErrorsMixin from './mixins/apiErrorsMixin';
+
+
+ export FieldEnyoSelect;
+ export FieldFileInput;
+ export FieldJsonTextarea;
+ export CrudComponent;
+ export TableAndChartsCard;
+ export EnyoSelect;
+ export UploadButton;
+ export EnyoCard;
+ export EnyoStats;
+ export AjaxTable;
+ export LiveEdit;
+ export apiErrorsMixin;
+
 
 const VueEnyoComponents = {
    FieldEnyoSelect,
@@ -39,7 +42,8 @@ const VueEnyoComponents = {
    EnyoCard,
    EnyoStats,
    AjaxTable,
-   LiveEdit
+   LiveEdit,
+   apiErrorsMixin,
  }
 
 export default VueEnyoComponents;

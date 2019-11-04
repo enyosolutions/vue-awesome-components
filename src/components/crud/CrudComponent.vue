@@ -306,7 +306,7 @@
 </template>
 <script>
 /* global $ */
-import apiErrors from "@/mixins/api-errors";
+import apiErrors from "../../mixins/apiErrorsMixin";
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import AjaxTable from "../table/AjaxTable.vue";
