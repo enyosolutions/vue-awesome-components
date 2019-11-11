@@ -38,7 +38,7 @@
 <script>
 import TableAndChartsCard from "@/components/card/TableAndChartsCard.vue";
 
-import AjaxTable from "@/components/table/AjaxTable.vue";
+import EnyoAjaxTable from "@/components/table/EnyoAjaxTable.vue";
 import LiveEdit from "@/components/form/LiveEdit.vue";
 
 import EnyoCard from "@/components/card/EnyoCard.vue";
@@ -61,14 +61,14 @@ export default {
     return {
       components: [
         CrudComponent,
-        AjaxTable,
+        EnyoAjaxTable,
         TableAndChartsCard,
         EnyoStats,
         EnyoChartCard,
         EnyoStatsCard,
         LiveEdit,
       ]
-      // components: [CrudComponent, AjaxTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
+      // components: [CrudComponent, EnyoAjaxTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };
   }
 };

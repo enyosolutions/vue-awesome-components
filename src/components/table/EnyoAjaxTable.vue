@@ -316,9 +316,9 @@ import _ from "lodash";
 
 
 export default {
-  name: "AjaxTable",
+  name: "EnyoAjaxTable",
   token: `
-  <AjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
+  <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
     <template slot="table-actions"></template>
     <template slot="table-top-actions"></template>
     <template slot="table-top-more-actions"></template>
@@ -326,7 +326,7 @@ export default {
     <template slot="table-row-actions"></template>
 
     <!-- END OF ARRAY -->
-  </AjaxTable>
+  </EnyoAjaxTable>
   `,
   components: {
     EnyoCard,
@@ -434,7 +434,7 @@ export default {
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
-        console.error("AJAXTABLE MISSING COLUMNS");
+        console.error("EnyoAjaxTable MISSING COLUMNS");
         return [];
       }
       const newcolumns = this.columns.map(col => {

@@ -18,7 +18,7 @@ import EnyoStatsCard from './components/card/EnyoStatsCard.vue';
 import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoStats from './components/misc/EnyoStats.vue';
-import AjaxTable from './components/table/AjaxTable.vue';
+import EnyoAjaxTable from './components/table/EnyoAjaxTable.vue';
 
 
 
@@ -52,7 +52,8 @@ const GlobalComponents = {
     Vue.component('fieldFileInput', FieldFileInput);
     Vue.component('fieldJsonTextarea', FieldJsonTextarea);
 
-    Vue.component('ajax-table', AjaxTable);
+    Vue.component('ajax-table', EnyoAjaxTable);
+    Vue.component('enyo-ajax-table', EnyoAjaxTable);
     Vue.component('crud-component', CrudComponent);
 
 

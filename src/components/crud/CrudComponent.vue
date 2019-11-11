@@ -254,7 +254,7 @@
             </div>
           </div>
           <!-- END OF create MODAL -->
-          <AjaxTable
+          <EnyoAjaxTable
             :columns="innerOptions.columns"
             :columns-displayed="innerOptions.columnsDisplayed"
             :entity="modelName"
@@ -298,7 +298,7 @@
             </template>
 
             <!-- END OF ARRAY -->
-          </AjaxTable>
+          </EnyoAjaxTable>
         </div>
       </div>
     </div>
@@ -309,7 +309,7 @@
 import apiErrors from "../../mixins/apiErrorsMixin";
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
-import AjaxTable from "../table/AjaxTable.vue";
+import EnyoAjaxTable from "../table/EnyoAjaxTable.vue";
 import "vue-good-table/dist/vue-good-table.css";
 
 const defaultOptions = {
@@ -426,7 +426,7 @@ There are 3 ways of using the Crud Component.
   `,
   defaultOptions,
   components: {
-    AjaxTable
+    EnyoAjaxTable
     // VueGoodTable
   },
   mixins: [apiErrors],

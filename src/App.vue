@@ -224,7 +224,7 @@
         </div>
       </div>
     </div>
-    <AjaxTable
+    <EnyoAjaxTable
       :columns="['col1', 'col2']"
       :rows="[{col1: 'qq', col2:'some data'},{col1: 'qq2', col2:'some moore data'},{col1: 'qq3', col2:'a third data'}, ]"
     />
@@ -234,7 +234,7 @@
 import Documentation from "@/components/misc/Documentation.vue";
 import ticketSchema from "@/fixtures/ticket";
 import userSchema from "@/fixtures/user";
-import AjaxTable from "@/components/table/AjaxTable.vue";
+import EnyoAjaxTable from "@/components/table/EnyoAjaxTable.vue";
 import LiveEdit from "@/components/form/LiveEdit.vue";
 import CrudComponent from "@/components/crud/CrudComponent.vue";
 
@@ -243,7 +243,7 @@ export default {
     components: {
         Documentation,
         CrudComponent,
-        AjaxTable,
+        EnyoAjaxTable,
         LiveEdit,
     },
     data() {
