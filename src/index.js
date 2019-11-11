@@ -15,6 +15,7 @@ import EnyoStats from './components/misc/EnyoStats.vue';
 import AjaxTable from './components/table/AjaxTable.vue';
 
 import apiErrorsMixin from './mixins/apiErrorsMixin';
+import rolesMixin from './mixins/rolesMixin';
 
 
 
@@ -32,6 +33,7 @@ const VueEnyoComponents = {
  AjaxTable,
  LiveEdit,
  apiErrorsMixin,
+ rolesMixin,
 }
 
 
@@ -48,6 +50,7 @@ export {
   AjaxTable,
   LiveEdit,
   apiErrorsMixin,
+  rolesMixin,
   VueEnyoComponents
 }
 export default VueEnyoComponents;
