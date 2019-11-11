@@ -316,7 +316,7 @@ import _ from "lodash";
 
 
 export default {
-  name: "EnyoAjaxTable",
+  name: "AjaxTable",
   token: `
   <AjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
     <template slot="table-actions"></template>
@@ -587,7 +587,7 @@ export default {
   },
   created() {},
   mounted() {
-    this.filterable = this.props.options && this.props.options.filterInitiallyOn;
+    this.filterable = this.props && this.props.options && this.props.options.filterInitiallyOn;
 
     if (this.refresh && this.store) {
       return;
