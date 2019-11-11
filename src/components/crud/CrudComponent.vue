@@ -430,7 +430,7 @@ There are 3 ways of using the Crud Component.
   props: {
     name: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
-    primaryKey: {type: String, default: 'monid'},
+    primaryKey: {type: String, default: 'id'},
     model: {
       type: Object,
       required: false,
