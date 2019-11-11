@@ -20,9 +20,6 @@
               :stats-needs-refresh.sync="statsNeedsRefresh"
             />
           </div>
-          <!--
-            <EnyoSelect v-model="mySelect2" url="/page" :options="[]" label="content" track-by="_id"  :multiple="true" :somevar="'test'"></EnyoSelect>
-          -->
           <div class="text-right">
             <slot name="top-right-buttons">
               <button
@@ -433,6 +430,7 @@ There are 3 ways of using the Crud Component.
   props: {
     name: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
+    primaryKey: {type: String, default: 'monid'},
     model: {
       type: Object,
       required: false,
@@ -735,7 +733,7 @@ There are 3 ways of using the Crud Component.
       const formSchema = [];
       const size = Object.keys(schema.properties).length;
       Object.keys(schema.properties).forEach(key => {
-        if (["_id", "metadata"].indexOf(key) === -1) {
+        if ([this.primaryKey].indexOf(key) === -1) {
           const prop = schema.properties[key];
           if (prop.field && prop.field.hidden) {
             return;
@@ -918,21 +916,21 @@ There are 3 ways of using the Crud Component.
         window.history.replaceState(
           {},
           null,
-          `${this.parentPath}/${item._id}/edit`
+          `${this.parentPath}/${item[this.primaryKey]}/edit`
         );
         this.editFunction(item);
         return;
       }
-      this.$router.push(this.innerOptions.editPath.replace(":id", item._id));
+      this.$router.push(this.innerOptions.editPath.replace(":id", item[this.primaryKey]));
     },
 
     goToViewPage(item) {
       if (!this.innerOptions.viewPath) {
-        window.history.replaceState({}, null, `${this.parentPath}/${item._id}`);
+        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         this.viewFunction(item);
         return;
       }
-      this.$router.push(this.innerOptions.viewPath.replace(":id", item._id));
+      this.$router.push(this.innerOptions.viewPath.replace(":id", item[this.primaryKey]));
     },
 
     createItem() {
@@ -995,7 +993,7 @@ There are 3 ways of using the Crud Component.
 
       this.$http
         .put(
-          `${this.innerOptions.url}/${this.selectedItem._id}`,
+          `${this.innerOptions.url}/${this.selectedItem[this.primaryKey]}`,
           this.selectedItem
         )
         .then(() => {
@@ -1021,7 +1019,7 @@ There are 3 ways of using the Crud Component.
       this.viewMode = "edit";
       this.selectedItem = item;
       this.$http
-        .get(`${this.innerOptions.url}/${item._id}`)
+        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
         .then(res => {
           this.selectedItem = res.data.body;
           this.openModal();
@@ -1036,7 +1034,7 @@ There are 3 ways of using the Crud Component.
       this.viewMode = "view";
       this.selectedItem = item;
       this.$http
-        .get(`${this.innerOptions.url}/${item._id}`)
+        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
         .then(res => {
           this.selectedItem = res.data.body;
           this.openModal();
@@ -1075,7 +1073,7 @@ There are 3 ways of using the Crud Component.
       }).then(result => {
         if (result.value) {
           this.$http
-            .delete(`${this.innerOptions.url}/${item._id}`)
+            .delete(`${this.innerOptions.url}/${item[this.primaryKey]}`)
             .then(() => {
               this.tableNeedsRefresh = true;
               this.statsNeedsRefresh = true;

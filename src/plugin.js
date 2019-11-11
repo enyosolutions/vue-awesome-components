@@ -1,7 +1,7 @@
 import axios from 'axios';
 import CripVueLoading from 'crip-vue-loading';
 import { directive as vClickOutside } from 'vue-clickaway';
-
+import _ from 'lodash'
 import FieldEnyoSelect from './components/crud/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/FieldJsonTextarea.vue';
@@ -29,12 +29,24 @@ import {
  * You can register global components here and use them as a plugin in your main Vue instance
  */
 
-const GlobalComponents = {
-  install(Vue) {
+ const GlobalComponents = {
+  install(Vue, options) {
     // if (!Vue.$root.$options.components.multiselect) {
     //   // eslint-disable-next-line
     //   console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
     // }
+
+
+    if (options) {
+      if (options['CrudComponent'] && options['CrudComponent'].props) {
+        CrudComponent.props = _.merge(CrudComponent.props, options['CrudComponent'].props);
+      }
+
+      if (options['EnyoAjaxTable'] && options['EnyoAjaxTable'].props) {
+        EnyoAjaxTable.props = _.merge(EnyoAjaxTable.props, options['EnyoAjaxTable'].props);
+      }
+    }
+
 
     Vue.component('enyo-card', EnyoCard);
     Vue.component('enyo-stats-card', EnyoStatsCard);
@@ -54,6 +66,8 @@ const GlobalComponents = {
 
     Vue.component('ajax-table', EnyoAjaxTable);
     Vue.component('enyo-ajax-table', EnyoAjaxTable);
+
+
     Vue.component('crud-component', CrudComponent);
 
 

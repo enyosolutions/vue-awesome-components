@@ -35,7 +35,7 @@ Vue.component("vue-form-generator", VueFormGenerator, []);
 
 
 Vue.use(VueI18n);
-Vue.use(VueEnyoComponents);
+Vue.use(VueEnyoComponents, {'CrudComponent': {extends: {props:{primaryKey: {type:String, default: 'tintin'}}}}});
 
 Vue.config.productionTip = false;
 

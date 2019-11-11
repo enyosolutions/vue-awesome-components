@@ -344,6 +344,7 @@ export default {
       default: 8
     },
     rows: {type: Array, default: () => ([])},
+    primaryKey: {type: String, default: 'id'},
     url: {type: String, default: ''},
     params: {type: Object, default: () => ({})},
     headers: {type: Object, default: () => ({})},
@@ -687,7 +688,7 @@ export default {
         return item;
       }
       const value = this.$store.state.listOfValues[listName].find(
-        elm => elm._id === item || elm.code === item
+        elm => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -701,7 +702,7 @@ export default {
         return item;
       }
       const value = this.$store.state.data[listName].find(
-        elm => elm._id === item || elm.code === item
+        elm => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;

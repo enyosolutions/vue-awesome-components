@@ -151,6 +151,7 @@
           data-parent="#accordion"
         >
           <div class="card-body">
+            basic
             <crud-component
               model-name="contact"
               :schema="ticketSchema"
@@ -236,13 +237,13 @@ import ticketSchema from "@/fixtures/ticket";
 import userSchema from "@/fixtures/user";
 import EnyoAjaxTable from "@/components/table/EnyoAjaxTable.vue";
 import LiveEdit from "@/components/form/LiveEdit.vue";
-import CrudComponent from "@/components/crud/CrudComponent.vue";
+// import CrudComponent from "@/components/crud/CrudComponent.vue";
 
 export default {
     name: "App",
     components: {
         Documentation,
-        CrudComponent,
+     //   CrudComponent,
         EnyoAjaxTable,
         LiveEdit,
     },

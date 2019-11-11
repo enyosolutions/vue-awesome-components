@@ -223,7 +223,8 @@ export default {
   ></table-and-charts-card>`,
   description: "",
   components: {
-    EnyoChartCard
+    EnyoChartCard,
+    EnyoAjaxTable,
   },
   props: {
     tableColumns: { type: Array, required: true },
