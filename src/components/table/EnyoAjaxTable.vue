@@ -316,7 +316,7 @@ import _ from "lodash";
 
 
 export default {
-  name: "AjaxTable",
+  name: "EnyoAjaxTable",
   token: `
   <AjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
     <template slot="table-actions"></template>

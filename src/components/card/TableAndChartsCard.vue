@@ -3,7 +3,7 @@
     class="card-table-and-chart"
     :class="{'card-stats-fullscreen': fullscreen, [className]: className}"
   >
-    <AjaxTable
+    <EnyoAjaxTable
       v-if="currentState === 'table'"
       :title="title"
       :columns="tableColumns"
@@ -49,7 +49,7 @@
         </button>
       </template>
       <!-- END OF ARRAY -->
-    </AjaxTable>
+    </EnyoAjaxTable>
     <enyo-chart-card
       v-if="currentState === 'bar'"
       chart-type="Bar"
@@ -204,6 +204,7 @@
 </template>
 <script>
 import EnyoChartCard from "./EnyoChartCard.vue";
+import EnyoAjaxTable from "../table/EnyoAjaxTable.vue";
 import _ from "lodash";
 
 export default {
