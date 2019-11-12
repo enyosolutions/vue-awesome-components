@@ -58,7 +58,7 @@
             :class="{'btn-primary': filterable, 'btn-default': !filterable}"
             @click="toggleFilter()"
           >
-            <i class="font-awesome fa fa--filter" />
+            <i class="font-awesome fa fa-filter" />
             {{ $t('common.buttons.filters') }}
           </button>
           <div class="dropdown">
@@ -68,7 +68,7 @@
               @click="getItems()"
             >
               <i
-                :class="'font-awesome fa fa--arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
+                :class="'font-awesome fa fa-arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
               />
               {{ $t('common.buttons.refresh') }}
             </button>
@@ -81,7 +81,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <i class="font-awesome fa fa--plus" />
+              <i class="font-awesome fa fa-plus" />
               {{ $t('table.more') }}
             </button>
             <div
@@ -110,7 +110,7 @@
                 class="btn btn-success btn-simple btn-block"
                 @click="exportCallBack"
               >
-                <i class="font-awesome fa fa--file-excel" />
+                <i class="font-awesome fa fa-file-excel" />
                 {{ $t('common.buttons.excel') }}
               </button>
             </div>
@@ -153,12 +153,15 @@
       >
         <div slot="table-actions">
           <template v-if="opts && opts.customTableTopActions">
+            <template v-for="(action, index) in opts.customTableTopActions">
                 <button
-                  v-for="(action, index) in opts.customTableTopActions"
+                  v-if="!action.canDisplay || action.canDisplay({item: props.row}, this)"
                   :key="index"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
                   :data-title="action.title || action.label"
+                  :tooltip="action.title || action.label"
+                  :data-tooltip="action.title || action.label"
                   @click="$emit('customAction',{action, item: props.row, location: 'tabletop'})"
                 >
                   {{ action.label ? $t(action.label) : '' }}
@@ -167,6 +170,7 @@
                     :class="action.icon"
                   />
                 </button>
+            </template>
           </template>
 
           <date-range-picker
@@ -198,8 +202,10 @@
                   :key="index"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
+                  :id="action.name + '-' + props.index"
                   :data-title="action.title || action.label"
-                  @click="$emit('customAction',{action, item: props.row, location: 'inline'})"
+                  @click="$emit('customAction', {action, item: props.row, location: 'inline',
+                   props, id: action.name + '-' + props.index})"
                 >
                   {{ action.label ? $t(action.label) : '' }}
                   <i
@@ -214,21 +220,21 @@
               class="btn btn-xs btn-simple btn-icon"
               @click="$emit('view', props.row)"
             >
-              <i class="font-awesome fa fa--eye text-info" />
+              <i class="fa fa-eye text-info" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.edit"
               class="btn btn-xs btn-simple btn-icon"
               @click="$emit('edit', props.row)"
             >
-              <i class="font-awesome-pencil fa fa--pencil" />
+              <i class="fa fa-pencil fa fa-pencil" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.delete"
               class="btn btn-xs btn-simple btn-icon"
               @click="deleteItem(props.row)"
             >
-              <i class="font-awesome fa fa--cancel text-danger" />
+              <i class="font-awesome fa fa-times text-danger" />
             </button>
           </span>
           <span

@@ -20,23 +20,26 @@
           :stats-needs-refresh.sync="statsNeedsRefresh"
           />
         </div>
+
         <div class="text-right">
           <slot name="top-right-buttons">
-            {{ opts && opts.customTopRightActions }}
-            <template v-if="opts && opts.customTopRightActions">
+            <template v-if="options && options.customTopRightActions">
                 <button
-                  v-for="(action, index) in opts.customTopRightActions"
+                  v-for="(action, index) in options.customTopRightActions"
                   :key="index"
-                  class="btn btn-xs btn-simple"
+                  class="btn btn-simple"
                   :class="action.class"
+                  :id="action.name"
                   :data-title="action.title || action.label"
-                  @click="$emit('customAction',{action, item: props.row, location: 'top'})"
+                  :tooltip="action.title || action.label"
+                  :data-tooltip="action.title || action.label"
+                  @click="$emit('customAction',{action, location: 'topright', id: action.name})"
                 >
-                  {{ action.label ? $t(action.label) : '' }}
                   <i
                     v-if="action.icon"
                     :class="action.icon"
                   />
+                  {{ action.label ? $t(action.label) : '' }}
                 </button>
               </template>
             <button
@@ -435,7 +438,7 @@ export default {
  `,
  defaultOptions,
  components: {
-  EnyoAjaxTable
+  EnyoAjaxTable,
     // VueGoodTable
   },
   mixins: [apiErrors],
@@ -1116,9 +1119,9 @@ export default {
       this.$router.push(this.innerOptions.createPath);
     },
 
-    customAction({ button, item, location }) {
-      // console.log(item);
-      return button.action && button.action({ button, item, location }, this);
+    customAction(body) {
+      const { action } = body;
+      return action && action.action && action.action(body, this);
     },
     listUpdated(datas){
       this.$emit('list-updated', datas);
