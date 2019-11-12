@@ -5,7 +5,7 @@
     <template slot="header">
       <h4 class="card-title ajax-table-header">
         <slot name="table-title">
-          {{ title || $t('app.labels.' + entity) }}
+          {{ _tableTitle }}
         </slot>
         <div class="btn-group btn-group-sm float-right">
           <slot name="table-top-actions" />
@@ -58,7 +58,7 @@
             :class="{'btn-primary': filterable, 'btn-default': !filterable}"
             @click="toggleFilter()"
           >
-            <i class="font-awesome enyo-fa-filter" />
+            <i class="font-awesome fa fa--filter" />
             {{ $t('common.buttons.filters') }}
           </button>
           <div class="dropdown">
@@ -68,7 +68,7 @@
               @click="getItems()"
             >
               <i
-                :class="'font-awesome enyo-fa-arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
+                :class="'font-awesome fa fa--arrows-cw' + (isRefreshing ? ' fa-spin' : '') "
               />
               {{ $t('common.buttons.refresh') }}
             </button>
@@ -81,7 +81,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <i class="font-awesome enyo-fa-plus" />
+              <i class="font-awesome fa fa--plus" />
               {{ $t('table.more') }}
             </button>
             <div
@@ -110,7 +110,7 @@
                 class="btn btn-success btn-simple btn-block"
                 @click="exportCallBack"
               >
-                <i class="font-awesome enyo-fa-file-excel" />
+                <i class="font-awesome fa fa--file-excel" />
                 {{ $t('common.buttons.excel') }}
               </button>
             </div>
@@ -152,6 +152,23 @@
         @on-search="onSearch"
       >
         <div slot="table-actions">
+          <template v-if="opts && opts.customTableTopActions">
+                <button
+                  v-for="(action, index) in opts.customTableTopActions"
+                  :key="index"
+                  class="btn btn-xs btn-simple"
+                  :class="action.class"
+                  :data-title="action.title || action.label"
+                  @click="$emit('customAction',{action, item: props.row, location: 'tabletop'})"
+                >
+                  {{ action.label ? $t(action.label) : '' }}
+                  <i
+                    v-if="action.icon"
+                    :class="action.icon"
+                  />
+                </button>
+          </template>
+
           <date-range-picker
             v-if="opts.actions && opts.actions.filter && opts.actions.dateFilter && filterable"
             class="form-group vgt-date-range"
@@ -175,14 +192,14 @@
               name="table-row-actions"
               :item="props.row"
             >
-              <span v-if="opts && opts.customActions">
+              <span v-if="opts && opts.customInlineActions">
                 <button
-                  v-for="(action, index) in opts.customActions"
+                  v-for="(action, index) in opts.customInlineActions"
                   :key="index"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
                   :data-title="action.title || action.label"
-                  @click="$emit('customAction',{action, item: props.row})"
+                  @click="$emit('customAction',{action, item: props.row, location: 'inline'})"
                 >
                   {{ action.label ? $t(action.label) : '' }}
                   <i
@@ -197,21 +214,21 @@
               class="btn btn-xs btn-simple btn-icon"
               @click="$emit('view', props.row)"
             >
-              <i class="font-awesome enyo-fa-eye text-info" />
+              <i class="font-awesome fa fa--eye text-info" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.edit"
               class="btn btn-xs btn-simple btn-icon"
               @click="$emit('edit', props.row)"
             >
-              <i class="font-awesome-pencil enyo-fa-pencil" />
+              <i class="font-awesome-pencil fa fa--pencil" />
             </button>
             <button
               v-if="opts && opts.actions && opts.actions.delete"
               class="btn btn-xs btn-simple btn-icon"
               @click="deleteItem(props.row)"
             >
-              <i class="font-awesome enyo-fa-cancel text-danger" />
+              <i class="font-awesome fa fa--cancel text-danger" />
             </button>
           </span>
           <span
@@ -369,7 +386,7 @@ export default {
       type: Object,
       default: () => ({
         pagination: true,
-        customActions: [], // {key, label, action: function(item, context{}}
+        customInlineActions: [], // {key, label, action: function(item, context{}}
         filterInitialyOn: false,
         saveSearchDatas: false,
         actions: {
@@ -432,6 +449,12 @@ export default {
     opts() {
       return _.merge(this.defaultOptions, this.options);
     },
+
+    _tableTitle() {
+      return this.title
+      || (this.$te('app.labels.' + this.entity) ? this.$t('app.labels.' + this.entity) : _.startCase(this.entity));
+    },
+
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
@@ -597,6 +620,7 @@ export default {
   },
   beforeDestroy() {},
   methods: {
+    startCase: _.startCase,
     // eslint-disable-next-line
     refreshTableData(changed) {
       // console.log("my url ", this.url);

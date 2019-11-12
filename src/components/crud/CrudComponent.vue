@@ -5,301 +5,311 @@
         <div class="col-12">
           <h1 class="text-primary">
             {{ $t('common.labels.manageTitle') }} {{ _titlePlural }} <i
-              v-if="isRefreshing"
-              class="fa fa-circle-o-notch fa-spin fa-fw"
-              style="color:orange;margin-left:10px"
+            v-if="isRefreshing"
+            class="fa fa-circle-o-notch fa-spin fa-fw"
+            style="color:orange;margin-left:10px"
             />
           </h1>
           <div
-            v-if="innerOptions.stats"
-            class="row"
+          v-if="innerOptions.stats"
+          class="row"
           >
-            <enyo-stats
-              :url="innerOptions.url + '/stats'"
-              :entity="modelName"
-              :stats-needs-refresh.sync="statsNeedsRefresh"
-            />
-          </div>
-          <div class="text-right">
-            <slot name="top-right-buttons">
-              <button
-                v-if="innerOptions.actions && innerOptions.actions.create"
-                class="btn btn-primary btn-simple"
-                @click="createFunction()"
-              >
-                <i class="enyo-fa-plus" />
-                {{ $t('common.labels.createNew') }} {{ _title }}
-              </button>
-            </slot>
-            <div style="display: inline-block">
+          <enyo-stats
+          :url="innerOptions.url + '/stats'"
+          :entity="modelName"
+          :stats-needs-refresh.sync="statsNeedsRefresh"
+          />
+        </div>
+        <div class="text-right">
+          <slot name="top-right-buttons">
+            {{ opts && opts.customTopRightActions }}
+            <template v-if="opts && opts.customTopRightActions">
+                <button
+                  v-for="(action, index) in opts.customTopRightActions"
+                  :key="index"
+                  class="btn btn-xs btn-simple"
+                  :class="action.class"
+                  :data-title="action.title || action.label"
+                  @click="$emit('customAction',{action, item: props.row, location: 'top'})"
+                >
+                  {{ action.label ? $t(action.label) : '' }}
+                  <i
+                    v-if="action.icon"
+                    :class="action.icon"
+                  />
+                </button>
+              </template>
+            <button
+            v-if="innerOptions.actions && innerOptions.actions.create"
+            class="btn btn-primary btn-simple"
+            @click="createFunction()"
+            >
+            <i class="fa fa-plus" />
+            {{ $t('common.labels.createNew') }} {{ _title }}
+          </button>
+        </slot>
+
+        <div style="display: inline-block">
               <!-- <upload-button
               name="pictureUpload"
               :options="{ upload:true, targetUrl: '/picture/banner', method: 'POST', headers:{}, base64: true, label: 'Upload', class: 'btn btn-success' }"
               @base64='callbackFunctionForBAse64'
               @uploaded='callbackFunctionForPostUploadWithServerResponse'
               >
-              </upload-button>-->
-            </div>
-            <!-- START OF create MODAL -->
-            <div
-              id="formModal"
-              class="modal"
-              :class="{slide: innerOptions.modalMode === 'slide', fade: innerOptions.modalMode === 'fade'}"
-              tabindex="-1"
-              role="dialog"
-            >
-              <div
-                class="modal-dialog"
-                :class="{'modal-full-height': innerOptions.modalMode === 'slide', 'modal-lg': innerOptions.modalMode === 'fade'}"
-                role="document"
-              >
-                <div
-                  v-if="viewMode==='create'"
-                  class="modal-content"
-                >
-                  <form @submit.prevent="createItem()">
-                    <div class="modal-header bg-primary text-white">
-                      <h3 class="modal-title mt-0">
-                        {{ $t('common.labels.add_a') }} {{ title }}
-                      </h3>
-                      <button
-                        type="button"
-                        class="close"
-                        aria-label="Close"
-                        @click="closeModal()"
-                      >
-                        <span
-                          aria-hidden="true"
-                          class="text-white"
-                        >&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <slot
-                        name="create-form"
-                        :selectedItem="selectedItem"
-                      >
-                        <template v-if="formSchema && formSchema.fields">
-                          <VueFormGenerator
-                            ref="form"
-                            :schema.sync="formSchema"
-                            :model="selectedItem"
-                            :options="formOptions"
-                          />
-                        </template>
-                      </slot>
-                    </div>
-                    <div class="modal-footer">
-                      <slot name="add-modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-default btn-simple mr-auto"
-                          @click="closeModal()"
-                        >
-                          {{ $t('common.buttons.cancel') }}
-                        </button>
-                        <button
-                          type="submit"
-                          class="btn btn-primary ml-auto"
-                        >
-                          {{ $t('common.buttons.save') }}
-                        </button>
-                      </slot>
-                    </div>
-                  </form>
-                </div>
-                <!--  EDITS -->
-                <div
-                  v-if="viewMode==='edit' || viewMode==='view'"
-                  class="modal-content"
-                >
-                  <form @submit.prevent="editItem()">
-                    <div class="modal-header bg-primary text-white">
-                      <h3
-                        v-if="viewMode==='edit'"
-                        class="modal-title mt-0"
-                      >
-                        {{ $t('common.buttons.edit') }}
-                      </h3>
-                      <h3
-                        v-if="viewMode==='view'"
-                        class="modal-title mt-0"
-                      >
-                        {{ $t('common.buttons.view') }}
-                      </h3>
-                      <button
-                        type="button"
-                        class="close"
-                        aria-label="Close"
-                        @click="closeModal()"
-                      >
-                        <span
-                          aria-hidden="true"
-                          class="text-white"
-                        >&times;</span>
-                      </button>
-                    </div>
-                    <div
-                      class="modal-body"
-                      :class="{'view-mode': viewMode === 'view'}"
-                    >
-                      <ul
-                        v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
-                        class="nav nav-tabs mt-5 mb-4"
-                      >
-                        <li class="nav-item">
-                          <a
-                            class="nav-link active"
-                            data-toggle="tab"
-                            @click="activeNestedTab = 'general'"
-                          >{{ $t('app.labels.' + name) }}</a>
-                        </li>
-                        <li
-                          v-for="ns in nestedSchemas"
-                          :key="ns.$id"
-                          class="nav-item"
-                        >
-                          <a
-                            class="nav-link"
-                            data-toggle="tab"
-                            @click="activeNestedTab = ns.name"
-                          >
-                            <i
-                              v-if="ns.icon"
-                              :class="ns.icon"
-                            />
-                            {{ $t(ns.title || ns.name || ns.modelName) }}
-                          </a>
-                        </li>
-                      </ul>
-                      <slot
-                        name="edit-form"
-                        :selectedItem="selectedItem"
-                      >
-                        <div class="tab-content">
-                          <template v-if="formSchema && formSchema.fields">
-                            <div
-                              class="tab-pane nested-tab fade"
-                              :class="{'active show': activeNestedTab === 'general' }"
-                            >
-                              <VueFormGenerator
-                                :schema.sync="formSchema"
-                                :model="selectedItem"
-                                :options="formOptions"
-                              />
-                            </div>
-                          </template>
-                          <template v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem">
-                            <div
-                              v-for="ns in nestedSchemas"
-                              :key="ns.$id"
-                              class="tab-pane nested-tab fade"
-                              :class="{'active show': activeNestedTab===ns.name}"
-                            >
-                              <crud-component
-                                v-bind="ns"
-                                :parent="selectedItem"
-                                :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-                              >
-                                <div slot="crud-title" />
-                              </crud-component>
-                            </div>
-                          </template>
-                        </div>
-                      </slot>
-                    </div>
-                    <div class="modal-footer">
-                      <slot name="edit-modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-default btn-simple mr-auto"
-                          @click="closeModal()"
-                        >
-                          {{ $t('common.buttons.cancel') }}
-                        </button>
-                        <button
-                          v-if="viewMode==='edit'"
-                          type="submit"
-                          class="btn btn-primary ml-auto"
-                        >
-                          {{ $t('common.buttons.save') }}
-                        </button>
-                        <button
-                          v-if="viewMode === 'view' && innerOptions.actions && innerOptions.actions.edit && !innerOptions.noActions"
-                          type="button"
-                          class="btn btn-info btn-simple ml-auto"
-                          @click.prevent.stop="goToEditPage(selectedItem)"
-                        >
-                          <i class="fa fa-pencil" />
-                          {{ $t('common.buttons.edit') }}
-                        </button>
-                        <button
-                          v-if="viewMode==='view'"
-                          type="button"
-                          class="btn btn-primary ml-2"
-                          @click="closeModal()"
-                        >
-                          {{ $t('common.buttons.close') }}
-                        </button>
-                      </slot>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <!-- // .modal-content -->
-              <!-- // .modal-content -->
-            </div>
+            </upload-button>-->
           </div>
-          <!-- END OF create MODAL -->
-          <EnyoAjaxTable
-            :columns="innerOptions.columns"
-            :columns-displayed="innerOptions.columnsDisplayed"
-            :entity="modelName"
-            :mode="innerOptions.mode"
-            :url="innerOptions.url"
-            :params="innerOptions.queryParams"
-            :table-needs-refresh.sync="tableNeedsRefresh"
-            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :options="{
-            pagination: innerOptions.pagination,
-            noHeaders: innerOptions.noHeaders,
-            filterInitiallyOn: innerOptions.filterInitiallyOn,
-            saveSearchDatas: innerOptions.saveSearchDatas,
-            noActions: innerOptions.noActions,
-            actions: innerOptions.actions,
-            customActions: innerOptions.customActions
-          }"
-            name="ajax-table"
-            @edit="goToEditPage"
-            @view="goToViewPage"
-            @create="createFunction"
-            @delete="deleteFunction"
-            @customAction="customAction"
-            @crud-list-updated="listUpdated"
+          <!-- START OF create MODAL -->
+          <div
+          id="formModal"
+          class="modal"
+          :class="{slide: innerOptions.modalMode === 'slide', fade: innerOptions.modalMode === 'fade'}"
+          tabindex="-1"
+          role="dialog"
           >
-            <template slot="table-top-more-actions">
-              <upload-button
-                v-if="innerOptions.actions && innerOptions.actions.import"
-                name="import"
-                :options="{
-                  upload: true,
-                  targetUrl: innerOptions.uploadUrl,
-                  method: 'POST',
-                  headers: {},
-                  base64: false,
-                  label: $t('common.buttons.import'),
-                  class: 'btn btn-success btn-simple btn-block'
-                }"
-                @uploaded="importResponse"
+          <div
+          class="modal-dialog"
+          :class="{'modal-full-height': innerOptions.modalMode === 'slide', 'modal-lg': innerOptions.modalMode === 'fade'}"
+          role="document"
+          >
+          <div
+          v-if="viewMode==='create'"
+          class="modal-content"
+          >
+          <form @submit.prevent="createItem()">
+            <div class="modal-header bg-primary text-white">
+              <h3 class="modal-title mt-0">
+                {{ $t('common.labels.add_a') }} {{ title }}
+              </h3>
+              <button
+              type="button"
+              class="close"
+              aria-label="Close"
+              @click="closeModal()"
+              >
+              <span
+              aria-hidden="true"
+              class="text-white"
+              >&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <slot
+            name="create-form"
+            :selectedItem="selectedItem"
+            >
+            <template v-if="formSchema && formSchema.fields">
+              <VueFormGenerator
+              ref="form"
+              :schema.sync="formSchema"
+              :model="selectedItem"
+              :options="formOptions"
               />
             </template>
-
-            <!-- END OF ARRAY -->
-          </EnyoAjaxTable>
+          </slot>
         </div>
-      </div>
+        <div class="modal-footer">
+          <slot name="add-modal-footer">
+            <button
+            type="button"
+            class="btn btn-default btn-simple mr-auto"
+            @click="closeModal()"
+            >
+            {{ $t('common.buttons.cancel') }}
+          </button>
+          <button
+          type="submit"
+          class="btn btn-primary ml-auto"
+          >
+          {{ $t('common.buttons.save') }}
+        </button>
+      </slot>
     </div>
+  </form>
+</div>
+<!--  EDITS -->
+<div
+v-if="viewMode==='edit' || viewMode==='view'"
+class="modal-content"
+>
+<form @submit.prevent="editItem()">
+  <div class="modal-header bg-primary text-white">
+    <h3
+    v-if="viewMode==='edit'"
+    class="modal-title mt-0"
+    >
+    {{ $t('common.buttons.edit') }}
+  </h3>
+  <h3
+  v-if="viewMode==='view'"
+  class="modal-title mt-0"
+  >
+  {{ $t('common.buttons.view') }}
+</h3>
+<button
+type="button"
+class="close"
+aria-label="Close"
+@click="closeModal()"
+>
+<span
+aria-hidden="true"
+class="text-white"
+>&times;</span>
+</button>
+</div>
+<div
+class="modal-body"
+:class="{'view-mode': viewMode === 'view'}"
+>
+<ul
+v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
+class="nav nav-tabs mt-5 mb-4"
+>
+<li class="nav-item">
+  <a
+  class="nav-link active"
+  data-toggle="tab"
+  @click="activeNestedTab = 'general'"
+  >{{ $te('app.labels.' + name) ?  $te('app.labels.' + name) : _.startCase(name) }}</a>
+</li>
+<li
+v-for="ns in nestedSchemas"
+:key="ns.$id"
+class="nav-item"
+>
+<a
+class="nav-link"
+data-toggle="tab"
+@click="activeNestedTab = ns.name"
+>
+<i
+v-if="ns.icon"
+:class="ns.icon"
+/>
+{{ $t(ns.title || ns.name || ns.modelName) }}
+</a>
+</li>
+</ul>
+<slot
+name="edit-form"
+:selectedItem="selectedItem"
+>
+<div class="tab-content">
+  <template v-if="formSchema && formSchema.fields">
+    <div
+    class="tab-pane nested-tab fade"
+    :class="{'active show': activeNestedTab === 'general' }"
+    >
+    <VueFormGenerator
+    :schema.sync="formSchema"
+    :model="selectedItem"
+    :options="formOptions"
+    />
   </div>
+</template>
+<template v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem">
+  <div
+  v-for="ns in nestedSchemas"
+  :key="ns.$id"
+  class="tab-pane nested-tab fade"
+  :class="{'active show': activeNestedTab===ns.name}"
+  >
+  <crud-component
+  v-bind="ns"
+  :parent="selectedItem"
+  :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+  >
+  <div slot="crud-title" />
+</crud-component>
+</div>
+</template>
+</div>
+</slot>
+</div>
+<div class="modal-footer">
+  <slot name="edit-modal-footer">
+    <button
+    type="button"
+    class="btn btn-default btn-simple mr-auto"
+    @click="closeModal()"
+    >
+    {{ $t('common.buttons.cancel') }}
+  </button>
+  <button
+  v-if="viewMode==='edit'"
+  type="submit"
+  class="btn btn-primary ml-auto"
+  >
+  {{ $t('common.buttons.save') }}
+</button>
+<button
+v-if="viewMode === 'view' && innerOptions.actions && innerOptions.actions.edit && !innerOptions.noActions"
+type="button"
+class="btn btn-info btn-simple ml-auto"
+@click.prevent.stop="goToEditPage(selectedItem)"
+>
+<i class="fa fa-pencil" />
+{{ $t('common.buttons.edit') }}
+</button>
+<button
+v-if="viewMode==='view'"
+type="button"
+class="btn btn-primary ml-2"
+@click="closeModal()"
+>
+{{ $t('common.buttons.close') }}
+</button>
+</slot>
+</div>
+</form>
+</div>
+</div>
+<!-- // .modal-content -->
+<!-- // .modal-content -->
+</div>
+</div>
+<!-- END OF create MODAL -->
+<EnyoAjaxTable
+:columns="innerOptions.columns"
+:columns-displayed="innerOptions.columnsDisplayed"
+:entity="modelName"
+:mode="innerOptions.mode"
+:url="innerOptions.url"
+:params="innerOptions.queryParams"
+:table-needs-refresh.sync="tableNeedsRefresh"
+:nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+:options="innerOptions"
+name="ajax-table"
+@edit="goToEditPage"
+@view="goToViewPage"
+@create="createFunction"
+@delete="deleteFunction"
+@customAction="customAction"
+@crud-list-updated="listUpdated"
+>
+<template slot="table-top-more-actions">
+  <upload-button
+  v-if="innerOptions.actions && innerOptions.actions.import"
+  name="import"
+  :options="{
+  upload: true,
+  targetUrl: innerOptions.uploadUrl,
+  method: 'POST',
+  headers: {},
+  base64: false,
+  label: $t('common.buttons.import'),
+  class: 'btn btn-success btn-simple btn-block'
+}"
+@uploaded="importResponse"
+/>
+</template>
+
+<!-- END OF ARRAY -->
+</EnyoAjaxTable>
+</div>
+</div>
+</div>
+</div>
 </template>
 <script>
 /* global $ */
@@ -320,7 +330,9 @@ const defaultOptions = {
   stats: false,
   modalMode: "slide", // fade | slide
   columnsDisplayed: 8,
-  customActions: [], // {key, label, action: function(item, context{}}
+  customInlineActions: [],
+  customTopActions: [],
+  customTabletopActions: [],
   actions: {
     noActions: false,
     search: true,
@@ -331,25 +343,25 @@ const defaultOptions = {
     export: false,
     import: false,
     dateFilter: true,
-    refresh: true
+    refresh: true,
   }
 };
 
 export default {
   name: "CrudComponent",
   introduction:
-    "A component to quickly create a table UI with edit capabilities",
+  "A component to quickly create a table UI with edit capabilities",
   description: `This component magically create lists and edit data based on a json schema.
 
   ### Usage.
 
-There are 3 ways of using the Crud Component.
-   The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
+  There are 3 ways of using the Crud Component.
+  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
 
   If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
 
   The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
-   Whatever the reason for you to modify the component, we suggest that you copy the html code as source for your edits.
+  Whatever the reason for you to modify the component, we suggest that you copy the html code as source for your edits.
 
   ### Actions
 
@@ -374,7 +386,7 @@ There are 3 ways of using the Crud Component.
   `,
   token: `
   // example of route for crud component
- {
+  {
    name: 'contact',
    path: 'contact',
    component: CrudComponent,
@@ -420,10 +432,10 @@ There are 3 ways of using the Crud Component.
    }]
  }
  ,
-  `,
-  defaultOptions,
-  components: {
-    EnyoAjaxTable
+ `,
+ defaultOptions,
+ components: {
+  EnyoAjaxTable
     // VueGoodTable
   },
   mixins: [apiErrors],
@@ -442,7 +454,7 @@ There are 3 ways of using the Crud Component.
       required: false,
       default: undefined,
       note:
-        "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
+      "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
     },
     crudNeedsRefresh: { type: Boolean, default: false },
     nestedSchemas: {
@@ -450,14 +462,14 @@ There are 3 ways of using the Crud Component.
       required: false,
       default: () => [],
       note:
-        "An array describing data that is linked to this model. Serves for displaying a detailed object"
+      "An array describing data that is linked to this model. Serves for displaying a detailed object"
     },
     parent: {
       type: Object,
       required: false,
       note:
-        "The actual object containing the parent in case of a nested schema." +
-        " You don't actually to pass this, it's done automatically by the compoenet itself"
+      "The actual object containing the parent in case of a nested schema." +
+      " You don't actually to pass this, it's done automatically by the compoenet itself"
     },
     nestedDisplayMode: {
       type: String,
@@ -495,31 +507,34 @@ There are 3 ways of using the Crud Component.
   computed: {
     _title() {
       if (this.title) {
-      return this.$te(this.title) ? this.$t(this.title) : this.title;
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
 
       if (this.name) {
-        return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : this.name;
+        return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : _.startCase(this.name);
       }
       if (this.modelName) {
-        return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : this.modelName;
+        return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : _.startCase(this.modelName);
       }
       return '';
     },
     _titlePlural() {
-      if (this.titlePlural) {
-      return this.$te(this.titlePlural) ? this.$t(this.titlePlural) : this.titlePlural;
+      if (this.innerModel && this.innerModel.pluralName) {
+        return this.$te(this.innerModel.pluralName) ?
+        this.$t(this.innerModel.pluralName) : _.startCase(this.innerModel.pluralName);
       }
 
       if (this.title) {
-      return this.$te(this.title) ? this.$t(this.title + 's') : (this.title + 's');
+        return this.$te(this.title) ? this.$t(this.title + 's') : (this.title + 's');
       }
 
       if (this.name) {
-        return this.$te(`app.labels.${this.name}s`) ? this.$t(`app.labels.${this.name}s`) : this.name + 's';
+        return this.$te(`app.labels.${this.name}s`) ?
+        this.$t(`app.labels.${this.name}s`) : _.startCase(this.name + 's');
       }
       if (this.modelName) {
-        return this.$te(`app.labels.${this.modelName}s`) ? this.$t(`app.labels.${this.modelName}s`) : this.modelName + 's';
+        return this.$te(`app.labels.${this.modelName}s`) ?
+        this.$t(`app.labels.${this.modelName}s`) : _.startCase(this.modelName + 's');
       }
       return '';
     },
@@ -585,19 +600,19 @@ There are 3 ways of using the Crud Component.
           this.$store.state &&
           !this.options.deletePermitted.some(
             v => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0
-          )
-        ) {
+            )
+          ) {
           this.options.actions.delete = false;
-        }
       }
-      this.innerOptions = _.merge(this.innerOptions, this.options);
-      if (this.$route && this.$route.query && this.$route.query.filters) {
-        this.innerOptions.queryParams = _.merge(
-          this.innerOptions.queryParams || this.$route.query.filters
+    }
+    this.innerOptions = _.merge(this.innerOptions, this.options);
+    if (this.$route && this.$route.query && this.$route.query.filters) {
+      this.innerOptions.queryParams = _.merge(
+        this.innerOptions.queryParams || this.$route.query.filters
         );
-      }
-    },
-    callbackFunctionForBAse64(e) {
+    }
+  },
+  callbackFunctionForBAse64(e) {
       // eslint-disable-next-line
       console.log("Base 64 done", e);
     },
@@ -608,51 +623,51 @@ There are 3 ways of using the Crud Component.
       if (
         (!e.improperData || e.improperData.length === 0) &&
         (!e.properData || e.properData.length === 0)
-      ) {
+        ) {
         Swal.fire({
           title: this.$t("common.messages.no_data_imported", {
             title: this._title
           }),
           type: "warning"
         });
-        return;
-      }
+      return;
+    }
 
-      if (e.properData.length > 0) {
+    if (e.properData.length > 0) {
+      this.$notify({
+        title: this.$t("common.messages.successfullyImported", {
+          title: this._title
+        }),
+        type: "success"
+      });
+    }
+
+    if (e.improperData.length > 0) {
+      let message = "";
+      e.improperData.forEach(element => {
+        message += ` - ${Object.values(element).join(" | ")}, `;
+      });
+      message = message.substring(0, message.length - 2);
+      setTimeout(() => {
         this.$notify({
-          title: this.$t("common.messages.successfullyImported", {
-            title: this._title
-          }),
-          type: "success"
-        });
-      }
-
-      if (e.improperData.length > 0) {
-        let message = "";
-        e.improperData.forEach(element => {
-          message += ` - ${Object.values(element).join(" | ")}, `;
-        });
-        message = message.substring(0, message.length - 2);
-        setTimeout(() => {
-          this.$notify({
-            title: `${e.improperData.length} ${this.$t(
-              "common.messages.not_imported",
-              { title: this._title }
+          title: `${e.improperData.length} ${this.$t(
+            "common.messages.not_imported",
+            { title: this._title }
             )}`,
             message,
             type: "warning",
             timeout: 30000
           });
-        }, 0);
-      }
-      this.tableNeedsRefresh = true;
-      this.statsNeedsRefresh = true;
-      this.nestedCrudNeedsRefresh = true;
-      this.$forceUpdate();
-    },
+      }, 0);
+    }
+    this.tableNeedsRefresh = true;
+    this.statsNeedsRefresh = true;
+    this.nestedCrudNeedsRefresh = true;
+    this.$forceUpdate();
+  },
 
-    exportCurrentArrayToExcel() {
-      let CsvString = "";
+  exportCurrentArrayToExcel() {
+    let CsvString = "";
       // eslint-disable-next-line
       this.items.forEach((RowItem, RowIndex) => {
         // eslint-disable-next-line
@@ -705,20 +720,20 @@ There are 3 ways of using the Crud Component.
       }
       if (this.$route && this.$route.params && this.$route.params.id) {
         this.$http
-          .get(`${this.innerOptions.url}/${this.$route.params.id}`)
-          .then(res => {
-            const matched = this.$route.matched[this.$route.matched.length - 1];
-            if (matched.path.indexOf("/edit") !== -1) {
-              this.editFunction(res.data.body);
-            } else {
-              this.viewFunction(res.data.body);
-            }
-            this.$forceUpdate();
-          })
-          .catch(this.apiErrorCallback)
-          .finally(()=> {
-                    this.isRefreshing = false;
-                  });
+        .get(`${this.innerOptions.url}/${this.$route.params.id}`)
+        .then(res => {
+          const matched = this.$route.matched[this.$route.matched.length - 1];
+          if (matched.path.indexOf("/edit") !== -1) {
+            this.editFunction(res.data.body);
+          } else {
+            this.viewFunction(res.data.body);
+          }
+          this.$forceUpdate();
+        })
+        .catch(this.apiErrorCallback)
+        .finally(()=> {
+          this.isRefreshing = false;
+        });
       }
     },
 
@@ -745,62 +760,62 @@ There are 3 ways of using the Crud Component.
             subSchema.styleClasses = `subgroup  ${(prop.field &&
               prop.field.styleClasses) ||
               "card"}`;
-            formSchema.push(subSchema);
-          } else {
-            if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = prop.relation;
-              prop.field.fieldOptions.trackBy = prop.foreignKey;
-            }
-            const field = {
-              type: (prop.field && prop.field.type) || this.getFormtype(prop),
-              label: prop.title || prop.description || _.startCase(key),
-              placeholder: prop.description || prop.title || _.startCase(key),
-              fieldOptions: (prop.field && prop.field.fieldOptions) || {
+              formSchema.push(subSchema);
+            } else {
+              if (prop.field && prop.relation && prop.field.fieldOptions) {
+                prop.field.fieldOptions.url = prop.relation;
+                prop.field.fieldOptions.trackBy = prop.foreignKey;
+              }
+              const field = {
+                type: (prop.field && prop.field.type) || this.getFormtype(prop),
+                label: prop.title || prop.description || _.startCase(key),
                 placeholder: prop.description || prop.title || _.startCase(key),
-                url: prop.relation,
-                trackBy: prop.foreignKey || "code",
-                label: "label",
-                step: prop.field && prop.field.step
-              },
-              values:
+                fieldOptions: (prop.field && prop.field.fieldOptions) || {
+                  placeholder: prop.description || prop.title || _.startCase(key),
+                  url: prop.relation,
+                  trackBy: prop.foreignKey || "code",
+                  label: "label",
+                  step: prop.field && prop.field.step
+                },
+                values:
                 prop.enum ||
                 (prop.items && prop.items.enum) ||
                 (prop.field &&
                   prop.field.fieldOptions &&
                   this.getSelectEnum(prop.field.fieldOptions.enum)),
-              required: prop.field && prop.field.required,
-              hint: prop.description,
-              model: prefix + key,
-              validator: prop.field && prop.field.validator,
-              min: prop.min,
-              max: prop.max,
-              multi: prop.type === "array",
-              readonly:
+                required: prop.field && prop.field.required,
+                hint: prop.description,
+                model: prefix + key,
+                validator: prop.field && prop.field.validator,
+                min: prop.min,
+                max: prop.max,
+                multi: prop.type === "array",
+                readonly:
                 this.viewMode === "view" || (prop.field && prop.field.readonly),
-              disabled:
+                disabled:
                 this.viewMode === "view" || (prop.field && prop.field.readonly),
-              styleClasses:
+                styleClasses:
                 (prop.field && prop.field.styleClasses) ||
                 (size < 8 ? "col-md-12" : "col-md-6"),
-              relation: prop.relation,
-              foreignKey: prop.foreignKey
-            };
-            field.fieldOptions.inputType =
+                relation: prop.relation,
+                foreignKey: prop.foreignKey
+              };
+              field.fieldOptions.inputType =
               (prop.field && prop.field.inputType) ||
               this.getFormInputType(prop) ||
               "text";
-            if (field.type === "dateTime") {
-              field.fieldOptions.icons = {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
-              };
+              if (field.type === "dateTime") {
+                field.fieldOptions.icons = {
+                  time: "fa fa-clock-o",
+                  date: "fa fa-calendar",
+                  up: "fa fa-arrow-up",
+                  down: "fa fa-arrow-down"
+                };
+              }
+              formSchema.push(field);
             }
-            formSchema.push(field);
           }
-        }
-      });
+        });
       return { fields: formSchema };
     },
 
@@ -817,18 +832,18 @@ There are 3 ways of using the Crud Component.
       switch (type) {
         default:
         case "string":
-          return "input";
+        return "input";
         case "number":
-          return "input";
+        return "input";
         case "boolean":
-          return "checkbox";
+        return "checkbox";
       }
     },
     getSelectEnum(val) {
       const options = this.$store && this.$store.state;
       _.isString(val) && val.indexOf("$store") === 0
-        ? _.get(this.$store.state, val.replace("$store.", ""))
-        : val;
+      ? _.get(this.$store.state, val.replace("$store.", ""))
+      : val;
       return options;
     },
 
@@ -845,96 +860,96 @@ There are 3 ways of using the Crud Component.
 
       switch (type) {
         case "string":
-          switch (property.format) {
-            case "email":
-              return "email";
-            case "date-time":
-              return "datetime";
-            default:
-              return "text";
-          }
+        switch (property.format) {
+          case "email":
+          return "email";
+          case "date-time":
+          return "datetime";
+          default:
+          return "text";
+        }
         case "number":
-          return "number";
+        return "number";
         case "boolean":
         case "array":
         case "object":
-          return "string";
+        return "string";
         default:
           // console.error("type not known ", type, property);
           return type;
-      }
-    },
+        }
+      },
 
-    getColumnType(property) {
-      if (property.column && property.column.type) {
-        return property.column && property.column.type;
-      }
-      if (property.columnType) {
-        return property.columnType;
-      }
-      let { type } = property;
-      if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
-        for (let i = 0; i < possibleTypes.length; i++) {
-          if (property.type.indexOf(possibleTypes[i]) > -1) {
-            type = possibleTypes[i];
+      getColumnType(property) {
+        if (property.column && property.column.type) {
+          return property.column && property.column.type;
+        }
+        if (property.columnType) {
+          return property.columnType;
+        }
+        let { type } = property;
+        if (Array.isArray(type)) {
+          const possibleTypes = ["string", "number", "boolean"];
+          for (let i = 0; i < possibleTypes.length; i++) {
+            if (property.type.indexOf(possibleTypes[i]) > -1) {
+              type = possibleTypes[i];
+            }
           }
         }
-      }
 
-      switch (type) {
-        case "string":
+        switch (type) {
+          case "string":
           switch (property.format) {
             case "date-time":
-              return "text";
+            return "text";
             default:
-              return "text";
+            return "text";
           }
-        case "number":
+          case "number":
           return "number";
-        case "boolean":
+          case "boolean":
           return "boolean";
-        case "array":
-        case "object":
+          case "array":
+          case "object":
           return "object";
-        default:
+          default:
           return "text";
-      }
-    },
+        }
+      },
 
-    openModal() {
-      this.$modal && this.$modal.modal("show");
-    },
+      openModal() {
+        this.$modal && this.$modal.modal("show");
+      },
 
-    closeModal() {
-      window.history.replaceState({}, null, `${this.parentPath}`);
-      this.$modal && this.$modal.modal("hide");
-    },
+      closeModal() {
+        window.history.replaceState({}, null, `${this.parentPath}`);
+        this.$modal && this.$modal.modal("hide");
+      },
 
-    goToEditPage(item) {
-      if (!this.innerOptions.editPath) {
-        window.history.replaceState(
-          {},
-          null,
-          `${this.parentPath}/${item[this.primaryKey]}/edit`
-        );
-        this.editFunction(item);
-        return;
-      }
-      this.$router.push(this.innerOptions.editPath.replace(":id", item[this.primaryKey]));
-    },
+      goToEditPage(item) {
+        if (!this.innerOptions.editPath) {
+          window.history.replaceState(
+            {},
+            null,
+            `${this.parentPath}/${item[this.primaryKey]}/edit`
+            );
+          this.editFunction(item);
+          return;
+        }
+        this.$router.push(this.innerOptions.editPath.replace(":id", item[this.primaryKey]));
+      },
 
-    goToViewPage(item) {
-      if (!this.innerOptions.viewPath) {
-        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
-        this.viewFunction(item);
-        return;
-      }
-      this.$router.push(this.innerOptions.viewPath.replace(":id", item[this.primaryKey]));
-    },
+      goToViewPage(item) {
+        if (!this.innerOptions.viewPath) {
+          window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+          this.viewFunction(item);
+          return;
+        }
+        this.$router.push(this.innerOptions.viewPath.replace(":id", item[this.primaryKey]));
+      },
 
-    createItem() {
-      if (!this.innerOptions.url) {
+      createItem() {
+        if (!this.innerOptions.url) {
         // eslint-disable-next-line
         console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
         return false;
@@ -951,27 +966,27 @@ There are 3 ways of using the Crud Component.
         console.warn(
           "Unable to find the reference to the scham form on ",
           this.$route.path
-        );
+          );
       }
       return this.$http
-        .post(this.innerOptions.url, this.selectedItem)
-        .then(() => {
-          Swal.fire({
-            title: this.$t("common.messages.successfullyCreated", {
-              title: this.type
-            }),
-            type: "success"
-          });
-          this.tableNeedsRefresh = true;
-          this.statsNeedsRefresh = true;
-          this.nestedCrudNeedsRefresh = true;
-          this.$forceUpdate();
-          this.closeModal();
-        })
-        .catch(this.apiErrorCallback)
-        .finally(()=> {
-                  this.isRefreshing = false;
-                });
+      .post(this.innerOptions.url, this.selectedItem)
+      .then(() => {
+        Swal.fire({
+          title: this.$t("common.messages.successfullyCreated", {
+            title: this.type
+          }),
+          type: "success"
+        });
+        this.tableNeedsRefresh = true;
+        this.statsNeedsRefresh = true;
+        this.nestedCrudNeedsRefresh = true;
+        this.$forceUpdate();
+        this.closeModal();
+      })
+      .catch(this.apiErrorCallback)
+      .finally(()=> {
+        this.isRefreshing = false;
+      });
 
       // return false;
     },
@@ -992,26 +1007,26 @@ There are 3 ways of using the Crud Component.
       }
 
       this.$http
-        .put(
-          `${this.innerOptions.url}/${this.selectedItem[this.primaryKey]}`,
-          this.selectedItem
+      .put(
+        `${this.innerOptions.url}/${this.selectedItem[this.primaryKey]}`,
+        this.selectedItem
         )
-        .then(() => {
-          Swal.fire({
-            title: this.$t("common.messages.successfullyModified", {
-              title: this.type
-            }),
-            type: "success"
-          });
-          this.tableNeedsRefresh = true;
-          this.nestedCrudNeedsRefresh = true;
-          this.$forceUpdate();
-
-          this.closeModal();
-        })
-        .catch(this.apiErrorCallback).finally(()=> {
-          this.isRefreshing = false;
+      .then(() => {
+        Swal.fire({
+          title: this.$t("common.messages.successfullyModified", {
+            title: this.type
+          }),
+          type: "success"
         });
+        this.tableNeedsRefresh = true;
+        this.nestedCrudNeedsRefresh = true;
+        this.$forceUpdate();
+
+        this.closeModal();
+      })
+      .catch(this.apiErrorCallback).finally(()=> {
+        this.isRefreshing = false;
+      });
       return false;
     },
 
@@ -1019,44 +1034,44 @@ There are 3 ways of using the Crud Component.
       this.viewMode = "edit";
       this.selectedItem = item;
       this.$http
-        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
-        .then(res => {
-          this.selectedItem = res.data.body;
-          this.openModal();
-        })
-        .catch(this.apiErrorCallback)
-        .finally(()=> {
-          this.isRefreshing = false;
-        });
+      .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+      .then(res => {
+        this.selectedItem = res.data.body;
+        this.openModal();
+      })
+      .catch(this.apiErrorCallback)
+      .finally(()=> {
+        this.isRefreshing = false;
+      });
     },
 
     viewFunction(item) {
       this.viewMode = "view";
       this.selectedItem = item;
       this.$http
-        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
-        .then(res => {
-          this.selectedItem = res.data.body;
-          this.openModal();
-        })
-        .catch(this.apiErrorCallback)
-        .finally(()=> {
-          this.isRefreshing = false;
-        });
+      .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+      .then(res => {
+        this.selectedItem = res.data.body;
+        this.openModal();
+      })
+      .catch(this.apiErrorCallback)
+      .finally(()=> {
+        this.isRefreshing = false;
+      });
     },
 
     nestedViewFunction() {
       this.viewMode = 'view';
       this.$http
-        .get(`${this.innerOptions.url}`)
-        .then((res) => {
-          this.selectedItem = res.data.body;
-          this.nestedCrudNeedsRefresh = true;
-        })
-        .catch(this.apiErrorCallback)
-        .finally(()=> {
-                  this.isRefreshing = false;
-                });
+      .get(`${this.innerOptions.url}`)
+      .then((res) => {
+        this.selectedItem = res.data.body;
+        this.nestedCrudNeedsRefresh = true;
+      })
+      .catch(this.apiErrorCallback)
+      .finally(()=> {
+        this.isRefreshing = false;
+      });
     },
 
     deleteFunction(item) {
@@ -1073,20 +1088,20 @@ There are 3 ways of using the Crud Component.
       }).then(result => {
         if (result.value) {
           this.$http
-            .delete(`${this.innerOptions.url}/${item[this.primaryKey]}`)
-            .then(() => {
-              this.tableNeedsRefresh = true;
-              this.statsNeedsRefresh = true;
-              this.nestedCrudNeedsRefresh = true;
-              this.$forceUpdate();
-            })
-            .catch(err => {
+          .delete(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+          .then(() => {
+            this.tableNeedsRefresh = true;
+            this.statsNeedsRefresh = true;
+            this.nestedCrudNeedsRefresh = true;
+            this.$forceUpdate();
+          })
+          .catch(err => {
               // eslint-disable-next-line
               console.error(err);
             })
-            .finally(()=> {
-                      this.isRefreshing = false;
-                    });
+          .finally(()=> {
+            this.isRefreshing = false;
+          });
         }
       });
     },
@@ -1101,9 +1116,9 @@ There are 3 ways of using the Crud Component.
       this.$router.push(this.innerOptions.createPath);
     },
 
-    customAction({ action, item }) {
+    customAction({ button, item, location }) {
       // console.log(item);
-      return action.action(item, this);
+      return button.action && button.action({ button, item, location }, this);
     },
     listUpdated(datas){
       this.$emit('list-updated', datas);
@@ -1118,7 +1133,7 @@ There are 3 ways of using the Crud Component.
           newCol.type = this.getColumnType(prop);
           newCol.label = _.startCase(
             (prop.column && prop.column.title) || prop.title || key
-          );
+            );
           newCol.listName = prop.column && prop.column.listName;
           newCol.filterOptions = { enabled: false };
           newCol.enum = prop.enum || (prop.column && prop.column.enum);
@@ -1155,9 +1170,9 @@ There are 3 ways of using the Crud Component.
 
 .form-element.field-input {
   label {
-      overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
