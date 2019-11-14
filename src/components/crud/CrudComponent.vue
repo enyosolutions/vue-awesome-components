@@ -768,6 +768,7 @@ export default {
               if (prop.field && prop.relation && prop.field.fieldOptions) {
                 prop.field.fieldOptions.url = prop.relation;
                 prop.field.fieldOptions.trackBy = prop.foreignKey;
+                prop.field.fieldOptions.searchable = true;
               }
               const field = {
                 type: (prop.field && prop.field.type) || this.getFormtype(prop),

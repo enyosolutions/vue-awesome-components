@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
   props: {
     options: {
@@ -28,8 +29,10 @@ export default {
   },
 
   watch: {
-    // eslint-disable-next-line
-    vModelValue(newValue, oldValue) {
+    url() {
+      this.setIncomingValue(this.vModelValue);
+    },
+    vModelValue(newValue) {
       this.setIncomingValue(newValue);
     }
   },
@@ -53,7 +56,7 @@ export default {
 
   },
   methods: {
-    // Sets the value from the the the v-model attribute
+  // Sets the value from the the the v-model attribute
     setIncomingValue(value) {
       if (Array.isArray(value)) {
         this.internalValue = this.internalOptions && this.internalOptions.filter(option => {
@@ -66,10 +69,14 @@ export default {
         const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
         return searchKey == value;
       });
+      if (!this.internalValue && this.url) {
+        this.loadRemoteEntities(value)
+      }
     },
 
     // Sends up the value selected by the multiselect component
-    updateSelected(value /* , id */ ) {
+    updateSelected(value /* , id */) {
+      console.log('value', value);
       this.internalValue = value;
       if (!value || typeof (value) === 'string' || typeof (value) === 'number') {
         this.$emit('input', value);
@@ -82,23 +89,16 @@ export default {
     },
 
     loadRemoteEntities(searchString = undefined) {
-      // console.log('LOADING remote entities');
+      /* eslint-disable-next-line */
+      console.log('LOADING remote entities');
       if (this.dataUrl) {
         this.isLoading = true;
-        const promise = this.$http.get(this.dataUrl, {
-          params: {
-            listOfValues: true,
-            search: searchString
-          }
-        });
+        const promise = this.$http.get(this.dataUrl, { params: { listOfValues: true, search: searchString } });
         promise.then(res => {
           this.apiOptions = res.data.body;
           this.isLoading = false;
-        }).catch(() => {
-          // eslint-disable-next-line
-          this.apiOptions = [];
-          this.isLoading = false;
-        });
+          /* eslint-disable-next-line */
+        }).catch(err => console.error(err));
         return promise;
       }
       return Promise.resolve();
@@ -106,16 +106,17 @@ export default {
   },
 
   created() {
-    // Check if the component is loaded globally
+  // Check if the component is loaded globally
     if (!this.$root.$options.components.multiselect) {
-      // eslint-disable-next-line
+      /* eslint-disable-next-line */
       console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
     }
   },
 
   mounted() {
     this.setIncomingValue(this.vModelValue);
-    this.loadRemoteEntities().then(ok => {
+    console.log('this.vModelValue', this.vModelValue);
+    this.loadRemoteEntities(this.vModelValue).then(ok => {
       if (ok) {
         this.setIncomingValue(this.vModelValue);
       }

@@ -196,24 +196,28 @@
               name="table-row-actions"
               :item="props.row"
             >
-              <span v-if="opts && opts.customInlineActions">
-                <button
-                  v-for="(action, index) in opts.customInlineActions"
-                  :key="index"
-                  class="btn btn-xs btn-simple"
-                  :class="action.class"
-                  :id="action.name + '-' + props.index"
-                  :data-title="action.title || action.label"
-                  @click="$emit('customAction', {action, item: props.row, location: 'inline',
-                   props, id: action.name + '-' + props.index})"
-                >
-                  {{ action.label ? $t(action.label) : '' }}
-                  <i
-                    v-if="action.icon"
-                    :class="action.icon"
-                  />
-                </button>
-              </span>
+              <template v-if="opts && opts.customInlineActions">
+                <template v-for="(action, index) in opts.customInlineActions">
+                  <button
+
+                    v-if="!action.canDisplay || action.canDisplay({item: props.row}, this)"
+                    :key="index"
+                    class="btn btn-xs btn-simple"
+                    :class="action.class"
+                    :id="action.name + '-' + props.index"
+                    :data-title="action.title || action.label"
+                    :data-tooltip="action.title || action.label"
+                    @click="$emit('customAction', {action, item: props.row, location: 'inline',
+                     props, id: action.name + '-' + props.index})"
+                  >
+                    {{ action.label ? $t(action.label) : '' }}
+                    <i
+                      v-if="action.icon"
+                      :class="action.icon"
+                    />
+                  </button>
+                </template>
+              </template>
             </slot>
             <button
               v-if="opts && opts.actions && opts.actions.view"
