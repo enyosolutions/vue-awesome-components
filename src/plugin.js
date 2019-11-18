@@ -1,5 +1,4 @@
 import axios from 'axios';
-import CripVueLoading from 'crip-vue-loading';
 import { directive as vClickOutside } from 'vue-clickaway';
 import _ from 'lodash'
 import FieldEnyoSelect from './components/crud/FieldEnyoSelect.vue';
@@ -70,12 +69,9 @@ import {
 
     Vue.component('crud-component', CrudComponent);
 
-
     if (!Vue.prototype.$http) {
       Vue.prototype.$http = axios.create({});
     }
-
-    Vue.use(CripVueLoading, { axios: Vue.prototype.$http });
 
     // DIRECTIVES
     Vue.directive('click-outside', vClickOutside);

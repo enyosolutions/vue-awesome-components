@@ -9,6 +9,7 @@
       :columns="tableColumns"
       :rows="dataSource"
       :table-needs-refresh="needsRefresh || internalRefreshRequested"
+      :perPage="tableOptions ? tableOptions.perPage :''"
       :options="tableOptions"
     >
       <template slot="table-top-actions">

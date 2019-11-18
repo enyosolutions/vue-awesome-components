@@ -388,6 +388,10 @@ export default {
       type: [String, Number],
       default: 20
     },
+    limit: {
+      type: [String, Number],
+      default: 1000
+    },
     options: {
       type: Object,
       default: () => ({})
@@ -436,7 +440,7 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === "remote" ? this.perPage : 1000 // how many items I'm showing per page
+        perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
       data: [],
       datePicker: {
@@ -748,6 +752,7 @@ export default {
     toggleColumn(colName) {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
     },
+
     updateParams(newProps) {
       this.serverParams = Object.assign(
         {},
@@ -785,7 +790,9 @@ export default {
     },
 
     onSortChange(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== "remote" || !this.columns[params.columnIndex || !this.columns[params.columnIndex].field]) {
+        // eslint-disable-next-line
+        console.log('SORT', this.columns[params.columnIndex]);
         return;
       }
       const sort = {};

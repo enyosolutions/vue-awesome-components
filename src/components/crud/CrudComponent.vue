@@ -33,7 +33,7 @@
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
                   :data-tooltip="action.title || action.label"
-                  @click="$emit('customAction',{action, location: 'topright', id: action.name})"
+                  @click="customAction({action, location: 'topright', id: action.name})"
                 >
                   <i
                     v-if="action.icon"
@@ -844,8 +844,7 @@ export default {
       }
     },
     getSelectEnum(val) {
-      const options = this.$store && this.$store.state;
-      _.isString(val) && val.indexOf("$store") === 0
+      const options = _.isString(val) && val.indexOf("$store") === 0
       ? _.get(this.$store.state, val.replace("$store.", ""))
       : val;
       return options;
@@ -968,7 +967,7 @@ export default {
       } else {
         // eslint-disable-next-line
         console.warn(
-          "Unable to find the reference to the scham form on ",
+          "Unable to find the reference to the schema form on ",
           this.$route.path
           );
       }

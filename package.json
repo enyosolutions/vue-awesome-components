@@ -1,6 +1,6 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -26,7 +26,6 @@
     "vue-datetime": "^1.0.0-beta.10",
     "vue-multiselect": "^2.1.4",
     "vue2-daterange-picker": "^0.1.6",
-    "crip-vue-loading": "^1.2.5",
     "weekstart": "^1.0.0"
   },
   "devDependencies": {
