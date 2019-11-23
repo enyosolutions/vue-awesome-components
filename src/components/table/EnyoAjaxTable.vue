@@ -401,7 +401,7 @@ export default {
       default: () => ({
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
-        filterInitialyOn: false,
+        filterInitiallyOn: false,
         saveSearchDatas: false,
         actions: {
           noActions: false,
@@ -426,7 +426,7 @@ export default {
   data() {
     return {
       totalCount: 0,
-      filterable: this.options.filterInitialyOn,
+      filterable: this.options.filterInitiallyOn,
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
