@@ -6,12 +6,14 @@
     :options="internalOptions"
     :value="internalValue"
     :multiple="fieldOptions.multiple"
-    :track-by="fieldOptions.trackBy || null"
+    :track-by="_trackBy || null"
     :label="fieldOptions.label || null"
     :max="schema.max || fieldOptions.max || null"
-    :searchable="schema.searchable || fieldOptions.searchable || false"
+    :searchable="schema.searchable || fieldOptions.searchable || true"
+    :internal-search="schema.internalSearch || fieldOptions.internalSearch || !dataUrl"
     :disabled="disabled"
-
+    @search-change="apiRequestDebounced"
+    :url="dataUrl"
     v-model="myModel"
 
     @input="updateSelected"
@@ -52,22 +54,39 @@ export default {
 
     dataUrl() {
       // eslint-disable-next-line
-      console.log("URL", this.url || this.fieldOptions.url)
       return this.url || this.fieldOptions.url;
     },
 
-    trackBy() {
+    _trackBy() {
       return this.$props.trackBy || this.fieldOptions.trackBy || this.schema.foreignKey;
     }
   },
   watch: {
-    vModelValue(newValue) {
-      this.setIncomingValue(newValue);
+    vModelValue(newValue, oldValue) {
+      console.log('', "INCOMING vModelValue REQUESTED IN FIELD SELECT", newValue, oldValue);
+      if (newValue != oldValue) {
+        this.setIncomingValue(newValue, oldValue);
+      }
+      else {
+        console.warn('[WARN] ITS THE SAME INCOMING VALUE', newValue, oldValue);
+      }
     },
 
-    value(newValue) {
-      this.setIncomingValue(newValue);
+    value(newValue, oldValue) {
+    console.log('', "INCOMING VALUE REQUESTED IN FIELD SELECT", newValue, oldValue);
+      if (newValue != oldValue) {
+        this.setIncomingValue(newValue, oldValue);
+      }
+        else {
+        console.warn('[WARN] ITS THE SAME INCOMING VALUE', newValue, oldValue);
+      }
     },
+  },
+  created() {
+      this.apiRequestDebounced =  _.debounce((value) => {
+      console.log('', "DEBOUNCED", this);
+      return this.loadRemoteEntities(value);
+        }, 2000);
   },
 
   methods: {
@@ -79,35 +98,41 @@ export default {
     },
 
     // Sets the value from the the the v-model attribute
-    async setIncomingValue(value, loop) {
-      console.log('', this.internalOptions.length , this.apiOptions.length);
-      if (this.dataUrl && (!this.internalOptions || this.internalOptions.length < 1)) {
-        console.log('', "list is empty i'm going to searhc more options");
-        await this.loadRemoteEntities(value);
+    async setIncomingValue(value, oldValue, loop) {
+      if (value === oldValue) {
+        console.warn('[WARN] ', 'SAME VALUE');
+        return;
+      }
+      else {
+        console.warn('[WARN] ', 'NEW VALUE => setIncomingValue', oldValue, loop);
+      }
+
+       console.log('', "INCOMING VALUE REQUESTED IN setIncomingValue SELECT", value, oldValue);
+      if (this.dataUrl && (!this.internalOptions || this.internalOptions.length < 1) && !loop) {
+        console.log('', "list is empty i'm going to search more options");
+        await this.apiRequestDebounced(value);
       }
       if (Array.isArray(value)) {
         this.internalValue = this.internalOptions && this.internalOptions.filter(option => {
-          const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
+          const searchKey = typeof (option) === 'string' ? option : option[this._trackBy];
           return value.indexOf(searchKey) > -1;
         });
         return;
       }
       this.internalValue = this.internalOptions && this.internalOptions.find(option => {
-        console.log('this.trackBy', this.trackBy);
-        const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
+        const searchKey = typeof (option) === 'string' ? option : option[this._trackBy];
         return searchKey == value;
       });
 
-      console.log('incoming vlaue ', value, this.dataUrl,  this.internalValue);
+      console.log('incoming value ', value, this.dataUrl,  this.internalValue);
 
       if (!this.internalValue && this.dataUrl && !loop) {
         console.log('[fieldES]', "remote load", value);
-        this.loadRemoteEntities(value).then(ok => {
+        const ok = await this.apiRequestDebounced(value);
         if (ok) {
           console.log('', "take 2", value, this.internalOptions.length);
-          this.setIncomingValue(value, true)
+          this.setIncomingValue(value, null, true)
         }
-      });
       }
     // this.myModel = this.internalValue;
   },
@@ -118,12 +143,12 @@ export default {
       this.$emit('input', value);
       this.value = value;
     } else if (Array.isArray(value)) {
-      const valueArray = value.map(item => (this.trackBy && item[this.trackBy] ? item[this.trackBy] : item));
+      const valueArray = value.map(item => (this._trackBy && item[this._trackBy] ? item[this._trackBy] : item));
       this.$emit('input', valueArray);
       this.value = valueArray;
     } else {
-      this.$emit('input', value[this.trackBy]);
-      this.value = value[this.trackBy];
+      this.$emit('input', value[this._trackBy]);
+      this.value = value[this._trackBy];
     }
   },
 
@@ -135,12 +160,12 @@ export default {
       onSearch(searchQuery, id, this.options);
     }
     else {
-      this.loadRemoteEntities(searchQuery)
+      this.apiRequestDebounced(searchQuery)
     }
   },
   onSelect(/* selectedOption, id */) {
       // console.log("onSelect", selectedOption, id);
-    },
+  },
     onRemove(/* removedOption, id */) {
       // console.log("onRemove", removedOption, id);
     },
@@ -149,18 +174,7 @@ export default {
     },
     onClose(/* value, id */) {
       // console.log("onClose", value, id);
-    }
-  },
-  created() {
-  // Check if the component is loaded globally
+  }
 },
-mounted() {
-  this.setIncomingValue(this.vModelValue);
-  this.loadRemoteEntities().then(ok => {
-    if (ok) {
-      this.setIncomingValue(this.vModelValue);
-    }
-  });
-}
 };
 </script>

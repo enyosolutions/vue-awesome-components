@@ -568,6 +568,16 @@ export default {
     }
     const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
+      if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
+        delete this.$route.params.id;
+        if (this.$route.query.item) {
+          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          // eslint-disable-next-line
+          console.log(this.selectedItem);
+        }
+        this.createFunction({reset: false});
+        return;
+      }
       this.parentPath = matched.path.replace("/edit", "").replace("/:id", "");
     } else {
       this.parentPath = matched.path;
@@ -885,7 +895,7 @@ export default {
 
       getColumnType(property) {
         if (property.column && property.column.type) {
-          return property.column && property.column.type;
+          return property.column.type;
         }
         if (property.columnType) {
           return property.columnType;
@@ -1109,10 +1119,13 @@ export default {
       });
     },
 
-    createFunction() {
+    createFunction(options = {reset: true}) {
       if (!this.innerOptions.createPath) {
         this.viewMode = "create";
-        this.selectedItem = {};
+        if (options.reset) {
+          this.selectedItem = {};
+        }
+
         this.openModal();
         return;
       }
@@ -1123,13 +1136,15 @@ export default {
       const { action } = body;
       return action && action.action && action.action(body, this);
     },
+
     listUpdated(datas){
       this.$emit('list-updated', datas);
     },
+    // transform the schema into a format accepted by the ajaxtable
     parseColumns(properties) {
       const newcolumns = [];
       Object.keys(properties).forEach(key => {
-        const newCol = {};
+        let newCol = {};
         const prop = properties[key];
         if (!prop.hidden && !(prop.column && prop.column.hidden)) {
           newCol.field = key;
@@ -1137,14 +1152,14 @@ export default {
           newCol.label = _.startCase(
             (prop.column && prop.column.title) || prop.title || key
             );
-          newCol.listName = prop.column && prop.column.listName;
           newCol.filterOptions = { enabled: false };
           newCol.enum = prop.enum || (prop.column && prop.column.enum);
-          newCol.sortable = true;
-          newcolumns.push(newCol);
+          newCol.sortable = prop.column.sortable !== undefined ? prop.column.sortable : true;
+          newCol = {...newCol, ...prop.column};
           if (prop.relation) {
             newCol.relation = prop.relation;
           }
+          newcolumns.push(newCol);
         }
       });
 

@@ -5,8 +5,8 @@
     :value="internalValue || value"
     @input="updateSelected"
     :searchable="searchable"
-    :internal-search="false"
-    @search-changed="loadRemoteEntities"
+    :internal-search="internalSearch"
+    @search-change="loadRemoteEntities"
     :loading="isLoading"
     :options="internalOptions"
     :label="label"
@@ -35,6 +35,7 @@ export default {
     noResult: String,
     url: String,
     multiple: [String, Boolean],
+    internalSearch: [Boolean],
     searchable: {
       type: [String, Boolean, Number],
       default: false
@@ -53,16 +54,9 @@ export default {
   },
 
   watch: {
-    // 'vModelValue': function (newValue, oldValue) {
-    //   this.setIncomingValue(newValue);
-    // }
   },
 
   computed: {
-    internalOptions() {
-      return this.apiOptions || this.options;
-    },
-
     filteredProps() {
       const props = Object.assign({}, this.$props);
       delete props.vModelValue;
@@ -70,7 +64,6 @@ export default {
       delete props.value;
       return props;
     },
-
   },
   methods: {
 
@@ -84,14 +77,6 @@ export default {
     }
   },
 
-  mounted() {
-    this.setIncomingValue(this.vModelValue);
-    this.loadRemoteEntities().then(ok => {
-      if (ok) {
-        this.setIncomingValue(this.vModelValue);
-      }
-    });
-  }
 };
 </script>
 <style lang="scss">

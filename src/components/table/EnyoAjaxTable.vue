@@ -319,6 +319,9 @@
           <div
             v-else
             class="pointer text-avoid-overflow"
+            :class="props.column.class + ' ajax-table-col-' + props.column.field + ' ajax-table-col-value-' + props.formattedRow[props.column.field]"
+
+            :style="props.column.style"
             @click="clickOnLine(props.row)"
           >
             {{ props.formattedRow[props.column.field] }}
@@ -790,13 +793,14 @@ export default {
     },
 
     onSortChange(params) {
-      if (this.mode !== "remote" || !this.columns[params.columnIndex || !this.columns[params.columnIndex].field]) {
-        // eslint-disable-next-line
-        console.log('SORT', this.columns[params.columnIndex]);
+      // eslint-disable-next-line
+      console.log('SORT', params[0]);
+      if (this.mode !== "remote" || !this.columns || !this.columns[0].field) {
+
         return;
       }
       const sort = {};
-      sort[this.columns[params.columnIndex].field] = params.sortType;
+      sort[this.columns[0].field] = params[0].type;
       this.updateParams({ sort });
       this.getItems();
     },

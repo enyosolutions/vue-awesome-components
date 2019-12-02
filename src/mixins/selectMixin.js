@@ -32,8 +32,11 @@ export default {
     url() {
       this.setIncomingValue(this.vModelValue);
     },
-    vModelValue(newValue) {
-      this.setIncomingValue(newValue);
+    vModelValue(newValue, oldValue) {
+      console.log('', "INCOMING VALUE REQUESTED IN SELCT MIXIN", newValue, oldValue);
+      if (newValue !== oldValue) {
+        this.setIncomingValue(newValue, oldValue);
+      }
     }
   },
 
@@ -57,7 +60,11 @@ export default {
   },
   methods: {
   // Sets the value from the the the v-model attribute
-    setIncomingValue(value) {
+    setIncomingValue(value, oldValue) {
+      if (value == oldValue){
+        console.log('setIncomingValue', value, oldValue);
+        return;
+      }
       if (Array.isArray(value)) {
         this.internalValue = this.internalOptions && this.internalOptions.filter(option => {
           const searchKey = typeof (option) === 'string' ? option : option[this.trackBy];
@@ -70,7 +77,7 @@ export default {
         return searchKey == value;
       });
       if (!this.internalValue && this.url) {
-        this.loadRemoteEntities(value)
+        this.loadRemoteEntities(value);
       }
     },
 
@@ -90,7 +97,7 @@ export default {
 
     loadRemoteEntities(searchString = undefined) {
       /* eslint-disable-next-line */
-      console.log('LOADING remote entities');
+      console.log('LOADING remote entities', searchString);
       if (this.dataUrl) {
         this.isLoading = true;
         const promise = this.$http.get(this.dataUrl, { params: { listOfValues: true, search: searchString } });
@@ -98,7 +105,10 @@ export default {
           this.apiOptions = res.data.body;
           this.isLoading = false;
           /* eslint-disable-next-line */
-        }).catch(err => console.error(err));
+        }).catch(err => {
+          console.error(err);
+            this.isLoading = false;
+        });
         return promise;
       }
       return Promise.resolve();
@@ -114,12 +124,7 @@ export default {
   },
 
   mounted() {
+    console.log('', "FIRST INCOMING CALL HERE", this.vModelValue, 'value');
     this.setIncomingValue(this.vModelValue);
-    console.log('this.vModelValue', this.vModelValue);
-    this.loadRemoteEntities(this.vModelValue).then(ok => {
-      if (ok) {
-        this.setIncomingValue(this.vModelValue);
-      }
-    });
   }
 };
