@@ -341,9 +341,6 @@ import apiErrors from "../../mixins/apiErrorsMixin";
 import "vue-good-table/dist/vue-good-table.css";
 import _ from "lodash";
 
-var userLang = navigator.language || navigator.userLanguage;
-moment.locale(userLang);
-
 export default {
   name: "EnyoAjaxTable",
   token: `
@@ -638,6 +635,10 @@ export default {
     if (!this.$t) {
       this.$t = (str) => str;
     }
+  },
+  beforeMount() {
+    const userLang = window.navigator ? (navigator.language || navigator.userLanguage) : 'en';
+    moment.locale(userLang);
   },
   mounted() {
     this.filterable = this.options && this.options.filterInitiallyOn;

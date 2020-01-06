@@ -155,3 +155,4 @@ The crud component configuration schema.
   },
 }
 ```
+

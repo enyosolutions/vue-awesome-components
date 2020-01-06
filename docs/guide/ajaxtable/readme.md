@@ -24,6 +24,7 @@
 
 ## props
 
+
 <ComponentDoc :component="'EnyoAjaxTable'" />
 
 
@@ -63,4 +64,5 @@ This basic table..
 ```
 
 ... wiill result in this
-<AjaxTableDemo/>
+
+<AjaxTableDemo />

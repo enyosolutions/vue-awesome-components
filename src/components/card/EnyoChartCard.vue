@@ -25,13 +25,10 @@
   </div>
 </template>
 <script>
-// import Card from './Card.vue';
-import chartist from "chartist";
 
 export default {
   name: "EnyoChartCard",
   components: {
-    // Card
   },
   props: {
     classes: String,
@@ -77,8 +74,8 @@ export default {
   },
   async mounted() {
     this.updateChartId();
-    // const Chartist = await import('chartist');
-    this.$Chartist = chartist;
+    // we need dynamic import because of SSR
+    this.$Chartist = await import('chartist');
     setTimeout(() => {
       this.initChart();
     }, 100);

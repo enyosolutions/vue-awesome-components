@@ -1,6 +1,7 @@
 module.exports = {
   title: 'Enyo vue components',
   description: 'Components to speed up the development of a backoffice.',
+  base: '/vue-enyo-components/',
   head: [
     [
       'link',
