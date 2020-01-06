@@ -16,7 +16,7 @@ import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoStatsCard from './components/card/EnyoStatsCard.vue';
 import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
-import EnyoStats from './components/misc/EnyoStats.vue';
+import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 import EnyoAjaxTable from './components/table/EnyoAjaxTable.vue';
 
 
@@ -49,7 +49,7 @@ import {
 
     Vue.component('enyo-card', EnyoCard);
     Vue.component('enyo-stats-card', EnyoStatsCard);
-    Vue.component('enyo-stats', EnyoStats);
+    Vue.component('enyo-stats', EnyoCrudStatsSection);
     Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
 
     Vue.component('datetime', Datetime); //todo better re
@@ -68,6 +68,8 @@ import {
 
 
     Vue.component('crud-component', CrudComponent);
+
+    console.log('loaded components');
 
     if (!Vue.prototype.$http) {
       Vue.prototype.$http = axios.create({});

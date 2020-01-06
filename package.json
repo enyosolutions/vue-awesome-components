@@ -1,6 +1,6 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.3.5",
+  "version": "0.3.9",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -33,18 +33,19 @@
     "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
     "babel-eslint": "^10.0.1",
-    "crip-vue-loading": "^1.2.5",
     "bootstrap": "^4.3.1",
+    "crip-vue-loading": "^1.2.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
-    "vue": "2.6.7",
+    "vue": "2.6.11",
     "vue-form-generator": "^3.0.0-beta.7",
     "vue-good-table": "^2.14.4",
     "vue-i18n": "^8.1.0",
     "vue-loader": "^15.7.0",
-    "vue-template-compiler": "2.6.7",
+    "vue-template-compiler": "2.6.11",
+    "vuepress": "^1.2.0",
     "vuex": "^3.1.0"
   },
   "peerDependencies": {

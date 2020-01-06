@@ -5,7 +5,7 @@
       :class="options.class || 'btn btn-info'"
       @click="buttonClick"
     >
-      {{ options.label || 'Upload' }}
+      <i class="fa fa-file-excel"></i> {{ options.label || 'Upload' }}
     </button>
     <input
       ref="inputButton"

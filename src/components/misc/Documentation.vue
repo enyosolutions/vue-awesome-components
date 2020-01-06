@@ -42,7 +42,6 @@ import EnyoAjaxTable from "@/components/table/EnyoAjaxTable.vue";
 import LiveEdit from "@/components/form/LiveEdit.vue";
 
 import EnyoCard from "@/components/card/EnyoCard.vue";
-import EnyoStats from "@/components/misc/EnyoStats.vue";
 import EnyoChartCard from "@/components/card/EnyoChartCard.vue";
 import EnyoStatsCard from "@/components/card/EnyoStatsCard.vue";
 
@@ -63,7 +62,6 @@ export default {
         CrudComponent,
         EnyoAjaxTable,
         TableAndChartsCard,
-        EnyoStats,
         EnyoChartCard,
         EnyoStatsCard,
         LiveEdit,

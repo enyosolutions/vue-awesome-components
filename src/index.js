@@ -10,26 +10,24 @@ import UploadButton from './components/form/UploadButton.vue';
 import LiveEdit from './components/form/LiveEdit.vue';
 
 import EnyoCard from './components/card/EnyoCard.vue';
-import EnyoStats from './components/misc/EnyoStats.vue';
+import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 
 import EnyoAjaxTable from './components/table/EnyoAjaxTable.vue';
 
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 import rolesMixin from './mixins/rolesMixin';
 
-
-
-
 const VueEnyoComponents = {
  FieldEnyoSelect,
  FieldFileInput,
  FieldJsonTextarea,
  CrudComponent,
+ EnyoCrudComponent: CrudComponent,
  TableAndChartsCard,
  EnyoSelect,
  UploadButton,
  EnyoCard,
- EnyoStats,
+ EnyoCrudStatsSection,
  EnyoAjaxTable,
  AjaxTable: EnyoAjaxTable,
  LiveEdit,
@@ -37,17 +35,17 @@ const VueEnyoComponents = {
  rolesMixin,
 }
 
-
 export {
   FieldEnyoSelect,
   FieldFileInput,
   FieldJsonTextarea,
   CrudComponent,
+  CrudComponent as EnyoCrudComponent,
   TableAndChartsCard,
   EnyoSelect,
   UploadButton,
   EnyoCard,
-  EnyoStats,
+  EnyoCrudStatsSection,
   EnyoAjaxTable,
   EnyoAjaxTable as AjaxTable,
   LiveEdit,
@@ -55,4 +53,5 @@ export {
   rolesMixin,
   VueEnyoComponents
 }
+
 export default VueEnyoComponents;

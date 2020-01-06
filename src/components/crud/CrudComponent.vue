@@ -14,7 +14,7 @@
           v-if="innerOptions.stats"
           class="row"
           >
-          <enyo-stats
+          <EnyoCrudStatsSection
           :url="innerOptions.url + '/stats'"
           :entity="modelName"
           :stats-needs-refresh.sync="statsNeedsRefresh"
@@ -24,35 +24,35 @@
         <div class="text-right">
           <slot name="top-right-buttons">
             <template v-if="options && options.customTopRightActions">
-                <button
-                  v-for="(action, index) in options.customTopRightActions"
-                  :key="index"
-                  class="btn btn-simple"
-                  :class="action.class"
-                  :id="action.name"
-                  :data-title="action.title || action.label"
-                  :tooltip="action.title || action.label"
-                  :data-tooltip="action.title || action.label"
-                  @click="customAction({action, location: 'topright', id: action.name})"
-                >
-                  <i
-                    v-if="action.icon"
-                    :class="action.icon"
-                  />
-                  {{ action.label ? $t(action.label) : '' }}
-                </button>
-              </template>
-            <button
-            v-if="innerOptions.actions && innerOptions.actions.create"
-            class="btn btn-primary btn-simple"
-            @click="createFunction()"
-            >
-            <i class="fa fa-plus" />
-            {{ $t('common.labels.createNew') }} {{ _title }}
-          </button>
-        </slot>
+              <button
+              v-for="(action, index) in options.customTopRightActions"
+              :key="index"
+              class="btn btn-simple"
+              :class="action.class"
+              :id="action.name"
+              :data-title="action.title || action.label"
+              :tooltip="action.title || action.label"
+              :data-tooltip="action.title || action.label"
+              @click="customAction({action, location: 'topright', id: action.name})"
+              >
+              <i
+              v-if="action.icon"
+              :class="action.icon"
+              />
+              <span v-html="action.label ? $t(action.label) : ''"></span>
+            </button>
+          </template>
+          <button
+          v-if="innerOptions.actions && innerOptions.actions.create"
+          class="btn btn-primary btn-simple"
+          @click="createFunction()"
+          >
+          <i class="fa fa-plus" />
+          {{ $t('common.labels.createNew') }} {{ _title }}
+        </button>
+      </slot>
 
-        <div style="display: inline-block">
+      <div style="display: inline-block">
               <!-- <upload-button
               name="pictureUpload"
               :options="{ upload:true, targetUrl: '/picture/banner', method: 'POST', headers:{}, base64: true, label: 'Upload', class: 'btn btn-success' }"
@@ -282,6 +282,9 @@ class="btn btn-primary ml-2"
 :table-needs-refresh.sync="tableNeedsRefresh"
 :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
 :options="innerOptions"
+:auto-refresh="innerOptions.autoRefresh"
+:auto-refresh-interval="innerOptions.autoRefreshInterval"
+:export-url="innerOptions.exportUrl"
 name="ajax-table"
 @edit="goToEditPage"
 @view="goToViewPage"
@@ -289,6 +292,7 @@ name="ajax-table"
 @delete="deleteFunction"
 @customAction="customAction"
 @crud-list-updated="listUpdated"
+@refresh="onTableRefresh"
 >
 <template slot="table-top-more-actions">
   <upload-button
@@ -296,7 +300,7 @@ name="ajax-table"
   name="import"
   :options="{
   upload: true,
-  targetUrl: innerOptions.uploadUrl,
+  targetUrl: innerOptions.uploadUrl || innerOptions.importUrl,
   method: 'POST',
   headers: {},
   base64: false,
@@ -305,6 +309,14 @@ name="ajax-table"
 }"
 @uploaded="importResponse"
 />
+<button
+v-if="innerOptions.actions && innerOptions.actions.import"
+class="btn btn-info btn-simple btn-block"
+@click="exportTemplateCallBack"
+>
+<i class="fa fa-file-excel" />
+{{ $t('common.buttons.excel-template') }}
+</button>
 </template>
 
 <!-- END OF ARRAY -->
@@ -320,6 +332,8 @@ import apiErrors from "../../mixins/apiErrorsMixin";
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import EnyoAjaxTable from "../table/EnyoAjaxTable.vue";
+import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
+
 import "vue-good-table/dist/vue-good-table.css";
 
 const defaultOptions = {
@@ -331,6 +345,7 @@ const defaultOptions = {
   editPath: null,
   queryParams: {},
   stats: false,
+  autoRefresh: false, // or integer in seconds
   modalMode: "slide", // fade | slide
   columnsDisplayed: 8,
   customInlineActions: [],
@@ -439,13 +454,16 @@ export default {
  defaultOptions,
  components: {
   EnyoAjaxTable,
+  EnyoCrudStatsSection,
     // VueGoodTable
   },
   mixins: [apiErrors],
   props: {
     name: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
-    primaryKey: {type: String, default: 'id'},
+    primaryKey: {type: String, default: 'id',
+    note: "The field to use as a primary key (id / _id)"
+  },
     model: {
       type: Object,
       required: false,
@@ -459,7 +477,9 @@ export default {
       note:
       "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
     },
-    crudNeedsRefresh: { type: Boolean, default: false },
+    crudNeedsRefresh: { type: Boolean, default: false,
+      note: "Define whether the content of the table list should be refreshed",
+    },
     nestedSchemas: {
       type: Array,
       required: false,
@@ -471,14 +491,14 @@ export default {
       type: Object,
       required: false,
       note:
-      "The actual object containing the parent in case of a nested schema." +
-      " You don't actually to pass this, it's done automatically by the compoenet itself"
+      "The object containing the parent in case of a nested schema." +
+      "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
     },
     nestedDisplayMode: {
       type: String,
       required: false,
       default: "list",
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list of a form`
+      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
     },
     options: {
       type: Object,
@@ -528,7 +548,7 @@ export default {
       }
 
       if (this.title) {
-        return this.$te(this.title) ? this.$t(this.title + 's') : (this.title + 's');
+        return this.$te(this.title + 's') ? this.$t(this.title + 's') : (this.title + 's');
       }
 
       if (this.name) {
@@ -590,6 +610,7 @@ export default {
     });
   },
   methods: {
+    $alert: Swal,
     refreshComponent() {
       // console.log("refresh component watcher");
       if (this.modelName) {
@@ -604,6 +625,10 @@ export default {
       setTimeout(() => {
         this.$emit("update:crudNeedsRefresh", false);
       }, 100);
+    },
+
+    onTableRefresh() {
+      this.statsNeedsRefresh = true;
     },
 
     mergeOptions() {
@@ -679,39 +704,41 @@ export default {
     this.$forceUpdate();
   },
 
-  exportCurrentArrayToExcel() {
-    let CsvString = "";
-      // eslint-disable-next-line
-      this.items.forEach((RowItem, RowIndex) => {
-        // eslint-disable-next-line
-        RowItem.forEach((ColItem, ColIndex) => {
-          CsvString += `${ColItem},`;
-        });
-        CsvString += "\r\n";
-      });
-      CsvString = `data:application/csv,${encodeURIComponent(CsvString)}`;
-      const x = document.createElement("A");
-      x.setAttribute("href", CsvString);
-      x.setAttribute("download", "somedata.csv");
-      document.body.appendChild(x);
-      x.click();
-    },
+  exportTemplateCallBack() {
+    if (!this.innerOptions.importUrl) {
+      this.$notify({title: '[WARN] missing export url', type: 'warning'});
+      return;
+    }
+    this.$http
+    .get(this.innerOptions.importUrl + '-template', {})
+    .then(res => {
+      if (res.data.url) {
+        const link = document.createElement("a");
+        link.download = `${this.entity}_export`;
+        link.href = res.data.url;
+        link.click();
+        link.remove();
+      }
+    })
+    .catch(this.apiErrorCallback);
+  },
 
-    loadModel() {
-      if (!this.options) {
-        this.options = {};
-      }
-      this.mergeOptions();
-      if (this.$store && this.$store.state && !this.model) {
-        this.innerModel = this.$store.state.data.models.find((model) => model.name === this.modelName);
-      } else {
-        this.innerModel = this.model;
-      }
-      if (this.modelName && !this.name) {
-        this.name = this.modelName;
-      }
 
-      if (!this.innerModel && !this.schema) {
+  loadModel() {
+    if (!this.options) {
+      this.options = {};
+    }
+    this.mergeOptions();
+    if (this.$store && this.$store.state && !this.model) {
+      this.innerModel = this.$store.state.data.models.find((model) => model.name === this.modelName);
+    } else {
+      this.innerModel = this.model;
+    }
+    if (this.modelName && !this.name) {
+      this.name = this.modelName;
+    }
+
+    if (!this.innerModel && !this.schema) {
         // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
         return;
       }
@@ -721,6 +748,14 @@ export default {
       this.innerOptions.url = (this.options && this.options.url) || (this.innerModel && this.innerModel.url) || `/crud/${this.modelName}`;
       if (typeof this.innerOptions.url === 'function') {
         this.innerOptions.url = this.innerOptions.url(this.parent, this);
+      }
+
+      if (!this.innerOptions.exportUrl) {
+        this.innerOptions.exportUrl = `${this.innerOptions.url}/export`;
+      }
+
+      if (!this.innerOptions.importUrl) {
+        this.innerOptions.importUrl = `${this.innerOptions.url}/import`;
       }
 
       // if the crud is nested and should display as a form then remote load the data
@@ -796,7 +831,9 @@ export default {
                 (prop.items && prop.items.enum) ||
                 (prop.field &&
                   prop.field.fieldOptions &&
-                  this.getSelectEnum(prop.field.fieldOptions.enum)),
+                  (prop.field.fieldOptions.values || this.getSelectEnum(prop.field.fieldOptions.enum)))
+                || prop.enum ||
+                (prop.items && prop.items.enum),
                 required: prop.field && prop.field.required,
                 hint: prop.description,
                 model: prefix + key,
@@ -843,14 +880,19 @@ export default {
           }
         }
       }
+
+      if (property.enum) {
+        return 'select';
+      }
       switch (type) {
-        default:
         case "string":
         return "input";
         case "number":
         return "input";
         case "boolean":
         return "checkbox";
+        default:
+        return 'input';
       }
     },
     getSelectEnum(val) {
@@ -1153,8 +1195,8 @@ export default {
             (prop.column && prop.column.title) || prop.title || key
             );
           newCol.filterOptions = { enabled: false };
-          newCol.enum = prop.enum || (prop.column && prop.column.enum);
-          newCol.sortable = prop.column.sortable !== undefined ? prop.column.sortable : true;
+          newCol.enum = (prop.column && prop.column.enum) || prop.enum;
+          newCol.sortable = prop.column && prop.column.sortable !== undefined ? prop.column.sortable : true;
           newCol = {...newCol, ...prop.column};
           if (prop.relation) {
             newCol.relation = prop.relation;
