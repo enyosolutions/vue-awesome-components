@@ -42,6 +42,8 @@
 | checkbox | Checkox |
 | relation | Date time field (exact format will depend on your browser) <Badge text="beta"/> |
 | object | Date time field (exact format will depend on your browser) |
+| list-of-value | The value is used to find the value in a vuex store |
+| list-of-data | The value is used to find the value in a vuex store |
 
 
 

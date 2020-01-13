@@ -9,6 +9,16 @@
        ]"
        :options="{actions: {noActions: true}}"
     />
+        <EnyoAjaxTable
+      :columns="[{type:'image', field: 'picture'}, {type: 'url', field: 'url'}, {type: 'boolean', field: 'myboolean'}]"
+      :rows="[
+      {picture: 'https://picsum.photos/200?1', url:'https://mozilla.org', myboolean: false, notDisplayedColumn: 'ghosted'},
+      {picture: 'https://picsum.photos/200?2', url:'https://bing.com', myboolean: true, notDisplayedColumn: 'ghosted'},
+      {picture: 'https://picsum.photos/200?3', url:'https://google.com', myboolean: undefined, notDisplayedColumn: 'ghosted'},
+       ]"
+       :options="{actions: {noActions: true}}"
+    />
+
   </div>
 </template>
 

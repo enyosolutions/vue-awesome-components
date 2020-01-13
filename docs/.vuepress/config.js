@@ -7,6 +7,7 @@ module.exports = {
       'link',
       {
         rel: 'stylesheet',
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
       },
     ],
   ],
@@ -16,6 +17,7 @@ module.exports = {
       { text: 'Home', link: '/' },
       { text: 'Getting started', link: '/guide/' },
       { text: 'CrudComponent', link: '/guide/crudcomponent/' },
+      { text: 'Github', link: 'https://github.com/enyosolutions-team/vue-enyo-components' },
     ],
     sidebar: [
       {
@@ -48,12 +50,14 @@ module.exports = {
           { title: 'TableAndChartsCard', path: '/guide/tableandchartscard' },
           { title: 'EnyoStats', path: '/guide/enyostats.md' },
           { title: 'EnyoChartCard', path: '/guide/enyochartcard.md' },
+          { title: 'EnyoSelect', path: '/guide/enyochartcard.md' },
         ],
       },
       {
         title: 'Next steps',
         path: '/next-steps.md'
-      }
+      },
+      { title: 'Github', path: 'https://github.com/enyosolutions-team/vue-enyo-components' }
     ],
   },
 };

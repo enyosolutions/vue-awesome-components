@@ -245,7 +245,7 @@ class="text-avoid-overflow"
 class="fa"
 :class="{
 'fa-check text-success': props.formattedRow[props.column.field],
-'fa-times text-danger': !props.formattedRow[props.column.field],
+'fa-times text-danger': !props.formattedRow[props.column.field] && props.formattedRow[props.column.field] !== undefined,
 }"
 ></i>
 </div>
@@ -371,6 +371,7 @@ export default {
     },
     rows: {type: Array, default: () => ([])},
     primaryKey: {type: String, default: 'id'},
+    responseField: {type: String, default: 'body', note: 'field to'},
     url: {type: String, default: ''},
     params: {type: Object, default: () => ({})},
     headers: {type: Object, default: () => ({})},
@@ -715,7 +716,7 @@ export default {
       this.$http
       .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
       .then(res => {
-        this.data = res.data.body;
+        this.data = _.get(res.data, this.responseField);
         this.totalCount = res.data.totalCount;
         if(this.options.
           SearchDatas && this.mode === 'remote'){

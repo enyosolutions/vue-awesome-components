@@ -39,7 +39,7 @@
 </template>
 <script>
 import marked from 'marked';
-// import VueEnyoComponents from '../../../src';
+import VueEnyoComponents from '../../../src';
 export default {
   name: 'ComponentDoc',
   props: {
@@ -69,7 +69,7 @@ export default {
   mounted() {},
   methods: {
     process(component, documentation, ignoreMixins) {
-      let VueEnyoComponents = {};
+    //  let VueEnyoComponents = {};
       let _component;
       if (typeof component === 'string' && VueEnyoComponents[component]) {
         _component = VueEnyoComponents[component];

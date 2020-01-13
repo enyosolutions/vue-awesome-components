@@ -21,40 +21,24 @@ The crud component is one of the most powerful components of the package. It all
 
 This component magically create lists and edit data based on a json schema.
 
-  ### Usage.
+  ## Initialisation
+
 
   There are 3 ways of using the Crud Component.
-  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
+  - 1 - The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
 
-  If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
+  - 2 - If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
 
-  The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
+  - 3 - The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
   Whatever the reason for you to modify the component, we suggest that you read the html code as source for your edits. Then you can extend it/
 
-  ### Actions
-
-  The crud compoenent allows to define which actions are enabled on a component. There are many default actions that can be configured.
-
-  - create
-  - edit
-  - noActions (globally disable all actions)
-  - search
-  - filter
-  - create
-  - view
-  - delete
-  - export
-  - import
-  - dateFilter
-  - refresh
+  ### 1 - configuration with the router
 
 
-  ## Passing configuration with the router
+  #### 1.1 - automatically loading routes REST routes when needed;
 
-  ### automatically loading routes REST routes when needed;
 
   ```
-
   if (config.automaticModels && config.automaticModels.length) {
   const appRoute = routes.find(route => route.path === '/app');
   config.automaticModels.forEach((model) => {
@@ -118,6 +102,34 @@ This component magically create lists and edit data based on a json schema.
 }
 
 ```
+
+ ## configure forms
+
+
+ ### Display mode
+
+   `modalMode: 'slide', // fade | slide`
+
+ ### fields types
+
+
+  ### Actions
+
+  The crud compoenent allows to define which actions are enabled on a component. There are many default actions that can be configured.
+
+  - create
+  - edit
+  - noActions (globally disable all actions)
+  - search
+  - filter
+  - create
+  - view
+  - delete
+  - export
+  - import
+  - dateFilter
+  - refresh
+
 
   ### custom actions
 

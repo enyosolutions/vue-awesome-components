@@ -1,4 +1,10 @@
 # vue-enyo-components
+> Super charge your dev with ready to use power components
+
+A set of various vue components to simplify the creation of backoffices and admin panels.
+
+See [Github](https://github.com/enyosolutions-team/vue-enyo-components/).
+
 
 ## Dependencies
 
@@ -67,5 +73,3 @@ yarn run test
 yarn run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
