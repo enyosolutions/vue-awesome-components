@@ -69,8 +69,6 @@ import {
 
     Vue.component('crud-component', CrudComponent);
 
-    console.log('loaded components');
-
     if (!Vue.prototype.$http) {
       Vue.prototype.$http = axios.create({});
     }

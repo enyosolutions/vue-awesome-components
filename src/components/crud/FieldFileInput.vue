@@ -1,6 +1,7 @@
 <template>
   <div class="input-group field-file-input">
     <base64-upload
+      :type="type"
       :key="refresh"
       :image-src="value"
       @change="onChangeImage"
@@ -13,7 +14,7 @@ import VueFormGenerator from "vue-form-generator";
 // import moment from "moment";
 
 // You need a specific loader for CSS files
-import Base64Upload from "vue-base64-upload";
+import Base64Upload from "./Base64Upload";
 
 export default {
   components: { Base64Upload },
@@ -21,7 +22,7 @@ export default {
   data() {
     return {
       refresh: new Date(),
-      oldValue: ""
+      type: this.schema && this.schema.fieldOptions && this.schema.inputType,
     };
   },
   computed: {},

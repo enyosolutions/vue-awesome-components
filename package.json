@@ -1,6 +1,6 @@
-onit{
+{
   "name": "vue-enyo-components",
-  "version": "0.3.9",
+  "version": "0.3.11",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -23,7 +23,6 @@ onit{
     "qs": "^6.6.0",
     "sweetalert2": "^8.2.6",
     "vue-base64-file-upload": "^1.0.4",
-    "vue-base64-upload": "^1.0.1",
     "vue-clickaway": "^2.2.2",
     "vue-datetime": "^1.0.0-beta.10",
     "vue-multiselect": "^2.1.4",

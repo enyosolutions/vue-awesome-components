@@ -464,112 +464,112 @@ export default {
     primaryKey: {type: String, default: 'id',
     note: "The field to use as a primary key (id / _id)"
   },
-    model: {
-      type: Object,
-      required: false,
-      default: undefined,
-      note: "The object that will be used for managing the component"
-    },
-    schema: {
-      type: Object,
-      required: false,
-      default: undefined,
-      note:
-      "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
-    },
-    crudNeedsRefresh: { type: Boolean, default: false,
-      note: "Define whether the content of the table list should be refreshed",
-    },
-    nestedSchemas: {
-      type: Array,
-      required: false,
-      default: () => [],
-      note:
-      "An array describing data that is linked to this model. Serves for displaying a detailed object"
-    },
-    parent: {
-      type: Object,
-      required: false,
-      note:
-      "The object containing the parent in case of a nested schema." +
-      "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
-    },
-    nestedDisplayMode: {
-      type: String,
-      required: false,
-      default: "list",
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
-    },
-    options: {
-      type: Object,
-      default: () => defaultOptions
+  model: {
+    type: Object,
+    required: false,
+    default: undefined,
+    note: "The object that will be used for managing the component"
+  },
+  schema: {
+    type: Object,
+    required: false,
+    default: undefined,
+    note:
+    "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
+  },
+  crudNeedsRefresh: { type: Boolean, default: false,
+    note: "Define whether the content of the table list should be refreshed",
+  },
+  nestedSchemas: {
+    type: Array,
+    required: false,
+    default: () => [],
+    note:
+    "An array describing data that is linked to this model. Serves for displaying a detailed object"
+  },
+  parent: {
+    type: Object,
+    required: false,
+    note:
+    "The object containing the parent in case of a nested schema." +
+    "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
+  },
+  nestedDisplayMode: {
+    type: String,
+    required: false,
+    default: "list",
+    note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
+  },
+  options: {
+    type: Object,
+    default: () => defaultOptions
+  }
+},
+data() {
+  return {
+    $modal: null,
+    parentPath: "",
+    selectedItem: {},
+    viewMode: 'view',
+    isRefreshing: false,
+    tableNeedsRefresh: false,
+    statsNeedsRefresh: false,
+    nestedCrudNeedsRefresh: false,
+    innerOptions: {},
+    innerSchema: {},
+    innerModel: {},
+    innerNestedSchemas: [],
+    activeNestedTab: 'general',
+    formOptions: {
+      validayeAsync: true,
+      validateAfterLoad: false,
+      validateAfterChanged: true
     }
-  },
-  data() {
-    return {
-      $modal: null,
-      parentPath: "",
-      selectedItem: {},
-      viewMode: 'view',
-      isRefreshing: false,
-      tableNeedsRefresh: false,
-      statsNeedsRefresh: false,
-      nestedCrudNeedsRefresh: false,
-      innerOptions: {},
-      innerSchema: {},
-      innerModel: {},
-      innerNestedSchemas: [],
-      activeNestedTab: 'general',
-      formOptions: {
-        validayeAsync: true,
-        validateAfterLoad: false,
-        validateAfterChanged: true
-      }
-    };
-  },
-  computed: {
-    _title() {
-      if (this.title) {
-        return this.$te(this.title) ? this.$t(this.title) : this.title;
-      }
-
-      if (this.name) {
-        return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : _.startCase(this.name);
-      }
-      if (this.modelName) {
-        return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : _.startCase(this.modelName);
-      }
-      return '';
-    },
-    _titlePlural() {
-      if (this.innerModel && this.innerModel.pluralName) {
-        return this.$te(this.innerModel.pluralName) ?
-        this.$t(this.innerModel.pluralName) : _.startCase(this.innerModel.pluralName);
-      }
-
-      if (this.title) {
-        return this.$te(this.title + 's') ? this.$t(this.title + 's') : (this.title + 's');
-      }
-
-      if (this.name) {
-        return this.$te(`app.labels.${this.name}s`) ?
-        this.$t(`app.labels.${this.name}s`) : _.startCase(this.name + 's');
-      }
-      if (this.modelName) {
-        return this.$te(`app.labels.${this.modelName}s`) ?
-        this.$t(`app.labels.${this.modelName}s`) : _.startCase(this.modelName + 's');
-      }
-      return '';
-    },
-    formSchema() {
-      if (!this.innerSchema) {
-        return [];
-      }
-      const parsedFormSchema = this.parseSchema(this.innerSchema);
-      return parsedFormSchema;
+  };
+},
+computed: {
+  _title() {
+    if (this.title) {
+      return this.$te(this.title) ? this.$t(this.title) : this.title;
     }
+
+    if (this.name) {
+      return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : _.startCase(this.name);
+    }
+    if (this.modelName) {
+      return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : _.startCase(this.modelName);
+    }
+    return '';
   },
-  watch: {
+  _titlePlural() {
+    if (this.innerModel && this.innerModel.pluralName) {
+      return this.$te(this.innerModel.pluralName) ?
+      this.$t(this.innerModel.pluralName) : _.startCase(this.innerModel.pluralName);
+    }
+
+    if (this.title) {
+      return this.$te(this.title + 's') ? this.$t(this.title + 's') : (this.title + 's');
+    }
+
+    if (this.name) {
+      return this.$te(`app.labels.${this.name}s`) ?
+      this.$t(`app.labels.${this.name}s`) : _.startCase(this.name + 's');
+    }
+    if (this.modelName) {
+      return this.$te(`app.labels.${this.modelName}s`) ?
+      this.$t(`app.labels.${this.modelName}s`) : _.startCase(this.modelName + 's');
+    }
+    return '';
+  },
+  formSchema() {
+    if (!this.innerSchema) {
+      return [];
+    }
+    const parsedFormSchema = this.parseSchema(this.innerSchema);
+    return parsedFormSchema;
+  }
+},
+watch: {
     // call again the method if the route changes
     name: "loadModel",
     modelName: "loadModel",
@@ -851,10 +851,12 @@ export default {
                 relation: prop.relation,
                 foreignKey: prop.foreignKey
               };
-              field.fieldOptions.inputType =
-              (prop.field && prop.field.inputType) ||
-              this.getFormInputType(prop) ||
-              "text";
+              if (!field.fieldOptions.inputType) {
+                field.fieldOptions.inputType =
+                (prop.field && prop.field.inputType) ||
+                this.getFormInputType(prop) ||
+                "text";
+              }
               if (field.type === "dateTime") {
                 field.fieldOptions.icons = {
                   time: "fa fa-clock-o",
