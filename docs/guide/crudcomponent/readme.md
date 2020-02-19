@@ -34,8 +34,60 @@ This component magically create lists and edit data based on a json schema.
 
   ### 1 - configuration with the router
 
+  #### 1.1 Connecting the crudComponent to the router
 
-  #### 1.1 - automatically loading routes REST routes when needed;
+
+  ```
+  // example of route for crud component
+  {
+   name: 'contact',
+   path: 'contact',
+   component: CrudComponent,
+   beforeEnter: authGuard,
+   props: {
+     modelName: 'contact',
+     options: {
+       url: '/contact',
+       stats: true,
+       actions: {
+         view: true,
+         delete: true,
+       }
+     }
+   },
+   children: [{
+     name: 'contact-view',
+     path: ':id',
+     component: CrudComponent,
+     props: {
+       modelName: 'contact',
+       options: {
+         actions: {
+           view: true,
+           delete: true,
+         }
+       }
+     }
+   }, {
+     name: 'contact-edit',
+     path: ':id/edit',
+     component: CrudComponent,
+     props: {
+       modelName: 'contact',
+       options: {
+         actions: {
+           edit: true,
+           view: true,
+           delete: true,
+         }
+       }
+     }
+   }]
+ }
+```
+
+
+  #### 1.2 - automatically loading routes REST routes when needed;
 
 
   ```
@@ -134,55 +186,6 @@ This component magically create lists and edit data based on a json schema.
   ### custom actions
 
   In addition to the default actions on a crud component it's also possible to create custom actions.
-
-  ```
-  // example of route for crud component
-  {
-   name: 'contact',
-   path: 'contact',
-   component: CrudComponent,
-   beforeEnter: authGuard,
-   props: {
-     modelName: 'contact',
-     options: {
-       url: '/contact',
-       stats: true,
-       actions: {
-         view: true,
-         delete: true,
-       }
-     }
-   },
-   children: [{
-     name: 'contact-view',
-     path: ':id',
-     component: CrudComponent,
-     props: {
-       modelName: 'contact',
-       options: {
-         actions: {
-           view: true,
-           delete: true,
-         }
-       }
-     }
-   }, {
-     name: 'contact-edit',
-     path: ':id/edit',
-     component: CrudComponent,
-     props: {
-       modelName: 'contact',
-       options: {
-         actions: {
-           edit: true,
-           view: true,
-           delete: true,
-         }
-       }
-     }
-   }]
- }
-```
 
 
 

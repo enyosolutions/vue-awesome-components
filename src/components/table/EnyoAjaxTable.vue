@@ -148,7 +148,7 @@ perPage: perPage
       :data-title="action.title || action.label"
       :tooltip="action.title || action.label"
       :data-tooltip="action.title || action.label"
-      @click="$emit('customAction',{action, item: props.row, location: 'tabletop'})"
+      @click="$emit('customAction',{action, location: 'tabletop'})"
       >
       <i
       v-if="action.icon"
@@ -375,7 +375,7 @@ export default {
     url: {type: String, default: ''},
     params: {type: Object, default: () => ({})},
     headers: {type: Object, default: () => ({})},
-    entity: {type: String, default: ''},
+    entity: {type: String, default: '', note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'},
     title: {type: String, default: ''},
     autoRefresh: {type: Boolean, default: false},
     autoRefreshInterval: {type: Number, default: 1},
@@ -674,13 +674,13 @@ export default {
   methods: {
     startCase: _.startCase,
     // eslint-disable-next-line
-    refreshTableData(changed) {
+    async refreshTableData(changed) {
       // console.log("my url ", this.url);
       if (this.url) {
         this.data = [];
         // console.log("this.serverParams", this.serverParams);
         this.serverParams = _.merge({}, this.serverParams, this.params);
-        this.getItems();
+        await this.getItems();
       } else {
         this.data = this.rows;
         this.$forceUpdate();
@@ -696,7 +696,7 @@ export default {
 
     tableRefreshCompleted() {
       this.$emit("update:tableNeedsRefresh", false);
-      this.$emit("afterRefresh");
+      this.$emit("afterRefresh", {data: this.data});
     },
 
     /** GET ENTITY ITEMS */
@@ -713,7 +713,7 @@ export default {
         return;
       }
       this.isRefreshing = true;
-      this.$http
+      return this.$http
       .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
       .then(res => {
         this.data = _.get(res.data, this.responseField);
@@ -722,6 +722,7 @@ export default {
           SearchDatas && this.mode === 'remote'){
           this.$emit('crud-list-updated', this.data);
         }
+        this.$emit('dataChanged', this.data);
       })
       .catch(err => {
           // eslint-disable-next-line
@@ -845,7 +846,7 @@ export default {
         return;
       }
       let search = params.searchTerm;
-      this.updateParams({ search });
+      this.updateParams({ search, page: 0 });
       this.getItems();
     },
 
@@ -853,7 +854,7 @@ export default {
       if (this.mode !== "remote") {
         return;
       }
-      this.updateParams({ filters: _.cloneDeep(params.columnFilters) });
+      this.updateParams({ filters: _.cloneDeep(params.columnFilters), page: 0 });
       this.getItems();
     },
 

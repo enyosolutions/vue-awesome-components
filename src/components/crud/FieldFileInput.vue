@@ -1,7 +1,11 @@
 <template>
   <div class="input-group field-file-input">
     <base64-upload
+      :disabled="schema.disabled"
+      :readonly="schema.readonly"
       :type="type"
+      :placeholder="placeholder"
+      :inputClass="inputClass"
       :key="refresh"
       :image-src="value"
       @change="onChangeImage"
@@ -22,7 +26,9 @@ export default {
   data() {
     return {
       refresh: new Date(),
-      type: this.schema && this.schema.fieldOptions && this.schema.inputType,
+      type: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputType,
+      placeholder: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder,
+      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass,
     };
   },
   computed: {},
