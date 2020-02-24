@@ -285,6 +285,7 @@ class="btn btn-primary ml-2"
 :auto-refresh="innerOptions.autoRefresh"
 :auto-refresh-interval="innerOptions.autoRefreshInterval"
 :export-url="innerOptions.exportUrl"
+:responseField="innerOptions.responseField"
 name="ajax-table"
 @edit="goToEditPage"
 @view="goToViewPage"
@@ -351,6 +352,11 @@ const defaultOptions = {
   customInlineActions: [],
   customTopActions: [],
   customTabletopActions: [],
+  responseField: {
+    type: String,
+    default: 'body',
+    note: `This field dictates where in the response should the component search for the results from the api.
+    \nThis field is directly sent to ajaxTable.` },
   actions: {
     noActions: false,
     search: true,
@@ -461,49 +467,50 @@ export default {
   props: {
     name: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
-    primaryKey: {type: String, default: 'id',
-    note: "The field to use as a primary key (id / _id)"
-  },
-  model: {
-    type: Object,
-    required: false,
-    default: undefined,
-    note: "The object that will be used for managing the component"
-  },
-  schema: {
-    type: Object,
-    required: false,
-    default: undefined,
-    note:
-    "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
-  },
-  crudNeedsRefresh: { type: Boolean, default: false,
-    note: "Define whether the content of the table list should be refreshed",
-  },
-  nestedSchemas: {
-    type: Array,
-    required: false,
-    default: () => [],
-    note:
-    "An array describing data that is linked to this model. Serves for displaying a detailed object"
-  },
-  parent: {
-    type: Object,
-    required: false,
-    note:
-    "The object containing the parent in case of a nested schema." +
-    "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
-  },
-  nestedDisplayMode: {
-    type: String,
-    required: false,
-    default: "list",
-    note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
-  },
-  options: {
-    type: Object,
-    default: () => defaultOptions
-  }
+    primaryKey: {
+      type: String, default: 'id',
+      note: "The field to use as a primary key (id / _id)"
+    },
+    model: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note: "The object that will be used for managing the component"
+    },
+    schema: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note:
+      "The json schema that represent the object to display. this is used to personalise form inputs and column displays"
+    },
+    crudNeedsRefresh: { type: Boolean, default: false,
+      note: "Define whether the content of the table list should be refreshed",
+    },
+    nestedSchemas: {
+      type: Array,
+      required: false,
+      default: () => [],
+      note:
+      "An array describing data that is linked to this model. Serves for displaying a detailed object"
+    },
+    parent: {
+      type: Object,
+      required: false,
+      note:
+      "The object containing the parent in case of a nested schema." +
+      "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
+    },
+    nestedDisplayMode: {
+      type: String,
+      required: false,
+      default: "list",
+      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
+    },
+    options: {
+      type: Object,
+      default: () => defaultOptions
+    }
 },
 data() {
   return {
@@ -606,9 +613,16 @@ watch: {
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
     next(vm => {
+      vm.closeModal();
       //    vm.loadModel();
     });
   },
+  beforeRouteLeave(to, from, next) {
+      next(vm => {
+      vm.closeModal();
+    });
+  },
+
   methods: {
     $alert: Swal,
     refreshComponent() {
@@ -771,10 +785,11 @@ watch: {
         .get(`${this.innerOptions.url}/${this.$route.params.id}`)
         .then(res => {
           const matched = this.$route.matched[this.$route.matched.length - 1];
+          const data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
           if (matched.path.indexOf("/edit") !== -1) {
-            this.editFunction(res.data.body);
+            this.editFunction(data);
           } else {
-            this.viewFunction(res.data.body);
+            this.viewFunction(data);
           }
           this.$forceUpdate();
         })
@@ -1093,7 +1108,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = res.data.body;
+        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
@@ -1108,7 +1123,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = res.data.body;
+        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
@@ -1122,7 +1137,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}`)
       .then((res) => {
-        this.selectedItem = res.data.body;
+        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
         this.nestedCrudNeedsRefresh = true;
       })
       .catch(this.apiErrorCallback)

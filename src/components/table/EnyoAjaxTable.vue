@@ -371,12 +371,26 @@ export default {
     },
     rows: {type: Array, default: () => ([])},
     primaryKey: {type: String, default: 'id'},
-    responseField: {type: String, default: 'body', note: 'field to'},
+    responseField: {type: [String, Boolean], default: 'body', note: 'This field dictates where in the response should the component search for the results '},
     url: {type: String, default: ''},
-    params: {type: Object, default: () => ({})},
+    params: {type: Object, default: () => ({}), note: 'A params object containing parameters that will be passed as query params to the api request.\n It\'s up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.'},
     headers: {type: Object, default: () => ({})},
     entity: {type: String, default: '', note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'},
     title: {type: String, default: ''},
+    translations: {type: Object, default: () => ({
+      "table.empty": "vide",
+      "common.buttons.filters": "Filter",
+      "common.buttons.refresh": "Refresh",
+      "common.buttons.excel-currentpage": "Export current page",
+      "table.searchInput": "table.searchInput",
+      "table.next": "Next",
+      "table.prev": "Previous",
+      "table.rows_per_page": "Rows per page",
+      "table.of": "of",
+      "table.page": "page",
+      "table.all": "all",
+      "table.empty": "empty"
+    })},
     autoRefresh: {type: Boolean, default: false},
     autoRefreshInterval: {type: Number, default: 1},
     refresh: {type: Function, default: undefined},
@@ -634,7 +648,29 @@ export default {
   },
   created() {
     if (!this.$t) {
-      this.$t = (str) => str;
+      this.$t = (str) => {
+        /*
+        if (!window.trans) {
+          window.trans = {}
+        }
+        window.trans[str]= str;
+        */
+
+        return this.translations[str] || str
+        };
+        this.$te = (str) =>  !!this.translations[str];
+
+
+    }
+    if (!this.$http) {
+      try {
+        const axios = require('axios');
+        this.$http = axios;
+      }
+      catch(err) {
+        console.warn(err.message);
+      }
+
     }
   },
   beforeMount() {
@@ -716,7 +752,7 @@ export default {
       return this.$http
       .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
       .then(res => {
-        this.data = _.get(res.data, this.responseField);
+        this.data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
         this.totalCount = res.data.totalCount;
         if(this.options.
           SearchDatas && this.mode === 'remote'){

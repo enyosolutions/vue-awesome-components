@@ -49,22 +49,4 @@
 
 ## Examples
 
-This basic table..
-```
-<EnyoAjaxTable
-:columns="['col1', 'col2', 'col3']"
-:rows="[
-{col1: 'qq', col2:'some data', col3: 'oopsie',
- notDisplayedColumn: 'ghosted'},
-{col1: 'qq2', col2:'some moore data', col3: 'oopsie',
- notDisplayedColumn: 'ghosted'},
-{col1: 'qq3', col2:'a third data', col3: 'oopsie',
- notDisplayedColumn: 'ghosted'},
- ]"
-:options="{actions: {noActions: true}}"
- />
-```
-
-... wiill result in this
-
 <AjaxTableDemo />
