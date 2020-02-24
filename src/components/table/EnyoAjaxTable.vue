@@ -82,7 +82,7 @@ aria-haspopup="true"
 aria-expanded="false"
 >
 <i class="fa fa-plus" />
-{{ $t('table.more') }}
+{{ $t('EnyoAjaxTable.more') }}
 </button>
 <div
 class="dropdown-menu"
@@ -119,16 +119,16 @@ class="btn btn-success btn-simple btn-block"
 }"
 :search-options="{
 enabled: opts && opts.actions && opts.actions.search,
-placeholder: this.$t('table.searchInput'),
+placeholder: this.$t('EnyoAjaxTable.searchInput'),
 }"
 :pagination-options="{
 enabled: opts && opts.pagination,
-nextLabel: this.$t('table.next'),
-prevLabel: this.$t('table.prev'),
-rowsPerPageLabel: this.$t('table.rows_per_page'),
-ofLabel: this.$t('table.of'),
-pageLabel: this.$t('table.page'),
-allLabel: this.$t('table.all'),
+nextLabel: this.$t('EnyoAjaxTable.next'),
+prevLabel: this.$t('EnyoAjaxTable.prev'),
+rowsPerPageLabel: this.$t('EnyoAjaxTable.rows_per_page'),
+ofLabel: this.$t('EnyoAjaxTable.of'),
+pageLabel: this.$t('EnyoAjaxTable.page'),
+allLabel: this.$t('EnyoAjaxTable.all'),
 perPage: perPage
 }"
 @on-page-change="onPageChange"
@@ -325,7 +325,7 @@ class="pointer text-avoid-overflow"
 </div>
 </template>
 <div slot="emptystate">
-  {{ $t('table.empty') }}
+  {{ $t('EnyoAjaxTable.empty') }}
 </div>
 </vue-good-table>
 </div>
@@ -338,7 +338,7 @@ import { VueGoodTable } from "vue-good-table";
 import qs from "qs";
 import moment from "moment";
 import apiErrors from "../../mixins/apiErrorsMixin";
-import "vue-good-table/dist/vue-good-table.css";
+import "vue-good-table/dist/vue-good-EnyoAjaxTable.css";
 import _ from "lodash";
 
 export default {
@@ -378,18 +378,17 @@ export default {
     entity: {type: String, default: '', note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'},
     title: {type: String, default: ''},
     translations: {type: Object, default: () => ({
-      "table.empty": "vide",
       "common.buttons.filters": "Filter",
       "common.buttons.refresh": "Refresh",
       "common.buttons.excel-currentpage": "Export current page",
-      "table.searchInput": "table.searchInput",
-      "table.next": "Next",
-      "table.prev": "Previous",
-      "table.rows_per_page": "Rows per page",
-      "table.of": "of",
-      "table.page": "page",
-      "table.all": "all",
-      "table.empty": "empty"
+      "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
+      "EnyoAjaxTable.next": "Next",
+      "EnyoAjaxTable.prev": "Previous",
+      "EnyoAjaxTable.rows_per_page": "Rows per page",
+      "EnyoAjaxTable.of": "of",
+      "EnyoAjaxTable.page": "page",
+      "EnyoAjaxTable.all": "all",
+      "EnyoAjaxTable.empty": "empty"
     })},
     autoRefresh: {type: Boolean, default: false},
     autoRefreshInterval: {type: Number, default: 1},
@@ -668,7 +667,7 @@ export default {
         this.$http = axios;
       }
       catch(err) {
-        console.warn(err.message);
+       // console.warn(err.message);
       }
 
     }
