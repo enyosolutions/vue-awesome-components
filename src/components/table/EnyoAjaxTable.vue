@@ -1,344 +1,403 @@
 <template>
-  <enyo-card
-  :header-class="'ajax-table-header '+ (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
-  >
-  <template slot="header">
-    <h4 class="card-title ajax-table-header">
-      <slot name="table-title">
-        {{ _tableTitle }}
-      </slot>
-      <div class="btn-group btn-group-sm float-right">
-        <slot name="table-top-actions" />
-        <div
-        v-if="canHideColumns"
-        class="dropdown"
-        >
-        <button
-        id="dropdownMenuButton"
-        class="btn btn-secondary btn-simple dropdown-toggle"
-        type="button"
-        data-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-        >
-        Columns
-      </button>
-      <div
-      class="dropdown-menu"
-      aria-labelledby="dropdownMenuButton"
-      style="max-height:100vh; overflow: auto;"
-      >
-      <button
-      v-for="(col, index) in formattedColumns"
-      :key="index"
-      type="button"
-      class="dropdown-item"
-      href="#"
-      :class="{'text-light bg-primary': columnsState[col.field], 'bg-info': col.field === 'ACTIONS'}"
-      :disabled="col.field === 'ACTIONS'"
-      @click="toggleColumn(col.field)"
-      >
-      {{ col.label }}
-    </button>
-  </div>
-</div>
-<div
-v-if="isRefreshing"
-style="text-align: center"
->
-<i
-class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-style="color:orange;margin-left:10px"
-/>
-</div>
-<button
-v-if="opts.actions.filter"
-type="button"
-class="btn btn-simple"
-:class="{'btn-primary': filterable, 'btn-default': !filterable}"
-@click="toggleFilter()"
->
-<i class="fa fa-filter" />
-{{ $t('common.buttons.filters') }}
-</button>
-<div class="dropdown">
-  <button
-  v-if="opts.actions && (opts.actions.refresh)"
-  class="btn btn-simple"
-  @click="getItems()"
-  >
-  <i
-  :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '') "
-  />
-  {{ $t('common.buttons.refresh') }}
-</button>
-<button
-v-if="opts.actions && (opts.actions.export || opts.actions.import)"
-id="dropdownMenuButton"
-class="btn btn-secondary btn-simple dropdown-toggle"
-type="button"
-data-toggle="dropdown"
-aria-haspopup="true"
-aria-expanded="false"
->
-<i class="fa fa-plus" />
-{{ $t('EnyoAjaxTable.more') }}
-</button>
-<div
-class="dropdown-menu"
-aria-labelledby="dropdownMenuButton"
->
-<slot name="table-top-more-actions" />
-<button
-v-if="opts.actions && opts.actions.export"
-class="btn btn-success btn-simple btn-block"
-@click="exportCallBack"
->
-<i class="fa fa-file-excel" />
-{{ $t('common.buttons.excel') }}
-</button>
-
-<button class="btn btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel"> <i class="fa fa-file-excel" /> {{ $t('common.buttons.excel-currentpage') }}</button>
-</div>
-</div>
-</div>
-</h4>
-<p class="card-category">
-  <slot name="table-subtitle" />
-</p>
-</template>
-<div class="table-responsive">
-  <vue-good-table
-  :mode="mode"
-  :total-rows="totalCount"
-  style-class="vgt-table table striped"
-  :columns="displayedColumns"
-  :rows="data || []"
-  :filter-options="{
-  enabled: opts && opts.actions && opts.actions.filter
-}"
-:search-options="{
-enabled: opts && opts.actions && opts.actions.search,
-placeholder: this.$t('EnyoAjaxTable.searchInput'),
-}"
-:pagination-options="{
-enabled: opts && opts.pagination,
-nextLabel: this.$t('EnyoAjaxTable.next'),
-prevLabel: this.$t('EnyoAjaxTable.prev'),
-rowsPerPageLabel: this.$t('EnyoAjaxTable.rows_per_page'),
-ofLabel: this.$t('EnyoAjaxTable.of'),
-pageLabel: this.$t('EnyoAjaxTable.page'),
-allLabel: this.$t('EnyoAjaxTable.all'),
-perPage: perPage
-}"
-@on-page-change="onPageChange"
-@on-sort-change="onSortChange"
-@on-column-filter="onColumnFilter"
-@on-per-page-change="onPerPageChange"
-@on-search="onSearch"
->
-<div slot="table-actions">
-  <template v-if="opts && opts.customTableTopActions">
-    <template v-for="(action, index) in opts.customTableTopActions">
-      <button
-      v-if="!action.canDisplay || action.canDisplay({item: props.row}, this)"
-      :key="index"
-      class="btn btn-xs btn-simple"
-      :class="action.class"
-      :data-title="action.title || action.label"
-      :tooltip="action.title || action.label"
-      :data-tooltip="action.title || action.label"
-      @click="$emit('customAction',{action, location: 'tabletop'})"
-      >
-      <i
-      v-if="action.icon"
-      :class="action.icon"
-      /><span v-html="action.label ? $t(action.label) : ''"></span>
-    </button>
-  </template>
-</template>
-
-<date-range-picker
-v-if="opts.actions && opts.actions.filter && opts.actions.dateFilter && filterable"
-class="form-group vgt-date-range"
-:placeholder="$t('common.field.start')"
-:start-date="defaultStartDate"
-:end-date="defaultEndDate"
-:locale-data="datePicker.locale"
-:opens="'left'"
-@update="onDateFilter"
-/>
-</div>
-<template
-slot="table-row"
-slot-scope="props"
->
-<span
-v-if="props.column.field === 'ACTIONS'"
-class="text-right"
->
-<slot
-name="table-row-actions"
-:item="props.row"
->
-<template v-if="opts && opts.customInlineActions">
-  <template v-for="(action, index) in opts.customInlineActions">
-    <button
-
-    v-if="!action.canDisplay || action.canDisplay({item: props.row}, this)"
-    :key="index"
-    class="btn btn-xs btn-simple"
-    :class="action.class"
-    :id="action.name + '-' + props.index"
-    :data-title="action.title || action.label"
-    :data-tooltip="action.title || action.label"
-    @click="$emit('customAction', {action, item: props.row, location: 'inline',
-    props, id: action.name + '-' + props.index})"
+  <div class="card ajax-table-card">
+    <div
+      class="card-header"
+      :class="
+        'ajax-table-header ' +
+          (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
+      "
     >
-    <i
-    v-if="action.icon"
-    :class="action.icon"
-    /><span v-html="action.label ? $t(action.label) : ''"></span>
-  </button>
-</template>
-</template>
-</slot>
-<button
-v-if="opts && opts.actions && opts.actions.view"
-class="btn btn-xs btn-simple btn-icon"
-@click="$emit('view', props.row)"
->
-<i class="fa fa-eye text-info" />
-</button>
-<button
-v-if="opts && opts.actions && opts.actions.edit"
-class="btn btn-xs btn-simple btn-icon"
-@click="$emit('edit', props.row)"
->
-<i class="fa fa-pencil fa fa-pencil" />
-</button>
-<button
-v-if="opts && opts.actions && opts.actions.delete"
-class="btn btn-xs btn-simple btn-icon"
-@click="deleteItem(props.row)"
->
-<i class="fa fa-trash text-danger" />
-</button>
-</span>
-<span
-v-else-if="props.column.type === 'image'"
-class="pointer"
-@click="clickOnLine(props.row)"
->
-<img
-:src="props.formattedRow[props.column.field]"
-alt="image"
-class="ajax-table-img"
->
-</span>
-<div
-v-else-if="props.column.type === 'boolean'"
-class="text-avoid-overflow"
-:data-value="props.formattedRow[props.column.field]"
->
-<i
-class="fa"
-:class="{
-'fa-check text-success': props.formattedRow[props.column.field],
-'fa-times text-danger': !props.formattedRow[props.column.field] && props.formattedRow[props.column.field] !== undefined,
-}"
-></i>
-</div>
-<div
-v-else-if="props.column.type === 'url'"
-class="text-avoid-overflow"
->
-<a
-:href="props.formattedRow[props.column.field]"
-target="_blank"
-class="ajax-table-href"
->{{ props.formattedRow[props.column.field] }}</a>
-</div>
-<div
-v-else-if="props.column.type === 'html'"
-class="pointer"
-@click="clickOnLine(props.row)"
-v-html="props.formattedRow[props.column.field]"
-/>
-<div
-v-else-if="props.column.type === 'relation'"
-class="text-avoid-overflow"
->
-<router-link
-:to="'/app' + props.column.relation + '/' + props.formattedRow[props.column.field]"
-class="ajax-table-href"
->
-<span class="badge badge-info">
-  {{
-    props.column.listName ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
-    : props.formattedRow[props.column.field] }}
-  </span>
-</router-link>
-</div>
-<span
-v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
-class="pointer"
-@click="clickOnLine(props.row)"
->{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
-<span
-v-else-if="props.column.type === 'list-of-data'"
-class="pointer"
-@click="clickOnLine(props.row)"
->{{ getDataValue(props.formattedRow[props.column.field], props.column.listName) }}</span>
-<div
-v-else-if="props.column.type === 'object'"
-class="pointer text-avoid-overflow"
-@click="clickOnLine(props.row)"
->
-|
-<template
-v-for="(value, key) of props.formattedRow[props.column.field]"
-class="label label-info"
->
-<label :key="key">{{ key }}:</label>
-<label
-:key="key"
-class="text-primary"
->{{ value }}</label> |
-</template>
-</div>
-<div v-else-if="props.column.type === 'checkbox'" class="pointer text-avoid-overflow"
-@click="clickOnLine(props.row)">
-<input v-if="props.formattedRow[props.column.field] === true"
-class="ajax-table-checkbox" type="checkbox" checked disabled />
-<input class="ajax-table-checkbox" v-else type="checkbox" disabled />
-</div>
-<div
-v-else
-class="pointer text-avoid-overflow"
-:class="props.column.class + ' ajax-table-col-' + props.column.field + ' ajax-table-col-value-' + props.formattedRow[props.column.field]"
+      <h4 class="card-title ajax-table-header">
+        <slot name="table-title">
+          {{ _tableTitle }}
+        </slot>
+        <div class="btn-group btn-group-sm float-right">
+          <slot name="table-top-actions" />
+          <div v-if="canHideColumns" class="dropdown">
+            <button
+              id="dropdownMenuButton"
+              class="btn btn-secondary btn-simple dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Columns
+            </button>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton"
+              style="max-height:100vh; overflow: auto;"
+            >
+              <button
+                v-for="(col, index) in formattedColumns"
+                :key="index"
+                type="button"
+                class="dropdown-item"
+                href="#"
+                :class="{
+                  'text-light bg-primary': columnsState[col.field],
+                  'bg-info': col.field === 'ACTIONS'
+                }"
+                :disabled="col.field === 'ACTIONS'"
+                @click="toggleColumn(col.field)"
+              >
+                {{ col.label }}
+              </button>
+            </div>
+          </div>
+          <div v-if="isRefreshing" style="text-align: center">
+            <i
+              class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+              style="color:orange;margin-left:10px"
+            />
+          </div>
+          <button
+            v-if="opts.actions.filter"
+            type="button"
+            class="btn btn-simple"
+            :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+            @click="toggleFilter()"
+          >
+            <i class="fa fa-filter" />
+            {{ $t("common.buttons.filters") }}
+          </button>
+          <div class="dropdown">
+            <button
+              v-if="opts.actions && opts.actions.refresh"
+              class="btn btn-simple"
+              @click="getItems()"
+            >
+              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
+              {{ $t("common.buttons.refresh") }}
+            </button>
+            <button
+              v-if="
+                opts.actions && (opts.actions.export || opts.actions.import)
+              "
+              id="dropdownMenuButton"
+              class="btn btn-secondary btn-simple dropdown-toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fa fa-plus" />
+              {{ $t("EnyoAjaxTable.more") }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <slot name="table-top-more-actions" />
+              <button
+                v-if="opts.actions && opts.actions.export"
+                class="btn btn-success btn-simple btn-block"
+                @click="exportCallBack"
+              >
+                <i class="fa fa-file-excel" />
+                {{ $t("common.buttons.excel") }}
+              </button>
 
-:style="props.column.style"
-@click="clickOnLine(props.row)"
->
-{{ props.formattedRow[props.column.field] }}
-</div>
-</template>
-<div slot="emptystate">
-  {{ $t('EnyoAjaxTable.empty') }}
-</div>
-</vue-good-table>
-</div>
-</enyo-card>
+              <button
+                class="btn btn-default btn-simple btn-block"
+                @click="exportCurrentArrayToExcel"
+              >
+                <i class="fa fa-file-excel" />
+                {{ $t("common.buttons.excel-currentpage") }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </h4>
+      <p class="card-category">
+        <slot name="table-subtitle" />
+      </p>
+    </div>
+
+    <div class="card-body ajax-table-card-body">
+      <div class="table-responsive">
+        <vue-good-table
+          :mode="mode"
+          :total-rows="totalCount"
+          style-class="vgt-table table striped"
+          :columns="displayedColumns"
+          :fixed-header="opts && opts.fixedHeader"
+          :max-height="opts.maxHeight"
+          :rows="data || []"
+          :filter-options="{
+            enabled: opts && opts.actions && opts.actions.filter
+          }"
+          :search-options="{
+            enabled: opts && opts.actions && opts.actions.search,
+            placeholder: this.$t('EnyoAjaxTable.searchInput')
+          }"
+          :pagination-options="{
+            enabled: opts && opts.pagination,
+            nextLabel: this.$t('EnyoAjaxTable.next'),
+            prevLabel: this.$t('EnyoAjaxTable.prev'),
+            rowsPerPageLabel: this.$t('EnyoAjaxTable.rows_per_page'),
+            ofLabel: this.$t('EnyoAjaxTable.of'),
+            pageLabel: this.$t('EnyoAjaxTable.page'),
+            allLabel: this.$t('EnyoAjaxTable.all'),
+            perPage: perPage
+          }"
+          @on-page-change="onPageChange"
+          @on-sort-change="onSortChange"
+          @on-column-filter="onColumnFilter"
+          @on-per-page-change="onPerPageChange"
+          @on-search="onSearch"
+        >
+          <div slot="table-actions">
+            <template v-if="opts && opts.customTableTopActions">
+              <template v-for="(action, index) in opts.customTableTopActions">
+                <button
+                  v-if="
+                    !action.canDisplay ||
+                      action.canDisplay({ item: props.row }, this)
+                  "
+                  :key="index"
+                  class="btn btn-xs btn-simple"
+                  :class="action.class"
+                  :data-title="action.title || action.label"
+                  :tooltip="action.title || action.label"
+                  :data-tooltip="action.title || action.label"
+                  @click="
+                    $emit('customAction', { action, location: 'tabletop' })
+                  "
+                >
+                  <i v-if="action.icon" :class="action.icon" /><span
+                    v-html="action.label ? $t(action.label) : ''"
+                  ></span>
+                </button>
+              </template>
+            </template>
+
+            <date-range-picker
+              v-if="
+                opts.actions &&
+                  opts.actions.filter &&
+                  opts.actions.dateFilter &&
+                  filterable
+              "
+              class="form-group vgt-date-range"
+              :placeholder="$t('common.field.start')"
+              :start-date="defaultStartDate"
+              :end-date="defaultEndDate"
+              :locale-data="datePicker.locale"
+              :opens="'left'"
+              @update="onDateFilter"
+            />
+          </div>
+          <template slot="table-row" slot-scope="props">
+            <span v-if="props.column.field === 'ACTIONS'" class="text-right">
+              <slot name="table-row-actions" :item="props.row">
+                <template v-if="opts && opts.customInlineActions">
+                  <template v-for="(action, index) in opts.customInlineActions">
+                    <button
+                      v-if="
+                        !action.canDisplay ||
+                          action.canDisplay({ item: props.row }, this)
+                      "
+                      :key="index"
+                      class="btn btn-xs btn-simple"
+                      :class="action.class"
+                      :id="action.name + '-' + props.index"
+                      :data-title="action.title || action.label"
+                      :data-tooltip="action.title || action.label"
+                      @click="
+                        $emit('customAction', {
+                          action,
+                          item: props.row,
+                          location: 'inline',
+                          props,
+                          id: action.name + '-' + props.index
+                        })
+                      "
+                    >
+                      <i v-if="action.icon" :class="action.icon" /><span
+                        v-html="action.label ? $t(action.label) : ''"
+                      ></span>
+                    </button>
+                  </template>
+                </template>
+              </slot>
+              <button
+                v-if="opts && opts.actions && opts.actions.view"
+                class="btn btn-xs btn-simple btn-icon"
+                @click="$emit('view', props.row)"
+              >
+                <i class="fa fa-eye text-info" />
+              </button>
+              <button
+                v-if="opts && opts.actions && opts.actions.edit"
+                class="btn btn-xs btn-simple btn-icon"
+                @click="$emit('edit', props.row)"
+              >
+                <i class="fa fa-pencil fa fa-pencil" />
+              </button>
+              <button
+                v-if="opts && opts.actions && opts.actions.delete"
+                class="btn btn-xs btn-simple btn-icon"
+                @click="deleteItem(props.row)"
+              >
+                <i class="fa fa-trash text-danger" />
+              </button>
+            </span>
+            <span
+              v-else-if="props.column.type === 'image'"
+              class="pointer"
+              @click="clickOnLine(props.row)"
+            >
+              <img
+                :src="props.formattedRow[props.column.field]"
+                alt="image"
+                class="ajax-table-img"
+              />
+            </span>
+            <div
+              v-else-if="props.column.type === 'boolean'"
+              class="text-avoid-overflow"
+              :data-value="props.formattedRow[props.column.field]"
+            >
+              <i
+                class="fa"
+                :class="{
+                  'fa-check text-success':
+                    props.formattedRow[props.column.field],
+                  'fa-times text-danger':
+                    !props.formattedRow[props.column.field] &&
+                    props.formattedRow[props.column.field] !== undefined
+                }"
+              ></i>
+            </div>
+            <div
+              v-else-if="props.column.type === 'url'"
+              class="text-avoid-overflow"
+            >
+              <a
+                :href="props.formattedRow[props.column.field]"
+                target="_blank"
+                class="ajax-table-href"
+                >{{ props.formattedRow[props.column.field] }}</a
+              >
+            </div>
+            <div
+              v-else-if="props.column.type === 'html'"
+              class="pointer"
+              @click="clickOnLine(props.row)"
+              v-html="props.formattedRow[props.column.field]"
+            ></div>
+            <div
+              v-else-if="props.column.type === 'relation'"
+              class="text-avoid-overflow"
+            >
+              <router-link
+                :to="
+                  '/app' +
+                    props.column.relation +
+                    '/' +
+                    props.formattedRow[props.column.field]
+                "
+                class="ajax-table-href"
+              >
+                <span class="badge badge-info">
+                  {{
+                    props.column.listName
+                      ? getLovValue(
+                          props.formattedRow[props.column.field],
+                          props.column.listName
+                        )
+                      : props.formattedRow[props.column.field]
+                  }}
+                </span>
+              </router-link>
+            </div>
+            <span
+              v-else-if="
+                props.column.type === 'list-of-value' ||
+                  props.column.type === 'lov'
+              "
+              class="pointer"
+              @click="clickOnLine(props.row)"
+              >{{
+                getLovValue(
+                  props.formattedRow[props.column.field],
+                  props.column.listName
+                )
+              }}</span
+            >
+            <span
+              v-else-if="props.column.type === 'list-of-data'"
+              class="pointer"
+              @click="clickOnLine(props.row)"
+              >{{
+                getDataValue(
+                  props.formattedRow[props.column.field],
+                  props.column.listName
+                )
+              }}</span
+            >
+            <div
+              v-else-if="props.column.type === 'object'"
+              class="pointer text-avoid-overflow"
+              @click="clickOnLine(props.row)"
+            >
+              |
+              <template
+                v-for="(value, key) of props.formattedRow[props.column.field]"
+                class="label label-info"
+              >
+                <label :key="key">{{ key }}:</label>
+                <label :key="key" class="text-primary">{{ value }}</label> |
+              </template>
+            </div>
+            <div
+              v-else-if="props.column.type === 'checkbox'"
+              class="pointer text-avoid-overflow"
+              @click="clickOnLine(props.row)"
+            >
+              <input
+                v-if="props.formattedRow[props.column.field] === true"
+                class="ajax-table-checkbox"
+                type="checkbox"
+                checked
+                disabled
+              />
+              <input
+                class="ajax-table-checkbox"
+                v-else
+                type="checkbox"
+                disabled
+              />
+            </div>
+            <div
+              v-else
+              class="pointer text-avoid-overflow"
+              :class="
+                props.column.class +
+                  ' ajax-table-col-' +
+                  props.column.field +
+                  ' ajax-table-col-value-' +
+                  props.formattedRow[props.column.field]
+              "
+              :style="props.column.style"
+              @click="clickOnLine(props.row)"
+            >
+              {{ props.formattedRow[props.column.field] }}
+            </div>
+          </template>
+          <div slot="emptystate">
+            {{ $t("EnyoAjaxTable.empty") }}
+          </div>
+        </vue-good-table>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import EnyoCard from "../card/EnyoCard.vue";
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import qs from "qs";
 import moment from "moment";
 import apiErrors from "../../mixins/apiErrorsMixin";
-import "vue-good-table/dist/vue-good-EnyoAjaxTable.css";
 import _ from "lodash";
 
 export default {
@@ -363,39 +422,57 @@ export default {
   props: {
     columns: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     columnsDisplayed: {
       type: Number,
       default: 8
     },
-    rows: {type: Array, default: () => ([])},
-    primaryKey: {type: String, default: 'id'},
-    responseField: {type: [String, Boolean], default: 'body', note: 'This field dictates where in the response should the component search for the results '},
-    url: {type: String, default: ''},
-    params: {type: Object, default: () => ({}), note: 'A params object containing parameters that will be passed as query params to the api request.\n It\'s up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.'},
-    headers: {type: Object, default: () => ({})},
-    entity: {type: String, default: '', note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'},
-    title: {type: String, default: ''},
-    translations: {type: Object, default: () => ({
-      "common.buttons.filters": "Filter",
-      "common.buttons.refresh": "Refresh",
-      "common.buttons.excel-currentpage": "Export current page",
-      "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
-      "EnyoAjaxTable.next": "Next",
-      "EnyoAjaxTable.prev": "Previous",
-      "EnyoAjaxTable.rows_per_page": "Rows per page",
-      "EnyoAjaxTable.of": "of",
-      "EnyoAjaxTable.page": "page",
-      "EnyoAjaxTable.all": "all",
-      "EnyoAjaxTable.empty": "empty"
-    })},
-    autoRefresh: {type: Boolean, default: false},
-    autoRefreshInterval: {type: Number, default: 1},
-    refresh: {type: Function, default: undefined},
-    delete: {type: Function, default: undefined},
-    create: {type: Function, default: undefined},
-    exportUrl: {type: String, default: undefined},
+    rows: { type: Array, default: () => [] },
+    primaryKey: { type: String, default: "id" },
+    responseField: {
+      type: [String, Boolean],
+      default: "body",
+      note:
+        "This field dictates where in the response should the component search for the results "
+    },
+    url: { type: String, default: "" },
+    params: {
+      type: Object,
+      default: () => ({}),
+      note:
+        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
+    },
+    queryHeaders: { type: Object, default: () => ({}) },
+    entity: {
+      type: String,
+      default: "",
+      note:
+        "Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations"
+    },
+    title: { type: String, default: "" },
+    translations: {
+      type: Object,
+      default: () => ({
+        "common.buttons.filters": "Filter",
+        "common.buttons.refresh": "Refresh",
+        "common.buttons.excel-currentpage": "Export current page",
+        "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
+        "EnyoAjaxTable.next": "Next",
+        "EnyoAjaxTable.prev": "Previous",
+        "EnyoAjaxTable.rows_per_page": "Rows per page",
+        "EnyoAjaxTable.of": "of",
+        "EnyoAjaxTable.page": "page",
+        "EnyoAjaxTable.all": "all",
+        "EnyoAjaxTable.empty": "empty"
+      })
+    },
+    autoRefresh: { type: Boolean, default: false },
+    autoRefreshInterval: { type: Number, default: 1 },
+    refresh: { type: Function, default: undefined },
+    delete: { type: Function, default: undefined },
+    create: { type: Function, default: undefined },
+    exportUrl: { type: String, default: undefined },
     tableNeedsRefresh: {
       type: Boolean,
       default: false
@@ -415,6 +492,8 @@ export default {
     defaultOptions: {
       type: Object,
       default: () => ({
+        fixedHeader: false,
+        maxHeight: '',
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         filterInitiallyOn: false,
@@ -435,9 +514,9 @@ export default {
       })
     },
     mode: {
-      default: "locale",
+      default: "local",
       type: String
-    },
+    }
   },
   data() {
     return {
@@ -446,8 +525,8 @@ export default {
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
-      .subtract(7, "days")
-      .format("YYYY-MM-DD"),
+        .subtract(7, "days")
+        .format("YYYY-MM-DD"),
       defaultEndDate: moment().format("YYYY-MM-DD"),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -483,8 +562,12 @@ export default {
     },
 
     _tableTitle() {
-      return this.title
-      || (this.$te && this.$te('app.labels.' + this.entity) ? this.$t('app.labels.' + this.entity) : _.startCase(this.entity));
+      return (
+        this.title ||
+        (this.$te && this.$te("app.labels." + this.entity)
+          ? this.$t("app.labels." + this.entity)
+          : _.startCase(this.entity))
+      );
     },
 
     formattedColumns() {
@@ -554,10 +637,11 @@ export default {
         }
 
         if (col.type && col.type === "checkbox") {
-          col.sortable = false
+          col.sortable = false;
         }
 
-        let filterDropdownItems = col.filterOptions && col.filterOptions.filterDropdownItems;
+        let filterDropdownItems =
+          col.filterOptions && col.filterOptions.filterDropdownItems;
         if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
@@ -585,12 +669,14 @@ export default {
         }
 
         col.filterOptions = {
-          enabled: col.filterable !== undefined ?
-          col.filterable && this.filterable :
-          this.filterable,
-          filterDropdownItems };
-          return col;
-        });
+          enabled:
+            col.filterable !== undefined
+              ? col.filterable && this.filterable
+              : this.filterable,
+          filterDropdownItems
+        };
+        return col;
+      });
       const isInitialLoad = Object.keys(this.columnsState).length < 1;
       if (isInitialLoad && newcolumns.length > this.columnsDisplayed) {
         newcolumns.forEach((col, idx) => {
@@ -600,7 +686,7 @@ export default {
       if (
         !newcolumns.find(col => col.field === "ACTIONS") &&
         !this.opts.actions.noActions
-        ) {
+      ) {
         newcolumns.push({
           field: "ACTIONS",
           label: "Actions",
@@ -620,12 +706,12 @@ export default {
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter(
           col => this.columnsState[col.field]
-          );
+        );
 
         if (!this.columnsState.ACTIONS) {
           const actions = this.formattedColumns.find(
             col => col.field === "ACTIONS"
-            );
+          );
           if (actions) {
             cols.push(actions);
           }
@@ -647,7 +733,7 @@ export default {
   },
   created() {
     if (!this.$t) {
-      this.$t = (str) => {
+      this.$t = str => {
         /*
         if (!window.trans) {
           window.trans = {}
@@ -655,25 +741,23 @@ export default {
         window.trans[str]= str;
         */
 
-        return this.translations[str] || str
-        };
-        this.$te = (str) =>  !!this.translations[str];
-
-
+        return this.translations[str] || str;
+      };
+      this.$te = str => !!this.translations[str];
     }
     if (!this.$http) {
       try {
-        const axios = require('axios');
+        const axios = require("axios");
         this.$http = axios;
+      } catch (err) {
+        // console.warn(err.message);
       }
-      catch(err) {
-       // console.warn(err.message);
-      }
-
     }
   },
   beforeMount() {
-    const userLang = window.navigator ? (navigator.language || navigator.userLanguage) : 'en';
+    const userLang = window.navigator
+      ? navigator.language || navigator.userLanguage
+      : "en";
     moment.locale(userLang);
   },
   mounted() {
@@ -685,11 +769,13 @@ export default {
     this.refreshTableData();
 
     if (this.autoRefresh) {
-
       this.numberOfRefreshCalls = 0;
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
-          this.$notify({ title: 'too much calls, aborting tracking', type: 'warning' });
+          this.$notify({
+            title: "too much calls, aborting tracking",
+            type: "warning"
+          });
           clearInterval(this.refreshHandle);
           this.refreshHandle = null;
           return;
@@ -731,12 +817,12 @@ export default {
 
     tableRefreshCompleted() {
       this.$emit("update:tableNeedsRefresh", false);
-      this.$emit("afterRefresh", {data: this.data});
+      this.$emit("afterRefresh", { data: this.data });
     },
 
     /** GET ENTITY ITEMS */
     getItems() {
-      this.$emit('refresh');
+      this.$emit("refresh");
       // if i got a refresh function
       if (this.refresh) {
         this.refresh();
@@ -749,51 +835,54 @@ export default {
       }
       this.isRefreshing = true;
       return this.$http
-      .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
-      .then(res => {
-        this.data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
-        this.totalCount = res.data.totalCount;
-        if(this.options.
-          SearchDatas && this.mode === 'remote'){
-          this.$emit('crud-list-updated', this.data);
-        }
-        this.$emit('dataChanged', this.data);
-      })
-      .catch(err => {
+        .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
+        .then(res => {
+          this.data =
+            this.responseField && this.responseField != false
+              ? _.get(res.data, this.responseField)
+              : res.data;
+          this.totalCount = res.data.totalCount;
+          if (this.options.SearchDatas && this.mode === "remote") {
+            this.$emit("crud-list-updated", this.data);
+          }
+          this.$emit("dataChanged", this.data);
+        })
+        .catch(err => {
           // eslint-disable-next-line
           console.warn(err);
-        }).finally(()=> {
+        })
+        .finally(() => {
           this.isRefreshing = false;
         });
-      },
+    },
 
-      deleteItem(item) {
-        this.$emit("delete", item);
-      },
+    deleteItem(item) {
+      this.$emit("delete", item);
+    },
 
-      toggleFilter() {
-        this.filterable = !this.filterable;
+    toggleFilter() {
+      this.filterable = !this.filterable;
 
-        if (!this.filterable) {
-          this.serverParams.range = {};
-          this.serverParams.filters = {};
-          this.getItems();
+      if (!this.filterable) {
+        this.serverParams.range = {};
+        this.serverParams.filters = {};
+        this.getItems();
+      }
+      this.columns = this.columns.map(col => {
+        if (col.filterOptions) {
+          col.filterOptions.enabled = this.filterable;
         }
-        this.columns = this.columns.map(col => {
-          if (col.filterOptions) {
-            col.filterOptions.enabled = this.filterable;
-          }
-          return col;
-        });
-      },
+        return col;
+      });
+    },
 
     // editItem(item) {},
 
     clickOnLine(item) {
       this.opts &&
-      this.opts.actions &&
-      this.opts.actions.view &&
-      this.$emit("view", item);
+        this.opts.actions &&
+        this.opts.actions.view &&
+        this.$emit("view", item);
     },
 
     getLovValue(item, listName) {
@@ -802,7 +891,7 @@ export default {
       }
       const value = this.$store.state.listOfValues[listName].find(
         elm => elm[this.primaryKey] === item || elm.code === item
-        );
+      );
       if (!value) {
         return item;
       }
@@ -816,7 +905,7 @@ export default {
       }
       const value = this.$store.state.data[listName].find(
         elm => elm[this.primaryKey] === item || elm.code === item
-        );
+      );
       if (!value) {
         return item;
       }
@@ -834,7 +923,7 @@ export default {
         this.params,
         this.serverParams,
         newProps
-        );
+      );
     },
 
     // sort functions for unkown types
@@ -867,7 +956,6 @@ export default {
     onSortChange(params) {
       // eslint-disable-next-line
       if (this.mode !== "remote" || !this.columns || !this.columns[0].field) {
-
         return;
       }
       const sort = {};
@@ -876,7 +964,7 @@ export default {
       this.getItems();
     },
 
-    onSearch(params){
+    onSearch(params) {
       if (this.mode !== "remote") {
         return;
       }
@@ -889,7 +977,10 @@ export default {
       if (this.mode !== "remote") {
         return;
       }
-      this.updateParams({ filters: _.cloneDeep(params.columnFilters), page: 0 });
+      this.updateParams({
+        filters: _.cloneDeep(params.columnFilters),
+        page: 0
+      });
       this.getItems();
     },
 
@@ -899,11 +990,11 @@ export default {
         return;
       }
       this.serverParams.range.startDate = value.startDate
-      .toISOString()
-      .slice(0, 10);
+        .toISOString()
+        .slice(0, 10);
       this.serverParams.range.endDate = value.endDate
-      .toISOString()
-      .slice(0, 10);
+        .toISOString()
+        .slice(0, 10);
       this.getItems();
     },
 
@@ -916,34 +1007,34 @@ export default {
 
     exportCallBack() {
       if (!this.exportUrl) {
-        this.$notify({title: '[WARN] missing export url', type: 'warning'});
+        this.$notify({ title: "[WARN] missing export url", type: "warning" });
         return;
       }
       this.$http
-      .get(this.exportUrl, {})
-      .then(res => {
-        if (res.data.url) {
-          const link = document.createElement("a");
-          link.download = `${this.entity}_export`;
-          link.href = res.data.url;
-          link.click();
-          link.remove();
-        }
-      })
-      .catch(this.apiErrorCallback);
+        .get(this.exportUrl, {})
+        .then(res => {
+          if (res.data.url) {
+            const link = document.createElement("a");
+            link.download = `${this.entity}_export`;
+            link.href = res.data.url;
+            link.click();
+            link.remove();
+          }
+        })
+        .catch(this.apiErrorCallback);
     },
 
     exportCurrentArrayToExcel() {
       let CsvString = "";
       // eslint-disable-next-line
       const head = this.data[0];
-      Object.keys(head).forEach((ColItem) => {
+      Object.keys(head).forEach(ColItem => {
         CsvString += `${ColItem},`;
       });
       CsvString += "\r\n";
-      this.data.forEach((RowItem) => {
+      this.data.forEach(RowItem => {
         // eslint-disable-next-line
-        Object.values(RowItem).forEach((ColItem) => {
+        Object.values(RowItem).forEach(ColItem => {
           CsvString += `${ColItem},`;
         });
         CsvString += "\r\n";
@@ -954,16 +1045,16 @@ export default {
       x.setAttribute("download", "somedata.csv");
       document.body.appendChild(x);
       x.click();
-    },
+    }
   }
 };
 </script>
-<style lang='scss'>
+<style lang="scss">
 .ajax-table-img {
   max-height: 50px;
 }
 
-.ajax-table-checkbox{
+.ajax-table-checkbox {
   height: 18px;
   width: 18px;
 }

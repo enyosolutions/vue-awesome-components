@@ -347,7 +347,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  modalMode: "slide", // fade | slide
+  modalMode: "slide", // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
   customTopActions: [],

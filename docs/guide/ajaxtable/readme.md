@@ -46,6 +46,11 @@
 | list-of-data | The value is used to find the value in a vuex store |
 
 
+## Styling classes :
+
+`ajax-table-card`
+`ajax-table-card-head`
+`ajax-table-card-body`
 
 ## Examples
 
