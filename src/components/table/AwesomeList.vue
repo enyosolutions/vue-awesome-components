@@ -1,5 +1,5 @@
 <template>
-  <div class="card ajax-table-card">
+  <div class="card awesome-list-card">
     <div
       class="card-header"
       :class="
@@ -7,7 +7,7 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h4 class="card-title ajax-table-header">
+      <h4 class="card-title awesome-list-header">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
@@ -401,7 +401,7 @@ import apiErrors from "../../mixins/apiErrorsMixin";
 import _ from "lodash";
 
 export default {
-  name: "EnyoAjaxTable",
+  name: "AwesomeList",
   token: `
   <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
@@ -1049,8 +1049,6 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "~vue-good-table/dist/vue-good-table.css";
-
 .ajax-table-img {
   max-height: 50px;
 }

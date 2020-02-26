@@ -165,7 +165,6 @@
 
 <style lang="css" >
 
-@import "~vue-good-table/dist/vue-good-table.css";
 @import "~bootstrap/dist/css/bootstrap.min.css";
 
 

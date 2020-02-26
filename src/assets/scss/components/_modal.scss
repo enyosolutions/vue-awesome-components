@@ -1,11 +1,23 @@
 @import "../plugins/mq";
 .modal {
+  &.fade {
+    opacity: 0;
+    -webkit-transition: all .2s linear;
+    transition: all .2s linear;
+    visibility: hidden;
+    display: block !important;
+  }
   &.fade.show {
+     opacity: 1;
+    visibility: visible;
+    /*
     .modal-dialog {
-      -webkit-transform: translate(0, 30%);
+     -webkit-transform: translate(0, 30%);
       -o-transform: translate(0, 30%);
       transform: translate(0, 30%);
+
     }
+     */
   }
 
   &.modal-mini {

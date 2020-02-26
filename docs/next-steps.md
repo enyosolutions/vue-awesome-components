@@ -5,6 +5,13 @@
 
 - Support for an edit page in full (currently only slider and modal are supported)
 
+## critical
+
+- Remove dependency on bootstrap modals as it creates a dependency on jquery.
+-- we extract the code for modal feature from bootstrap,
+-- or we find another package that offers modals in vue
+-- or we implement our own modal code (preferred, but comes with a lot of potential bugs to deal with -- i'm thinking responsive...)
+
 
 ## Features
 - Custom Filters on top of the crud component.
@@ -24,7 +31,7 @@ Ex: if on product i set edit:false then the route /product/:id/edit should not e
 - Inline actions buttons should appear also when you are viewing / editing a form
 - Add Hability to select many items and execute custom actions on them.
 
-## DATASource
+## DataSource
 - Make crud component work without a schema (eg. just with an url)
 - Support for websockets
 - Support for firebase

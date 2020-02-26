@@ -1,7 +1,7 @@
 module.exports = {
   title: "Enyo vue components",
   description: "Components to speed up the development of a backoffice.",
-  base: "/",
+  base: "/vue-enyo-components",
   head: [
     [
       "link",
@@ -10,13 +10,20 @@ module.exports = {
         href:
           "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
       }
+    ],
+    ["script", { src: "https://code.jquery.com/jquery-3.3.1.min.js" }],
+    [
+      "script",
+      {
+        src:
+          "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+      }
     ]
   ],
   themeConfig: {
     logo: "http://www.enyosolutions.com/data/uploads/156320809647.png",
     nav: [
       { text: "Home", link: "/" },
-      { text: "Getting started", link: "/guide/" },
       { text: "Components", link: "/guide/" },
       { text: "CrudComponent", link: "/guide/crudcomponent/" },
       { text: "AjaxTable", link: "/guide/ajaxtable/" },
@@ -52,6 +59,10 @@ module.exports = {
               {
                 title: "Configuration of the schema",
                 path: "/guide/crudcomponent/schema-configuration.md"
+              },
+              {
+                title: "Examples",
+                path: "/guide/crudcomponent/examples.md"
               }
             ]
           },

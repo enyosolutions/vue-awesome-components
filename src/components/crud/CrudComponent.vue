@@ -63,7 +63,7 @@
           </div>
           <!-- START OF create MODAL -->
           <div
-          id="formModal"
+          :id="modelName + 'formModal'"
           class="modal"
           :class="{slide: innerOptions.modalMode === 'slide', fade: innerOptions.modalMode === 'fade'}"
           tabindex="-1"
@@ -173,7 +173,7 @@ class="nav nav-tabs mt-5 mb-4"
   class="nav-link active"
   data-toggle="tab"
   @click="activeNestedTab = 'general'"
-  >{{ $te('app.labels.' + name) ?  $te('app.labels.' + name) : _.startCase(name) }}</a>
+  >{{ $te('app.labels.' + modelName) ?  $te('app.labels.' + modelName) : _.startCase(modelName) }}</a>
 </li>
 <li
 v-for="ns in nestedSchemas"
@@ -183,7 +183,7 @@ class="nav-item"
 <a
 class="nav-link"
 data-toggle="tab"
-@click="activeNestedTab = ns.name"
+@click="activeNestedTab = ns.modelName"
 >
 <i
 v-if="ns.icon"
@@ -328,12 +328,12 @@ class="btn btn-info btn-simple btn-block"
 </div>
 </template>
 <script>
-/* global $ */
 import apiErrors from "../../mixins/apiErrorsMixin";
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import EnyoAjaxTable from "../table/EnyoAjaxTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
+import $ from 'jquery';
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -465,7 +465,7 @@ export default {
   },
   mixins: [apiErrors],
   props: {
-    name: { type: String, required: false, default: undefined},
+    title: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
     primaryKey: {
       type: String, default: 'id',
@@ -492,20 +492,31 @@ export default {
       required: false,
       default: () => [],
       note:
-      "An array describing data that is linked to this model. Serves for displaying a detailed object"
+      "An array describing the data that is linked to the nested model. Serves for displaying a detailed object"
     },
     parent: {
       type: Object,
       required: false,
       note:
       "The object containing the parent in case of a nested schema." +
-      "Most of the the time You don't actually to pass this, it's done automatically by the compoenet itself"
+      "You don't actually to pass this, it's done automatically by the parent component itself"
     },
     nestedDisplayMode: {
       type: String,
       required: false,
       default: "list",
       note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
+    },
+    translations: {
+      type: Object,
+      required: false,
+      default: () => ({
+        "common.labels.manageTitle": "common.labels.manageTitle",
+        "common.buttons.view": "common.buttons.view",
+        "common.buttons.cancel": "common.buttons.cancel",
+        "common.buttons.close": "common.buttons.close"
+      }),
+      note: 'Translation labels to use when vue-i18n is not present'
     },
     options: {
       type: Object,
@@ -540,14 +551,12 @@ computed: {
       return this.$te(this.title) ? this.$t(this.title) : this.title;
     }
 
-    if (this.name) {
-      return this.$te(`app.labels.${this.name}`) ? this.$t(`app.labels.${this.name}`) : _.startCase(this.name);
-    }
     if (this.modelName) {
       return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : _.startCase(this.modelName);
     }
     return '';
   },
+
   _titlePlural() {
     if (this.innerModel && this.innerModel.pluralName) {
       return this.$te(this.innerModel.pluralName) ?
@@ -558,16 +567,13 @@ computed: {
       return this.$te(this.title + 's') ? this.$t(this.title + 's') : (this.title + 's');
     }
 
-    if (this.name) {
-      return this.$te(`app.labels.${this.name}s`) ?
-      this.$t(`app.labels.${this.name}s`) : _.startCase(this.name + 's');
-    }
     if (this.modelName) {
       return this.$te(`app.labels.${this.modelName}s`) ?
       this.$t(`app.labels.${this.modelName}s`) : _.startCase(this.modelName + 's');
     }
     return '';
   },
+
   formSchema() {
     if (!this.innerSchema) {
       return [];
@@ -585,10 +591,29 @@ watch: {
     crudNeedsRefresh: "refreshComponent",
   },
   created() {
+    if (!this.$t) {
+      this.$t = str => {
+        if (!window.trans) {
+          window.trans = {}
+        }
+        window.trans[str]= str;
+
+        return this.translations[str] || str;
+      };
+      this.$te = str => !!this.translations[str];
+    }
+    if (!this.$http) {
+      try {
+        const axios = require("axios");
+        this.$http = axios;
+      } catch (err) {
+        // console.warn(err.message);
+      }
+    }
     this.loadModel();
   },
   mounted() {
-    this.$modal = $("#formModal");
+    this.$modal = $(`#${this.modelName}formModal`);
     this.loadModel();
     if (!this.$route) {
       return;
@@ -748,9 +773,6 @@ watch: {
     } else {
       this.innerModel = this.model;
     }
-    if (this.modelName && !this.name) {
-      this.name = this.modelName;
-    }
 
     if (!this.innerModel && !this.schema) {
         // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
@@ -759,7 +781,7 @@ watch: {
 
       this.innerSchema = this.schema || this.innerModel.schema;
       this.innerOptions.columns = this.parseColumns(this.innerSchema.properties);
-      this.innerOptions.url = (this.options && this.options.url) || (this.innerModel && this.innerModel.url) || `/crud/${this.modelName}`;
+      this.innerOptions.url = (this.options && this.options.url) || (this.innerModel && this.innerModel.url) || `/${this.modelName}`;
       if (typeof this.innerOptions.url === 'function') {
         this.innerOptions.url = this.innerOptions.url(this.parent, this);
       }
@@ -808,7 +830,7 @@ watch: {
         // console.warn("possible recursive parseSchema call", schema);
         return;
       }
-      const formSchema = [];
+      const fields = [];
       const size = Object.keys(schema.properties).length;
       Object.keys(schema.properties).forEach(key => {
         if ([this.primaryKey].indexOf(key) === -1) {
@@ -823,7 +845,7 @@ watch: {
             subSchema.styleClasses = `subgroup  ${(prop.field &&
               prop.field.styleClasses) ||
               "card"}`;
-              formSchema.push(subSchema);
+              fields.push(subSchema);
             } else {
               if (prop.field && prop.relation && prop.field.fieldOptions) {
                 prop.field.fieldOptions.url = prop.relation;
@@ -864,7 +886,8 @@ watch: {
                 (prop.field && prop.field.styleClasses) ||
                 (size < 8 ? "col-md-12" : "col-md-6"),
                 relation: prop.relation,
-                foreignKey: prop.foreignKey
+                foreignKey: prop.foreignKey,
+                group: (prop.field && prop.field.group)
               };
               if (!field.fieldOptions.inputType) {
                 field.fieldOptions.inputType =
@@ -880,12 +903,55 @@ watch: {
                   down: "fa fa-arrow-down"
                 };
               }
-              formSchema.push(field);
+              fields.push(field);
             }
           }
         });
-      return { fields: formSchema };
+        let groups = this.parseSchemaGroups(schema);
+        groups = this.distributeFieldsInGroups(groups, fields);
+
+      return { fields, groups };
     },
+
+    parseSchemaGroups(schema) {
+    let groups = [];
+    schema.formGroups.forEach((group, idx) => {
+        if (!groups[group.id]) {
+          groups.push({
+            fields: [],
+            ...group,
+            legend: this.$t(group.title),
+            type: 'group',
+
+          });
+        }
+    });
+    if (groups.length < 1) {
+      groups = [{legend: '', fields: schema.fields}];
+    }
+    return groups;
+  },
+
+  distributeFieldsInGroups(groups, fields) {
+    fields.forEach(f => {
+      if(f.group) {
+        const keys = f.group.split('.');
+        let targetGroup = {groups};
+        keys.forEach(key => {
+          targetGroup = _.find(targetGroup.groups,{id: key});
+          console.log({targetGroup, key, keys});
+
+        })
+        if (targetGroup) {
+          if (!targetGroup.fields) {
+            targetGroup.fields = [];
+          }
+          targetGroup.fields.push(f);
+        }
+      }
+    });
+    return groups;
+  },
 
     getFormtype(property) {
       let { type } = property;
@@ -990,12 +1056,34 @@ watch: {
       },
 
       openModal() {
-        this.$modal && this.$modal.modal("show");
+        if (!this.$modal) {
+          this.$modal = $(`#${this.modelName}formModal`);
+        }
+        if (this.$modal.modal) {
+          this.$modal.modal("show");
+        }
+        else if (this.innerOptions.modalMode == 'slide'){
+          this.$modal.addClass('show');
+        }
+        else {
+          this.$modal.addClass('show');
+        }
       },
 
       closeModal() {
+         if (!this.$modal) {
+          this.$modal = $(`#${this.modelName}formModal`);
+        }
         window.history.replaceState({}, null, `${this.parentPath}`);
-        this.$modal && this.$modal.modal("hide");
+        if (this.$modal.modal) {
+          this.$modal.modal("hide");
+        }
+        else if (this.innerOptions.modalMode == 'slide') {
+          this.$modal.removeClass('show');
+        }
+        else {
+          this.$modal.removeClass('show');
+        }
       },
 
       goToEditPage(item) {
