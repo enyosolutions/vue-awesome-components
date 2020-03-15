@@ -236,7 +236,7 @@
               <button
                 v-if="opts && opts.actions && opts.actions.delete"
                 class="btn btn-xs btn-simple btn-icon"
-                @click="deleteItem(props.row)"
+                @click="$emit('delete', props.row)"
               >
                 <i class="fa fa-trash text-danger" />
               </button>
@@ -395,9 +395,11 @@
 <script>
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
-import qs from "qs";
 import moment from "moment";
 import apiErrors from "../../mixins/apiErrorsMixin";
+import apiListMixin from "../../mixins/apiListMixin";
+import i18nMixin from "../../mixins/i18nMixin";
+
 import _ from "lodash";
 
 export default {
@@ -417,7 +419,7 @@ export default {
     DateRangePicker,
     VueGoodTable
   },
-  mixins: [apiErrors],
+  mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
     columns: {
       type: Array,
@@ -428,21 +430,7 @@ export default {
       default: 8
     },
     rows: { type: Array, default: () => [] },
-    primaryKey: { type: String, default: "id" },
-    responseField: {
-      type: [String, Boolean],
-      default: "body",
-      note:
-        "This field dictates where in the response should the component search for the results "
-    },
     url: { type: String, default: "" },
-    params: {
-      type: Object,
-      default: () => ({}),
-      note:
-        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
-    },
-    queryHeaders: { type: Object, default: () => ({}) },
     entity: {
       type: String,
       default: "",
@@ -721,14 +709,14 @@ export default {
     }
   },
   watch: {
-    tableNeedsRefresh: "refreshTableData",
+    tableNeedsRefresh: "refreshLocalData",
     params() {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
     },
     entity: "entityChanged",
     // store: changed => {},
-    rows: "refreshTableData"
+    rows: "refreshLocalData"
   },
   created() {
     if (!this.$t) {
@@ -744,14 +732,6 @@ export default {
       };
       this.$te = str => !!this.translations[str];
     }
-    if (!this.$http) {
-      try {
-        const axios = require("axios");
-        this.$http = axios;
-      } catch (err) {
-        // console.warn(err.message);
-      }
-    }
   },
   beforeMount() {
     const userLang = window.navigator
@@ -765,7 +745,7 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
-    this.refreshTableData();
+    this.refreshLocalData();
 
     if (this.autoRefresh) {
       this.numberOfRefreshCalls = 0;
@@ -793,71 +773,7 @@ export default {
   },
   methods: {
     startCase: _.startCase,
-    // eslint-disable-next-line
-    async refreshTableData(changed) {
-      // console.log("my url ", this.url);
-      if (this.url) {
-        this.data = [];
-        // console.log("this.serverParams", this.serverParams);
-        this.serverParams = _.merge({}, this.serverParams, this.params);
-        await this.getItems();
-      } else {
-        this.data = this.rows;
-        this.$forceUpdate();
-      }
-      this.tableRefreshCompleted();
-    },
 
-    entityChanged() {
-      this.data = this.url ? [] : this.rows;
-      this.serverParams = {};
-      this.getItems();
-    },
-
-    tableRefreshCompleted() {
-      this.$emit("update:tableNeedsRefresh", false);
-      this.$emit("afterRefresh", { data: this.data });
-    },
-
-    /** GET ENTITY ITEMS */
-    getItems() {
-      this.$emit("refresh");
-      // if i got a refresh function
-      if (this.refresh) {
-        this.refresh();
-        return;
-      }
-
-      if (!this.url) {
-        // console.log("[AJAXTABLE] no refresh url or refresh function");
-        return;
-      }
-      this.isRefreshing = true;
-      return this.$http
-        .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
-        .then(res => {
-          this.data =
-            this.responseField && this.responseField != false
-              ? _.get(res.data, this.responseField)
-              : res.data;
-          this.totalCount = res.data.totalCount;
-          if (this.options.SearchDatas && this.mode === "remote") {
-            this.$emit("crud-list-updated", this.data);
-          }
-          this.$emit("dataChanged", this.data);
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.warn(err);
-        })
-        .finally(() => {
-          this.isRefreshing = false;
-        });
-    },
-
-    deleteItem(item) {
-      this.$emit("delete", item);
-    },
 
     toggleFilter() {
       this.filterable = !this.filterable;
@@ -916,62 +832,6 @@ export default {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
     },
 
-    updateParams(newProps) {
-      this.serverParams = Object.assign(
-        {},
-        this.params,
-        this.serverParams,
-        newProps
-      );
-    },
-
-    // sort functions for unkown types
-    // eslint-disable-next-line
-    sortFn(x, y, col, rowX, rowY) {
-      // x - row1 value for column
-      // y - row2 value for column
-      // col - column being sorted
-      // rowX - row object for row1
-      // rowY - row object for row2
-      return x < y ? -1 : x > y ? 1 : 0;
-    },
-
-    onPageChange(params) {
-      if (this.mode !== "remote") {
-        return;
-      }
-      this.updateParams({ page: params.currentPage - 1 });
-      this.getItems();
-    },
-
-    onPerPageChange(params) {
-      if (this.mode !== "remote") {
-        return;
-      }
-      this.updateParams({ perPage: params.currentPerPage });
-      this.getItems();
-    },
-
-    onSortChange(params) {
-      // eslint-disable-next-line
-      if (this.mode !== "remote" || !this.columns || !this.columns[0].field) {
-        return;
-      }
-      const sort = {};
-      sort[this.columns[0].field] = params[0].type;
-      this.updateParams({ sort });
-      this.getItems();
-    },
-
-    onSearch(params) {
-      if (this.mode !== "remote") {
-        return;
-      }
-      let search = params.searchTerm;
-      this.updateParams({ search, page: 0 });
-      this.getItems();
-    },
-
     onColumnFilter(params) {
       if (this.mode !== "remote") {
         return;
@@ -980,6 +840,18 @@ export default {
         filters: _.cloneDeep(params.columnFilters),
         page: 0
       });
+      this.getItems();
+    },
+
+    onSortChange(params) {
+      const fieldIndex =  params[0].columnIndex;
+      // eslint-disable-next-line
+      if (this.mode !== "remote" || !this.columns || !this.columns[fieldIndex].field) {
+        return;
+      }
+      const sort = {};
+      sort[this.columns[fieldIndex].field] = params[0].sortType || params[0].type;
+      this.updateParams({ sort });
       this.getItems();
     },
 
@@ -1000,6 +872,7 @@ export default {
     hasValue(item, column) {
       return item[column.toLowerCase()] !== "undefined";
     },
+
     itemValue(item, column) {
       return item[column.toLowerCase()];
     },
@@ -1014,7 +887,7 @@ export default {
         .then(res => {
           if (res.data.url) {
             const link = document.createElement("a");
-            link.download = `${this.entity}_export`;
+            link.download = `${this.entity || ''}_export`;
             link.href = res.data.url;
             link.click();
             link.remove();
@@ -1022,29 +895,6 @@ export default {
         })
         .catch(this.apiErrorCallback);
     },
-
-    exportCurrentArrayToExcel() {
-      let CsvString = "";
-      // eslint-disable-next-line
-      const head = this.data[0];
-      Object.keys(head).forEach(ColItem => {
-        CsvString += `${ColItem},`;
-      });
-      CsvString += "\r\n";
-      this.data.forEach(RowItem => {
-        // eslint-disable-next-line
-        Object.values(RowItem).forEach(ColItem => {
-          CsvString += `${ColItem},`;
-        });
-        CsvString += "\r\n";
-      });
-      CsvString = `data:application/csv,${encodeURIComponent(CsvString)}`;
-      const x = document.createElement("A");
-      x.setAttribute("href", CsvString);
-      x.setAttribute("download", "somedata.csv");
-      document.body.appendChild(x);
-      x.click();
-    }
   }
 };
 </script>

@@ -329,6 +329,7 @@ class="btn btn-info btn-simple btn-block"
 </template>
 <script>
 import apiErrors from "../../mixins/apiErrorsMixin";
+import i18nMixin from "../../mixins/i18nMixin";
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import EnyoAjaxTable from "../table/EnyoAjaxTable.vue";
@@ -463,7 +464,7 @@ export default {
   EnyoCrudStatsSection,
     // VueGoodTable
   },
-  mixins: [apiErrors],
+  mixins: [i18nMixin, apiErrors],
   props: {
     title: { type: String, required: false, default: undefined},
     modelName: { type: String, required: true },
@@ -591,17 +592,6 @@ watch: {
     crudNeedsRefresh: "refreshComponent",
   },
   created() {
-    if (!this.$t) {
-      this.$t = str => {
-        if (!window.trans) {
-          window.trans = {}
-        }
-        window.trans[str]= str;
-
-        return this.translations[str] || str;
-      };
-      this.$te = str => !!this.translations[str];
-    }
     if (!this.$http) {
       try {
         const axios = require("axios");
@@ -915,7 +905,7 @@ watch: {
 
     parseSchemaGroups(schema) {
     let groups = [];
-    schema.formGroups.forEach((group, idx) => {
+    schema.formGroups.forEach((group) => {
         if (!groups[group.id]) {
           groups.push({
             fields: [],
@@ -939,7 +929,6 @@ watch: {
         let targetGroup = {groups};
         keys.forEach(key => {
           targetGroup = _.find(targetGroup.groups,{id: key});
-          console.log({targetGroup, key, keys});
 
         })
         if (targetGroup) {

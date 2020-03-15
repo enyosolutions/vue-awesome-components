@@ -27,11 +27,12 @@ Vue.use(VueGoodTablePlugin);
 
 Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
+Vue.component("vue-form-generator", VueFormGenerator, []);
+
 
 Vue.use(VueFormGenerator, {
   fields: _.values(VueFormGenerator.fieldsLoader)
 });
-Vue.component("vue-form-generator", VueFormGenerator, []);
 
 
 Vue.use(VueI18n);
@@ -42,7 +43,11 @@ Vue.config.productionTip = false;
 const i18n = new VueI18n({
   locale: "fr", // set locale
   messages: {
-    fr: {}
+    fr: {
+      "awesomelist.buttons.increase": "More items per row",
+      "awesomelist.buttons.decrease": "Less items per row",
+      "awesomelist.buttons.refresh": "Refresh"
+    }
   } // set locale messages
 });
 

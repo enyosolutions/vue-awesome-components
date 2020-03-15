@@ -1,6 +1,6 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.4.15",
+  "version": "0.6.0",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -57,6 +57,7 @@
     "vue-i18n": "^8.1.0",
     "vue-notifyjs": "^0.4.3",
     "vue-router": "^3.0.1",
+    "vuejs-paginate": "^2.1.0",
     "vuex": "^3.1.0"
   },
   "eslintConfig": {
