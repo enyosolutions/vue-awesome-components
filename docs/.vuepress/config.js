@@ -1,7 +1,8 @@
 module.exports = {
   title: "Enyo vue components",
   description: "Components to speed up the development of a backoffice.",
-  base: "/vue-enyo-components",
+  // base: "/vue-enyo-components",
+  base: "/",
   head: [
     [
       "link",
@@ -79,6 +80,7 @@ module.exports = {
               }
             ]
           },
+          { title: "AwesomeList component", path: "/guide/awesomelist" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },

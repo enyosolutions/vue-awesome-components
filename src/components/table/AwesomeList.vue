@@ -16,7 +16,7 @@
               style="color:#888;margin-left:10px"
             />
           </div>
-          <div class="dropdown">
+          <div class="btn-group" role="group">
             <button
               v-if="opts.actions && opts.actions.refresh"
               class="btn btn-simple"
@@ -26,15 +26,30 @@
               {{ $t("awesomelist.buttons.refresh") }}
             </button>
 
-            <button class="btn btn-simple" @click="decreaseItemsPerRow(1)">
-              <i :class="'fa fa-minus' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("awesomelist.buttons.decrease") }}
-            </button>
 
-            <button class="btn btn-simple" @click="increaseItemsPerRow(1)">
-              <i :class="'fa fa-plus' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("awesomelist.buttons.increase") }}
+
+            <template v-if="opts.actions && opts.actions.itemsPerRow">
+             <button class="btn " @click="setListMode()"
+              :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
+            >
+              <i :class="'fa fa-list'" />
+
             </button>
+              <button
+              class="btn"
+              :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
+              @click="setMediumGridMode()">
+                <i :class="'fa fa-th-large'" />
+              </button>
+
+              <button
+              class="btn"
+              :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
+              @click="setGridMode()">
+                <i :class="'fa fa-th'" />
+              </button>
+            </template>
+
             <button
               v-if="
                 opts.actions && (opts.actions.export || opts.actions.import)
@@ -76,14 +91,19 @@
       </p>
     </div>
 
-    <div class="ajax-table-card-body">
-      <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-        <div v-for="(item,index) in _paginatedItems" :key="index" :class="itemWrapperClasses">
-          <slot name="list-item" :item="item">
+    <div class>
+      <div class="list-responsive card-deck" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+        <div
+          v-for="(item, index) in _paginatedItems"
+          :key="index"
+          :class="itemWrapperClasses"
+          @click="handleItemClick($event, item)"
+        >
+          <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow">
             <div
               class="card mb-3 awesome-list-item"
               :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
-          'height': _itemHeight
+             'height': _itemHeight
           }"
             >
               <img
@@ -95,7 +115,14 @@
               <div class="card-body">
                 <h5 class="card-title" v-if="item[fields.title]">{{ item[fields.title] }}</h5>
                 <p class="card-text">{{ item[fields.description] }}</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <div class="awesomelist-item-action">
+                  <button
+                    @click="handleItemButtonClick($event, item)"
+                    class="btn btn-primary btn-sm"
+                  >
+                  {{ $t("awesomelist.buttons.itemAction") }}
+                  </button>
+                </div>
               </div>
             </div>
           </slot>
@@ -141,9 +168,13 @@ export default {
       type: Number,
       default: 3
     },
-    itemHeight: {
+    gridModeItemHeight: {
       type: [Number, String],
-      default: 500
+      default: undefined
+    },
+    listModeItemHeight: {
+      type: [Number, String],
+      default: undefined
     },
     fields: {
       type: Object,
@@ -160,6 +191,7 @@ export default {
         "awesomelist.buttons.increase": "More items per row",
         "awesomelist.buttons.decrease": "Less items per row",
         "awesomelist.buttons.refresh": "Refresh",
+        "awesomelist.buttons.itemAction": "Open",
       })
     },
     styles: {
@@ -175,7 +207,6 @@ export default {
         customInlineActions: [], // {key, label, action: function(item, context{}}
         saveSearchDatas: false,
         actions: {
-          noActions: false,
           search: true,
           filter: true,
           create: true,
@@ -183,9 +214,8 @@ export default {
           view: true,
           delete: true,
           export: false,
-          import: false,
-          dateFilter: true,
-          refresh: true
+          refresh: true,
+          itemsPerRow: true
         }
       })
     }
@@ -207,15 +237,17 @@ export default {
     },
 
     _itemHeight() {
-      return _.isString(this.itemHeight)
-        ? this.itemHeight
-        : this.itemHeight + "px";
+      const height =
+        this.itemsPerRow === 1
+          ? this.listModeItemHeight
+          : this.gridModeItemHeight;
+      return _.isString(height) ? height : height + "px";
     },
 
     _pageCount() {
       return this.perPage && this.totalCount
         ? Math.ceil(this.totalCount / this.perPage)
-        : 10;
+        : 0;
     },
     itemWrapperClasses() {
       switch (this.itemsPerRow) {
@@ -273,6 +305,26 @@ export default {
       this.itemsPerRow -= c;
     },
 
+    setGridMode() {
+      this.itemsPerRow = 3;
+    },
+
+    setListMode() {
+      this.itemsPerRow = 1;
+    },
+
+    setMediumGridMode() {
+      this.itemsPerRow = 2;
+    },
+
+    handleItemClick($event, item) {
+      this.$emit("itemClicked", item);
+    },
+
+    handleButtonClick(item) {
+      this.$emit("itemButtonClicked", item);
+    },
+
     onPaginationChange(page) {
       this.serverParams.page = page;
       if (this.mode !== "remote") {
@@ -287,6 +339,56 @@ export default {
 .awesome-list-component {
   .pagination {
     justify-content: center;
+  }
+
+  .awesome-list-item {
+    position: relative;
+    overflow: hidden;
+  }
+  .col-12 {
+    .awesome-list-item {
+      .card-img-top {
+        height: 100%;
+        width: 30%;
+      }
+
+      .awesomelist-item-action {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding-bottom: 10px;
+        padding-right: 10px;
+        text-align: right;
+        button {
+          color: #fff;
+        }
+      }
+    }
+  }
+  .col-2,
+  .col-3,
+  .col-4,
+  .col-6 {
+    .awesome-list-item {
+      .card-img-top {
+        height: 60%;
+      }
+
+      .awesomelist-item-action {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: white;
+
+        button {
+          color: #fff;
+        }
+      }
+    }
   }
 }
 .awesome-list-header {

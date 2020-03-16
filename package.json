@@ -1,13 +1,14 @@
 {
   "name": "vue-enyo-components",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --fix",
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-enyo-components.dev/dist/"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -45,6 +46,7 @@
     "vue": "2.6.11",
     "vue-i18n": "^8.1.0",
     "vue-loader": "^15.7.0",
+    "vue-router": "^3.1.6",
     "vue-template-compiler": "2.6.11",
     "vuepress": "^1.2.0",
     "vuex": "^3.1.0"

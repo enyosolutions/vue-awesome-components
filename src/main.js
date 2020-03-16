@@ -4,14 +4,14 @@ import "./main.scss";
 
 import Vue from "vue";
 import VueI18n from "vue-i18n";
-import App from "./App.vue";
 import axios from "axios";
 import Datetime from 'vue-datetime';
 import VueFormGenerator from 'vue-form-generator';
 import VueGoodTablePlugin from "vue-good-table";
+import VueRouter from "vue-router";
 import Multiselect from 'vue-multiselect'
 
-
+import App from "./App.vue";
 import VueEnyoComponents from "./plugin";
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
@@ -24,6 +24,7 @@ import $ from "jquery";
 
 // Vue Use and Components
 Vue.use(VueGoodTablePlugin);
+Vue.use(VueRouter);
 
 Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
@@ -46,9 +47,25 @@ const i18n = new VueI18n({
     fr: {
       "awesomelist.buttons.increase": "More items per row",
       "awesomelist.buttons.decrease": "Less items per row",
-      "awesomelist.buttons.refresh": "Refresh"
+      "awesomelist.buttons.refresh": "Refresh",
+      "awesomelist.buttons.itemAction": "Open"
     }
   } // set locale messages
+});
+
+
+const router = new VueRouter({
+  mode: "history",
+  routes: [
+    {
+      path: "/",
+      component: () => import("../examples/pages/Demos.vue")
+    },
+    {
+      path: "/awesomelist",
+      component: () => import("../examples/pages/AwesomelistPage")
+    }
+  ]
 });
 
 Vue.prototype.$http = axios.create({
@@ -63,6 +80,7 @@ window._ = _;
 
 window.vm = new Vue({
   i18n,
+  router,
   render: h => h(App)
 }).$mount("#app");
 
