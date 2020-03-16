@@ -80,7 +80,7 @@ module.exports = {
               }
             ]
           },
-          { title: "AwesomeList component", path: "/guide/awesomelist" },
+          { title: "AwesomeList component", path: "/guide/awesomelist/" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
