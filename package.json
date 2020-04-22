@@ -25,7 +25,7 @@
     "sweetalert2": "^8.2.6",
     "vue-base64-file-upload": "^1.0.4",
     "vue-clickaway": "^2.2.2",
-    "vue-datetime": "^1.0.0-beta.10",
+    "vue-datetime": "^1.0.0-beta.11",
     "vue-form-generator": "^3.0.0-beta.7",
     "vue-good-table": "^2.14.4",
     "vue-multiselect": "^2.1.6",
