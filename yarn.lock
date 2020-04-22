@@ -2945,9 +2945,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-date-fns@2.0.0-alpha.7:
-  version "2.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0-alpha.7.tgz#245ad16f95764eababfb2c0a41fd5d033c20e57a"
+date-fns@^2.0.0-beta.4:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.12.0.tgz#01754c8a2f3368fc1119cf4625c3dad8c1845ee6"
+  integrity sha512-qJgn99xxKnFgB1qL4jpxU7Q2t0LOn1p8KMIveef3UZD7kqjT3tpFNNdXJelEHhE+rUgffriXriw/sOSU+cS1Hw==
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -8724,17 +8725,19 @@ vue-form-generator@^3.0.0-beta.7:
   version "3.0.0-beta.7"
   resolved "https://registry.yarnpkg.com/vue-form-generator/-/vue-form-generator-3.0.0-beta.7.tgz#63b6786546cb98d9d04578e101086a1a84a9bdaa"
 
-vue-good-table@^2.14.4:
-  version "2.16.3"
-  resolved "https://registry.yarnpkg.com/vue-good-table/-/vue-good-table-2.16.3.tgz#0367bd601583db5659d9c6a803d315c89898f09a"
+vue-good-table@^2.19.1:
+  version "2.19.1"
+  resolved "https://registry.yarnpkg.com/vue-good-table/-/vue-good-table-2.19.1.tgz#b18e199c7e04fc3ba4cfa7b0eea8f126716ca9ab"
+  integrity sha512-Bfd9RO+vHSvdosw/Jo7MkwIuP/x8BM173PB8fe4mhm2yPMLIH+WlGNzYbsiF2VTekj7K7QfE8WfGpc7lO6nCnQ==
   dependencies:
-    date-fns "2.0.0-alpha.7"
+    date-fns "^2.0.0-beta.4"
     diacriticless "1.0.1"
     lodash.assign "^4.2.0"
     lodash.clonedeep "^4.5.0"
     lodash.filter "^4.6.0"
     lodash.foreach "^4.5.0"
     lodash.isequal "^4.5.0"
+    vue-select "^3.1.0"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.3"
@@ -8774,6 +8777,11 @@ vue-router@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.3.tgz#e6b14fabc0c0ee9fda0e2cbbda74b350e28e412b"
   integrity sha512-8iSa4mGNXBjyuSZFCCO4fiKfvzqk+mhL0lnKuGcQtO1eoj8nq3CmbEG8FwK5QqoqwDgsjsf1GDuisDX4cdb/aQ==
+
+vue-select@^3.1.0:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.10.1.tgz#3731af25c9ab59ff9d6122dbda3dee628f07ddfa"
+  integrity sha512-rmE19MPS8emN8eLWg6YSqAhrVO4nwD9cr9jeA4LjnJY0QPxqQTNHLl38ovCz23yttvBns57gjiOddsf/pxwPjQ==
 
 vue-server-renderer@^2.6.10:
   version "2.6.11"
