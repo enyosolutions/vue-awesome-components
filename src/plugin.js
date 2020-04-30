@@ -4,7 +4,8 @@ import _ from 'lodash'
 import FieldEnyoSelect from './components/crud/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/FieldJsonTextarea.vue';
-// import FieldDateTime from './components/crud/FieldDateTime.vue';
+import FieldDateTime from './components/crud/fields/fieldDateTime.vue';
+// import FieldDateRange from './components/crud/fields/fieldDateRange.vue';
 import CrudComponent from './components/crud/CrudComponent.vue';
 
 
@@ -58,7 +59,8 @@ import {
     Vue.component('enyo-select', EnyoSelect);
     Vue.component('live-edit', LiveEdit);
 
-    // Vue.component('fieldDateTime', FieldDateTime);
+    Vue.component('fieldDateTime', FieldDateTime);
+    // Vue.component('fieldDateTime', FieldDateRange);
     Vue.component('fieldEnyoSelect', FieldEnyoSelect);
     Vue.component('fieldFileInput', FieldFileInput);
     Vue.component('fieldJsonTextarea', FieldJsonTextarea);

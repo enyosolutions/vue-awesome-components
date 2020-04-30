@@ -3,20 +3,13 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h1 class="text-primary">
-            {{ $t('common.labels.manageTitle') }} {{ _titlePlural }} <i
-            v-if="isRefreshing"
-            class="fa fa-circle-o-notch fa-spin fa-fw"
-            style="color:orange;margin-left:10px"
-            />
-          </h1>
-          <div
+         <div
           v-if="innerOptions.stats"
           class="row"
           >
           <EnyoCrudStatsSection
           :url="innerOptions.url + '/stats'"
-          :entity="modelName"
+          :entity="identity"
           :stats-needs-refresh.sync="statsNeedsRefresh"
           />
         </div>
@@ -48,7 +41,7 @@
           @click="createFunction()"
           >
           <i class="fa fa-plus" />
-          {{ $t('common.labels.createNew') }} {{ _title }}
+          {{ $t('EnyoCrudComponent.labels.createNew') }} {{ _name }}
         </button>
       </slot>
 
@@ -63,7 +56,7 @@
           </div>
           <!-- START OF create MODAL -->
           <div
-          :id="modelName + 'formModal'"
+          :id="identity + 'formModal'"
           class="modal"
           :class="{slide: innerOptions.modalMode === 'slide', fade: innerOptions.modalMode === 'fade'}"
           tabindex="-1"
@@ -173,7 +166,7 @@ class="nav nav-tabs mt-5 mb-4"
   class="nav-link active"
   data-toggle="tab"
   @click="activeNestedTab = 'general'"
-  >{{ $te('app.labels.' + modelName) ?  $te('app.labels.' + modelName) : _.startCase(modelName) }}</a>
+  >{{ $te('app.labels.' + identity) ?  $te('app.labels.' + identity) : _.startCase(identity) }}</a>
 </li>
 <li
 v-for="ns in nestedSchemas"
@@ -183,13 +176,13 @@ class="nav-item"
 <a
 class="nav-link"
 data-toggle="tab"
-@click="activeNestedTab = ns.modelName"
+@click="activeNestedTab = ns.identity"
 >
 <i
 v-if="ns.icon"
 :class="ns.icon"
 />
-{{ $t(ns.title || ns.name || ns.modelName) }}
+{{ $t(ns.title || ns.name || ns.identity) }}
 </a>
 </li>
 </ul>
@@ -215,7 +208,7 @@ name="edit-form"
   v-for="ns in nestedSchemas"
   :key="ns.$id"
   class="tab-pane nested-tab fade"
-  :class="{'active show': activeNestedTab===ns.name}"
+  :class="{'active show': activeNestedTab===ns.identity}"
   >
   <crud-component
   v-bind="ns"
@@ -275,17 +268,18 @@ class="btn btn-primary ml-2"
 <EnyoAjaxTable
 :columns="innerOptions.columns"
 :columns-displayed="innerOptions.columnsDisplayed"
-:entity="modelName"
+:entity="identity"
 :mode="innerOptions.mode"
 :url="innerOptions.url"
 :params="innerOptions.queryParams"
-:table-needs-refresh.sync="tableNeedsRefresh"
+:needs-refresh.sync="tableNeedsRefresh"
 :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
 :options="innerOptions"
 :auto-refresh="innerOptions.autoRefresh"
 :auto-refresh-interval="innerOptions.autoRefreshInterval"
 :export-url="innerOptions.exportUrl"
 :responseField="innerOptions.responseField"
+:title="_title || ($t('common.labels.manageTitle') + ' ' + _titlePlural)"
 name="ajax-table"
 @edit="goToEditPage"
 @view="goToViewPage"
@@ -353,11 +347,7 @@ const defaultOptions = {
   customInlineActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  responseField: {
-    type: String,
-    default: 'body',
-    note: `This field dictates where in the response should the component search for the results from the api.
-    \nThis field is directly sent to ajaxTable.` },
+  responseField: 'body',
   actions: {
     noActions: false,
     search: true,
@@ -417,7 +407,7 @@ export default {
    component: CrudComponent,
    beforeEnter: authGuard,
    props: {
-     modelName: 'contact',
+     identity: 'contact',
      options: {
        url: '/contact',
        stats: true,
@@ -432,7 +422,7 @@ export default {
      path: ':id',
      component: CrudComponent,
      props: {
-       modelName: 'contact',
+       identity: 'contact',
        options: {
          actions: {
            view: true,
@@ -445,7 +435,7 @@ export default {
      path: ':id/edit',
      component: CrudComponent,
      props: {
-       modelName: 'contact',
+       identity: 'contact',
        options: {
          actions: {
            edit: true,
@@ -458,7 +448,6 @@ export default {
  }
  ,
  `,
- defaultOptions,
  components: {
   EnyoAjaxTable,
   EnyoCrudStatsSection,
@@ -467,9 +456,12 @@ export default {
   mixins: [i18nMixin, apiErrors],
   props: {
     title: { type: String, required: false, default: undefined},
-    modelName: { type: String, required: true },
+    pageTitle: { type: String, required: false, default: undefined},
+    identity: { type: String, required: true },
+    modelName: { type: String, required: false },
     primaryKey: {
-      type: String, default: 'id',
+      type: String,
+      default: 'id',
       note: "The field to use as a primary key (id / _id)"
     },
     model: {
@@ -523,54 +515,88 @@ export default {
       type: Object,
       default: () => defaultOptions
     }
-},
-data() {
-  return {
-    $modal: null,
-    parentPath: "",
-    selectedItem: {},
-    viewMode: 'view',
-    isRefreshing: false,
-    tableNeedsRefresh: false,
-    statsNeedsRefresh: false,
-    nestedCrudNeedsRefresh: false,
-    innerOptions: {},
-    innerSchema: {},
-    innerModel: {},
-    innerNestedSchemas: [],
-    activeNestedTab: 'general',
-    formOptions: {
-      validayeAsync: true,
-      validateAfterLoad: false,
-      validateAfterChanged: true
+  },
+  data() {
+    return {
+      $modal: null,
+      parentPath: "",
+      selectedItem: {},
+      viewMode: 'view',
+      isRefreshing: false,
+      tableNeedsRefresh: false,
+      statsNeedsRefresh: false,
+      nestedCrudNeedsRefresh: false,
+      innerOptions: {},
+      innerSchema: {},
+      '_model': {},
+      innerNestedSchemas: [],
+      activeNestedTab: 'general',
+      formOptions: {
+        validayeAsync: true,
+        validateAfterLoad: false,
+        validateAfterChanged: true
+      }
+    };
+  },
+  computed: {
+    _title() {
+    // @deprecated
+    if (this._model && this._model.pageTitle) {
+      return this.$te(this._model.pageTitle) ?
+      this.$t(this._model.pageTitle) : this._model.pageTitle;
     }
-  };
-},
-computed: {
-  _title() {
+
     if (this.title) {
       return this.$te(this.title) ? this.$t(this.title) : this.title;
     }
 
-    if (this.modelName) {
-      return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : _.startCase(this.modelName);
+    if (this._model && this._model.singularName) {
+      return this.$te(this._model.singularName) ?
+      this.$t(this._model.singularName) : _.startCase(this._model.singularName);
+    }
+
+    if (this.identity) {
+      return this.$te(`app.labels.${this.identity}`) ? this.$t(`app.labels.${this.identity}`) : _.startCase(this.identity);
     }
     return '';
   },
 
   _titlePlural() {
-    if (this.innerModel && this.innerModel.pluralName) {
-      return this.$te(this.innerModel.pluralName) ?
-      this.$t(this.innerModel.pluralName) : _.startCase(this.innerModel.pluralName);
+    if (this._model && this._model.namePlural) {
+      return this.$te(this._model.namePlural) ?
+      this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
     }
 
     if (this.title) {
       return this.$te(this.title + 's') ? this.$t(this.title + 's') : (this.title + 's');
     }
 
-    if (this.modelName) {
-      return this.$te(`app.labels.${this.modelName}s`) ?
-      this.$t(`app.labels.${this.modelName}s`) : _.startCase(this.modelName + 's');
+    if (this.identity) {
+      return this.$te(`app.labels.${this.identity}s`) ?
+      this.$t(`app.labels.${this.identity}s`) : _.startCase(this.identity + 's');
+    }
+    return '';
+  },
+
+  _name() {
+    if (this._model && this._model.name) {
+      return this.$te(this._model.name) ?
+      this.$t(this._model.name) : _.startCase(this._model.name);
+    }
+
+    if (this.identity) {
+      return this.$te(`app.labels.${this.identity}`) ? this.$t(`app.labels.${this.identity}`) : _.startCase(this.identity);
+    }
+    return '';
+  },
+  _namePlural() {
+    if (this._model && this._model.namePlural) {
+      return this.$te(this._model.namePlural) ?
+      this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+    }
+
+    if (this.identity) {
+      return this.$te(`app.labels.${this.identity}`) ? this.$t(`app.labels.${this.identity}`) : _.startCase(this.identity);
     }
     return '';
   },
@@ -581,12 +607,13 @@ computed: {
     }
     const parsedFormSchema = this.parseSchema(this.innerSchema);
     return parsedFormSchema;
-  }
+  },
+
 },
 watch: {
     // call again the method if the route changes
     name: "loadModel",
-    modelName: "loadModel",
+    identity: "loadModel",
     model: "loadModel",
     options: "mergeOptions",
     crudNeedsRefresh: "refreshComponent",
@@ -603,7 +630,11 @@ watch: {
     this.loadModel();
   },
   mounted() {
-    this.$modal = $(`#${this.modelName}formModal`);
+    // allow old property names to still work
+    if(this.modelName) {
+      this.identity = this.modelName;
+    }
+    this.$modal = $(`#${this.identity}formModal`);
     this.loadModel();
     if (!this.$route) {
       return;
@@ -614,8 +645,6 @@ watch: {
         delete this.$route.params.id;
         if (this.$route.query.item) {
           this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
-          // eslint-disable-next-line
-          console.log(this.selectedItem);
         }
         this.createFunction({reset: false});
         return;
@@ -633,7 +662,7 @@ watch: {
     });
   },
   beforeRouteLeave(to, from, next) {
-      next(vm => {
+    next(vm => {
       vm.closeModal();
     });
   },
@@ -642,7 +671,7 @@ watch: {
     $alert: Swal,
     refreshComponent() {
       // console.log("refresh component watcher");
-      if (this.modelName) {
+      if (this.identity) {
         this.loadModel();
       }
 
@@ -672,12 +701,13 @@ watch: {
           this.options.actions.delete = false;
       }
     }
-    this.innerOptions = _.merge(this.innerOptions, this.options);
+    this.innerOptions = _.merge({}, defaultOptions, this.innerOptions, this.options);
     if (this.$route && this.$route.query && this.$route.query.filters) {
       this.innerOptions.queryParams = _.merge(
         this.innerOptions.queryParams || this.$route.query.filters
         );
     }
+
   },
   callbackFunctionForBAse64(e) {
       // eslint-disable-next-line
@@ -759,19 +789,20 @@ watch: {
     }
     this.mergeOptions();
     if (this.$store && this.$store.state && !this.model) {
-      this.innerModel = this.$store.state.data.models.find((model) => model.name === this.modelName);
+      // @delete ?
+      this._model = this.$store.state.data.models.find((model) => model.identity === this.identity);
     } else {
-      this.innerModel = this.model;
+      this._model = this.model;
     }
 
-    if (!this.innerModel && !this.schema) {
+    if (!this._model && !this.schema) {
         // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
         return;
       }
 
-      this.innerSchema = this.schema || this.innerModel.schema;
+      this.innerSchema = this.schema || this._model.schema;
       this.innerOptions.columns = this.parseColumns(this.innerSchema.properties);
-      this.innerOptions.url = (this.options && this.options.url) || (this.innerModel && this.innerModel.url) || `/${this.modelName}`;
+      this.innerOptions.url = (this.options && this.options.url) || (this._model && this._model.url) || `/${this.identity}`;
       if (typeof this.innerOptions.url === 'function') {
         this.innerOptions.url = this.innerOptions.url(this.parent, this);
       }
@@ -797,7 +828,7 @@ watch: {
         .get(`${this.innerOptions.url}/${this.$route.params.id}`)
         .then(res => {
           const matched = this.$route.matched[this.$route.matched.length - 1];
-          const data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+          const data = this.innerOptions.responseField && this.innerOptions.responseField != false ? _.get(res.data, this.innerOptions.responseField) : res.data;
           if (matched.path.indexOf("/edit") !== -1) {
             this.editFunction(data);
           } else {
@@ -829,7 +860,7 @@ watch: {
             return;
           }
           if (prop.type === "object" && !(prop.field && prop.field.type)) {
-            const subSchema = this.parseSchema(prop, `${key}.`);
+            const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
             subSchema.legend = prop.title || _.startCase(key);
             subSchema.type = "group";
             subSchema.styleClasses = `subgroup  ${(prop.field &&
@@ -849,18 +880,23 @@ watch: {
                 fieldOptions: (prop.field && prop.field.fieldOptions) || {
                   placeholder: prop.description || prop.title || _.startCase(key),
                   url: prop.relation,
-                  trackBy: prop.foreignKey || "code",
-                  label: "label",
-                  step: prop.field && prop.field.step
+                  trackBy: prop.foreignKey ||  "id",
+                  label: "label", // key label for enyo select
+                  name: "label", // key label for native select
+                  step: prop.field && prop.field.step,
+                  readonly:
+                  this.viewMode === "view" || (prop.field && prop.field.readonly),
+                  disabled:
+                  this.viewMode === "view" || (prop.field && prop.field.readonly),
                 },
                 values:
-                prop.enum ||
-                (prop.items && prop.items.enum) ||
+
+
                 (prop.field &&
                   prop.field.fieldOptions &&
-                  (prop.field.fieldOptions.values || this.getSelectEnum(prop.field.fieldOptions.enum)))
+                  (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum)))
                 || prop.enum ||
-                (prop.items && prop.items.enum),
+                (prop.items && prop.items.enum) || [],
                 required: prop.field && prop.field.required,
                 hint: prop.description,
                 model: prefix + key,
@@ -877,13 +913,20 @@ watch: {
                 (size < 8 ? "col-md-12" : "col-md-6"),
                 relation: prop.relation,
                 foreignKey: prop.foreignKey,
-                group: (prop.field && prop.field.group)
+                group: (prop.field ? prop.field.group : undefined)
               };
               if (!field.fieldOptions.inputType) {
                 field.fieldOptions.inputType =
                 (prop.field && prop.field.inputType) ||
                 this.getFormInputType(prop) ||
                 "text";
+              }
+              if (prop.type === "boolean" && (field.type === "select" || field.type === "enyoSelect") && (!field.values || !field.values.length)) {
+                field.values = [
+                {id: true, label: 'Yes'},
+                {id: false, label: 'No'},
+                {id: '', label: '-'},
+                ];
               }
               if (field.type === "dateTime") {
                 field.fieldOptions.icons = {
@@ -892,20 +935,25 @@ watch: {
                   up: "fa fa-arrow-up",
                   down: "fa fa-arrow-down"
                 };
+              }if (field.type === "enyoSelect" && !field.fieldOptions.options) {
+                field.options = field.values;
               }
               fields.push(field);
             }
           }
         });
-        let groups = this.parseSchemaGroups(schema);
-        groups = this.distributeFieldsInGroups(groups, fields);
+       // let groups = this.parseSchemaGroups(schema);
+       // groups = this.distributeFieldsInGroups(groups, fields);
 
-      return { fields, groups };
-    },
+       return { fields };
+     },
 
-    parseSchemaGroups(schema) {
-    let groups = [];
-    schema.formGroups.forEach((group) => {
+     parseSchemaGroups(schema) {
+      let groups = [];
+      if (!schema.formGroups) {
+        return {};
+      }
+      schema.formGroups.forEach((group) => {
         if (!groups[group.id]) {
           groups.push({
             fields: [],
@@ -915,32 +963,32 @@ watch: {
 
           });
         }
-    });
-    if (groups.length < 1) {
-      groups = [{legend: '', fields: schema.fields}];
-    }
-    return groups;
-  },
-
-  distributeFieldsInGroups(groups, fields) {
-    fields.forEach(f => {
-      if(f.group) {
-        const keys = f.group.split('.');
-        let targetGroup = {groups};
-        keys.forEach(key => {
-          targetGroup = _.find(targetGroup.groups,{id: key});
-
-        })
-        if (targetGroup) {
-          if (!targetGroup.fields) {
-            targetGroup.fields = [];
-          }
-          targetGroup.fields.push(f);
-        }
+      });
+      if (groups.length < 1) {
+        groups = [{legend: '', fields: schema.fields}];
       }
-    });
-    return groups;
-  },
+      return groups;
+    },
+
+    distributeFieldsInGroups(groups, fields) {
+      fields.forEach(f => {
+        if(f.group) {
+          const keys = f.group.split('.');
+          let targetGroup = {groups};
+          keys.forEach(key => {
+            targetGroup = _.find(targetGroup.groups,{id: key});
+
+          })
+          if (targetGroup) {
+            if (!targetGroup.fields) {
+              targetGroup.fields = [];
+            }
+            targetGroup.fields.push(f);
+          }
+        }
+      });
+      return groups;
+    },
 
     getFormtype(property) {
       let { type } = property;
@@ -962,12 +1010,12 @@ watch: {
         case "number":
         return "input";
         case "boolean":
-        return "checkbox";
+        return "select"; // put enyoSelect after debugging all the issues...enyoSelect
         default:
         return 'input';
       }
     },
-    getSelectEnum(val) {
+    getSelectEnumFromStore(val) {
       const options = _.isString(val) && val.indexOf("$store") === 0
       ? _.get(this.$store.state, val.replace("$store.", ""))
       : val;
@@ -1046,7 +1094,7 @@ watch: {
 
       openModal() {
         if (!this.$modal) {
-          this.$modal = $(`#${this.modelName}formModal`);
+          this.$modal = $(`#${this.identity}formModal`);
         }
         if (this.$modal.modal) {
           this.$modal.modal("show");
@@ -1060,45 +1108,45 @@ watch: {
       },
 
       closeModal() {
-         if (!this.$modal) {
-          this.$modal = $(`#${this.modelName}formModal`);
-        }
-        window.history.replaceState({}, null, `${this.parentPath}`);
-        if (this.$modal.modal) {
-          this.$modal.modal("hide");
-        }
-        else if (this.innerOptions.modalMode == 'slide') {
-          this.$modal.removeClass('show');
-        }
-        else {
-          this.$modal.removeClass('show');
-        }
-      },
+       if (!this.$modal) {
+        this.$modal = $(`#${this.identity}formModal`);
+      }
+      window.history.replaceState({}, null, `${this.parentPath}`);
+      if (this.$modal.modal) {
+        this.$modal.modal("hide");
+      }
+      else if (this.innerOptions.modalMode == 'slide') {
+        this.$modal.removeClass('show');
+      }
+      else {
+        this.$modal.removeClass('show');
+      }
+    },
 
-      goToEditPage(item) {
-        if (!this.innerOptions.editPath) {
-          window.history.replaceState(
-            {},
-            null,
-            `${this.parentPath}/${item[this.primaryKey]}/edit`
-            );
-          this.editFunction(item);
-          return;
-        }
-        this.$router.push(this.innerOptions.editPath.replace(":id", item[this.primaryKey]));
-      },
+    goToEditPage(item) {
+      if (!this.innerOptions.editPath) {
+        window.history.replaceState(
+          {},
+          null,
+          `${this.parentPath}/${item[this.primaryKey]}/edit`
+          );
+        this.editFunction(item);
+        return;
+      }
+      this.$router.push(this.innerOptions.editPath.replace(":id", item[this.primaryKey]));
+    },
 
-      goToViewPage(item) {
-        if (!this.innerOptions.viewPath) {
-          window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
-          this.viewFunction(item);
-          return;
-        }
-        this.$router.push(this.innerOptions.viewPath.replace(":id", item[this.primaryKey]));
-      },
+    goToViewPage(item) {
+      if (!this.innerOptions.viewPath) {
+        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+        this.viewFunction(item);
+        return;
+      }
+      this.$router.push(this.innerOptions.viewPath.replace(":id", item[this.primaryKey]));
+    },
 
-      createItem() {
-        if (!this.innerOptions.url) {
+    createItem() {
+      if (!this.innerOptions.url) {
         // eslint-disable-next-line
         console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
         return false;
@@ -1119,13 +1167,18 @@ watch: {
       }
       return this.$http
       .post(this.innerOptions.url, this.selectedItem)
-      .then(() => {
+      .then((res) => {
+        this.$emit(this.identity + "-item-created", res.data);
         Swal.fire({
-          title: this.$t("common.messages.successfullyCreated", {
-            title: this.type
-          }),
-          type: "success"
-        });
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t("common.messages.successfullyCreated", {
+              title: this.type
+            }),
+            type: "success"
+          });
         this.tableNeedsRefresh = true;
         this.statsNeedsRefresh = true;
         this.nestedCrudNeedsRefresh = true;
@@ -1146,6 +1199,11 @@ watch: {
         console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
         return false;
       }
+      if (!this.selectedItem[this.primaryKey]) {
+        // eslint-disable-next-line
+        console.warn("CRUDCOMPONENT ERROR:: No primary key on this them", this.selectedItem, this.primaryKey);
+        return false;
+      }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
@@ -1160,8 +1218,13 @@ watch: {
         `${this.innerOptions.url}/${this.selectedItem[this.primaryKey]}`,
         this.selectedItem
         )
-      .then(() => {
+      .then((res) => {
+        this.$emit(this.identity + "-item-updated", res.data);
         Swal.fire({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
           title: this.$t("common.messages.successfullyModified", {
             title: this.type
           }),
@@ -1172,8 +1235,10 @@ watch: {
         this.$forceUpdate();
 
         this.closeModal();
+
       })
-      .catch(this.apiErrorCallback).finally(()=> {
+      .catch(this.apiErrorCallback)
+      .finally(()=> {
         this.isRefreshing = false;
       });
       return false;
@@ -1185,7 +1250,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+        this.selectedItem = this.innerOptions.responseField && this.innerOptions.responseField != false ? _.get(res.data, this.innerOptions.responseField) : res.data;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
@@ -1200,7 +1265,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+        this.selectedItem = this.innerOptions.responseField && this.innerOptions.responseField != false ? _.get(res.data, this.innerOptions.responseField) : res.data;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
@@ -1214,7 +1279,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}`)
       .then((res) => {
-        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+        this.selectedItem = this.innerOptions.responseField && this.innerOptions.responseField != false ? _.get(res.data, this.innerOptions.responseField) : res.data;
         this.nestedCrudNeedsRefresh = true;
       })
       .catch(this.apiErrorCallback)
@@ -1270,11 +1335,13 @@ watch: {
 
     customAction(body) {
       const { action } = body;
+      this.$emit(this.identity + "-custom-action", action);
       return action && action.action && action.action(body, this);
     },
 
     listUpdated(datas){
       this.$emit('list-updated', datas);
+      this.$emit(this.identity + "-list-updated", datas);
     },
     // transform the schema into a format accepted by the ajaxtable
     parseColumns(properties) {

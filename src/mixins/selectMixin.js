@@ -37,6 +37,12 @@ export default {
       if (newValue !== oldValue) {
         this.setIncomingValue(newValue, oldValue);
       }
+    },
+    value(newValue, oldValue) {
+      console.log('', "INCOMING VALUE REQUESTED IN SELCT MIXIN", this.this.vModelValue, 'new val', newValue, 'oldVal', oldValue);
+      if (newValue !== oldValue) {
+        this.setIncomingValue(newValue, oldValue);
+      }
     }
   },
 
@@ -124,7 +130,7 @@ export default {
   },
 
   mounted() {
-    console.log('', "FIRST INCOMING CALL HERE", this.vModelValue, 'value');
+    console.log('', "FIRST INCOMING CALL HERE", 'value',  this.vModelValue, this.value);
     this.setIncomingValue(this.vModelValue);
   }
 };

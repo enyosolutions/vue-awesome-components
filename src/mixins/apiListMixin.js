@@ -49,7 +49,7 @@ export default {
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
     exportUrl: { type: String, default: undefined },
-    componentNeedsRefresh: {
+    needsRefresh: {
       type: Boolean,
       default: false
     },
@@ -112,7 +112,7 @@ export default {
   },
 
   watch: {
-    componentNeedsRefresh: "refreshLocalData",
+    needsRefresh: "refreshLocalData",
     apiQueryParams() {
       this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
       this.getItems();
@@ -167,7 +167,7 @@ export default {
     },
 
     localRefreshCompleted() {
-      this.$emit("update:componentNeedsRefresh", false);
+      this.$emit("update:needsRefresh", false);
       this.$emit("afterRefresh", { data: this.data });
     },
 

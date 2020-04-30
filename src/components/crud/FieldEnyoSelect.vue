@@ -14,7 +14,7 @@
     :disabled="disabled"
     @search-change="apiRequestDebounced"
     :url="dataUrl"
-    v-model="myModel"
+    v-model="value"
 
     @input="updateSelected"
     >
@@ -39,7 +39,10 @@ export default {
     fieldOptions() {
       return this.schema.fieldOptions || {};
     },
-
+    // we need to override the mixin definition
+    internalOptions() {
+      return this.apiOptions || this.schema.fieldOptions.values || this.schema.fieldOptions.options || this.schema.values;
+    },
     customLabel() {
       if (
         typeof this.schema.fieldOptions !== 'undefined' &&
@@ -100,7 +103,7 @@ export default {
     // Sets the value from the the the v-model attribute
     async setIncomingValue(value, oldValue, loop) {
       if (value === oldValue) {
-        console.warn('[WARN] ', 'SAME VALUE');
+        console.warn('[WARN] ', 'SAME VALUE', value);
         return;
       }
       else {

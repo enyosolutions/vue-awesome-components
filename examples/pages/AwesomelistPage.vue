@@ -1,105 +1,108 @@
 <template>
   <div id="app">
     <h1>Awesome list component examples</h1>
+
+    <ul class="nav nav-pills" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a
+          class="nav-link active"
+          id="home-tab"
+          data-toggle="tab"
+          href="#home"
+          role="tab"
+          aria-controls="home"
+          aria-selected="true"
+        >Simple list</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="profile-tab"
+          data-toggle="tab"
+          href="#profile"
+          role="tab"
+          aria-controls="profile"
+          aria-selected="false"
+        >List with api</a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="contact-tab"
+          data-toggle="tab"
+          href="#contact"
+          role="tab"
+          aria-controls="contact"
+          aria-selected="false"
+        >List with custom rendering slots</a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="one-per-row-tab"
+          data-toggle="tab"
+          href="#one-per-row"
+          role="tab"
+          aria-controls="one-per-row"
+          aria-selected="false"
+        >List with custom rendering slots</a>
+      </li>
+    </ul>
     <hr />
-    <div class="container">
-      <AwesomeList
-        title="My  awesome list"
-        class="row"
-        :fields="{
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <AwesomeList
+          title="My  awesome list"
+          class="row"
+          :fields="{
           image: 'picture',
           title: 'url',
           subtitle: '',
           description: 'description',
         }"
-        :rows="asList"
-        :styles="{
+          :rows="asList"
+          :styles="{
           listWrapperClasses: 'row',
           itemWrapperClasses: 'col-3',
         }"
-        perPage="2"
-        :options="{}"
-        @itemClicked="handleItemClick"
-        @itemButtonClicked="handleItemClick"
-      />
+          perPage="2"
+          :options="{}"
+          @itemClicked="handleItemClick"
+          @itemButtonClicked="handleItemClick"
+        />
+      </div>
 
-      <hr />
-      <!--  url="https://jsonplaceholder.typicode.com/photos" -->
-      <AwesomeList
-        title="Awesome remote list"
-        class="row"
-        mode="local"
-        url="http://localhost:3000/photos"
-        :fields="{
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <!--  url="https://jsonplaceholder.typicode.com/photos" -->
+        <AwesomeList
+          title="Awesome remote list"
+          class="row"
+          mode="local"
+          url="http://localhost:3000/photos"
+          :fields="{
           image: 'download_url',
           title: 'author',
           subtitle: 'url',
           description: '',
         }"
-        :styles="{
+          :styles="{
       listWrapperClasses: 'row',
       itemWrapperClasses: 'col-3',
     }"
-        :perPage="10"
-        :limit="500"
-        :apiResponseConfig="{dataPath: false, totalCountPath:'headers.x-total-count'}"
-        :apiRequestConfig="{perPageField: '_limit', pageField: '_page'}"
-        :options="{}"
-        @itemClicked="handleItemClick"
-      />
+          :perPage="10"
+          :limit="500"
+          :apiResponseConfig="{dataPath: false, totalCountPath:'headers.x-total-count'}"
+          :apiRequestConfig="{perPageField: '_limit', pageField: '_page'}"
+          :options="{}"
+          @itemClicked="handleItemClick"
+        />
+      </div>
 
-      <hr />
+      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="contact-tab">
       <!--  url="https://jsonplaceholder.typicode.com/photos" -->
       <AwesomeList
-        title="Awesome remote list with custom rendering slots"
-        class="row"
-        mode="local"
-        url="http://localhost:3000/photos"
-        :fields="{
-          image: 'download_url',
-          title: 'author',
-          subtitle: 'url',
-          description: '',
-        }"
-        :styles="{
-      listWrapperClasses: 'row',
-      itemWrapperClasses: 'col-3',
-    }"
-        :perPage="10"
-        :perRow="2"
-        :limit="500"
-        :apiResponseConfig="{dataPath: false, totalCountPath:'headers.x-total-count'}"
-        :apiRequestConfig="{perPageField: '_limit', pageField: '_page'}"
-        :options="{}"
-        @itemClicked="handleItemClick"
-      >
-        <template v-slot:list-item="slotProps">
-           <div
-              class="card mb-3 awesome-list-item"
-              :style="{'flex-direction': slotProps.itemsPerRow < 2 ? 'row' : 'column',
-          }"
-            >
-              <img
-                class="card-img-top"
-                :src="slotProps.item.download_url"
-                :alt="slotProps.item.author"
-              />
-              <div class="card-img-overlay">
-                <h5 class="card-title" v-if="slotProps.item.author">{{ slotProps.item.author }}</h5>
-                <p class="card-text"></p>
-                <p class="card-text">Last updated 3 mins ago</p>
-              </div>
-
-            </div>
-
-
-        </template>
-      </AwesomeList>
-
-      <hr />
-      <!--  url="https://jsonplaceholder.typicode.com/photos" -->
-      <AwesomeList
-        title="Awesome remote list with one item per row"
+        title="Awesome remote list with one item per row and column changing options"
         class="row"
         mode="local"
         url="http://localhost:3000/photos"
@@ -120,9 +123,58 @@
         :apiResponseConfig="{dataPath: false, totalCountPath:'headers.x-total-count'}"
         :apiRequestConfig="{perPageField: '_limit', pageField: '_page'}"
         :options="{
-
+          actions: {itemsPerRow: false}
     }"
       ></AwesomeList>
+        </div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <AwesomeList
+          title="Awesome remote list with custom rendering slots"
+          class="row"
+          mode="local"
+          url="http://localhost:3000/photos"
+          :fields="{
+          image: 'download_url',
+          title: 'author',
+          subtitle: 'url',
+          description: '',
+        }"
+          :styles="{
+      listWrapperClasses: 'row',
+      itemWrapperClasses: 'col-3',
+    }"
+          :perPage="10"
+          :perRow="2"
+          :limit="500"
+          :apiResponseConfig="{dataPath: false, totalCountPath:'headers.x-total-count'}"
+          :apiRequestConfig="{perPageField: '_limit', pageField: '_page'}"
+          :options="{}"
+          @itemClicked="handleItemClick"
+        >
+          <template v-slot:list-item="slotProps">
+            <div
+              class="card mb-3 awesome-list-item"
+              :style="{'flex-direction': slotProps.itemsPerRow < 2 ? 'row' : 'column',
+          }"
+            >
+              <img
+                class="card-img-top"
+                :src="slotProps.item.download_url"
+                :alt="slotProps.item.author"
+              />
+              <div class="card-img-overlay">
+                <h5 class="card-title" v-if="slotProps.item.author">{{ slotProps.item.author }}</h5>
+                <p class="card-text"></p>
+                <p class="card-text">Last updated 3 mins ago</p>
+              </div>
+            </div>
+          </template>
+        </AwesomeList>
+      </div>
+    </div>
+
+    <div class="container">
+
     </div>
   </div>
 </template>

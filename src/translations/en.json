@@ -1,0 +1,28 @@
+{
+  "EnyoAjaxTable": {
+    "buttons": {
+      "filters": "Filter",
+      "refresh": "Refresh",
+      "excel-currentpage": "Export current page",
+      "searchInput": "Search"
+    },
+    "next": "Next",
+    "prev": "Previous",
+    "rows_per_page": "Rows per page",
+    "of": "of",
+    "page": "page",
+    "all": "all",
+    "empty": "No results"
+  },
+  "EnyoCrudComponent": {
+    "labels": {
+      "manageTitle": "Manage",
+      "createNew": "Create a new"
+    },
+    "buttons": {
+      "view": "Open",
+      "cancel": "Cancel",
+      "close": "Edit"
+    }
+  }
+}

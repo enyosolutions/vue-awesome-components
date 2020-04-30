@@ -7,7 +7,7 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h4 class="card-title ajax-table-header">
+      <h3 class="card-title ajax-table-header text-primary">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
@@ -106,7 +106,7 @@
             </div>
           </div>
         </div>
-      </h4>
+      </h3>
       <p class="card-category">
         <slot name="table-subtitle" />
       </p>
@@ -405,7 +405,7 @@ import _ from "lodash";
 export default {
   name: "EnyoAjaxTable",
   token: `
-  <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
+  <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :needsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
   <template slot="table-top-actions"></template>
   <template slot="table-top-more-actions"></template>
@@ -441,9 +441,9 @@ export default {
     translations: {
       type: Object,
       default: () => ({
-        "common.buttons.filters": "Filter",
-        "common.buttons.refresh": "Refresh",
-        "common.buttons.excel-currentpage": "Export current page",
+        "EnyoAjaxTable.buttons.filters": "Filter",
+        "EnyoAjaxTable.buttons.refresh": "Refresh",
+        "EnyoAjaxTable.buttons.excel-currentpage": "Export current page",
         "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
         "EnyoAjaxTable.next": "Next",
         "EnyoAjaxTable.prev": "Previous",
@@ -460,7 +460,7 @@ export default {
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
     exportUrl: { type: String, default: undefined },
-    tableNeedsRefresh: {
+    needsRefresh: {
       type: Boolean,
       default: false
     },
@@ -709,7 +709,7 @@ export default {
     }
   },
   watch: {
-    tableNeedsRefresh: "refreshLocalData",
+    // needsRefresh: "refreshLocalData",
     params() {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
