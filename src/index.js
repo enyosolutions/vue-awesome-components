@@ -17,6 +17,7 @@ import AwesomeTable from './components/table/AwesomeTable.vue';
 
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 import rolesMixin from './mixins/rolesMixin';
+import install from './mixins/rolesMixin';
 
 const VueEnyoComponents = {
   FieldEnyoSelect,
@@ -35,6 +36,7 @@ const VueEnyoComponents = {
   LiveEdit,
   apiErrorsMixin,
   rolesMixin,
+  install
 }
 
 export {
@@ -54,7 +56,8 @@ export {
   LiveEdit,
   apiErrorsMixin,
   rolesMixin,
-  VueEnyoComponents
+  VueEnyoComponents,
+  install
 }
 
 export default VueEnyoComponents;

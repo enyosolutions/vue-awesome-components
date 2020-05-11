@@ -1,4 +1,4 @@
-import en from 'vue-enyo-components/translations/en.json';
+import en from '../translations/en.json';
 import { set, get, merge } from 'lodash';
 export default {
   props: {

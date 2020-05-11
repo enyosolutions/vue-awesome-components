@@ -17,8 +17,8 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 let plugins = [];
 let optimization = {};
 
-// comment line 6 to disable analyzer
-plugins.push(new BundleAnalyzerPlugin());
+// comment line  to disable analyzer
+// plugins.push(new BundleAnalyzerPlugin());
 
 
 module.exports = {
@@ -30,19 +30,7 @@ module.exports = {
   configureWebpack: {
     plugins,
     optimization,
-    externals: {
-      'moment': 'moment',
-      'vue-multiselect': 'vue-multiselect',
-      'sweetalert2': 'sweetalert2',
-      'sweetalert2/dist': 'sweetalert2/dist',
-      'vue2-daterange-picker': 'vue2-daterange-picker',
-      'vue-form-generator': 'vue-form-generator',
-      'vue-good-table': 'vue-good-table',
-      'core-js': 'core-js',
-      'axios': 'axios',
-      'lodash': 'lodash',
-      'qs': 'qs',
-    },
+
     resolve: {
       alias: {
         "vue-enyo-components": path.resolve(__dirname, "src")
@@ -56,6 +44,19 @@ module.exports = {
 
   chainWebpack: (config) => {
     if (process.env.NODE_ENV === "production") {
+      config.externals = {
+        'moment': 'moment',
+        'vue-multiselect': 'vue-multiselect',
+        'sweetalert2': 'sweetalert2',
+        'sweetalert2/dist': 'sweetalert2/dist',
+        'vue2-daterange-picker': 'vue2-daterange-picker',
+        'vue-form-generator': 'vue-form-generator',
+        'vue-good-table': 'vue-good-table',
+        'core-js': 'core-js',
+        // 'axios': 'axios',
+        'lodash': 'lodash',
+        'qs': 'qs',
+      };
       config.plugin("banner").use(webpack.BannerPlugin, [
         {
           banner,
@@ -63,26 +64,26 @@ module.exports = {
           entryOnly: true
         }
       ]);
-      config.plugin("lodash").use(LodashModuleReplacementPlugin, [
-        {
-          cloning: true,
-          caching: true,
-          collections: true,
-          guards: true,
-          deburring: true,
-          unicode: true,
-          chaining: true,
-          coercions: true,
-          flattening: true,
-          paths: true,
-          placeholders: true,
-          shorthands: false,
-          currying: false,
-          metadata: false,
-          exotics: false,
-          memoizing: false,
-        }
-      ]);
+      // config.plugin("lodash").use(LodashModuleReplacementPlugin, [
+      //   {
+      //     cloning: true,
+      //     caching: true,
+      //     collections: true,
+      //     guards: true,
+      //     deburring: true,
+      //     unicode: true,
+      //     chaining: true,
+      //     coercions: true,
+      //     flattening: true,
+      //     paths: true,
+      //     placeholders: true,
+      //     shorthands: false,
+      //     currying: false,
+      //     metadata: false,
+      //     exotics: false,
+      //     memoizing: false,
+      //   }
+      // ]);
     }
     else {
       config.resolve.alias.set("vue-enyo-components", path.resolve(__dirname, "src"));

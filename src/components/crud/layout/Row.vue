@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import layoutMixin from '@/mixins/layoutMixin';
-import i18nMixin from '@/mixins/i18nMixin';
+import layoutMixin from '../../../mixins/layoutMixin';
+import i18nMixin from '../../../mixins/i18nMixin';
 import { uniqueId } from 'lodash';
 
 export default {

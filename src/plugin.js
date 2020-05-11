@@ -30,57 +30,55 @@ import {
  * You can register global components here and use them as a plugin in your main Vue instance
  */
 
-const GlobalComponents = {
-  install(Vue, options) {
-    // if (!Vue.$root.$options.components.multiselect) {
-    //   // eslint-disable-next-line
-    //   console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
-    // }
+const install = (Vue, options) => {
+  // if (!Vue.$root.$options.components.multiselect) {
+  //   // eslint-disable-next-line
+  //   console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
+  // }
 
 
-    if (options) {
-      if (options['CrudComponent'] && options['CrudComponent'].props) {
-        CrudComponent.props = _.merge(CrudComponent.props, options['CrudComponent'].props);
-      }
-
-      if (options['AwesomeTable'] && options['AwesomeTable'].props) {
-        AwesomeTable.props = _.merge(AwesomeTable.props, options['AwesomeTable'].props);
-      }
+  if (options) {
+    if (options['CrudComponent'] && options['CrudComponent'].props) {
+      CrudComponent.props = _.merge(CrudComponent.props, options['CrudComponent'].props);
     }
 
-
-    Vue.component('enyo-card', EnyoCard);
-    Vue.component('enyo-stats-card', EnyoStatsCard);
-    Vue.component('enyo-stats', EnyoCrudStatsSection);
-    Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
-
-    Vue.component('datetime', Datetime); //todo better re
-
-    Vue.component('upload-button', UploadButton);
-    Vue.component('enyo-select', EnyoSelect);
-    Vue.component('live-edit', LiveEdit);
-
-    Vue.component('fieldDateTime', FieldDateTime);
-    // Vue.component('fieldDateTime', FieldDateRange);
-    Vue.component('fieldEnyoSelect', FieldEnyoSelect);
-    Vue.component('fieldFileInput', FieldFileInput);
-    Vue.component('fieldJsonTextarea', FieldJsonTextarea);
-
-    Vue.component('ajax-table', AwesomeTable);
-    Vue.component('enyo-ajax-table', AwesomeTable);
-    Vue.component('AwesomeTable', AwesomeTable);
-    Vue.component('AwesomeForm', AwesomeForm);
-
-
-    Vue.component('crud-component', CrudComponent);
-
-    if (!Vue.prototype.$http) {
-      Vue.prototype.$http = axios.create({});
+    if (options['AwesomeTable'] && options['AwesomeTable'].props) {
+      AwesomeTable.props = _.merge(AwesomeTable.props, options['AwesomeTable'].props);
     }
-
-    // DIRECTIVES
-    Vue.directive('click-outside', vClickOutside);
   }
+
+
+  Vue.component('enyo-card', EnyoCard);
+  Vue.component('enyo-stats-card', EnyoStatsCard);
+  Vue.component('enyo-stats', EnyoCrudStatsSection);
+  Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
+
+  Vue.component('datetime', Datetime); //todo better re
+
+  Vue.component('upload-button', UploadButton);
+  Vue.component('enyo-select', EnyoSelect);
+  Vue.component('live-edit', LiveEdit);
+
+  Vue.component('fieldDateTime', FieldDateTime);
+  // Vue.component('fieldDateTime', FieldDateRange);
+  Vue.component('fieldEnyoSelect', FieldEnyoSelect);
+  Vue.component('fieldFileInput', FieldFileInput);
+  Vue.component('fieldJsonTextarea', FieldJsonTextarea);
+
+  Vue.component('ajax-table', AwesomeTable);
+  Vue.component('enyo-ajax-table', AwesomeTable);
+  Vue.component('AwesomeTable', AwesomeTable);
+  Vue.component('AwesomeForm', AwesomeForm);
+
+
+  Vue.component('crud-component', CrudComponent);
+
+  if (!Vue.prototype.$http) {
+    Vue.prototype.$http = axios.create({});
+  }
+
+  // DIRECTIVES
+  Vue.directive('click-outside', vClickOutside);
 };
 
-export default GlobalComponents;
+export default install;

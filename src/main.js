@@ -1,7 +1,7 @@
 // Import the styles directly. (Or you could add them via script tags.)
 import "bootstrap/scss/bootstrap.scss";
-import 'vue-enyo-components/assets/css/font-awesome.min.css';
-import 'vue-enyo-components/assets/css/bootstrap-theme.min.css';
+import './assets/css/font-awesome.min.css';
+import './assets/css/bootstrap-theme.min.css';
 import "./main.scss";
 
 import Vue from "vue";

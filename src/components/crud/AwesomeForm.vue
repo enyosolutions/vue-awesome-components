@@ -319,10 +319,10 @@ import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions } from '../../mixins/defaultProps';
-import Column from 'vue-enyo-components/components/crud/layout/Column.vue';
-import Tabs from 'vue-enyo-components/components/crud/layout/Tabs.vue';
-import Row from 'vue-enyo-components/components/crud/layout/Row.vue';
-import Group from 'vue-enyo-components/components/crud/layout/Group.vue';
+import Column from './layout/Column.vue';
+import Tabs from './layout/Tabs.vue';
+import Row from './layout/Row.vue';
+import Group from './layout/Group.vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 

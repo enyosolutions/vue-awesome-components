@@ -24,7 +24,7 @@
 <script>
 /* eslint-disable */
 import VueFormGenerator from 'vue-form-generator';
-import selectMixin from 'vue-enyo-components/mixins/selectMixin';
+import selectMixin from '../../../mixins/selectMixin';
 
 export default {
   mixins: [selectMixin, VueFormGenerator.abstractField],

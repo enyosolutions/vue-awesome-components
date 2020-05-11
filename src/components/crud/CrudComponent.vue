@@ -176,7 +176,7 @@ import { defaultActions } from '../../mixins/defaultProps';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import AwesomeTable from '../table/AwesomeTable.vue';
 import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
-import AwesomeForm from 'vue-enyo-components/components/crud/AwesomeForm.vue';
+import AwesomeForm from './AwesomeForm.vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 
@@ -647,10 +647,11 @@ export default {
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
           this.$notify({
-            title: `${e.improperData.length} ${this.$t(
-              'common.messages.not_imported',
-              { title: this._title }
-            )}`,
+            title: `${
+              e.improperData.length
+            } ${this.$t('common.messages.not_imported', {
+              title: this._title,
+            })}`,
             message,
             type: 'warning',
             timeout: 30000,

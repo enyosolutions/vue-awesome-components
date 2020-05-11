@@ -18,7 +18,7 @@ import VueFormGenerator from 'vue-form-generator';
 // import moment from "moment";
 
 // You need a specific loader for CSS files
-import Base64Upload from 'vue-enyo-components/components/form/Base64Upload';
+import Base64Upload from '../..//form/Base64Upload';
 
 export default {
   components: { Base64Upload },
