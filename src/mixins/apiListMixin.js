@@ -5,8 +5,10 @@
 import qs from "qs";
 import moment from "moment";
 import _ from "lodash";
+import apiConfigMixin from './apiConfigMixin';
 
 export default {
+  mixins: [apiConfigMixin],
   props: {
     rows: { type: Array, default: () => [] },
     primaryKey: { type: String, default: "id" },
@@ -142,7 +144,7 @@ export default {
   mounted() {
     this.refreshLocalData();
   },
-  beforeDestroy() {},
+  beforeDestroy() { },
   methods: {
     startCase: _.startCase,
 
@@ -192,15 +194,15 @@ export default {
         .then(res => {
           this.data =
             this.apiResponseConfig &&
-            this.apiResponseConfig.dataPath &&
-            this.apiResponseConfig.dataPath != false
+              this.apiResponseConfig.dataPath &&
+              this.apiResponseConfig.dataPath != false
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data;
 
           this.totalCount =
             this.apiResponseConfig &&
-            this.apiResponseConfig.totalCountPath &&
-            this.apiResponseConfig.totalCountPath != false
+              this.apiResponseConfig.totalCountPath &&
+              this.apiResponseConfig.totalCountPath != false
               ? _.get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
           this.$emit("crud-list-updated", this.data);

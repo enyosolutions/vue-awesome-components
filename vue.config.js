@@ -1,11 +1,91 @@
 const path = require("path");
+const webpack = require("webpack");
+const version = require("./package.json").version;
+const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
+
+const banner = `
+/**
+ * vue-enyo-components ${version}
+ * https://github.com/enyosolutions-team/vue-enyo-components/
+ * Released under the MIT License.
+ */
+`;
+
+
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+let plugins = [];
+let optimization = {};
+
+// comment line 6 to disable analyzer
+plugins.push(new BundleAnalyzerPlugin());
+
+
 module.exports = {
+  lintOnSave: false,
   filenameHashing: false,
+  runtimeCompiler: false,
+  transpileDependencies: [],
+  productionSourceMap: false,
   configureWebpack: {
+    plugins,
+    optimization,
+    externals: {
+      'moment': 'moment',
+      'vue-multiselect': 'vue-multiselect',
+      'sweetalert2': 'sweetalert2',
+      'sweetalert2/dist': 'sweetalert2/dist',
+      'vue2-daterange-picker': 'vue2-daterange-picker',
+      'vue-form-generator': 'vue-form-generator',
+      'vue-good-table': 'vue-good-table',
+      'core-js': 'core-js',
+      'axios': 'axios',
+      'lodash': 'lodash',
+      'qs': 'qs',
+    },
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "src/")
+        "vue-enyo-components": path.resolve(__dirname, "src")
       }
+    }
+  },
+
+  devServer: {
+    proxy: 'http://localhost:3000',
+  },
+
+  chainWebpack: (config) => {
+    if (process.env.NODE_ENV === "production") {
+      config.plugin("banner").use(webpack.BannerPlugin, [
+        {
+          banner,
+          raw: true,
+          entryOnly: true
+        }
+      ]);
+      config.plugin("lodash").use(LodashModuleReplacementPlugin, [
+        {
+          cloning: true,
+          caching: true,
+          collections: true,
+          guards: true,
+          deburring: true,
+          unicode: true,
+          chaining: true,
+          coercions: true,
+          flattening: true,
+          paths: true,
+          placeholders: true,
+          shorthands: false,
+          currying: false,
+          metadata: false,
+          exotics: false,
+          memoizing: false,
+        }
+      ]);
+    }
+    else {
+      config.resolve.alias.set("vue-enyo-components", path.resolve(__dirname, "src"));
     }
   }
 };

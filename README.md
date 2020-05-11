@@ -73,3 +73,17 @@ yarn run test
 yarn run lint
 ```
 
+
+### migration guide:
+
+#### crud component
+
+##### props
+modelName and name  becomes `identity`
+`displayMode`  becomes `mode`
+
+#### crud component
+
+##### props
+modelName and name  becomes `identity`
+`displayMode`  becomes `mode`

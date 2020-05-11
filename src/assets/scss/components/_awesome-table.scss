@@ -1,0 +1,36 @@
+.vgt-global-search,
+.vgt-wrap__footer {
+    background: none;
+    border: none;
+}
+
+.vgt-global-search {
+    justify-content: flex-end;
+
+    .vgt-global-search__input {
+        flex-grow: 0.2;
+    }
+}
+
+@media(max-width: 720px) {
+    .vgt-global-search {
+        justify-content: flex-end;
+
+        .vgt-global-search__input {
+            flex-grow: 1;
+            flex: auto;
+        }
+    }
+}
+
+
+
+.table-upgrade {
+    .table {
+        tr {
+            td {
+                width: 100%
+            }
+        }
+    }
+}

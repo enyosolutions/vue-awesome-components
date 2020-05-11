@@ -27,6 +27,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/ajaxTable">AjaxTable</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/crudcomponent">Crud component</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -39,19 +42,17 @@
 </template>
 <script>
 export default {
-  name: "App",
+  name: 'App',
   components: {},
   data() {
     return {};
   },
-  methods: {}
+  methods: {},
 };
 </script>
 <style>
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
-@import "https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/minty/bootstrap.min.css";
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

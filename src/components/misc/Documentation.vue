@@ -19,13 +19,10 @@
           <a :href="'#' + component.name">{{ component.name }}</a>
         </li>
       </ul>
-      <hr>
+      <hr />
       <div class="row">
         <div class="col-md-12">
-          <enyo-card
-            v-for="(component, index) in components"
-            :key="index"
-          >
+          <enyo-card v-for="(component, index) in components" :key="index">
             <div :id="component.name">
               <prop-doc :component="component" />
             </div>
@@ -36,17 +33,17 @@
   </div>
 </template>
 <script>
-import TableAndChartsCard from "@/components/card/TableAndChartsCard.vue";
+import TableAndChartsCard from '@/components/card/TableAndChartsCard.vue';
 
-import EnyoAjaxTable from "@/components/table/EnyoAjaxTable.vue";
-import LiveEdit from "@/components/form/LiveEdit.vue";
+import AwesomeTable from '@/components/table/AwesomeTable.vue';
+import LiveEdit from '@/components/form/LiveEdit.vue';
 
-import EnyoCard from "@/components/card/EnyoCard.vue";
-import EnyoChartCard from "@/components/card/EnyoChartCard.vue";
-import EnyoStatsCard from "@/components/card/EnyoStatsCard.vue";
+import EnyoCard from '@/components/card/EnyoCard.vue';
+import EnyoChartCard from '@/components/card/EnyoChartCard.vue';
+import EnyoStatsCard from '@/components/card/EnyoStatsCard.vue';
 
-import CrudComponent from "@/components/crud/CrudComponent.vue";
-import PropDoc from "@/components/misc/PropDoc.vue";
+import CrudComponent from '@/components/crud/CrudComponent.vue';
+import PropDoc from '@/components/misc/PropDoc.vue';
 
 export default {
   components: {
@@ -54,21 +51,21 @@ export default {
     EnyoCard,
   },
   props: {
-    title: String
+    title: String,
   },
   data() {
     return {
       components: [
         CrudComponent,
-        EnyoAjaxTable,
+        AwesomeTable,
         TableAndChartsCard,
         EnyoChartCard,
         EnyoStatsCard,
         LiveEdit,
-      ]
-      // components: [CrudComponent, EnyoAjaxTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
+      ],
+      // components: [CrudComponent, AwesomeTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };
-  }
+  },
 };
 </script>
 <style lang="scss">

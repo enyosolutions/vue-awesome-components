@@ -1,0 +1,1492 @@
+<template>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
+          <div class="text-left">
+            <!-- START OF create MODAL -->
+            <div
+              :id="identity + 'FormModal'"
+              class="AwesomeForm"
+              :class="{
+                'modal slide':
+                  displayMode === 'slide' ||
+                  displayMode === 'sidebar' ||
+                  displayMode === 'sidebar-left' ||
+                  displayMode === 'sidebar-right',
+                'modal fade':
+                  displayMode === 'fade' ||
+                  displayMode === 'modal' ||
+                  displayMode === 'fullscreen',
+                'page  fade': displayMode === 'page',
+                show: this.show,
+              }"
+              tabindex="-1"
+              role="dialog"
+            >
+              <div
+                class=""
+                :class="{
+                  'modal-dialog': displayMode !== 'page',
+                  'modal-full-height':
+                    displayMode === 'slide' ||
+                    displayMode === 'sidebar' ||
+                    displayMode === 'sidebar-right' ||
+                    displayMode === 'sidebar-left',
+                  'modal-full': displayMode === 'fullscreen',
+
+                  'modal-lg': displayMode === 'modal' || displayMode === 'fade',
+                }"
+                role="document"
+              >
+                <div v-if="mode === 'create'" class="modal-content">
+                  <form @submit.prevent="createItem()">
+                    <div class="modal-header bg-primary text-white">
+                      <h3
+                        class="modal-title mt-0"
+                        :title="
+                          $t('EnyoCrudComponent.labels.add_a') + ' '.title
+                        "
+                      >
+                        {{ $t('EnyoCrudComponent.labels.add_a') }} {{ title }}
+                      </h3>
+                      <button
+                        v-if="!standalone"
+                        type="button"
+                        class="close"
+                        aria-label="Close"
+                        @click="cancel()"
+                      >
+                        <span aria-hidden="true" class="text-white"
+                          >&times;</span
+                        >
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <slot name="create-form" :selectedItem="selectedItem">
+                        <template v-if="formSchema && formSchema.fields">
+                          <VueFormGenerator
+                            ref="form"
+                            :schema.sync="formSchema"
+                            :model="selectedItem"
+                            :options="formOptions"
+                            tag="div"
+                          />
+                        </template>
+                      </slot>
+                    </div>
+                    <div class="modal-footer">
+                      <slot name="add-modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-default btn-main-style mr-auto"
+                          @click="closeModal()"
+                        >
+                          {{ $t('EnyoCrudComponent.buttons.cancel') }}
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-auto">
+                          {{ $t('EnyoCrudComponent.buttons.save') }}
+                        </button>
+                      </slot>
+                    </div>
+                  </form>
+                </div>
+                <!--  EDITS -->
+                <div
+                  v-if="mode === 'edit' || mode === 'view'"
+                  class="modal-content"
+                >
+                  <form @submit.prevent="editItem()">
+                    <div class="modal-header bg-primary text-white">
+                      <h3 v-if="mode === 'edit'" class="modal-title mt-0">
+                        {{ $t('EnyoCrudComponent.buttons.edit') }}
+                      </h3>
+                      <h3 v-if="mode === 'view'" class="modal-title mt-0">
+                        {{ $t('EnyoCrudComponent.buttons.view') }}
+                      </h3>
+                      <button
+                        v-if="!standalone"
+                        type="button"
+                        class="close"
+                        aria-label="Close"
+                        @click="cancel()"
+                      >
+                        <span aria-hidden="true" class="text-white"
+                          >&times;</span
+                        >
+                      </button>
+                    </div>
+                    <div
+                      class="modal-body"
+                      :class="{ 'view-mode': mode === 'view' }"
+                    >
+                      <ul
+                        v-if="
+                          nestedSchemas &&
+                            nestedSchemas.length &&
+                            mode === 'view'
+                        "
+                        class="nav nav-tabs mt-5 mb-4"
+                      >
+                        <li class="nav-item">
+                          <a
+                            class="nav-link active"
+                            data-toggle="tab"
+                            @click="activeNestedTab = 'general'"
+                            >{{
+                              $te('app.labels.' + identity)
+                                ? $te('app.labels.' + identity)
+                                : _.startCase(identity)
+                            }}</a
+                          >
+                        </li>
+                        <li
+                          v-for="ns in nestedSchemas"
+                          :key="ns.$id"
+                          class="nav-item"
+                        >
+                          <a
+                            class="nav-link"
+                            data-toggle="tab"
+                            @click="activeNestedTab = ns.identity"
+                          >
+                            <i v-if="ns.icon" :class="ns.icon" />
+                            {{ $t(ns.title || ns.name || ns.identity) }}
+                          </a>
+                        </li>
+                      </ul>
+                      <slot name="edit-form" :selectedItem="selectedItem">
+                        <div class="tab-content">
+                          <div class="row" v-if="_model && _model.layout">
+                            <template
+                              v-for="(column, index) in _model.layout.columns"
+                            >
+                              <div :key="index" is="Column" v-bind="column">
+                                <template v-if="column.tabs">
+                                  <Tabs
+                                    :tabs="column.tabs"
+                                    :class="column.childStyleClasses"
+                                  >
+                                    <template
+                                      v-slot:content="{ tab, activeTabIndex }"
+                                    >
+                                      <template v-if="tab.rows">
+                                        <template
+                                          v-for="(row, index3) in tab.rows"
+                                        >
+                                          <Row v-bind="row" :key="index3">
+                                            <template v-if="row.groups">
+                                              <template
+                                                v-for="(group,
+                                                index4) in row.groups"
+                                              >
+                                                <Group
+                                                  :key="index4"
+                                                  v-bind="group"
+                                                >
+                                                  <VueFormGenerator
+                                                    :schema="
+                                                      getShemaForFields(
+                                                        group.fields
+                                                      )
+                                                    "
+                                                    :model="selectedItem"
+                                                    :options="formOptions"
+                                                    tag="div"
+                                                  />
+                                                </Group>
+                                              </template>
+                                            </template>
+                                          </Row>
+                                        </template>
+                                      </template>
+                                    </template>
+                                  </Tabs>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+
+                          <template v-if="formSchema && formSchema.fields">
+                            <div
+                              class="tab-pane nested-tab fade"
+                              :class="{
+                                'active show': activeNestedTab === 'general',
+                              }"
+                            >
+                              <VueFormGenerator
+                                :schema.sync="formSchema"
+                                :model="selectedItem"
+                                :options="formOptions"
+                                tag="div"
+                              />
+                            </div>
+                          </template>
+                          <template
+                            v-if="
+                              nestedSchemas &&
+                                nestedSchemas.length &&
+                                mode === 'view' &&
+                                selectedItem
+                            "
+                          >
+                            <div
+                              v-for="ns in nestedSchemas"
+                              :key="ns.$id"
+                              class="tab-pane nested-tab fade"
+                              :class="{
+                                'active show': activeNestedTab === ns.identity,
+                              }"
+                            >
+                              <crud-component
+                                v-bind="ns"
+                                :parent="selectedItem"
+                                :crud-needs-refresh.sync="
+                                  nestedCrudNeedsRefresh
+                                "
+                              >
+                                <div slot="crud-title" />
+                              </crud-component>
+                            </div>
+                          </template>
+                        </div>
+                      </slot>
+                    </div>
+                    <div class="modal-footer">
+                      <slot name="edit-modal-footer">
+                        <button
+                          v-if="!standalone"
+                          type="button"
+                          class="btn btn-default btn-main-style mr-auto"
+                          @click="closeModal()"
+                        >
+                          {{ $t('EnyoCrudComponent.buttons.cancel') }}
+                        </button>
+                        <button
+                          v-if="mode === 'edit'"
+                          type="submit"
+                          class="btn btn-primary ml-auto"
+                        >
+                          {{ $t('EnyoCrudComponent.buttons.save') }}
+                        </button>
+                        <button
+                          v-if="
+                            mode === 'view' &&
+                              _actions.edit &&
+                              !innerOptions.noActions
+                          "
+                          type="button"
+                          class="btn btn-info btn-main-style ml-auto"
+                          @click.prevent.stop="$emit('edit', selectedItem)"
+                        >
+                          <i class="fa fa-pencil" />
+                          {{ $t('EnyoCrudComponent.buttons.edit') }}
+                        </button>
+                        <button
+                          v-if="mode === 'view' && !standalone"
+                          type="button"
+                          class="btn btn-primary ml-2"
+                          @click="closeModal()"
+                        >
+                          {{ $t('EnyoCrudComponent.buttons.close') }}
+                        </button>
+                      </slot>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- // .modal-content -->
+              <!-- // .modal-content -->
+            </div>
+          </div>
+          <!-- END OF create MODAL -->
+          <div
+            :id="identity + 'Backdrop'"
+            v-if="displayMode !== 'page' && displayMode !== 'fullscreen'"
+            class="modal-backdrop show"
+            :class="displayMode"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import _ from 'lodash';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+
+import apiErrorsMixin from '../../mixins/apiErrorsMixin';
+import apiConfigMixin from '../../mixins/apiConfigMixin';
+import i18nMixin from '../../mixins/i18nMixin';
+import { defaultActions } from '../../mixins/defaultProps';
+import Column from 'vue-enyo-components/components/crud/layout/Column.vue';
+import Tabs from 'vue-enyo-components/components/crud/layout/Tabs.vue';
+import Row from 'vue-enyo-components/components/crud/layout/Row.vue';
+import Group from 'vue-enyo-components/components/crud/layout/Group.vue';
+
+import 'vue-good-table/dist/vue-good-table.css';
+
+const defaultOptions = {
+  mode: 'local',
+  url: null,
+  columns: null,
+  createPath: null,
+  viewPath: null,
+  editPath: null,
+  queryParams: {},
+  stats: false,
+  autoRefresh: false, // or integer in seconds
+  modalMode: 'slide', // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
+  columnsDisplayed: 8,
+  customInlineActions: [],
+  customTopActions: [],
+  customTabletopActions: [],
+  responseField: 'body',
+};
+
+export default {
+  // name: 'AwesomeForm',
+  introduction:
+    'A component to quickly create a table UI with edit capabilities',
+  components: {
+    Column,
+    Tabs,
+    Row,
+    Group,
+  },
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin],
+  props: {
+    item: { type: Object, required: true },
+    title: { type: String, required: false, default: undefined },
+    pageTitle: { type: String, required: false, default: undefined },
+    identity: { type: String, required: true },
+    modelName: { type: String, required: false },
+    standalone: { type: Boolean, required: false, default: true },
+    primaryKey: {
+      type: String,
+      default: 'id',
+      note: 'The field to use as a primary key (id / _id)',
+    },
+    model: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.',
+    },
+    schema: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note:
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available',
+    },
+    crudNeedsRefresh: {
+      type: Boolean,
+      default: false,
+      note: 'Define whether the content of the table list should be refreshed',
+    },
+    nestedSchemas: {
+      type: Array,
+      required: false,
+      default: () => [],
+      note:
+        'An array describing the data that is linked to the nested model. Serves for displaying a detailed object',
+    },
+    parent: {
+      type: Object,
+      required: false,
+      note:
+        'The object containing the parent in case of a nested schema.' +
+        "You don't actually to pass this, it's done automatically by the parent component itself",
+    },
+    nestedDisplayMode: {
+      type: String,
+      required: false,
+      default: 'list',
+      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`,
+    },
+    translations: {
+      type: Object,
+      required: false,
+      default: () => ({
+        'EnyoCrudComponent.labels.manageTitle':
+          'EnyoCrudComponent.labels.manageTitle',
+        'EnyoCrudComponent.buttons.view': 'EnyoCrudComponent.buttons.view',
+        'EnyoCrudComponent.buttons.cancel': 'EnyoCrudComponent.buttons.cancel',
+        'EnyoCrudComponent.buttons.close': 'EnyoCrudComponent.buttons.close',
+      }),
+      note: 'Translation labels to use when vue-i18n is not present',
+    },
+    mode: {
+      type: String,
+      required: true,
+      validator: (value) => {
+        // Only accepts values that contain the string 'cookie-dough'.
+        return ['create', 'edit', 'view'].indexOf(value) !== -1;
+      },
+    },
+    displayMode: {
+      type: String,
+      required: true,
+      default: 'sidebar',
+      validator: (value) => {
+        // Only accepts values that contain the string 'cookie-dough'.
+        return (
+          [
+            'modal',
+            'sidebar',
+            'page',
+            'fullscreen',
+            'sidebar-left',
+            'sidebar-right',
+            'fade', // deprecated
+            'slide', // deprecated
+          ].indexOf(value) !== -1
+        );
+      },
+    },
+    options: {
+      type: Object,
+      default: () => defaultOptions,
+    },
+    actions: {
+      type: Object,
+      default: () => defaultActions,
+      note: 'actions active in this instance',
+    },
+  },
+  data() {
+    return {
+      $modal: null,
+      parentPath: '',
+      selectedItem: {},
+      isRefreshing: false,
+      nestedCrudNeedsRefresh: false,
+      show: false,
+      showBackDrop: false,
+      innerOptions: {},
+      innerSchema: {},
+      _model: {},
+      innerNestedSchemas: [],
+      activeNestedTab: 'general',
+      formOptions: {
+        validayeAsync: true,
+        validateAfterLoad: false,
+        validateAfterChanged: true,
+      },
+    };
+  },
+  computed: {
+    _title() {
+      // @deprecated
+      if (this._model && this._model.pageTitle) {
+        return this.$te(this._model.pageTitle)
+          ? this.$t(this._model.pageTitle)
+          : this._model.pageTitle;
+      }
+
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.singularName) {
+        return this.$te(this._model.singularName)
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return '';
+    },
+
+    _titlePlural() {
+      if (this._model && this._model.namePlural) {
+        return this.$te(this._model.namePlural)
+          ? this.$t(this._model.namePlural)
+          : _.startCase(this._model.namePlural);
+      }
+
+      if (this.title) {
+        return this.$te(this.title + 's')
+          ? this.$t(this.title + 's')
+          : this.title + 's';
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}s`)
+          ? this.$t(`app.labels.${this.identity}s`)
+          : _.startCase(this.identity + 's');
+      }
+      return '';
+    },
+
+    _name() {
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name)
+          ? this.$t(this._model.name)
+          : _.startCase(this._model.name);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return '';
+    },
+    _namePlural() {
+      if (this._model && this._model.namePlural) {
+        return this.$te(this._model.namePlural)
+          ? this.$t(this._model.namePlural)
+          : _.startCase(this._model.namePlural);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return '';
+    },
+
+    formSchema() {
+      if (!this.innerSchema) {
+        return [];
+      }
+      const parsedFormSchema = this.parseSchema(this.innerSchema);
+      parsedFormSchema.styleClasses = 'row';
+      return parsedFormSchema;
+    },
+
+    _actions() {
+      return _.merge(
+        {},
+        defaultActions,
+        this.actions || (this.innerOptions && this.innerOptions.actions) // old location kept for BC
+      );
+    },
+
+    _url() {
+      const url =
+        this.url ||
+        (this.options && this.options.url) ||
+        (this._model && this._model.url) ||
+        `/${this.identity}`;
+
+      if (typeof url === 'function') {
+        return url({
+          parent: this.parent,
+          context: this,
+          currentItem: this.selectedItem,
+        });
+      }
+      return url;
+    },
+
+    _formSchemaGrouped() {
+      return { groups: [{ ...this.formSchema, legend: 'home' }] };
+    },
+  },
+  watch: {
+    // call again the method if the route changes
+    name: 'loadModel',
+    identity: 'loadModel',
+    model: 'loadModel',
+    options: 'mergeOptions',
+    crudNeedsRefresh: 'refreshComponent',
+    item: 'loadModel',
+  },
+  created() {
+    if (!this.$http) {
+      try {
+        const axios = require('axios');
+        this.$http = axios;
+      } catch (err) {
+        // console.warn(err.message);
+      }
+    }
+    this.loadModel();
+  },
+  mounted() {
+    // allow old property names to still work
+    if (this.modelName) {
+      this.identity = this.modelName;
+    }
+    this.loadModel();
+    if (this.$route) {
+      const matched = this.$route.matched[this.$route.matched.length - 1];
+      if (this.$route.params.id) {
+        if (
+          this.$route.params.id === 'create' ||
+          this.$route.params.id === 'new'
+        ) {
+          delete this.$route.params.id;
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(
+              this.selectedItem,
+              this.$route.query.item
+            );
+          }
+          this.$emit('create', this.selectedItem, { reset: false });
+
+          return;
+        }
+        this.parentPath = matched.path.replace('/edit', '').replace('/:id', '');
+      } else {
+        this.parentPath = matched.path;
+      }
+    }
+
+    const action = `${this.mode}Function`;
+    if (this[action]) {
+      this[action](this.item);
+    } else {
+      throw new Error('no_action_available_for_mode_' + this.mode);
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    // eslint-disable-next-line
+    next((vm) => {
+      vm.closeModal();
+      //    vm.loadModel();
+    });
+  },
+  beforeRouteLeave(to, from, next) {
+    next((vm) => {
+      vm.closeModal();
+    });
+  },
+
+  methods: {
+    $alert: Swal,
+    refreshComponent() {
+      // eslint-disable-next-line
+      console.log('refresh component watcher');
+      if (this.identity) {
+        this.loadModel();
+      }
+
+      this.tableNeedsRefresh = true;
+      this.statsNeedsRefresh = true;
+      this.nestedCrudNeedsRefresh = true;
+
+      setTimeout(() => {
+        this.$emit('update:crudNeedsRefresh', false);
+      }, 100);
+    },
+
+    onTableRefresh() {
+      this.statsNeedsRefresh = true;
+    },
+
+    mergeOptions() {
+      if (this.options.deletePermitted && this._actions.delete) {
+        if (
+          this.$store &&
+          this.$store.state &&
+          !this.options.deletePermitted.some(
+            (v) => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0
+          )
+        ) {
+          this._actions.delete = false;
+        }
+      }
+      this.innerOptions = _.merge(
+        {},
+        defaultOptions,
+        this.innerOptions,
+        this.options
+      );
+      if (this.$route && this.$route.query && this.$route.query.filters) {
+        this.innerOptions.queryParams = _.merge(
+          this.innerOptions.queryParams || this.$route.query.filters
+        );
+      }
+    },
+    callbackFunctionForBAse64(e) {
+      // eslint-disable-next-line
+      console.log('Base 64 done', e);
+    },
+
+    importResponse(e) {
+      // swal({title: this.$t('AwesomeDefault.messages.successfullyImported',{title: this.name}), type: 'success'})
+      this.$notifications.clear();
+      if (
+        (!e.improperData || e.improperData.length === 0) &&
+        (!e.properData || e.properData.length === 0)
+      ) {
+        Swal.fire({
+          title: this.$t('AwesomeDefault.messages.no_data_imported', {
+            title: this._title,
+          }),
+          type: 'warning',
+        });
+        return;
+      }
+
+      if (e.properData.length > 0) {
+        this.$notify({
+          title: this.$t('AwesomeDefault.messages.successfullyImported', {
+            title: this._title,
+          }),
+          type: 'success',
+        });
+      }
+
+      if (e.improperData.length > 0) {
+        let message = '';
+        e.improperData.forEach((element) => {
+          message += ` - ${Object.values(element).join(' | ')}, `;
+        });
+        message = message.substring(0, message.length - 2);
+        setTimeout(() => {
+          this.$notify({
+            title: `${e.improperData.length} ${this.$t(
+              'AwesomeDefault.messages.not_imported',
+              {
+                title: this._title,
+              }
+            )}`,
+            message,
+            type: 'warning',
+            timeout: 30000,
+          });
+        }, 0);
+      }
+      this.tableNeedsRefresh = true;
+      this.statsNeedsRefresh = true;
+      this.nestedCrudNeedsRefresh = true;
+      this.$forceUpdate();
+    },
+
+    exportTemplateCallBack() {
+      if (!this.innerOptions.importUrl) {
+        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
+        return;
+      }
+      this.$http
+        .get(this.innerOptions.importUrl + '-template', {})
+        .then((res) => {
+          if (res.data.url) {
+            const link = document.createElement('a');
+            link.download = `${this.entity}_export`;
+            link.href = res.data.url;
+            link.click();
+            link.remove();
+          }
+        })
+        .catch(this.apiErrorCallback);
+    },
+
+    loadModel() {
+      if (!this.options) {
+        this.options = {};
+      }
+      this.mergeOptions();
+      if (this.$store && this.$store.state && !this.model) {
+        // @delete ?
+        this._model = this.$store.state.data.models.find(
+          (model) => model.identity === this.identity
+        );
+      } else {
+        this._model = this.model;
+      }
+
+      if (!this._model && !this.schema) {
+        // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
+        return;
+      }
+
+      this.innerSchema = this.schema || this._model.schema;
+      setTimeout(() => {
+        this.openModal();
+      }, 100);
+      // now a computed property...
+      // this.innerOptions.url =
+      //   this.url ||
+      //   (this.options && this.options.url) ||
+      //   (this._model && this._model.url) ||
+      //   `/${this.identity}`;
+      // if (typeof this.innerOptions.url === 'function') {
+      //   this.innerOptions.url = this.innerOptions.url(this.parent, this);
+      // }
+
+      if (!this.innerOptions.exportUrl) {
+        this.innerOptions.exportUrl = `${this._url}/export`;
+      }
+
+      if (!this.innerOptions.importUrl) {
+        this.innerOptions.importUrl = `${this._url}/import`;
+      }
+
+      // if the crud is nested and should display as a form then remote load the data
+      if (this.parent && this.nestedDisplayMode === 'object') {
+        this.nestedViewFunction();
+      }
+
+      this.selectedItem = this.item;
+      if (!this._url) {
+        return;
+      }
+
+      // todo call only if
+      if (this.item && this.item[this.primaryKey]) {
+        this.$http
+          .get(`${this._url}/${this.item[this.primaryKey]}`)
+          .then((res) => {
+            const data =
+              this.apiResponseConfig.dataPath &&
+              this.apiResponseConfig.dataPath != false
+                ? _.get(res.data, this.apiResponseConfig.dataPath)
+                : res.data;
+            this.selectedItem = data;
+          })
+          .catch(this.apiErrorCallback)
+          .finally(() => {
+            this.isRefreshing = false;
+            this.needsRefresh = false;
+          });
+      }
+    },
+
+    parseSchema(schema, prefix = '') {
+      if (!schema.properties) {
+        return [];
+      }
+      if (prefix && schema.$schema) {
+        // console.warn("possible recursive parseSchema call", schema);
+        return;
+      }
+      const fields = [];
+      const size = Object.keys(schema.properties).length;
+      Object.keys(schema.properties).forEach((key) => {
+        if ([this.primaryKey].indexOf(key) === -1) {
+          const prop = schema.properties[key];
+          if (prop.field && prop.field.hidden) {
+            return;
+          }
+          if (prop.type === 'object' && !(prop.field && prop.field.type)) {
+            const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
+            subSchema.legend = prop.title || _.startCase(key);
+            subSchema.type = 'group';
+            subSchema.styleClasses = `subgroup  ${(prop.field &&
+              prop.field.styleClasses) ||
+              'card'}`;
+            fields.push(subSchema);
+          } else {
+            if (prop.field && prop.relation && prop.field.fieldOptions) {
+              prop.field.fieldOptions.url = prop.relation;
+              prop.field.fieldOptions.trackBy = prop.foreignKey;
+              prop.field.fieldOptions.searchable = true;
+            }
+            const field = {
+              type: (prop.field && prop.field.type) || this.getFormtype(prop),
+              label: prop.title || prop.description || _.startCase(key),
+              placeholder: prop.description || prop.title || _.startCase(key),
+              fieldOptions: (prop.field && prop.field.fieldOptions) || {
+                placeholder: prop.description || prop.title || _.startCase(key),
+                url: prop.relation,
+                trackBy: prop.foreignKey || 'id',
+                label: 'label', // key label for enyo select
+                name: 'label', // key label for native select
+                step: prop.field && prop.field.step,
+                readonly:
+                  this.mode === 'view' || (prop.field && prop.field.readonly),
+                disabled:
+                  this.mode === 'view' || (prop.field && prop.field.readonly),
+              },
+              values:
+                (prop.field &&
+                  prop.field.fieldOptions &&
+                  (prop.field.fieldOptions.values ||
+                    this.getSelectEnumFromStore(
+                      prop.field.fieldOptions.enum
+                    ))) ||
+                prop.enum ||
+                (prop.items && prop.items.enum) ||
+                [],
+              required: prop.field && prop.field.required,
+              hint: prop.description,
+              model: prefix + key,
+              validator: prop.field && prop.field.validator,
+              min: prop.min,
+              max: prop.max,
+              multi: prop.type === 'array',
+              readonly:
+                this.mode === 'view' || (prop.field && prop.field.readonly),
+              disabled:
+                this.mode === 'view' || (prop.field && prop.field.readonly),
+              styleClasses:
+                (prop.field && prop.field.styleClasses) ||
+                (size < 8 || (this._model && this._model.layout)
+                  ? 'col-12'
+                  : 'col-6'),
+              relation: prop.relation,
+              foreignKey: prop.foreignKey,
+              group: prop.field ? prop.field.group : undefined,
+            };
+            if (!field.fieldOptions.inputType) {
+              field.fieldOptions.inputType =
+                (prop.field && prop.field.inputType) ||
+                this.getFormInputType(prop) ||
+                'text';
+            }
+            if (
+              prop.type === 'boolean' &&
+              (field.type === 'select' || field.type === 'enyoSelect') &&
+              (!field.values || !field.values.length)
+            ) {
+              field.values = [
+                { id: true, label: 'Yes' },
+                { id: false, label: 'No' },
+                { id: '', label: '-' },
+              ];
+            }
+            if (field.type === 'dateTime') {
+              field.fieldOptions.icons = {
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-arrow-up',
+                down: 'fa fa-arrow-down',
+              };
+            }
+            if (field.type === 'enyoSelect' && !field.fieldOptions.options) {
+              field.options = field.values;
+            }
+            fields.push(field);
+          }
+        }
+      });
+      // let groups = this.parseSchemaGroups(schema);
+      // groups = this.distributeFieldsInGroups(groups, fields);
+
+      return { fields };
+    },
+
+    parseSchemaGroups(schema) {
+      let groups = [];
+      if (!schema.formGroups) {
+        return {};
+      }
+      schema.formGroups.forEach((group) => {
+        if (!groups[group.id]) {
+          groups.push({
+            fields: [],
+            ...group,
+            legend: this.$t(group.title),
+            type: 'group',
+          });
+        }
+      });
+      if (groups.length < 1) {
+        groups = [{ legend: '', fields: schema.fields }];
+      }
+      return groups;
+    },
+
+    distributeFieldsInGroups(groups, fields) {
+      fields.forEach((f) => {
+        if (f.group) {
+          const keys = f.group.split('.');
+          let targetGroup = { groups };
+          keys.forEach((key) => {
+            targetGroup = _.find(targetGroup.groups, { id: key });
+          });
+          if (targetGroup) {
+            if (!targetGroup.fields) {
+              targetGroup.fields = [];
+            }
+            targetGroup.fields.push(f);
+          }
+        }
+      });
+      return groups;
+    },
+
+    getShemaForFields(fields) {
+      const fieldsDefinition = this.formSchema.fields.filter((f) => {
+        return fields.indexOf(f.model) > -1;
+      });
+      return { ...this.formSchema, fields: fieldsDefinition };
+    },
+
+    getFormtype(property) {
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+
+      if (property.enum) {
+        return 'select';
+      }
+      switch (type) {
+        case 'string':
+          return 'input';
+        case 'number':
+          return 'input';
+        case 'boolean':
+          return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
+        default:
+          return 'input';
+      }
+    },
+    getSelectEnumFromStore(val) {
+      const options =
+        _.isString(val) && val.indexOf('$store') === 0
+          ? _.get(this.$store.state, val.replace('$store.', ''))
+          : val;
+      return options;
+    },
+
+    getFormInputType(property) {
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+
+      switch (type) {
+        case 'string':
+          switch (property.format) {
+            case 'email':
+              return 'email';
+            case 'date-time':
+              return 'datetime';
+            default:
+              return 'text';
+          }
+        case 'number':
+          return 'number';
+        case 'boolean':
+        case 'array':
+        case 'object':
+          return 'string';
+        default:
+          // console.error("type not known ", type, property);
+          return type;
+      }
+    },
+
+    getColumnType(property) {
+      if (property.column && property.column.type) {
+        return property.column.type;
+      }
+      if (property.columnType) {
+        return property.columnType;
+      }
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+
+      switch (type) {
+        case 'string':
+          switch (property.format) {
+            case 'date-time':
+              return 'text';
+            default:
+              return 'text';
+          }
+        case 'number':
+          return 'number';
+        case 'boolean':
+          return 'boolean';
+        case 'array':
+        case 'object':
+          return 'object';
+        default:
+          return 'text';
+      }
+    },
+
+    openModal() {
+      // eslint-disable-next-line
+      console.log('openModal was called', this.mode);
+
+      switch (this.displayMode) {
+        case 'modal':
+        case 'fade':
+          document.body.classList.add('modal-open');
+          break;
+        case 'slide':
+        case 'sidebar':
+        case 'sidebar-right':
+        case 'sidebar-left':
+        case 'fullscreen':
+          document.body.classList.add('modal-open');
+          break;
+      }
+      this.show = true;
+      this.showBackdrop = true;
+
+      // eslint-disable-next-line
+      console.log('openModal was called', this.show);
+      /*
+      if (this.displayMode !== 'page' && this.$modal.modal) {
+        this.$modal.modal('show');
+      } else if (this.displayMode == 'slide') {
+        this.$modal.addClass('show');
+      } else {
+        this.$modal.addClass('show');
+      }
+      */
+    },
+
+    closeModal() {
+      this.$emit('closeRequested', null, { context: this.mode });
+      if (this.standalone) {
+        return;
+      }
+      //eslint-disable-next-line
+      console.log('close modal called');
+      if (this.parentPath) {
+        window.history.replaceState({}, null, `${this.parentPath}`);
+      }
+      setTimeout(() => {
+        this.show = false;
+        this.showBackdrop = false;
+      }, 100);
+      document.body.classList.remove('modal-open');
+    },
+
+    cancel() {
+      //eslint-disable-next-line
+      console.log('cancel modal called');
+      this.closeModal();
+      this.$emit('cancel', null, { context: this.mode });
+    },
+
+    goToEditPage(item) {
+      if (!this.innerOptions.editPath) {
+        window.history.replaceState(
+          {},
+          null,
+          `${this.parentPath}/${item[this.primaryKey]}/edit`
+        );
+        this.editFunction(item);
+        return;
+      }
+      this.$router.push(
+        this.innerOptions.editPath.replace(':id', item[this.primaryKey])
+      );
+    },
+
+    goToViewPage(item) {
+      if (!this.innerOptions.viewPath) {
+        window.history.replaceState(
+          {},
+          null,
+          `${this.parentPath}/${item[this.primaryKey]}`
+        );
+        this.viewFunction(item);
+        return;
+      }
+      this.$router.push(
+        this.innerOptions.viewPath.replace(':id', item[this.primaryKey])
+      );
+    },
+
+    createItem() {
+      if (!this._url) {
+        // eslint-disable-next-line
+        console.warn('CRUDCOMPONENT ERROR:: No url for submitting');
+        return false;
+      }
+      if (this.$refs.form) {
+        const errors = this.$refs.form.validate();
+        if (errors.length > 0) {
+          // eslint-disable-next-line
+          console.error('CRUDCOMPONENT ERROR:: validation errors', error);
+          return;
+        }
+      } else {
+        // eslint-disable-next-line
+        console.warn(
+          'Unable to find the reference to the schema form on ',
+          this.$route.path
+        );
+      }
+      return this.$http
+        .post(this._url, this.selectedItem)
+        .then((res) => {
+          this.$emit(this.identity + '-item-created', res.data);
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t('AwesomeDefault.messages.successfullyCreated', {
+              title: this.type,
+            }),
+            type: 'success',
+          });
+          this.tableNeedsRefresh = true;
+          this.statsNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
+          this.$forceUpdate();
+          this.closeModal();
+          this.$emit('itemCreated', this.selectedItem, {
+            context: this.mode,
+          });
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
+
+      // return false;
+    },
+
+    editItem() {
+      if (!this._url) {
+        // eslint-disable-next-line
+        console.warn('CRUDCOMPONENT ERROR:: No url for submitting');
+        return false;
+      }
+      if (!this.selectedItem[this.primaryKey]) {
+        // eslint-disable-next-line
+        console.warn(
+          'CRUDCOMPONENT ERROR:: No primary key on this them',
+          this.selectedItem,
+          this.primaryKey
+        );
+        return false;
+      }
+      if (this.$refs.form) {
+        const errors = this.$refs.form.validate();
+        if (errors.length > 0) {
+          // eslint-disable-next-line
+          console.error('CRUDCOMPONENT ERROR:: validation errors', errors);
+          return;
+        }
+      }
+
+      this.$http
+        .put(
+          `${this._url}/${this.selectedItem[this.primaryKey]}`,
+          this.selectedItem
+        )
+        .then((res) => {
+          this.$emit(this.identity + '-item-updated', res.data);
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t('AwesomeDefault.messages.successfullyModified', {
+              title: this.type,
+            }),
+            type: 'success',
+          });
+          this.tableNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
+          this.$forceUpdate();
+          this.$emit('itemEdited', this.selectedItem, {
+            context: this.mode,
+          });
+          this.closeModal();
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
+      return false;
+    },
+
+    createFunction(item) {
+      this.$emit('create', item);
+    },
+
+    editFunction(item) {
+      this.$emit('edit', item);
+    },
+
+    viewFunction(item) {
+      this.$emit('view', item);
+    },
+
+    deleteFunction(item) {
+      this.$emit('delete', item);
+    },
+
+    nestedViewFunction() {
+      this.mode = 'view';
+      this.$http
+        .get(`${this._url}`)
+        .then((res) => {
+          this.selectedItem =
+            this.apiResponseConfig.dataPath &&
+            this.apiResponseConfig.dataPath != false
+              ? _.get(res.data, this.apiResponseConfig.dataPath)
+              : res.data;
+          this.nestedCrudNeedsRefresh = true;
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
+    },
+
+    customAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + '-custom-action', action);
+      return action && action.action && action.action(body, this);
+    },
+
+    listUpdated(datas) {
+      this.$emit('list-updated', datas);
+      this.$emit(this.identity + '-list-updated', datas);
+    },
+
+    renderLayout(layout) {},
+
+    renderSidebar() {},
+    renderTabs() {},
+    renderColumns(columns) {
+      return columns;
+    },
+    renderGroup() {},
+    renderForm(definition = { component: 'VueFormGenerator', props: {} }) {},
+  },
+};
+</script>
+<style lang="scss">
+.vue-form-generator textarea.form-control {
+  min-height: 150px;
+}
+
+.input-group .form-control {
+  z-index: 0 !important;
+}
+
+.form-element.field-input {
+  label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: -10px;
+    margin-top: 10px;
+  }
+}
+
+.vue-form-generator .input-group {
+  z-index: 100;
+}
+.vue-form-generator .multiselect {
+  width: 100%;
+  margin-top: 10px;
+}
+.vue-form-generator {
+  .form-element {
+    .hint {
+      font-size: 60%;
+      color: #999;
+      font-style: italic;
+      position: absolute;
+      width: calc(100% - 40px);
+      left: 20px;
+      background: white;
+      box-shadow: 0 0 2px #999;
+      transition: all 200ms linear;
+      z-index: 110;
+      padding: 10px;
+      margin-top: 10px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    &:hover {
+      .hint {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 1s;
+      }
+    }
+  }
+}
+
+.vdatetime.form-group {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.field-EnyoSelect div {
+  width: 100%;
+}
+
+body.modal-open .bootstrap-datetimepicker-widget {
+  z-index: 1200 !important;
+}
+
+.glyphicon.glyphicon-calendar {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.glyphicon-calendar:before {
+  content: '\f073';
+}
+
+.view-mode {
+  input,
+  textarea,
+  .multiselect__tags,
+  .field-wrap {
+    // border: none !important;
+    background: transparent !important;
+    font-size: 110% !important;
+    color: #78849e !important;
+  }
+
+  .subgroup {
+    legend {
+      padding-right: 15px;
+      font-size: 80%;
+    }
+  }
+}
+
+.input-group {
+  z-index: inherit !important;
+}
+
+.multiselect__content-wrapper {
+  z-index: 16 !important;
+}
+
+.multiselect__select:before {
+  z-index: 15;
+  position: absolute;
+  top: 15px !important;
+  right: 12px;
+}
+
+.nested-tab {
+  .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+</style>

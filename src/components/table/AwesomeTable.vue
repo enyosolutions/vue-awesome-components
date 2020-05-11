@@ -7,7 +7,7 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h3 class="card-title ajax-table-header text-primary">
+      <h3 class="card-title ajax-table-header text-primary text-left">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
@@ -37,7 +37,7 @@
                 href="#"
                 :class="{
                   'text-light bg-primary': columnsState[col.field],
-                  'bg-info': col.field === 'ACTIONS'
+                  'bg-info': col.field === 'ACTIONS',
                 }"
                 :disabled="col.field === 'ACTIONS'"
                 @click="toggleColumn(col.field)"
@@ -53,55 +53,53 @@
             />
           </div>
           <button
-            v-if="opts.actions.filter"
+            v-if="_actions.filter"
             type="button"
-            class="btn btn-simple"
+            class="btn btn-link btn-alt-style"
             :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
             @click="toggleFilter()"
           >
             <i class="fa fa-filter" />
-            {{ $t("common.buttons.filters") }}
+            {{ $t('AwesomeTable.buttons.filters') }}
           </button>
           <div class="dropdown">
             <button
-              v-if="opts.actions && opts.actions.refresh"
-              class="btn btn-simple"
+              v-if="_actions && _actions.refresh"
+              class="btn btn-link btn-alt-style"
               @click="getItems()"
             >
               <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("common.buttons.refresh") }}
+              {{ $t('AwesomeTable.buttons.refresh') }}
             </button>
             <button
-              v-if="
-                opts.actions && (opts.actions.export || opts.actions.import)
-              "
+              v-if="_actions && (_actions.export || _actions.import)"
               id="dropdownMenuButton"
-              class="btn btn-secondary btn-simple dropdown-toggle"
+              class="btn btn-secondary btn-main-style dropdown-toggle"
               type="button"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
             >
               <i class="fa fa-plus" />
-              {{ $t("EnyoAjaxTable.more") }}
+              {{ $t('AwesomeTable.more') }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
               <button
-                v-if="opts.actions && opts.actions.export"
-                class="btn btn-success btn-simple btn-block"
+                v-if="_actions && _actions.export"
+                class="btn btn-success btn-main-style btn-block"
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel") }}
+                {{ $t('AwesomeTable.buttons.excel') }}
               </button>
 
               <button
-                class="btn btn-default btn-simple btn-block"
+                class="btn btn-default btn-main-style btn-block"
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel-currentpage") }}
+                {{ $t('AwesomeTable.buttons.excel-currentpage') }}
               </button>
             </div>
           </div>
@@ -123,21 +121,21 @@
           :max-height="opts.maxHeight"
           :rows="data || []"
           :filter-options="{
-            enabled: opts && opts.actions && opts.actions.filter
+            enabled: _actions.filter,
           }"
           :search-options="{
-            enabled: opts && opts.actions && opts.actions.search,
-            placeholder: this.$t('EnyoAjaxTable.searchInput')
+            enabled: _actions.search,
+            placeholder: this.$t('AwesomeTable.searchInput'),
           }"
           :pagination-options="{
             enabled: opts && opts.pagination,
-            nextLabel: this.$t('EnyoAjaxTable.next'),
-            prevLabel: this.$t('EnyoAjaxTable.prev'),
-            rowsPerPageLabel: this.$t('EnyoAjaxTable.rows_per_page'),
-            ofLabel: this.$t('EnyoAjaxTable.of'),
-            pageLabel: this.$t('EnyoAjaxTable.page'),
-            allLabel: this.$t('EnyoAjaxTable.all'),
-            perPage: perPage
+            nextLabel: this.$t('AwesomeTable.next'),
+            prevLabel: this.$t('AwesomeTable.prev'),
+            rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
+            ofLabel: this.$t('AwesomeTable.of'),
+            pageLabel: this.$t('AwesomeTable.page'),
+            allLabel: this.$t('AwesomeTable.all'),
+            perPage: perPage,
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
@@ -154,7 +152,7 @@
                       action.canDisplay({ item: props.row }, this)
                   "
                   :key="index"
-                  class="btn btn-xs btn-simple"
+                  class="btn btn-xs btn-main-style"
                   :class="action.class"
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
@@ -171,14 +169,9 @@
             </template>
 
             <date-range-picker
-              v-if="
-                opts.actions &&
-                  opts.actions.filter &&
-                  opts.actions.dateFilter &&
-                  filterable
-              "
+              v-if="_actions.filter && _actions.dateFilter && filterable"
               class="form-group vgt-date-range"
-              :placeholder="$t('common.field.start')"
+              :placeholder="$t('AwesomeTable.daterange.start')"
               :start-date="defaultStartDate"
               :end-date="defaultEndDate"
               :locale-data="datePicker.locale"
@@ -197,7 +190,7 @@
                           action.canDisplay({ item: props.row }, this)
                       "
                       :key="index"
-                      class="btn btn-xs btn-simple"
+                      class="btn btn-xs btn-alt-style"
                       :class="action.class"
                       :id="action.name + '-' + props.index"
                       :data-title="action.title || action.label"
@@ -208,7 +201,7 @@
                           item: props.row,
                           location: 'inline',
                           props,
-                          id: action.name + '-' + props.index
+                          id: action.name + '-' + props.index,
                         })
                       "
                     >
@@ -220,22 +213,22 @@
                 </template>
               </slot>
               <button
-                v-if="opts && opts.actions && opts.actions.view"
-                class="btn btn-xs btn-simple btn-icon"
+                v-if="_actions.view"
+                class="btn btn-xs btn-alt-style btn-icon"
                 @click="$emit('view', props.row)"
               >
                 <i class="fa fa-eye text-info" />
               </button>
               <button
-                v-if="opts && opts.actions && opts.actions.edit"
-                class="btn btn-xs btn-simple btn-icon"
+                v-if="_actions.edit"
+                class="btn btn-xs btn-alt-style btn-icon"
                 @click="$emit('edit', props.row)"
               >
                 <i class="fa fa-pencil fa fa-pencil" />
               </button>
               <button
-                v-if="opts && opts.actions && opts.actions.delete"
-                class="btn btn-xs btn-simple btn-icon"
+                v-if="_actions.delete"
+                class="btn btn-xs btn-alt-style btn-icon"
                 @click="$emit('delete', props.row)"
               >
                 <i class="fa fa-trash text-danger" />
@@ -264,7 +257,7 @@
                     props.formattedRow[props.column.field],
                   'fa-times text-danger':
                     !props.formattedRow[props.column.field] &&
-                    props.formattedRow[props.column.field] !== undefined
+                    props.formattedRow[props.column.field] !== undefined,
                 }"
               ></i>
             </div>
@@ -345,8 +338,10 @@
                 v-for="(value, key) of props.formattedRow[props.column.field]"
                 class="label label-info"
               >
-                <label :key="key">{{ key }}:</label>
-                <label :key="key" class="text-primary">{{ value }}</label> |
+                <div :key="key">
+                  <label>{{ key }}:</label>
+                  <label class="text-primary">{{ value }}</label> |
+                </div>
               </template>
             </div>
             <div
@@ -385,7 +380,7 @@
             </div>
           </template>
           <div slot="emptystate">
-            {{ $t("EnyoAjaxTable.empty") }}
+            {{ $t('AwesomeTable.empty') }}
           </div>
         </vue-good-table>
       </div>
@@ -393,19 +388,20 @@
   </div>
 </template>
 <script>
-import DateRangePicker from "vue2-daterange-picker";
-import { VueGoodTable } from "vue-good-table";
-import moment from "moment";
-import apiErrors from "../../mixins/apiErrorsMixin";
-import apiListMixin from "../../mixins/apiListMixin";
-import i18nMixin from "../../mixins/i18nMixin";
+import DateRangePicker from 'vue2-daterange-picker';
+import { VueGoodTable } from 'vue-good-table';
+import moment from 'moment';
+import apiErrors from '../../mixins/apiErrorsMixin';
+import apiListMixin from '../../mixins/apiListMixin';
+import i18nMixin from '../../mixins/i18nMixin';
+import { defaultActions } from '../../mixins/defaultProps';
 
-import _ from "lodash";
+import _ from 'lodash';
 
 export default {
-  name: "EnyoAjaxTable",
+  name: 'AwesomeTable',
   token: `
-  <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :needsRefresh="needsRefresh" :options="tableOptions">
+  <AwesomeTable  :title="title" :columns="tableColumns" :rows="dataSource" :needsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
   <template slot="table-top-actions"></template>
   <template slot="table-top-more-actions"></template>
@@ -413,46 +409,46 @@ export default {
   <template slot="table-row-actions"></template>
 
   <!-- END OF ARRAY -->
-  </EnyoAjaxTable>
+  </AwesomeTable>
   `,
   components: {
     DateRangePicker,
-    VueGoodTable
+    VueGoodTable,
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
     columns: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     columnsDisplayed: {
       type: Number,
-      default: 8
+      default: 8,
     },
     rows: { type: Array, default: () => [] },
-    url: { type: String, default: "" },
+    url: { type: String, default: '' },
     entity: {
       type: String,
-      default: "",
+      default: '',
       note:
-        "Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations"
+        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations',
     },
-    title: { type: String, default: "" },
+    title: { type: String, default: '' },
     translations: {
       type: Object,
       default: () => ({
-        "EnyoAjaxTable.buttons.filters": "Filter",
-        "EnyoAjaxTable.buttons.refresh": "Refresh",
-        "EnyoAjaxTable.buttons.excel-currentpage": "Export current page",
-        "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
-        "EnyoAjaxTable.next": "Next",
-        "EnyoAjaxTable.prev": "Previous",
-        "EnyoAjaxTable.rows_per_page": "Rows per page",
-        "EnyoAjaxTable.of": "of",
-        "EnyoAjaxTable.page": "page",
-        "EnyoAjaxTable.all": "all",
-        "EnyoAjaxTable.empty": "empty"
-      })
+        'AwesomeTable.buttons.filters': 'Filter',
+        'AwesomeTable.buttons.refresh': 'Refresh',
+        'AwesomeTable.buttons.excel-currentpage': 'Export current page',
+        'AwesomeTable.searchInput': 'AwesomeTable.searchInput',
+        'AwesomeTable.next': 'Next',
+        'AwesomeTable.prev': 'Previous',
+        'AwesomeTable.rows_per_page': 'Rows per page',
+        'AwesomeTable.of': 'of',
+        'AwesomeTable.page': 'page',
+        'AwesomeTable.all': 'all',
+        'AwesomeTable.empty': 'empty',
+      }),
     },
     autoRefresh: { type: Boolean, default: false },
     autoRefreshInterval: { type: Number, default: 1 },
@@ -462,19 +458,19 @@ export default {
     exportUrl: { type: String, default: undefined },
     needsRefresh: {
       type: Boolean,
-      default: false
+      default: false,
     },
     perPage: {
       type: [String, Number],
-      default: 20
+      default: 20,
     },
     limit: {
       type: [String, Number],
-      default: 1000
+      default: 1000,
     },
     options: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     defaultOptions: {
       type: Object,
@@ -485,25 +481,18 @@ export default {
         customInlineActions: [], // {key, label, action: function(item, context{}}
         filterInitiallyOn: false,
         saveSearchDatas: false,
-        actions: {
-          noActions: false,
-          search: true,
-          filter: true,
-          create: true,
-          edit: true,
-          view: true,
-          delete: true,
-          export: false,
-          import: false,
-          dateFilter: true,
-          refresh: true
-        }
-      })
+      }),
     },
+    actions: {
+      type: Object,
+      default: () => defaultActions,
+      note: 'actions active in this instance',
+    },
+
     mode: {
-      default: "local",
-      type: String
-    }
+      default: 'local',
+      type: String,
+    },
   },
   data() {
     return {
@@ -512,9 +501,9 @@ export default {
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
-        .subtract(7, "days")
-        .format("YYYY-MM-DD"),
-      defaultEndDate: moment().format("YYYY-MM-DD"),
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
+      defaultEndDate: moment().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
         filters: {},
@@ -522,25 +511,25 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
+        perPage: this.mode === 'remote' ? this.perPage : this.limit, // how many items I'm showing per page
       },
       data: [],
       refreshHandle: null,
       numberOfRefreshCalls: 0,
       datePicker: {
         locale: {
-          direction: "ltr", // direction of text
-          format: "DD-MM-YYYY", // fomart of the dates displayed
-          separator: " - ", // separator between the two ranges
-          applyLabel: "Appliquer",
-          cancelLabel: "Annuler",
-          weekLabel: "W",
-          customRangeLabel: "Custom Range",
+          direction: 'ltr', // direction of text
+          format: 'DD-MM-YYYY', // fomart of the dates displayed
+          separator: ' - ', // separator between the two ranges
+          applyLabel: 'Appliquer',
+          cancelLabel: 'Annuler',
+          weekLabel: 'W',
+          customRangeLabel: 'Custom Range',
           daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
-          firstDay: 1 // ISO first day of week - see moment documenations for details
-        }
-      }
+          firstDay: 1, // ISO first day of week - see moment documenations for details
+        },
+      },
     };
   },
   computed: {
@@ -551,19 +540,27 @@ export default {
     _tableTitle() {
       return (
         this.title ||
-        (this.$te && this.$te("app.labels." + this.entity)
-          ? this.$t("app.labels." + this.entity)
+        (this.$te && this.$te('app.labels.' + this.entity)
+          ? this.$t('app.labels.' + this.entity)
           : _.startCase(this.entity))
+      );
+    },
+
+    _actions() {
+      return _.merge(
+        {},
+        defaultActions,
+        this.actions || (this.innerOptions && this._actions) // old location kept for BC
       );
     },
 
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
-        console.error("EnyoAjaxTable MISSING COLUMNS");
+        console.error('AwesomeTable MISSING COLUMNS');
         return [];
       }
-      const newcolumns = this.columns.map(col => {
+      const newcolumns = this.columns.map((col) => {
         const newCol = {};
 
         if (_.isString(col)) {
@@ -577,25 +574,25 @@ export default {
           col.label = _.startCase(col.field);
         }
 
-        if (col.type && col.type === "datetime") {
+        if (col.type && col.type === 'datetime') {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("lll");
+            return moment(value).format('lll');
           };
         }
 
-        if (col.type && col.type === "date") {
+        if (col.type && col.type === 'date') {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("DD-MM-YYYY");
+            return moment(value).format('DD-MM-YYYY');
           };
         }
 
-        if (col.type && col.type === "object") {
+        if (col.type && col.type === 'object') {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -609,7 +606,7 @@ export default {
           };
         }
 
-        if (col.type && col.type === "relation") {
+        if (col.type && col.type === 'relation') {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -623,35 +620,35 @@ export default {
           };
         }
 
-        if (col.type && col.type === "checkbox") {
+        if (col.type && col.type === 'checkbox') {
           col.sortable = false;
         }
 
         let filterDropdownItems =
           col.filterOptions && col.filterOptions.filterDropdownItems;
-        if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
+        if (col.type && (col.type === 'list-of-value' || col.type === 'lov')) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
-            filterDropdownItems = filterDropdownItems.map(e => ({
+            filterDropdownItems = filterDropdownItems.map((e) => ({
               value: e.code,
-              text: e.label || e.code || e
+              text: e.label || e.code || e,
             }));
           }
         }
 
-        if (col.type && col.type === "list-of-data") {
+        if (col.type && col.type === 'list-of-data') {
           filterDropdownItems = this.$store.state.data[col.listName];
-          filterDropdownItems = filterDropdownItems.map(e => ({
+          filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e.code,
-            text: e.label || e.code || e
+            text: e.label || e.code || e,
           }));
         }
 
         if (col.enum) {
           filterDropdownItems = col.enum;
-          filterDropdownItems = filterDropdownItems.map(e => ({
+          filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e,
-            text: _.startCase(e)
+            text: _.startCase(e),
           }));
         }
 
@@ -660,7 +657,7 @@ export default {
             col.filterable !== undefined
               ? col.filterable && this.filterable
               : this.filterable,
-          filterDropdownItems
+          filterDropdownItems,
         };
         return col;
       });
@@ -671,13 +668,13 @@ export default {
         });
       }
       if (
-        !newcolumns.find(col => col.field === "ACTIONS") &&
-        !this.opts.actions.noActions
+        !newcolumns.find((col) => col.field === 'ACTIONS') &&
+        !this._actions.noActions
       ) {
         newcolumns.push({
-          field: "ACTIONS",
-          label: "Actions",
-          filterOptions: { enabled: false }
+          field: 'ACTIONS',
+          label: 'Actions',
+          filterOptions: { enabled: false },
         });
         // eslint-disable-next-line
         this.columnsState.ACTIONS = true;
@@ -692,12 +689,12 @@ export default {
       this.columnsState;
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter(
-          col => this.columnsState[col.field]
+          (col) => this.columnsState[col.field]
         );
 
         if (!this.columnsState.ACTIONS) {
           const actions = this.formattedColumns.find(
-            col => col.field === "ACTIONS"
+            (col) => col.field === 'ACTIONS'
           );
           if (actions) {
             cols.push(actions);
@@ -706,7 +703,7 @@ export default {
         return cols;
       }
       return this.formattedColumns;
-    }
+    },
   },
   watch: {
     // needsRefresh: "refreshLocalData",
@@ -714,13 +711,13 @@ export default {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
     },
-    entity: "entityChanged",
+    entity: 'entityChanged',
     // store: changed => {},
-    rows: "refreshLocalData"
+    rows: 'refreshLocalData',
   },
   created() {
     if (!this.$t) {
-      this.$t = str => {
+      this.$t = (str) => {
         /*
         if (!window.trans) {
           window.trans = {}
@@ -730,13 +727,13 @@ export default {
 
         return this.translations[str] || str;
       };
-      this.$te = str => !!this.translations[str];
+      this.$te = (str) => !!this.translations[str];
     }
   },
   beforeMount() {
     const userLang = window.navigator
       ? navigator.language || navigator.userLanguage
-      : "en";
+      : 'en';
     moment.locale(userLang);
   },
   mounted() {
@@ -752,8 +749,8 @@ export default {
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
           this.$notify({
-            title: "too much calls, aborting tracking",
-            type: "warning"
+            title: 'too much calls, aborting tracking',
+            type: 'warning',
           });
           clearInterval(this.refreshHandle);
           this.refreshHandle = null;
@@ -774,7 +771,6 @@ export default {
   methods: {
     startCase: _.startCase,
 
-
     toggleFilter() {
       this.filterable = !this.filterable;
 
@@ -783,7 +779,7 @@ export default {
         this.serverParams.filters = {};
         this.getItems();
       }
-      this.columns = this.columns.map(col => {
+      this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
           col.filterOptions.enabled = this.filterable;
         }
@@ -794,10 +790,7 @@ export default {
     // editItem(item) {},
 
     clickOnLine(item) {
-      this.opts &&
-        this.opts.actions &&
-        this.opts.actions.view &&
-        this.$emit("view", item);
+      this._actions.view && this.$emit('view', item);
     },
 
     getLovValue(item, listName) {
@@ -805,7 +798,7 @@ export default {
         return item;
       }
       const value = this.$store.state.listOfValues[listName].find(
-        elm => elm[this.primaryKey] === item || elm.code === item
+        (elm) => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -819,7 +812,7 @@ export default {
         return item;
       }
       const value = this.$store.state.data[listName].find(
-        elm => elm[this.primaryKey] === item || elm.code === item
+        (elm) => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -833,24 +826,29 @@ export default {
     },
 
     onColumnFilter(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.updateParams({
         filters: _.cloneDeep(params.columnFilters),
-        page: 0
+        page: 0,
       });
       this.getItems();
     },
 
     onSortChange(params) {
-      const fieldIndex =  params[0].columnIndex;
+      const fieldIndex = params[0].columnIndex;
       // eslint-disable-next-line
-      if (this.mode !== "remote" || !this.columns || !this.columns[fieldIndex].field) {
+      if (
+        this.mode !== 'remote' ||
+        !this.columns ||
+        !this.columns[fieldIndex].field
+      ) {
         return;
       }
       const sort = {};
-      sort[this.columns[fieldIndex].field] = params[0].sortType || params[0].type;
+      sort[this.columns[fieldIndex].field] =
+        params[0].sortType || params[0].type;
       this.updateParams({ sort });
       this.getItems();
     },
@@ -870,7 +868,7 @@ export default {
     },
 
     hasValue(item, column) {
-      return item[column.toLowerCase()] !== "undefined";
+      return item[column.toLowerCase()] !== 'undefined';
     },
 
     itemValue(item, column) {
@@ -879,14 +877,14 @@ export default {
 
     exportCallBack() {
       if (!this.exportUrl) {
-        this.$notify({ title: "[WARN] missing export url", type: "warning" });
+        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http
         .get(this.exportUrl, {})
-        .then(res => {
+        .then((res) => {
           if (res.data.url) {
-            const link = document.createElement("a");
+            const link = document.createElement('a');
             link.download = `${this.entity || ''}_export`;
             link.href = res.data.url;
             link.click();
@@ -895,12 +893,10 @@ export default {
         })
         .catch(this.apiErrorCallback);
     },
-  }
+  },
 };
 </script>
 <style lang="scss">
-@import "~vue-good-table/dist/vue-good-table.css";
-
 .ajax-table-img {
   max-height: 50px;
 }

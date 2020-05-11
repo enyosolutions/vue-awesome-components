@@ -18,7 +18,7 @@
           </div>
           <div class="btn-group" role="group">
             <button
-              v-if="opts.actions && opts.actions.refresh"
+              v-if="actions && actions.refresh"
               class="btn btn-simple"
               @click="getItems()"
             >
@@ -28,7 +28,7 @@
 
 
 
-            <template v-if="opts.actions && opts.actions.itemsPerRow">
+            <template v-if="actions && actions.itemsPerRow">
              <button class="btn " @click="setListMode()"
               :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
             >
@@ -52,7 +52,7 @@
 
             <button
               v-if="
-                opts.actions && (opts.actions.export || opts.actions.import)
+                actions && (actions.export || actions.import)
               "
               id="dropdownMenuButton"
               class="btn btn-secondary btn-simple dropdown-toggle"
@@ -62,12 +62,12 @@
               aria-expanded="false"
             >
               <i class="fa fa-plus" />
-              {{ $t("EnyoAjaxTable.more") }}
+              {{ $t("AwesomeTable.more") }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
               <button
-                v-if="opts.actions && opts.actions.export"
+                v-if="actions && actions.export"
                 class="btn btn-success btn-simple btn-block"
                 @click="exportCallBack"
               >
@@ -115,10 +115,11 @@
               <div class="card-body">
                 <h5 class="card-title" v-if="item[fields.title]">{{ item[fields.title] }}</h5>
                 <p class="card-text">{{ item[fields.description] }}</p>
-                <div class="awesomelist-item-action">
+                <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
-                    class="btn btn-primary btn-sm"
+                    class="btn btn-primary btn-sm "
+                    :class="itemsPerRow > 1 ? 'btn-block': ''"
                   >
                   {{ $t("awesomelist.buttons.itemAction") }}
                   </button>
@@ -168,6 +169,10 @@ export default {
       type: Number,
       default: 3
     },
+    perPage: {
+      type: Number,
+      default: 6
+    },
     gridModeItemHeight: {
       type: [Number, String],
       default: undefined
@@ -198,6 +203,14 @@ export default {
       type: Object,
       default: () => ({})
     },
+    actions: {
+      type: Object,
+      default: () => ({
+          itemButton: true,
+          refresh: true,
+          itemsPerRow: true
+        })
+    },
     defaultOptions: {
       type: Object,
       default: () => ({
@@ -206,17 +219,6 @@ export default {
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         saveSearchDatas: false,
-        actions: {
-          search: true,
-          filter: true,
-          create: true,
-          edit: true,
-          view: true,
-          delete: true,
-          export: false,
-          refresh: true,
-          itemsPerRow: true
-        }
       })
     }
   },
@@ -287,16 +289,22 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+    'perRow': 'resetItemsPerRow'
+  },
   created() {},
   beforeMount() {},
   mounted() {
     if (this.perRow) {
-      this.itemsPerRow = this.perRow;
+      this.resetItemsPerRow();
     }
   },
   beforeDestroy() {},
   methods: {
+    resetItemsPerRow() {
+      this.itemsPerRow = this.perRow;
+    },
+
     increaseItemsPerRow(c) {
       this.itemsPerRow += c;
     },
@@ -321,9 +329,11 @@ export default {
       this.$emit("itemClicked", item);
     },
 
-    handleButtonClick(item) {
+    handleItemButtonClick($event, item) {
       this.$emit("itemButtonClicked", item);
     },
+
+
 
     onPaginationChange(page) {
       this.serverParams.page = page;

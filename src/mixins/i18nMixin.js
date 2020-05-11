@@ -1,3 +1,5 @@
+import en from 'vue-enyo-components/translations/en.json';
+import { set, get, merge } from 'lodash';
 export default {
   props: {
     translations: {
@@ -5,19 +7,27 @@ export default {
       default: () => ({})
     }
   },
+  computed: {
+    _translations() {
+      return merge(this.translations, en);
+      // return en;
+    }
+  },
   created() {
     if (!this.$t) {
       this.$t = str => {
-        /*
-        if (!window.trans) {
-          window.trans = {}
-        }
-        window.trans[str]= str;
-        */
+        const val = get(this._translations, str) || str;
 
-        return this.translations[str] || str;
+        if (process.env.NODE_ENV && process.env.NODE_ENV === 'development') {
+          if (!window.trans) {
+            window.trans = Object.assign({}, this._translations);
+          }
+          set(window.trans, str, val);
+        }
+        return val;
+
       };
-      this.$te = str => !!this.translations[str];
+      this.$te = str => !!get(this._translations, str)
     }
   }
 };

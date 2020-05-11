@@ -1,8 +1,11 @@
 // Import the styles directly. (Or you could add them via script tags.)
-import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/scss/bootstrap.scss";
+import 'vue-enyo-components/assets/css/font-awesome.min.css';
+import 'vue-enyo-components/assets/css/bootstrap-theme.min.css';
 import "./main.scss";
 
 import Vue from "vue";
+// eslint-disable-next-line
 import VueI18n from "vue-i18n";
 import axios from "axios";
 import Datetime from 'vue-datetime';
@@ -36,22 +39,22 @@ Vue.use(VueFormGenerator, {
 });
 
 
-Vue.use(VueI18n);
-Vue.use(VueEnyoComponents, {'CrudComponent': {extends: {props:{primaryKey: {type:String, default: 'tintin'}}}}});
+Vue.use(VueEnyoComponents, { 'CrudComponent': { extends: { props: { primaryKey: { type: String, default: 'tintin' } } } } });
 
 Vue.config.productionTip = false;
 
-const i18n = new VueI18n({
-  locale: "fr", // set locale
-  messages: {
-    fr: {
-      "awesomelist.buttons.increase": "More items per row",
-      "awesomelist.buttons.decrease": "Less items per row",
-      "awesomelist.buttons.refresh": "Refresh",
-      "awesomelist.buttons.itemAction": "Open"
-    }
-  } // set locale messages
-});
+// Vue.use(VueI18n);
+// const i18n = new VueI18n({
+//   locale: "fr", // set locale
+//   messages: {
+//     fr: {
+//       "awesomelist.buttons.increase": "More items per row",
+//       "awesomelist.buttons.decrease": "Less items per row",
+//       "awesomelist.buttons.refresh": "Refresh",
+//       "awesomelist.buttons.itemAction": "Open"
+//     }
+//   } // set locale messages
+// });
 
 
 const router = new VueRouter({
@@ -64,6 +67,18 @@ const router = new VueRouter({
     {
       path: "/awesomelist",
       component: () => import("../examples/pages/AwesomelistPage")
+    },
+    {
+      path: "/crudcomponent",
+      component: () => import("../examples/pages/CrudComponentPage")
+    },
+    {
+      path: "/crudcomponent/:id",
+      component: () => import("../examples/pages/CrudComponentPage")
+    },
+    {
+      path: "/crudcomponent/:id/edit",
+      component: () => import("../examples/pages/CrudComponentPage")
     }
   ]
 });
@@ -74,14 +89,17 @@ Vue.prototype.$http = axios.create({
     "Content-Type": "application/json"
   }
 });
-window.$ = $;
-window.$ = window.jQuery = require("jquery");
-window._ = _;
+if (process.env.NODE_ENV === 'development') {
 
+  window.$ = $;
+  window.$ = window.jQuery = require("jquery");
+  window._ = _;
+
+}
 window.vm = new Vue({
-  i18n,
+  // i18n,
   router,
   render: h => h(App)
 }).$mount("#app");
 
-export default i18n;
+export default window.vm;

@@ -22,55 +22,84 @@
       model-name="ticket"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
-      modal-mode='slide'
+      modal-mode="slide"
       :rows="[
-      {col1: 'qq', col2:'some data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq2', col2:'some moore data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq3', col2:'a third data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-       ]"
-      :options="{modalMode: 'fade', actions: {create: true}}"
+        {
+          col1: 'qq',
+          col2: 'some data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq2',
+          col2: 'some moore data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq3',
+          col2: 'a third data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+      ]"
+      :options="{ modalMode: 'fade', actions: { create: true } }"
     />
 
     <br />
     <br />
     <br />
-    <h3>Table with details opening in slide mode </h3>
+    <h3>Table with details opening in slide mode</h3>
 
-        <CrudComponent
+    <CrudComponent
       model-name="ticket2"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
       :rows="[
-      {col1: 'qq', col2:'some data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq2', col2:'some moore data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq3', col2:'a third data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-       ]"
-      :options="{modalMode: 'slide', actions: {create: true}}"
+        {
+          col1: 'qq',
+          col2: 'some data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq2',
+          col2: 'some moore data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq3',
+          col2: 'a third data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+      ]"
+      :options="{ modalMode: 'slide', actions: { create: true } }"
     />
-
   </div>
 </template>
 
 <script>
-import CrudComponent from "../../../src/components/crud/CrudComponent.vue";
-import ticketModel from "../../../src/fixtures/ticket.js";
+import CrudComponent from '../../../src/components/crud/CrudComponent.vue';
+import ticketModel from '../../../examples/fixtures/ticket.js';
 
 export default {
-  name: "CrudComponentDemo",
+  name: 'CrudComponentDemo',
   components: { CrudComponent },
   props: {},
   mounted() {},
   data() {
     return {
-      ticketModel
+      ticketModel,
     };
-  }
+  },
 };
 </script>
 
-<style lang="css" >
-@import "~bootstrap/dist/css/bootstrap.min.css";
-@import "../../../dist/css/app.css";
+<style lang="css">
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '../../../dist/css/app.css';
 
 table {
   margin: 0px;

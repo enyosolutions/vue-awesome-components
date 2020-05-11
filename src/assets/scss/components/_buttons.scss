@@ -1,0 +1,15 @@
+
+
+.btn-main-style {
+  @extend .btn-primary !optional;
+}
+
+
+.btn-alt-style {
+  color: var(--secondary);
+  @extend .btn-primary !optional;
+}
+
+.btn-link:hover {
+  text-decoration: none;
+}

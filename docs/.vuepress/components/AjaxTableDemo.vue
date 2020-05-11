@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Latest compiled and minified CSS -->
-``
+    ``
     <h3>Simple table</h3>
     <pre style="color:white">
       < EnyoAjaxTable
@@ -21,18 +21,33 @@
     <EnyoAjaxTable
       :columns="['col1', 'col2', 'col3']"
       :rows="[
-      {col1: 'qq', col2:'some data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq2', col2:'some moore data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-      {col1: 'qq3', col2:'a third data', col3: 'oopsie', notDisplayedColumn: 'ghosted'},
-       ]"
-       :options="{actions: {noActions: true}}"
+        {
+          col1: 'qq',
+          col2: 'some data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq2',
+          col2: 'some moore data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+        {
+          col1: 'qq3',
+          col2: 'a third data',
+          col3: 'oopsie',
+          notDisplayedColumn: 'ghosted',
+        },
+      ]"
+      :options="{ actions: { noActions: true } }"
     />
 
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
+    <br />
     <h3>Table with custom fields</h3>
-    <hr/>
+    <hr />
     <pre style="color:white">
          < EnyoAjaxTable
       :columns="[{type:'string', field: 'picture'},
@@ -53,32 +68,54 @@
        :options="{actions: {noActions: true}}"
     />
     </pre>
-        <EnyoAjaxTable
-      :columns="[{type:'string', field: 'picture'},
-        {type: 'url', field: 'url'},
-        {type: 'boolean', field: 'myboolean'},
-        {type: 'date', field: 'date'},
-        {type: 'datetime', field: 'dateTime'},
-        ]"
+    <EnyoAjaxTable
+      :columns="[
+        { type: 'string', field: 'picture' },
+        { type: 'url', field: 'url' },
+        { type: 'boolean', field: 'myboolean' },
+        { type: 'date', field: 'date' },
+        { type: 'datetime', field: 'dateTime' },
+      ]"
       :rows="[
-      {picture: 'https://picsum.photos/200?1', url:'https://mozilla.org', myboolean: false, notDisplayedColumn: 'ghosted', object: {foo: 'bar', john: 'doe', a: {b:1}},
-       date: new Date(), dateTime: new Date(), checkbox: true, html:''},
-      {picture: 'https://picsum.photos/200?2', url:'https://bing.com', myboolean: true, notDisplayedColumn: 'ghosted', object: {foo: 'bar', john: 'doe', a: {b:1}},
-       date: new Date(), dateTime: new Date(), checkbox: false},
-      {picture: 'https://picsum.photos/200?3', url:'https://google.com', myboolean: undefined, notDisplayedColumn: 'ghosted', object: {foo: 'bar', john: 'doe', a: {b:1}},
-       date: new Date(),
-      dateTime: new Date(),},
-       ]"
-       :options="{actions: {noActions: true}}"
+        {
+          picture: 'https://picsum.photos/200?1',
+          url: 'https://mozilla.org',
+          myboolean: false,
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          date: new Date(),
+          dateTime: new Date(),
+          checkbox: true,
+          html: '',
+        },
+        {
+          picture: 'https://picsum.photos/200?2',
+          url: 'https://bing.com',
+          myboolean: true,
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          date: new Date(),
+          dateTime: new Date(),
+          checkbox: false,
+        },
+        {
+          picture: 'https://picsum.photos/200?3',
+          url: 'https://google.com',
+          myboolean: undefined,
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          date: new Date(),
+          dateTime: new Date(),
+        },
+      ]"
+      :options="{ actions: { noActions: true } }"
     />
 
-
-
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
+    <br />
     <h3>Table with even more custom fields</h3>
-    <hr/>
+    <hr />
     <pre style="color:white">
          < EnyoAjaxTable
       :columns="[{type:'image', field: 'picture'},
@@ -94,26 +131,51 @@
        :options="{actions: {noActions: true, search: true}}"
     />
     </pre>
-        <EnyoAjaxTable
-      :columns="[{type:'image', field: 'picture'},
-        {type: 'object', field: 'object'},
-        {type: 'checkbox', field: 'checkbox'},
-        {type: 'html', field: 'html'},
-        ]"
+    <EnyoAjaxTable
+      :columns="[
+        { type: 'image', field: 'picture' },
+        { type: 'object', field: 'object' },
+        { type: 'checkbox', field: 'checkbox' },
+        { type: 'html', field: 'html' },
+      ]"
       :rows="[
-      {picture: 'https://picsum.photos/200?1', url:'https://mozilla.org', myboolean: false, notDisplayedColumn: 'ghosted', object: {foo: 'bar', john: 'doe', a: {b:1}},
-       date: new Date(), dateTime: new Date(), checkbox: true, html:'<b>bold</b> <hr/> <u>underlined</u>'},
-      {picture: 'https://picsum.photos/200?2', url:'https://bing.com', myboolean: true, notDisplayedColumn: 'ghosted', object: {foo: 'bar', john: 'doe', a: {b:1, foo: 'bar', john: 'doe'}, b: {b:1, foo: 'bar', john: 'doe'}, c: {b:1, foo: 'bar', john: 'doe'}},
-       date: new Date(), dateTime: new Date(), checkbox: false, html: `<iframe width='100%' height='315' src='https://www.youtube.com/embed/wZZ7oFKsKzY' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>`},
-       ]"
-       :options="{actions: {noActions: true}}"
+        {
+          picture: 'https://picsum.photos/200?1',
+          url: 'https://mozilla.org',
+          myboolean: false,
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          date: new Date(),
+          dateTime: new Date(),
+          checkbox: true,
+          html: '<b>bold</b> <hr/> <u>underlined</u>',
+        },
+        {
+          picture: 'https://picsum.photos/200?2',
+          url: 'https://bing.com',
+          myboolean: true,
+          notDisplayedColumn: 'ghosted',
+          object: {
+            foo: 'bar',
+            john: 'doe',
+            a: { b: 1, foo: 'bar', john: 'doe' },
+            b: { b: 1, foo: 'bar', john: 'doe' },
+            c: { b: 1, foo: 'bar', john: 'doe' },
+          },
+          date: new Date(),
+          dateTime: new Date(),
+          checkbox: false,
+          html: `<iframe width='100%' height='315' src='https://www.youtube.com/embed/wZZ7oFKsKzY' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>`,
+        },
+      ]"
+      :options="{ actions: { noActions: true } }"
     />
 
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
+    <br />
     <h3>Table with api</h3>
-    <hr/>
+    <hr />
 
     <pre style="color:white">
            < EnyoAjaxTable
@@ -130,40 +192,39 @@
         }"
     />
     </pre>
-        <EnyoAjaxTable
-      :columns="[{type:'number', field: 'userId'},
-       {type: 'number', field: 'id'},
-       {type: 'boolean', field: 'completed'},
-       {type: 'string', field: 'title'}]"
+    <EnyoAjaxTable
+      :columns="[
+        { type: 'number', field: 'userId' },
+        { type: 'number', field: 'id' },
+        { type: 'boolean', field: 'completed' },
+        { type: 'string', field: 'title' },
+      ]"
       url="https://jsonplaceholder.typicode.com/todos"
       responseField=""
       :options="{
         fixedHeader: true,
         maxHeight: '50vh',
-        actions: {search: true, filter: true}}"
+        actions: { search: true, filter: true },
+      }"
     />
-
   </div>
 </template>
 
 <script>
-  import EnyoAjaxTable from '../../../src/components/table/EnyoAjaxTable.vue';
+import EnyoAjaxTable from '../../../src/components/table/AwesomeTable.vue';
 
-  export default {
-    name: 'AjaxTableDemo',
-    components:{EnyoAjaxTable},
-    props: {
-    },
-    mounted() {
-    },
-    data() {
-      return {
-      }
-    }
-  }
+export default {
+  name: 'AjaxTableDemo',
+  components: { EnyoAjaxTable },
+  props: {},
+  mounted() {},
+  data() {
+    return {};
+  },
+};
 </script>
 
-<style lang="css" >
+<style lang="css">
 
 @import "~bootstrap/dist/css/bootstrap.min.css";
 
@@ -332,5 +393,4 @@ table {
         }
     }
 }
-
 </style>

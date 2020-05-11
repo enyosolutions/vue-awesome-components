@@ -1,5 +1,5 @@
-export default {
-  $id: "http://enyosolutions.com/schemas/ticket.json",
+module.exports = {
+  $id: "http://acme.com/schemas/photo.json",
   type: "object",
   required: ["type", "subject", "body", "status", "regionId", "type", "userId"],
   formGroups: [
@@ -30,9 +30,9 @@ export default {
     }
   ],
   properties: {
-    _id: {
-      $id: "_id",
-      type: "number",
+    id: {
+      $id: "id",
+      type: "integer",
       title: "numéro de course",
       description: "Identifiant de la course",
       field: {
@@ -61,7 +61,7 @@ export default {
       }
     },
     regionId: {
-      type: "number",
+      type: "integer",
       title: "numéro région",
       description: "Identifiant de la région de course",
       field: {
@@ -70,7 +70,7 @@ export default {
       }
     },
     userId: {
-      type: "number",
+      type: "integer",
       relation: "/user",
       title: "numéro utilisateur",
       description: "Identifiant utilisateur",
