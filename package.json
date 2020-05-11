@@ -47,7 +47,7 @@
     "vue-loader": "^15.7.0",
     "vue-template-compiler": "2.6.11",
     "vuepress": "^1.2.0",
-    "vuex": "^3.1.0"
+    "vuex": "^3.3.0"
   },
   "peerDependencies": {
     "crip-vue-loading": "^1.2.5",
@@ -57,7 +57,7 @@
     "vue-i18n": "^8.1.0",
     "vue-notifyjs": "^0.4.3",
     "vue-router": "^3.0.1",
-    "vuex": "^3.1.0"
+    "vuex": "^3.3.0"
   },
   "eslintConfig": {
     "root": true,
