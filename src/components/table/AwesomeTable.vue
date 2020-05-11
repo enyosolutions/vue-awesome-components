@@ -317,6 +317,18 @@
                 )
               }}</span
             >
+            <AwesomeLabel
+              :id="props.formattedRow[props.column.field]"
+              :data-source="$store.state.listOfValues[props.column.listName]"
+              :search-field="code"
+              :label="
+                (entity) =>
+                  `${entity.sex === 'M' ? 'mr' : 'mme'} ${entity.firstname} ${
+                    entity.lastname
+                  }`
+              "
+              display-type="text"
+            />
             <span
               v-else-if="props.column.type === 'list-of-data'"
               class="pointer"

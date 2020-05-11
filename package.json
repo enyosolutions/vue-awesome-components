@@ -4,7 +4,7 @@
   "main": "dist/vec.umd.min.js",
   "scripts": {
     "build": "vue-cli-service build",
-    "build:prod": "vue-cli-service build --mode production --no-clean --target lib --name vec src/index.js --report",
+    "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es --name vec src/index.js --report",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-enyo-components.dev/dist/",
     "docs:dev": "vuepress dev docs",

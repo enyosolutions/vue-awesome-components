@@ -69,6 +69,10 @@ const router = new VueRouter({
       component: () => import("../examples/pages/AwesomelistPage")
     },
     {
+      path: "/awesometable",
+      component: () => import("../examples/pages/AwesomeTablePage.vue")
+    },
+    {
       path: "/crudcomponent",
       component: () => import("../examples/pages/CrudComponentPage")
     },

@@ -44,19 +44,19 @@ module.exports = {
 
   chainWebpack: (config) => {
     if (process.env.NODE_ENV === "production") {
-      config.externals = {
-        'moment': 'moment',
-        'vue-multiselect': 'vue-multiselect',
-        'sweetalert2': 'sweetalert2',
-        'sweetalert2/dist': 'sweetalert2/dist',
-        'vue2-daterange-picker': 'vue2-daterange-picker',
-        'vue-form-generator': 'vue-form-generator',
-        'vue-good-table': 'vue-good-table',
-        'core-js': 'core-js',
-        // 'axios': 'axios',
-        'lodash': 'lodash',
-        'qs': 'qs',
-      };
+      // config.externals = {
+      //   'moment': 'moment',
+      //   'vue-multiselect': 'vue-multiselect',
+      //   'sweetalert2': 'sweetalert2',
+      //   'sweetalert2/dist': 'sweetalert2/dist',
+      //   'vue2-daterange-picker': 'vue2-daterange-picker',
+      //   'vue-form-generator': 'vue-form-generator',
+      //   'vue-good-table': 'vue-good-table',
+      //   'core-js': 'core-js',
+      //   // 'axios': 'axios',
+      //   'lodash': 'lodash',
+      //   'qs': 'qs',
+      // };
       config.plugin("banner").use(webpack.BannerPlugin, [
         {
           banner,

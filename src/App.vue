@@ -25,7 +25,7 @@
             <a class="nav-link" href="/awesomelist">Awesomelist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/ajaxTable">AjaxTable</a>
+            <a class="nav-link" href="/awesometable">AwesomeTable</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/crudcomponent">Crud component</a>
