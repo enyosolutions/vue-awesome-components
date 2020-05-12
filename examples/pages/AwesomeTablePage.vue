@@ -4,7 +4,7 @@
     ``
     <h3>Simple table</h3>
     <pre style="color:white">
-      < EnyoAjaxTable
+      <AwesomeTable
       :columns="['col1', 'col2', 'col3', 'col4']"
       :rows="[
       {col1: 'qq', col2:'some data', col3: 'oopsie',
@@ -49,7 +49,7 @@
     <h3>Table with custom fields</h3>
     <hr />
     <pre style="color:white">
-         < EnyoAjaxTable
+         <AwesomeTable
       :columns="[{type:'string', field: 'picture'},
         {type: 'url', field: 'url'},
         {type: 'boolean', field: 'myboolean'},
@@ -117,7 +117,7 @@
     <h3>Table with even more custom fields</h3>
     <hr />
     <pre style="color:white">
-         < EnyoAjaxTable
+         <AwesomeTable
       :columns="[{type:'image', field: 'picture'},
         {type: 'checkbox', field: 'checkbox'},
         {type: 'html', field: 'html'},
@@ -178,7 +178,7 @@
     <hr />
 
     <pre style="color:white">
-           < EnyoAjaxTable
+           <AwesomeTable
       :columns="[{type:'number', field: 'userId'},
        {type: 'number', field: 'id'},
        {type: 'boolean', field: 'completed'},
@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import AwesomeTable from '../../../src/components/table/AwesomeTable.vue';
+import AwesomeTable from '../../src/components/table/AwesomeTable.vue';
 
 export default {
   name: 'AjaxTableDemo',
@@ -224,7 +224,7 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style lang="scss">
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 table {
