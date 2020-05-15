@@ -8,6 +8,7 @@
             v-if="displayMode === 'view'"
             :mode="displayMode"
             :displayMode="this.innerOptions.detailPageMode"
+            :layout="this.layout || this.innerOptions.detailPageLayout"
             :item="selectedItem"
             :needs-refresh="awesomeEditNeedsRefresh"
             :standalone="false"
@@ -30,6 +31,7 @@
             v-if="displayMode === 'edit' || displayMode === 'create'"
             :mode="displayMode"
             :displayMode="this.innerOptions.detailPageMode"
+            :layout="this.layout || this.innerOptions.detailPageLayout"
             :item="selectedItem"
             :needs-refresh="awesomeEditNeedsRefresh"
             :standalone="false"
@@ -50,7 +52,7 @@
         <div
           class="col-12"
           v-show="
-            displayMode === 'table' || innerOptions.detailPageMode !== 'page'
+            !(displayMode !== 'table' && innerOptions.detailPageMode === 'page')
           "
         >
           <div v-if="innerOptions.stats" class="row">
@@ -146,13 +148,14 @@
                   headers: {},
                   base64: false,
                   label: $t('EnyoCrudComponent.buttons.import'),
-                  class: 'btn btn-main-style btn-success  btn-block',
+                  class:
+                    'btn btn-main-style btn btn-link text-success  btn-block',
                 }"
                 @uploaded="importResponse"
               />
               <button
                 v-if="_actions.import"
-                class="btn btn-info btn-link btn-alt-style btn-block"
+                class="btn text-info btn-link btn-alt-style btn-block"
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -194,6 +197,7 @@ const defaultOptions = {
   initialDisplayMode: 'table',
   modalMode: 'slide', // fade | slide | full
   detailPageMode: 'sidebar', // fade | slide | full
+  detailPageLayout: 'sidebar', // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
   customTopActions: [],
@@ -295,8 +299,18 @@ export default {
   props: {
     title: { type: String, required: false, default: undefined },
     pageTitle: { type: String, required: false, default: undefined },
-    identity: { type: String, required: true },
-    modelName: { type: String, required: false },
+    identity: { type: String, required: false },
+    modelName: {
+      type: String,
+      required: false,
+      note: 'Deprecated use identity',
+    },
+    nestedDisplayMode: {
+      type: String,
+      required: false,
+      default: 'list',
+      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`,
+    },
     primaryKey: {
       type: String,
       default: 'id',
@@ -316,6 +330,12 @@ export default {
       note:
         'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available',
     },
+    layout: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note: 'The layout of the create/edit/view pages',
+    },
     crudNeedsRefresh: {
       type: Boolean,
       default: false,
@@ -334,12 +354,6 @@ export default {
       note:
         'The object containing the parent in case of a nested schema.' +
         "You don't actually to pass this, it's done automatically by the parent component itself",
-    },
-    nestedDisplayMode: {
-      type: String,
-      required: false,
-      default: 'list',
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`,
     },
     translations: {
       type: Object,
@@ -553,13 +567,17 @@ export default {
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
     next((vm) => {
-      vm.closeModal();
+      if (vm.closeModal) {
+        vm.closeModal();
+      }
       //    vm.loadModel();
     });
   },
   beforeRouteLeave(to, from, next) {
     next((vm) => {
-      vm.closeModal();
+      if (vm.closeModal) {
+        vm.closeModal();
+      }
     });
   },
 
@@ -603,9 +621,11 @@ export default {
         this.innerOptions,
         this.options
       );
-      if (this.$route && this.$route.query && this.$route.query.filters) {
+      if (this.$route && this.$route.query && this.$route.query._filters) {
         this.innerOptions.queryParams = _.merge(
-          this.innerOptions.queryParams || this.$route.query.filters
+          this.innerOptions.queryParams,
+          { _filters: this.$route.query._filters },
+          { _fields: this.$route.query._fields }
         );
       }
     },
@@ -647,11 +667,12 @@ export default {
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
           this.$notify({
-            title: `${
-              e.improperData.length
-            } ${this.$t('common.messages.not_imported', {
-              title: this._title,
-            })}`,
+            title: `${e.improperData.length} ${this.$t(
+              'common.messages.not_imported',
+              {
+                title: this._title,
+              }
+            )}`,
             message,
             type: 'warning',
             timeout: 30000,
@@ -740,7 +761,7 @@ export default {
             const data =
               this.apiResponseConfig.dataPath &&
               this.apiResponseConfig.dataPath != false
-                ? _.get(res.data, this.apiResponseConfig.dataPath)
+                ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             if (matched.path.indexOf('/edit') !== -1) {
               this.setDisplayMode('edit', data);
@@ -1091,7 +1112,7 @@ export default {
           this.selectedItem =
             this.apiResponseConfig.dataPath &&
             this.apiResponseConfig.dataPath != false
-              ? _.get(res.data, this.apiResponseConfig.dataPath)
+              ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data;
           this.nestedCrudNeedsRefresh = true;
         })

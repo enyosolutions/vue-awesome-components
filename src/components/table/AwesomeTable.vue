@@ -72,7 +72,12 @@
               {{ $t('AwesomeTable.buttons.refresh') }}
             </button>
             <button
-              v-if="_actions && (_actions.export || _actions.import)"
+              v-if="
+                _actions &&
+                  (_actions.export ||
+                    _actions.import ||
+                    _actions.dropdownActions)
+              "
               id="dropdownMenuButton"
               class="btn btn-secondary btn-main-style dropdown-toggle"
               type="button"
@@ -87,7 +92,7 @@
               <slot name="table-top-more-actions" />
               <button
                 v-if="_actions && _actions.export"
-                class="btn btn-success btn-main-style btn-block"
+                class="btn btn-link text-success btn-main-style btn-block"
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -95,7 +100,8 @@
               </button>
 
               <button
-                class="btn btn-default btn-main-style btn-block"
+                v-if="_actions && _actions.export"
+                class="btn btn-link text-success btn-main-style btn-block"
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
@@ -181,12 +187,12 @@
           </div>
           <template slot="table-row" slot-scope="props">
             <awesome-display
-                    :type="props.column.type"
-                    :value="props.formattedRow[props.column.field]"
-                    :field="props.column.field"
-                    :class="props.column.class"
-                    :style="props.column.style"
-                    :clickEvent="clickOnLine(props.row)"
+              :type="props.column.type"
+              :value="props.formattedRow[props.column.field]"
+              :field="props.column.field"
+              :class="props.column.class"
+              :style="props.column.style"
+              :clickEvent="clickOnLine(props.row)"
             >
             </awesome-display>
 
@@ -313,7 +319,7 @@ import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions } from '../../mixins/defaultProps';
 
 import _ from 'lodash';
-import AwesomeDisplay from "../crud/display/AwesomeDisplay";
+import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
 export default {
   name: 'AwesomeTable',

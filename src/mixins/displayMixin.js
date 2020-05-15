@@ -2,8 +2,16 @@ export default {
   props: {
     options: {
     },
-    value: [String,Boolean,Array],
-    type: String,
+    value: [String, Boolean, Array],
+    type: {
+      type: String,
+      values: ['image',
+        'boolean',
+        'url',
+        'html',
+        'object',
+        'checkbox',]
+    },
     src: String,
     row: Array,
     field: String,
@@ -14,9 +22,9 @@ export default {
     return {
     };
   },
-  methods:{
-    clickOnItem(item){
-        this.$emit('view', item);
+  methods: {
+    clickOnItem(item) {
+      this.$emit('view', item);
     }
   }
 };

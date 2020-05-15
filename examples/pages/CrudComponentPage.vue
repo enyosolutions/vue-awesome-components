@@ -99,21 +99,23 @@
       >
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
         <AutoProps
-          compoenent="CrudComponent"
-          :initialProps="{}"
+          :component="CrudComponent"
+          :componentProps="{
+            identity: 'ticket',
+            apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
+            options: { detailPageMode: 'slide' },
+          }"
+          :skip-props="['translations']"
           v-slot="{ userProps }"
         >
           <CrudComponent
-            v-bind="userProps"
-            identity="ticket"
             :model="ticketModel"
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count',
             }"
-            :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-            :options="{ detailPageMode: 'slide' }"
+            v-bind="userProps"
           />
         </AutoProps>
       </div>
@@ -162,6 +164,7 @@ import ticketModel from '../fixtures/ticketModel';
 import userSchema from '../fixtures/user';
 import CrudComponent from 'vue-enyo-components/components/crud/CrudComponent.vue';
 import AwesomeForm from 'vue-enyo-components/components/crud/AwesomeForm.vue';
+import LiveEdit from 'vue-enyo-components/components/form/LiveEdit.vue';
 
 export default {
   name: 'CrudComponentPage',
@@ -172,6 +175,8 @@ export default {
   },
   data() {
     return {
+      CrudComponent,
+      LiveEdit,
       ticketSchema,
       ticketModel,
       userSchema,

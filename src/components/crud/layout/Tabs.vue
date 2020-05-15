@@ -1,10 +1,14 @@
 <template>
   <div :class="computedCols + ' ' + styleClasses" :style="style">
     <slot name="header">
-      <ul class="nav" :class="'nav-' + navType + tabsDirection">
+      <ul
+        class="nav"
+        :class="'nav-' + navType + tabsDirection"
+        v-if="!autoHideTab || tabs.length > 1"
+      >
         <li class="nav-item" v-for="(tab, index) in tabs" :key="index">
           <a
-            v-if="tab.visible !== false && tab.visible !== 0"
+            v-if="!tab.hidden"
             class="nav-link show"
             :class="{
               active: activeTabIndex === index,
@@ -53,6 +57,7 @@ export default {
   props: {
     // activeTabIndex: {type: Number, default: 0}
     tabs: { type: Array, default: () => [] },
+    autoHideTab: { type: Boolean, default: true },
     navType: { type: String, default: 'tabs' },
     direction: { type: String, default: 'horizontal' },
     id: { type: String, default: '' },

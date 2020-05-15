@@ -80,7 +80,7 @@
                         <button
                           type="button"
                           class="btn btn-default btn-main-style mr-auto"
-                          @click="closeModal()"
+                          @click="cancel()"
                         >
                           {{ $t('EnyoCrudComponent.buttons.cancel') }}
                         </button>
@@ -157,48 +157,69 @@
                       </ul>
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
-                          <div class="row" v-if="_model && _model.layout">
-                            <template
-                              v-for="(column, index) in _model.layout.columns"
-                            >
+                          <div class="row" v-if="renderLayout">
+                            <template v-for="(column, index) in layout.columns">
                               <div :key="index" is="Column" v-bind="column">
-                                <template v-if="column.tabs">
+                                <template>
                                   <Tabs
-                                    :tabs="column.tabs"
+                                    :tabs="
+                                      column.tabs || [
+                                        {
+                                          legend: '',
+                                          ...column,
+                                          cols: null,
+                                          styleClasses: 'p-0 m-0',
+                                        },
+                                      ]
+                                    "
                                     :class="column.childStyleClasses"
                                   >
                                     <template
                                       v-slot:content="{ tab, activeTabIndex }"
                                     >
+                                      <template v-if="tab.fields">
+                                        <VueFormGenerator
+                                          :schema="
+                                            getShemaForFields(column.fields)
+                                          "
+                                          :model="selectedItem"
+                                          :options="formOptions"
+                                          tag="div"
+                                          :class="'tab-' + activeTabIndex"
+                                        />
+                                      </template>
                                       <template v-if="tab.rows">
                                         <template
                                           v-for="(row, index3) in tab.rows"
                                         >
-                                          <Row v-bind="row" :key="index3">
+                                          <Row
+                                            v-bind="row"
+                                            :key="index3"
+                                            :class="'row-' + row.index3"
+                                          >
+                                            <template v-if="row.fields">
+                                              <VueFormGenerator
+                                                :schema="
+                                                  getShemaForFields(row.fields)
+                                                "
+                                                :model="selectedItem"
+                                                :options="formOptions"
+                                                tag="div"
+                                              />
+                                            </template>
                                             <template v-if="row.groups">
-                                              <template
-                                                v-for="(group,
-                                                index4) in row.groups"
-                                              >
-                                                <Group
-                                                  :key="index4"
-                                                  v-bind="group"
-                                                >
-                                                  <VueFormGenerator
-                                                    :schema="
-                                                      getShemaForFields(
-                                                        group.fields
-                                                      )
-                                                    "
-                                                    :model="selectedItem"
-                                                    :options="formOptions"
-                                                    tag="div"
-                                                  />
-                                                </Group>
-                                              </template>
+                                              <GroupedForm
+                                                :groups="row.groups"
+                                              />
                                             </template>
                                           </Row>
                                         </template>
+                                      </template>
+                                      <template v-if="tab.groups">
+                                        i has group
+                                        {{ tab.groups }}
+
+                                        <GroupedForm :groups="tab.groups" />
                                       </template>
                                     </template>
                                   </Tabs>
@@ -207,7 +228,11 @@
                             </template>
                           </div>
 
-                          <template v-if="formSchema && formSchema.fields">
+                          <template
+                            v-if="
+                              formSchema && formSchema.fields && !this.layout
+                            "
+                          >
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
@@ -258,7 +283,7 @@
                           v-if="!standalone"
                           type="button"
                           class="btn btn-default btn-main-style mr-auto"
-                          @click="closeModal()"
+                          @click="cancel()"
                         >
                           {{ $t('EnyoCrudComponent.buttons.cancel') }}
                         </button>
@@ -302,9 +327,12 @@
           <!-- END OF create MODAL -->
           <div
             :id="identity + 'Backdrop'"
-            v-if="displayMode !== 'page' && displayMode !== 'fullscreen'"
-            class="modal-backdrop show"
+            v-if="
+              displayMode !== 'page' && displayMode !== 'fullscreen' && show
+            "
+            class="modal-backdrop backdrop-custom show"
             :class="displayMode"
+            style="background: #111;"
           ></div>
         </div>
       </div>
@@ -322,7 +350,7 @@ import { defaultActions } from '../../mixins/defaultProps';
 import Column from './layout/Column.vue';
 import Tabs from './layout/Tabs.vue';
 import Row from './layout/Row.vue';
-import Group from './layout/Group.vue';
+import GroupedForm from './layout/GroupedForm.vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 
@@ -345,14 +373,14 @@ const defaultOptions = {
 };
 
 export default {
-  // name: 'AwesomeForm',
+  name: 'AwesomeForm',
   introduction:
     'A component to quickly create a table UI with edit capabilities',
   components: {
     Column,
     Tabs,
     Row,
-    Group,
+    GroupedForm,
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin],
   props: {
@@ -428,7 +456,7 @@ export default {
     },
     displayMode: {
       type: String,
-      required: true,
+      required: false,
       default: 'sidebar',
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
@@ -454,6 +482,10 @@ export default {
       type: Object,
       default: () => defaultActions,
       note: 'actions active in this instance',
+    },
+    layout: {
+      type: Object,
+      note: 'Layout of the form',
     },
   },
   data() {
@@ -842,9 +874,15 @@ export default {
             const data =
               this.apiResponseConfig.dataPath &&
               this.apiResponseConfig.dataPath != false
-                ? _.get(res.data, this.apiResponseConfig.dataPath)
+                ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
+            // eslint-disable-next-line
+            console.log(
+              this.selectedItem,
+              res.data,
+              this.apiResponseConfig.dataPath
+            );
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -862,7 +900,7 @@ export default {
         // console.warn("possible recursive parseSchema call", schema);
         return;
       }
-      const fields = [];
+      let fields = [];
       const size = Object.keys(schema.properties).length;
       Object.keys(schema.properties).forEach((key) => {
         if ([this.primaryKey].indexOf(key) === -1) {
@@ -877,7 +915,12 @@ export default {
             subSchema.styleClasses = `subgroup  ${(prop.field &&
               prop.field.styleClasses) ||
               'card'}`;
-            fields.push(subSchema);
+            // if layout is activated, then do not group fields
+            if (this.layout) {
+              fields = fields.concat(subSchema.fields);
+            } else {
+              fields.push(subSchema);
+            }
           } else {
             if (prop.field && prop.relation && prop.field.fieldOptions) {
               prop.field.fieldOptions.url = prop.relation;
@@ -898,7 +941,7 @@ export default {
                 readonly:
                   this.mode === 'view' || (prop.field && prop.field.readonly),
                 disabled:
-                  this.mode === 'view' || (prop.field && prop.field.readonly),
+                  this.mode === 'view' || (prop.field && prop.field.disabled),
               },
               values:
                 (prop.field &&
@@ -922,10 +965,11 @@ export default {
               disabled:
                 this.mode === 'view' || (prop.field && prop.field.readonly),
               styleClasses:
-                (prop.field && prop.field.styleClasses) ||
-                (size < 8 || (this._model && this._model.layout)
+                (prop.field && prop.field.styleClasses) || this.layout
+                  ? ''
+                  : size < 8 || this.layout
                   ? 'col-12'
-                  : 'col-6'),
+                  : 'col-6',
               relation: prop.relation,
               foreignKey: prop.foreignKey,
               group: prop.field ? prop.field.group : undefined,
@@ -1012,6 +1056,8 @@ export default {
       const fieldsDefinition = this.formSchema.fields.filter((f) => {
         return fields.indexOf(f.model) > -1;
       });
+      // eslint-disable-next-line
+      console.log(fields, this.formSchema.fields);
       return { ...this.formSchema, fields: fieldsDefinition };
     },
 
@@ -1336,7 +1382,7 @@ export default {
           this.selectedItem =
             this.apiResponseConfig.dataPath &&
             this.apiResponseConfig.dataPath != false
-              ? _.get(res.data, this.apiResponseConfig.dataPath)
+              ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data;
           this.nestedCrudNeedsRefresh = true;
         })
@@ -1357,7 +1403,9 @@ export default {
       this.$emit(this.identity + '-list-updated', datas);
     },
 
-    renderLayout(layout) {},
+    renderLayout(layout) {
+      return true;
+    },
 
     renderSidebar() {},
     renderTabs() {},
@@ -1369,7 +1417,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .vue-form-generator textarea.form-control {
   min-height: 150px;
 }
@@ -1420,6 +1468,21 @@ export default {
         transition-delay: 1s;
       }
     }
+  }
+}
+
+.backdrop-custom {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0;
+  z-index: 1040;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: #000;
+
+  &:after,
+  &:before {
+    background: #000;
   }
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Latest compiled and minified CSS -->
-    ``
+    <AutoProps :component="AwesomeDisplay" props="{}"> </AutoProps>
     <h3>Simple table</h3>
     <pre style="color:white">
       <AwesomeTable
@@ -212,14 +212,16 @@
 
 <script>
 import AwesomeTable from '../../src/components/table/AwesomeTable.vue';
+import AwesomeDisplay from '../../src/components/crud/display/AwesomeDisplay.vue';
+import AutoProps from '../../src/components/misc/AutoProps.vue';
 
 export default {
   name: 'AjaxTableDemo',
-  components: { AwesomeTable },
+  components: { AwesomeTable, AutoProps },
   props: {},
   mounted() {},
   data() {
-    return {};
+    return { AwesomeDisplay };
   },
 };
 </script>
@@ -263,10 +265,7 @@ table {
   > thead > tr > th,
   > tfoot > tr > th {
     border-bottom-width: 1px;
-    font-size: $font-size-small;
     text-transform: uppercase;
-    color: $dark-gray;
-    font-weight: $font-weight-normal;
     padding-bottom: 5px;
     border-top: none !important;
     border-bottom: none;
@@ -274,7 +273,7 @@ table {
   }
 
   .td-actions .btn {
-    @include opacity(0.36);
+    opacity: 0.36;
 
     &.btn-xs {
       padding-left: 3px;
@@ -291,7 +290,7 @@ table {
 
     &:hover {
       .td-actions .btn {
-        @include opacity(1);
+        opacity: 1;
       }
     }
   }
@@ -312,10 +311,7 @@ table {
 
     thead > tr > th {
       border-bottom-width: 1px;
-      font-size: $font-size-small;
       text-transform: uppercase;
-      color: $dark-gray;
-      font-weight: $font-weight-normal;
       padding-bottom: 5px;
       border-top: none !important;
       border-bottom: none;
