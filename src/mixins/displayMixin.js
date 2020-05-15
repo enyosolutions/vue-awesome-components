@@ -8,7 +8,7 @@ export default {
     row: Array,
     field: String,
     style: String,
-    class:String
+    class: String
   },
   data() {
     return {
