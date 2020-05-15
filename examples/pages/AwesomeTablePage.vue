@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import AwesomeTable from '../../../src/components/table/AwesomeTable.vue';
+import AwesomeTable from '../../src/components/table/AwesomeTable.vue';
 
 export default {
   name: 'AjaxTableDemo',

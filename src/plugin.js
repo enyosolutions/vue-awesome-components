@@ -68,6 +68,7 @@ const install = (Vue, options) => {
   Vue.component('ajax-table', AwesomeTable);
   Vue.component('enyo-ajax-table', AwesomeTable);
   Vue.component('AwesomeTable', AwesomeTable);
+  Vue.component('AwesomeTable', AwesomeTable);
   Vue.component('AwesomeForm', AwesomeForm);
 
 

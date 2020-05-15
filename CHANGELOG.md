@@ -23,7 +23,7 @@
 
 - new mixin for managing translations when vue i18n is not present
 
-### Awesome list
+### Awesome table
 
 - Added pagination component
 - Fixed local pagination
@@ -33,6 +33,10 @@
 - Small refactoring to delete useless properties
 - renamed buttons for better trnaslations
 
+
+## Crudcompoenent :
+
+Removed support for hiddne property of form and columns (use visible)
 
 
 

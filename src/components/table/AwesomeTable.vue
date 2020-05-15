@@ -72,7 +72,12 @@
               {{ $t('AwesomeTable.buttons.refresh') }}
             </button>
             <button
-              v-if="_actions && (_actions.export || _actions.import)"
+              v-if="
+                _actions &&
+                  (_actions.export ||
+                    _actions.import ||
+                    _actions.dropdownActions)
+              "
               id="dropdownMenuButton"
               class="btn btn-secondary btn-main-style dropdown-toggle"
               type="button"
@@ -87,7 +92,7 @@
               <slot name="table-top-more-actions" />
               <button
                 v-if="_actions && _actions.export"
-                class="btn btn-success btn-main-style btn-block"
+                class="btn btn-link text-success btn-main-style btn-block"
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -95,7 +100,8 @@
               </button>
 
               <button
-                class="btn btn-default btn-main-style btn-block"
+                v-if="_actions && _actions.export"
+                class="btn btn-link text-success btn-main-style btn-block"
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
@@ -317,18 +323,7 @@
                 )
               }}</span
             >
-            <AwesomeLabel
-              :id="props.formattedRow[props.column.field]"
-              :data-source="$store.state.listOfValues[props.column.listName]"
-              :search-field="code"
-              :label="
-                (entity) =>
-                  `${entity.sex === 'M' ? 'mr' : 'mme'} ${entity.firstname} ${
-                    entity.lastname
-                  }`
-              "
-              display-type="text"
-            />
+
             <span
               v-else-if="props.column.type === 'list-of-data'"
               class="pointer"

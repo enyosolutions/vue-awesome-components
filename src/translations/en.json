@@ -39,7 +39,8 @@
       "view": "Open",
       "cancel": "Cancel",
       "close": "Close",
-      "edit": "Edit"
+      "edit": "Edit",
+      "save": "Save"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
