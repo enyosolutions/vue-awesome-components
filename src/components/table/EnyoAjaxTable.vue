@@ -1049,7 +1049,6 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "~vue-good-table/dist/vue-good-table.css";
 
 .ajax-table-img {
   max-height: 50px;
