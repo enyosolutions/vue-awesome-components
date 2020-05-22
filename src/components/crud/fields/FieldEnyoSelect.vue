@@ -74,12 +74,6 @@ export default {
   },
   watch: {
     vModelValue(newValue, oldValue) {
-      console.log(
-        '',
-        'INCOMING vModelValue REQUESTED IN FIELD SELECT',
-        newValue,
-        oldValue
-      );
       if (newValue != oldValue) {
         this.setIncomingValue(newValue, oldValue);
       } else {
@@ -88,12 +82,6 @@ export default {
     },
 
     value(newValue, oldValue) {
-      console.log(
-        '',
-        'INCOMING VALUE REQUESTED IN FIELD SELECT',
-        newValue,
-        oldValue
-      );
       if (newValue != oldValue) {
         this.setIncomingValue(newValue, oldValue);
       } else {
@@ -103,7 +91,7 @@ export default {
   },
   created() {
     this.apiRequestDebounced = _.debounce((value) => {
-      console.log('', 'DEBOUNCED', this);
+      console.warn('', 'DEBOUNCED', this);
       return this.loadRemoteEntities(value);
     }, 2000);
   },
@@ -130,7 +118,7 @@ export default {
         );
       }
 
-      console.log(
+      console.warn(
         '',
         'INCOMING VALUE REQUESTED IN setIncomingValue SELECT',
         value,
@@ -141,7 +129,7 @@ export default {
         (!this.internalOptions || this.internalOptions.length < 1) &&
         !loop
       ) {
-        console.log('', "list is empty i'm going to search more options");
+        console.warn('', "list is empty i'm going to search more options");
         await this.apiRequestDebounced(value);
       }
       if (Array.isArray(value)) {
@@ -162,13 +150,13 @@ export default {
           return searchKey == value;
         });
 
-      console.log('incoming value ', value, this.dataUrl, this.internalValue);
+      console.warn('incoming value ', value, this.dataUrl, this.internalValue);
 
       if (!this.internalValue && this.dataUrl && !loop) {
-        console.log('[fieldES]', 'remote load', value);
+        console.warn('[fieldES]', 'remote load', value);
         const ok = await this.apiRequestDebounced(value);
         if (ok) {
-          console.log('', 'take 2', value, this.internalOptions.length);
+          console.warn('', 'take 2', value, this.internalOptions.length);
           this.setIncomingValue(value, null, true);
         }
       }
@@ -195,7 +183,7 @@ export default {
     onSearchChange(searchQuery, id) {
       const onSearch = this.fieldOptions.onSearch;
 
-      console.log('onSearch', searchQuery);
+      console.warn('onSearch', searchQuery);
       if (typeof onSearch === 'function') {
         onSearch(searchQuery, id, this.options);
       } else {

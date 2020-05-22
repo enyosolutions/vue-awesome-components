@@ -60,7 +60,7 @@
                     <option
                       v-for="val in propinfo.values"
                       :value="val"
-                      v-bind:key="key"
+                      v-bind:key="val"
                       >{{ val }}</option
                     >
                   </select>
@@ -287,7 +287,7 @@ export default {
           try {
             prop = JSON.parse(prop);
           } catch (err) {
-            console.log(err, propName, prop);
+            console.warn(err, propName, prop);
           }
           defaultProps[propName] = prop;
         }
