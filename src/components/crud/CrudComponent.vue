@@ -807,7 +807,7 @@ watch: {
         .get(`${this.innerOptions.url}/${this.$route.params.id}`)
         .then(res => {
           const matched = this.$route.matched[this.$route.matched.length - 1];
-          const data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+          const data = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
           if (matched.path.indexOf("/edit") !== -1) {
             this.editFunction(data);
           } else {
@@ -907,10 +907,10 @@ watch: {
             }
           }
         });
-        let groups = this.parseSchemaGroups(schema);
-        groups = this.distributeFieldsInGroups(groups, fields);
+        // let groups = this.parseSchemaGroups(schema);
+        // groups = this.distributeFieldsInGroups(groups, fields);
 
-      return { fields, groups };
+      return { fields };
     },
 
     parseSchemaGroups(schema) {
@@ -1196,7 +1196,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+        this.selectedItem = this.responseField && this.responseField != false ? _.get(res, this.responseField) : res.data.body;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
@@ -1211,7 +1211,7 @@ watch: {
       this.$http
       .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
       .then(res => {
-        this.selectedItem = this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+        this.selectedItem = this.responseField && this.responseField != false ? _.get(res, this.responseField) : res.data.body;
         this.openModal();
       })
       .catch(this.apiErrorCallback)
