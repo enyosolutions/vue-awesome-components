@@ -839,7 +839,7 @@ export default {
           this.data =
             this.responseField && this.responseField != false
               ? _.get(res.data, this.responseField)
-              : res.data;
+              : res.data.body;
           this.totalCount = res.data.totalCount;
           if (this.options.SearchDatas && this.mode === "remote") {
             this.$emit("crud-list-updated", this.data);
