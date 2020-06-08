@@ -569,18 +569,25 @@ export default {
     },
 
     _name() {
+      if (this.innerModel && this.innerModel.singularName) {
+        return this.$te(this.innerModel.singularName)
+          ? this.$t(this.innerModel.singularName)
+          : _.startCase(this.innerModel.singularName);
+      }
+
       if (this.innerModel && this.innerModel.name) {
         return this.$te(this.innerModel.name)
           ? this.$t(this.innerModel.name)
           : _.startCase(this.innerModel.name);
       }
 
+
       if (this.modelName) {
         return this.$te(`app.labels.${this.modelName}`)
           ? this.$t(`app.labels.${this.modelName}`)
           : _.startCase(this.modelName);
       }
-      return '';
+      return this._title;
     },
 
     _namePlural() {
@@ -654,8 +661,6 @@ export default {
             this.selectedItem,
             this.$route.query.item
           );
-          // eslint-disable-next-line
-          console.log(this.selectedItem);
         }
         this.createFunction({ reset: false });
         return;
@@ -956,7 +961,7 @@ export default {
 
     parseSchemaGroups(schema) {
       let groups = [];
-      schema.formGroups.forEach((group, idx) => {
+      schema.formGroups.forEach((group) => {
         if (!groups[group.id]) {
           groups.push({
             fields: [],
@@ -979,7 +984,6 @@ export default {
           let targetGroup = { groups };
           keys.forEach((key) => {
             targetGroup = _.find(targetGroup.groups, { id: key });
-            console.log({ targetGroup, key, keys });
           });
           if (targetGroup) {
             if (!targetGroup.fields) {
@@ -1243,7 +1247,7 @@ export default {
         .then((res) => {
           this.selectedItem =
             this.responseField && this.responseField != false
-              ? _.get(res, this.responseField)
+              ? _.get(res.data, this.responseField)
               : res.data.body;
           this.openModal();
         })
@@ -1261,7 +1265,7 @@ export default {
         .then((res) => {
           this.selectedItem =
             this.responseField && this.responseField != false
-              ? _.get(res, this.responseField)
+              ? _.get(res.data, this.responseField)
               : res.data.body;
           this.openModal();
         })
