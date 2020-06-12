@@ -4,16 +4,26 @@
       <div class="row">
         <div class="col-12">
           <h1 class="text-primary">
-            {{ $t('common.labels.manageTitle') }} {{ _namePlural }}
-            <i
-              v-if="isRefreshing"
-              class="fa fa-circle-o-notch fa-spin fa-fw"
-              style="color:orange;margin-left:10px"
-            />
+            <template v-if="_title !== undefined && _title !== null">
+              {{ _title }}
+              <i
+                v-if="isRefreshing"
+                class="fa fa-circle-o-notch fa-spin fa-fw"
+                style="color:orange;margin-left:10px"
+              />
+            </template>
+            <template v-if="_title === undefined || _title === null">
+              {{ $t('common.labels.manageTitle') }} {{ _namePlural }}
+              <i
+                v-if="isRefreshing"
+                class="fa fa-circle-o-notch fa-spin fa-fw"
+                style="color:orange;margin-left:10px"
+              />
+            </template>
           </h1>
           <div v-if="innerOptions.stats" class="row">
             <EnyoCrudStatsSection
-              :url="innerOptions.url + '/stats'"
+              :url="_url + '/stats'"
               :entity="modelName"
               :stats-needs-refresh.sync="statsNeedsRefresh"
             />
@@ -31,6 +41,7 @@
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
                   :data-tooltip="action.title || action.label"
+                  type="button"
                   @click="
                     customAction({
                       action,
@@ -47,6 +58,7 @@
                 v-if="innerOptions.actions && innerOptions.actions.create"
                 class="btn btn-primary btn-simple"
                 @click="createFunction()"
+                type="button"
               >
                 <i class="fa fa-plus" />
                 {{ $t('common.labels.createNew') }} {{ _name }}
@@ -164,14 +176,13 @@
                       >
                         <li class="nav-item">
                           <a
-                            class="nav-link active"
+                            class="nav-link"
                             data-toggle="tab"
+                            :class="{
+                              active: activeNestedTab === 'general',
+                            }"
                             @click="activeNestedTab = 'general'"
-                            >{{
-                              $te('app.labels.' + modelName)
-                                ? $te('app.labels.' + modelName)
-                                : _.startCase(modelName)
-                            }}</a
+                            >{{ _name }}</a
                           >
                         </li>
                         <li
@@ -182,6 +193,9 @@
                           <a
                             class="nav-link"
                             data-toggle="tab"
+                            :class="{
+                              'active show': activeNestedTab === ns.modelName,
+                            }"
                             @click="activeNestedTab = ns.modelName"
                           >
                             <i v-if="ns.icon" :class="ns.icon" />
@@ -218,10 +232,11 @@
                               :key="ns.$id"
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': activeNestedTab === ns.name,
+                                'active show': activeNestedTab === ns.modelName,
                               }"
                             >
                               <crud-component
+                                v-if="activeNestedTab === ns.modelName"
                                 v-bind="ns"
                                 :parent="selectedItem"
                                 :crud-needs-refresh.sync="
@@ -288,7 +303,7 @@
             :columns-displayed="innerOptions.columnsDisplayed"
             :entity="modelName"
             :mode="innerOptions.mode"
-            :url="innerOptions.url"
+            :url="_url"
             :params="innerOptions.queryParams"
             :table-needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -324,6 +339,7 @@
               <button
                 v-if="innerOptions.actions && innerOptions.actions.import"
                 class="btn btn-info btn-simple btn-block"
+                type="button"
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -562,10 +578,10 @@ export default {
   },
   computed: {
     _title() {
-      if (this.title) {
+      if (this.title !== undefined) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
-      return '';
+      return null;
     },
 
     _name() {
@@ -580,7 +596,6 @@ export default {
           ? this.$t(this.innerModel.name)
           : _.startCase(this.innerModel.name);
       }
-
 
       if (this.modelName) {
         return this.$te(`app.labels.${this.modelName}`)
@@ -605,6 +620,24 @@ export default {
       return '';
     },
 
+    _url() {
+      const url =
+        this.url ||
+        (this.options && this.options.url) ||
+        (this.innerModel && this.innerModel.url) ||
+        (this.innerOptions && this.innerOptions.url) ||
+        `/${this.modelName}`;
+      if (typeof url === 'function') {
+        return url({
+          parent: this.parent,
+          context: this,
+          currentItem: this.selectedItem,
+          items: this.items,
+        });
+      }
+      return url;
+    },
+
     formSchema() {
       if (!this.innerSchema) {
         return [];
@@ -617,6 +650,7 @@ export default {
     // call again the method if the route changes
     name: 'loadModel',
     modelName: 'loadModel',
+    'parent.id': 'loadModel',
     model: 'loadModel',
     options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
@@ -670,16 +704,28 @@ export default {
       this.parentPath = matched.path;
     }
   },
+
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
     next((vm) => {
-      vm.closeModal();
+      if (vm && vm.closeModal) {
+        vm.closeModal();
+      } else {
+        // eslint-disable-next-line
+        console.warn(vm);
+      }
+
       //    vm.loadModel();
     });
   },
   beforeRouteLeave(to, from, next) {
     next((vm) => {
-      vm.closeModal();
+      if (vm && vm.closeModal) {
+        vm.closeModal();
+      } else {
+        // eslint-disable-next-line
+        console.warn(vm);
+      }
     });
   },
 
@@ -805,7 +851,7 @@ export default {
       this.mergeOptions();
       if (this.$store && this.$store.state && !this.model) {
         this.innerModel = this.$store.state.data.models.find(
-          (model) => model.name === this.modelName
+          (model) => model.modelName === this.modelName
         );
       } else {
         this.innerModel = this.model;
@@ -820,20 +866,18 @@ export default {
       this.innerOptions.columns = this.parseColumns(
         this.innerSchema.properties
       );
-      this.innerOptions.url =
-        (this.options && this.options.url) ||
-        (this.innerModel && this.innerModel.url) ||
-        `/${this.modelName}`;
-      if (typeof this.innerOptions.url === 'function') {
-        this.innerOptions.url = this.innerOptions.url(this.parent, this);
-      }
 
       if (!this.innerOptions.exportUrl) {
-        this.innerOptions.exportUrl = `${this.innerOptions.url}/export`;
+        this.innerOptions.exportUrl = `${this._url}/export`;
       }
 
       if (!this.innerOptions.importUrl) {
-        this.innerOptions.importUrl = `${this.innerOptions.url}/import`;
+        this.innerOptions.importUrl = `${this._url}/import`;
+      }
+
+      // if the crud is nested and should display as a form then remote load the data
+      if (this.parent) {
+        this.nestedCrudNeedsRefresh = true;
       }
 
       // if the crud is nested and should display as a form then remote load the data
@@ -841,12 +885,12 @@ export default {
         this.nestedViewFunction();
       }
 
-      if (!this.innerOptions.url) {
+      if (!this._url) {
         return;
       }
       if (this.$route && this.$route.params && this.$route.params.id) {
         this.$http
-          .get(`${this.innerOptions.url}/${this.$route.params.id}`)
+          .get(`${this._url}/${this.$route.params.id}`)
           .then((res) => {
             const matched = this.$route.matched[this.$route.matched.length - 1];
             const data =
@@ -858,6 +902,7 @@ export default {
             } else {
               this.viewFunction(data);
             }
+
             this.$forceUpdate();
           })
           .catch(this.apiErrorCallback)
@@ -1142,6 +1187,7 @@ export default {
     },
 
     goToViewPage(item) {
+      console.warn('goToViewPage', item);
       if (!this.innerOptions.viewPath) {
         window.history.replaceState(
           {},
@@ -1157,7 +1203,7 @@ export default {
     },
 
     createItem() {
-      if (!this.innerOptions.url) {
+      if (!this._url) {
         // eslint-disable-next-line
         console.warn('CRUDCOMPONENT ERROR:: No url for submitting');
         return false;
@@ -1177,7 +1223,7 @@ export default {
         );
       }
       return this.$http
-        .post(this.innerOptions.url, this.selectedItem)
+        .post(this._url, this.selectedItem)
         .then(() => {
           Swal.fire({
             title: this.$t('common.messages.successfullyCreated', {
@@ -1200,7 +1246,7 @@ export default {
     },
 
     editItem() {
-      if (!this.innerOptions.url) {
+      if (!this._url) {
         // eslint-disable-next-line
         console.warn('CRUDCOMPONENT ERROR:: No url for submitting');
         return false;
@@ -1216,7 +1262,7 @@ export default {
 
       this.$http
         .put(
-          `${this.innerOptions.url}/${this.selectedItem[this.primaryKey]}`,
+          `${this._url}/${this.selectedItem[this.primaryKey]}`,
           this.selectedItem
         )
         .then(() => {
@@ -1242,8 +1288,9 @@ export default {
     editFunction(item) {
       this.viewMode = 'edit';
       this.selectedItem = item;
+      this.activeNestedTab = 'general';
       this.$http
-        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+        .get(`${this._url}/${item[this.primaryKey]}`)
         .then((res) => {
           this.selectedItem =
             this.responseField && this.responseField != false
@@ -1259,9 +1306,10 @@ export default {
 
     viewFunction(item) {
       this.viewMode = 'view';
+      this.activeNestedTab = 'general';
       this.selectedItem = item;
       this.$http
-        .get(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+        .get(`${this._url}/${item[this.primaryKey]}`)
         .then((res) => {
           this.selectedItem =
             this.responseField && this.responseField != false
@@ -1278,12 +1326,12 @@ export default {
     nestedViewFunction() {
       this.viewMode = 'view';
       this.$http
-        .get(`${this.innerOptions.url}`)
+        .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =
             this.responseField && this.responseField != false
               ? _.get(res.data, this.responseField)
-              : res.data;
+              : res.data.body;
           this.nestedCrudNeedsRefresh = true;
         })
         .catch(this.apiErrorCallback)
@@ -1306,7 +1354,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           this.$http
-            .delete(`${this.innerOptions.url}/${item[this.primaryKey]}`)
+            .delete(`${this._url}/${item[this.primaryKey]}`)
             .then(() => {
               this.tableNeedsRefresh = true;
               this.statsNeedsRefresh = true;

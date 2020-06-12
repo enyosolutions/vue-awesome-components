@@ -37,7 +37,7 @@
                 href="#"
                 :class="{
                   'text-light bg-primary': columnsState[col.field],
-                  'bg-info': col.field === 'ACTIONS'
+                  'bg-info': col.field === 'ACTIONS',
                 }"
                 :disabled="col.field === 'ACTIONS'"
                 @click="toggleColumn(col.field)"
@@ -60,16 +60,17 @@
             @click="toggleFilter()"
           >
             <i class="fa fa-filter" />
-            {{ $t("common.buttons.filters") }}
+            {{ $t('common.buttons.filters') }}
           </button>
           <div class="dropdown">
             <button
               v-if="opts.actions && opts.actions.refresh"
               class="btn btn-simple"
               @click="getItems()"
+              type="button"
             >
               <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("common.buttons.refresh") }}
+              {{ $t('common.buttons.refresh') }}
             </button>
             <button
               v-if="
@@ -83,7 +84,7 @@
               aria-expanded="false"
             >
               <i class="fa fa-plus" />
-              {{ $t("EnyoAjaxTable.more") }}
+              {{ $t('EnyoAjaxTable.more') }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
@@ -91,17 +92,19 @@
                 v-if="opts.actions && opts.actions.export"
                 class="btn btn-success btn-simple btn-block"
                 @click="exportCallBack"
+                type="button"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel") }}
+                {{ $t('common.buttons.excel') }}
               </button>
 
               <button
                 class="btn btn-default btn-simple btn-block"
                 @click="exportCurrentArrayToExcel"
+                type="button"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel-currentpage") }}
+                {{ $t('common.buttons.excel-currentpage') }}
               </button>
             </div>
           </div>
@@ -123,11 +126,11 @@
           :max-height="opts.maxHeight"
           :rows="data || []"
           :filter-options="{
-            enabled: opts && opts.actions && opts.actions.filter
+            enabled: opts && opts.actions && opts.actions.filter,
           }"
           :search-options="{
             enabled: opts && opts.actions && opts.actions.search,
-            placeholder: this.$t('EnyoAjaxTable.searchInput')
+            placeholder: this.$t('EnyoAjaxTable.searchInput'),
           }"
           :pagination-options="{
             enabled: opts && opts.pagination,
@@ -137,7 +140,7 @@
             ofLabel: this.$t('EnyoAjaxTable.of'),
             pageLabel: this.$t('EnyoAjaxTable.page'),
             allLabel: this.$t('EnyoAjaxTable.all'),
-            perPage: perPage
+            perPage: perPage,
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
@@ -156,6 +159,7 @@
                   :key="index"
                   class="btn btn-xs btn-simple"
                   :class="action.class"
+                  type="button"
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
                   :data-tooltip="action.title || action.label"
@@ -197,6 +201,7 @@
                           action.canDisplay({ item: props.row }, this)
                       "
                       :key="index"
+                      type="button"
                       class="btn btn-xs btn-simple"
                       :class="action.class"
                       :id="action.name + '-' + props.index"
@@ -208,7 +213,7 @@
                           item: props.row,
                           location: 'inline',
                           props,
-                          id: action.name + '-' + props.index
+                          id: action.name + '-' + props.index,
                         })
                       "
                     >
@@ -223,6 +228,7 @@
                 v-if="opts && opts.actions && opts.actions.view"
                 class="btn btn-xs btn-simple btn-icon"
                 @click="$emit('view', props.row)"
+                type="button"
               >
                 <i class="fa fa-eye text-info" />
               </button>
@@ -230,6 +236,7 @@
                 v-if="opts && opts.actions && opts.actions.edit"
                 class="btn btn-xs btn-simple btn-icon"
                 @click="$emit('edit', props.row)"
+                type="button"
               >
                 <i class="fa fa-pencil fa fa-pencil" />
               </button>
@@ -237,6 +244,7 @@
                 v-if="opts && opts.actions && opts.actions.delete"
                 class="btn btn-xs btn-simple btn-icon"
                 @click="deleteItem(props.row)"
+                type="button"
               >
                 <i class="fa fa-trash text-danger" />
               </button>
@@ -264,7 +272,7 @@
                     props.formattedRow[props.column.field],
                   'fa-times text-danger':
                     !props.formattedRow[props.column.field] &&
-                    props.formattedRow[props.column.field] !== undefined
+                    props.formattedRow[props.column.field] !== undefined,
                 }"
               ></i>
             </div>
@@ -385,7 +393,7 @@
             </div>
           </template>
           <div slot="emptystate">
-            {{ $t("EnyoAjaxTable.empty") }}
+            {{ $t('EnyoAjaxTable.empty') }}
           </div>
         </vue-good-table>
       </div>
@@ -393,15 +401,15 @@
   </div>
 </template>
 <script>
-import DateRangePicker from "vue2-daterange-picker";
-import { VueGoodTable } from "vue-good-table";
-import qs from "qs";
-import moment from "moment";
-import apiErrors from "../../mixins/apiErrorsMixin";
-import _ from "lodash";
+import DateRangePicker from 'vue2-daterange-picker';
+import { VueGoodTable } from 'vue-good-table';
+import qs from 'qs';
+import moment from 'moment';
+import apiErrors from '../../mixins/apiErrorsMixin';
+import _ from 'lodash';
 
 export default {
-  name: "EnyoAjaxTable",
+  name: 'EnyoAjaxTable',
   token: `
   <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
@@ -415,56 +423,56 @@ export default {
   `,
   components: {
     DateRangePicker,
-    VueGoodTable
+    VueGoodTable,
   },
   mixins: [apiErrors],
   props: {
     columns: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     columnsDisplayed: {
       type: Number,
-      default: 8
+      default: 8,
     },
     rows: { type: Array, default: () => [] },
-    primaryKey: { type: String, default: "id" },
+    primaryKey: { type: String, default: 'id' },
     responseField: {
       type: [String, Boolean],
-      default: "body",
+      default: 'body',
       note:
-        "This field dictates where in the response should the component search for the results "
+        'This field dictates where in the response should the component search for the results ',
     },
-    url: { type: String, default: "" },
+    url: { type: String, default: '' },
     params: {
       type: Object,
       default: () => ({}),
       note:
-        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
+        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.",
     },
     queryHeaders: { type: Object, default: () => ({}) },
     entity: {
       type: String,
-      default: "",
+      default: '',
       note:
-        "Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations"
+        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations',
     },
-    title: { type: String, default: "" },
+    title: { type: String, default: '' },
     translations: {
       type: Object,
       default: () => ({
-        "common.buttons.filters": "Filter",
-        "common.buttons.refresh": "Refresh",
-        "common.buttons.excel-currentpage": "Export current page",
-        "EnyoAjaxTable.searchInput": "EnyoAjaxTable.searchInput",
-        "EnyoAjaxTable.next": "Next",
-        "EnyoAjaxTable.prev": "Previous",
-        "EnyoAjaxTable.rows_per_page": "Rows per page",
-        "EnyoAjaxTable.of": "of",
-        "EnyoAjaxTable.page": "page",
-        "EnyoAjaxTable.all": "all",
-        "EnyoAjaxTable.empty": "empty"
-      })
+        'common.buttons.filters': 'Filter',
+        'common.buttons.refresh': 'Refresh',
+        'common.buttons.excel-currentpage': 'Export current page',
+        'EnyoAjaxTable.searchInput': 'EnyoAjaxTable.searchInput',
+        'EnyoAjaxTable.next': 'Next',
+        'EnyoAjaxTable.prev': 'Previous',
+        'EnyoAjaxTable.rows_per_page': 'Rows per page',
+        'EnyoAjaxTable.of': 'of',
+        'EnyoAjaxTable.page': 'page',
+        'EnyoAjaxTable.all': 'all',
+        'EnyoAjaxTable.empty': 'empty',
+      }),
     },
     autoRefresh: { type: Boolean, default: false },
     autoRefreshInterval: { type: Number, default: 1 },
@@ -474,19 +482,19 @@ export default {
     exportUrl: { type: String, default: undefined },
     tableNeedsRefresh: {
       type: Boolean,
-      default: false
+      default: false,
     },
     perPage: {
       type: [String, Number],
-      default: 20
+      default: 20,
     },
     limit: {
       type: [String, Number],
-      default: 1000
+      default: 1000,
     },
     options: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     defaultOptions: {
       type: Object,
@@ -508,14 +516,14 @@ export default {
           export: false,
           import: false,
           dateFilter: true,
-          refresh: true
-        }
-      })
+          refresh: true,
+        },
+      }),
     },
     mode: {
-      default: "local",
-      type: String
-    }
+      default: 'local',
+      type: String,
+    },
   },
   data() {
     return {
@@ -524,9 +532,9 @@ export default {
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
-        .subtract(7, "days")
-        .format("YYYY-MM-DD"),
-      defaultEndDate: moment().format("YYYY-MM-DD"),
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
+      defaultEndDate: moment().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
         filters: {},
@@ -534,25 +542,25 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
+        perPage: this.mode === 'remote' ? this.perPage : this.limit, // how many items I'm showing per page
       },
       data: [],
       refreshHandle: null,
       numberOfRefreshCalls: 0,
       datePicker: {
         locale: {
-          direction: "ltr", // direction of text
-          format: "DD-MM-YYYY", // fomart of the dates displayed
-          separator: " - ", // separator between the two ranges
-          applyLabel: "Appliquer",
-          cancelLabel: "Annuler",
-          weekLabel: "W",
-          customRangeLabel: "Custom Range",
+          direction: 'ltr', // direction of text
+          format: 'DD-MM-YYYY', // fomart of the dates displayed
+          separator: ' - ', // separator between the two ranges
+          applyLabel: 'Appliquer',
+          cancelLabel: 'Annuler',
+          weekLabel: 'W',
+          customRangeLabel: 'Custom Range',
           daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
-          firstDay: 1 // ISO first day of week - see moment documenations for details
-        }
-      }
+          firstDay: 1, // ISO first day of week - see moment documenations for details
+        },
+      },
     };
   },
   computed: {
@@ -563,8 +571,8 @@ export default {
     _tableTitle() {
       return (
         this.title ||
-        (this.$te && this.$te("app.labels." + this.entity)
-          ? this.$t("app.labels." + this.entity)
+        (this.$te && this.$te('app.labels.' + this.entity)
+          ? this.$t('app.labels.' + this.entity)
           : _.startCase(this.entity))
       );
     },
@@ -572,10 +580,10 @@ export default {
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
-        console.error("EnyoAjaxTable MISSING COLUMNS");
+        console.error('EnyoAjaxTable MISSING COLUMNS');
         return [];
       }
-      const newcolumns = this.columns.map(col => {
+      const newcolumns = this.columns.map((col) => {
         const newCol = {};
 
         if (_.isString(col)) {
@@ -589,25 +597,25 @@ export default {
           col.label = _.startCase(col.field);
         }
 
-        if (col.type && col.type === "datetime") {
+        if (col.type && col.type === 'datetime') {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("lll");
+            return moment(value).format('lll');
           };
         }
 
-        if (col.type && col.type === "date") {
+        if (col.type && col.type === 'date') {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("DD-MM-YYYY");
+            return moment(value).format('DD-MM-YYYY');
           };
         }
 
-        if (col.type && col.type === "object") {
+        if (col.type && col.type === 'object') {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -621,7 +629,7 @@ export default {
           };
         }
 
-        if (col.type && col.type === "relation") {
+        if (col.type && col.type === 'relation') {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -635,35 +643,35 @@ export default {
           };
         }
 
-        if (col.type && col.type === "checkbox") {
+        if (col.type && col.type === 'checkbox') {
           col.sortable = false;
         }
 
         let filterDropdownItems =
           col.filterOptions && col.filterOptions.filterDropdownItems;
-        if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
+        if (col.type && (col.type === 'list-of-value' || col.type === 'lov')) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
-            filterDropdownItems = filterDropdownItems.map(e => ({
+            filterDropdownItems = filterDropdownItems.map((e) => ({
               value: e.code,
-              text: e.label || e.code || e
+              text: e.label || e.code || e,
             }));
           }
         }
 
-        if (col.type && col.type === "list-of-data") {
+        if (col.type && col.type === 'list-of-data') {
           filterDropdownItems = this.$store.state.data[col.listName];
-          filterDropdownItems = filterDropdownItems.map(e => ({
+          filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e.code,
-            text: e.label || e.code || e
+            text: e.label || e.code || e,
           }));
         }
 
         if (col.enum) {
           filterDropdownItems = col.enum;
-          filterDropdownItems = filterDropdownItems.map(e => ({
+          filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e,
-            text: _.startCase(e)
+            text: _.startCase(e),
           }));
         }
 
@@ -672,7 +680,7 @@ export default {
             col.filterable !== undefined
               ? col.filterable && this.filterable
               : this.filterable,
-          filterDropdownItems
+          filterDropdownItems,
         };
         return col;
       });
@@ -683,13 +691,13 @@ export default {
         });
       }
       if (
-        !newcolumns.find(col => col.field === "ACTIONS") &&
+        !newcolumns.find((col) => col.field === 'ACTIONS') &&
         !this.opts.actions.noActions
       ) {
         newcolumns.push({
-          field: "ACTIONS",
-          label: "Actions",
-          filterOptions: { enabled: false }
+          field: 'ACTIONS',
+          label: 'Actions',
+          filterOptions: { enabled: false },
         });
         // eslint-disable-next-line
         this.columnsState.ACTIONS = true;
@@ -704,12 +712,12 @@ export default {
       this.columnsState;
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter(
-          col => this.columnsState[col.field]
+          (col) => this.columnsState[col.field]
         );
 
         if (!this.columnsState.ACTIONS) {
           const actions = this.formattedColumns.find(
-            col => col.field === "ACTIONS"
+            (col) => col.field === 'ACTIONS'
           );
           if (actions) {
             cols.push(actions);
@@ -718,21 +726,21 @@ export default {
         return cols;
       }
       return this.formattedColumns;
-    }
+    },
   },
   watch: {
-    tableNeedsRefresh: "refreshTableData",
+    tableNeedsRefresh: 'refreshTableData',
     params() {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
     },
-    entity: "entityChanged",
+    entity: 'entityChanged',
     // store: changed => {},
-    rows: "refreshTableData"
+    rows: 'refreshTableData',
   },
   created() {
     if (!this.$t) {
-      this.$t = str => {
+      this.$t = (str) => {
         /*
         if (!window.trans) {
           window.trans = {}
@@ -742,11 +750,11 @@ export default {
 
         return this.translations[str] || str;
       };
-      this.$te = str => !!this.translations[str];
+      this.$te = (str) => !!this.translations[str];
     }
     if (!this.$http) {
       try {
-        const axios = require("axios");
+        const axios = require('axios');
         this.$http = axios;
       } catch (err) {
         // console.warn(err.message);
@@ -756,7 +764,7 @@ export default {
   beforeMount() {
     const userLang = window.navigator
       ? navigator.language || navigator.userLanguage
-      : "en";
+      : 'en';
     moment.locale(userLang);
   },
   mounted() {
@@ -772,8 +780,8 @@ export default {
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
           this.$notify({
-            title: "too much calls, aborting tracking",
-            type: "warning"
+            title: 'too much calls, aborting tracking',
+            type: 'warning',
           });
           clearInterval(this.refreshHandle);
           this.refreshHandle = null;
@@ -815,13 +823,13 @@ export default {
     },
 
     tableRefreshCompleted() {
-      this.$emit("update:tableNeedsRefresh", false);
-      this.$emit("afterRefresh", { data: this.data });
+      this.$emit('update:tableNeedsRefresh', false);
+      this.$emit('afterRefresh', { data: this.data });
     },
 
     /** GET ENTITY ITEMS */
     getItems() {
-      this.$emit("refresh");
+      this.$emit('refresh');
       // if i got a refresh function
       if (this.refresh) {
         this.refresh();
@@ -834,19 +842,25 @@ export default {
       }
       this.isRefreshing = true;
       return this.$http
-        .get(`${this.url}?${qs.stringify(this.serverParams, {})}`, {})
-        .then(res => {
+        .get(
+          `${this.url}${this.url.indexOf('?') > -1 ? '&' : '?'}${qs.stringify(
+            this.serverParams,
+            {}
+          )}`,
+          {}
+        )
+        .then((res) => {
           this.data =
             this.responseField && this.responseField != false
               ? _.get(res.data, this.responseField)
               : res.data.body;
           this.totalCount = res.data.totalCount;
-          if (this.options.SearchDatas && this.mode === "remote") {
-            this.$emit("crud-list-updated", this.data);
+          if (this.options.SearchDatas && this.mode === 'remote') {
+            this.$emit('crud-list-updated', this.data);
           }
-          this.$emit("dataChanged", this.data);
+          this.$emit('dataChanged', this.data);
         })
-        .catch(err => {
+        .catch((err) => {
           // eslint-disable-next-line
           console.warn(err);
         })
@@ -856,7 +870,7 @@ export default {
     },
 
     deleteItem(item) {
-      this.$emit("delete", item);
+      this.$emit('delete', item);
     },
 
     toggleFilter() {
@@ -867,7 +881,7 @@ export default {
         this.serverParams.filters = {};
         this.getItems();
       }
-      this.columns = this.columns.map(col => {
+      this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
           col.filterOptions.enabled = this.filterable;
         }
@@ -881,7 +895,7 @@ export default {
       this.opts &&
         this.opts.actions &&
         this.opts.actions.view &&
-        this.$emit("view", item);
+        this.$emit('view', item);
     },
 
     getLovValue(item, listName) {
@@ -889,7 +903,7 @@ export default {
         return item;
       }
       const value = this.$store.state.listOfValues[listName].find(
-        elm => elm[this.primaryKey] === item || elm.code === item
+        (elm) => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -903,7 +917,7 @@ export default {
         return item;
       }
       const value = this.$store.state.data[listName].find(
-        elm => elm[this.primaryKey] === item || elm.code === item
+        (elm) => elm[this.primaryKey] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -937,7 +951,7 @@ export default {
     },
 
     onPageChange(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.updateParams({ page: params.currentPage - 1 });
@@ -945,7 +959,7 @@ export default {
     },
 
     onPerPageChange(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.updateParams({ perPage: params.currentPerPage });
@@ -954,7 +968,7 @@ export default {
 
     onSortChange(params) {
       // eslint-disable-next-line
-      if (this.mode !== "remote" || !this.columns || !this.columns[0].field) {
+      if (this.mode !== 'remote' || !this.columns || !this.columns[0].field) {
         return;
       }
       const sort = {};
@@ -964,7 +978,7 @@ export default {
     },
 
     onSearch(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       let search = params.searchTerm;
@@ -973,12 +987,12 @@ export default {
     },
 
     onColumnFilter(params) {
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.updateParams({
         filters: _.cloneDeep(params.columnFilters),
-        page: 0
+        page: 0,
       });
       this.getItems();
     },
@@ -998,7 +1012,7 @@ export default {
     },
 
     hasValue(item, column) {
-      return item[column.toLowerCase()] !== "undefined";
+      return item[column.toLowerCase()] !== 'undefined';
     },
     itemValue(item, column) {
       return item[column.toLowerCase()];
@@ -1006,14 +1020,14 @@ export default {
 
     exportCallBack() {
       if (!this.exportUrl) {
-        this.$notify({ title: "[WARN] missing export url", type: "warning" });
+        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http
         .get(this.exportUrl, {})
-        .then(res => {
+        .then((res) => {
           if (res.data.url) {
-            const link = document.createElement("a");
+            const link = document.createElement('a');
             link.download = `${this.entity}_export`;
             link.href = res.data.url;
             link.click();
@@ -1024,32 +1038,31 @@ export default {
     },
 
     exportCurrentArrayToExcel() {
-      let CsvString = "";
+      let CsvString = '';
       // eslint-disable-next-line
       const head = this.data[0];
-      Object.keys(head).forEach(ColItem => {
+      Object.keys(head).forEach((ColItem) => {
         CsvString += `${ColItem},`;
       });
-      CsvString += "\r\n";
-      this.data.forEach(RowItem => {
+      CsvString += '\r\n';
+      this.data.forEach((RowItem) => {
         // eslint-disable-next-line
-        Object.values(RowItem).forEach(ColItem => {
+        Object.values(RowItem).forEach((ColItem) => {
           CsvString += `${ColItem},`;
         });
-        CsvString += "\r\n";
+        CsvString += '\r\n';
       });
       CsvString = `data:application/csv,${encodeURIComponent(CsvString)}`;
-      const x = document.createElement("A");
-      x.setAttribute("href", CsvString);
-      x.setAttribute("download", "somedata.csv");
+      const x = document.createElement('A');
+      x.setAttribute('href', CsvString);
+      x.setAttribute('download', 'somedata.csv');
       document.body.appendChild(x);
       x.click();
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">
-
 .ajax-table-img {
   max-height: 50px;
 }
