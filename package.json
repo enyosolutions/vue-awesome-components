@@ -68,7 +68,24 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "vue/no-reserved-keys": 0,
+      "no-unused-vars": [
+        "error",
+        {
+          "args": "none"
+        }
+      ],
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ]
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

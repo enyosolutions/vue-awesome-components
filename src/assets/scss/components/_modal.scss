@@ -1,14 +1,14 @@
-@import "../plugins/mq";
+@import '../plugins/mq';
 .modal {
   &.fade {
     opacity: 0;
-    -webkit-transition: all .2s linear;
-    transition: all .2s linear;
+    -webkit-transition: all 0.2s linear;
+    transition: all 0.2s linear;
     visibility: hidden;
     display: block !important;
   }
   &.fade.show {
-     opacity: 1;
+    opacity: 1;
     visibility: visible;
     /*
     .modal-dialog {
@@ -28,7 +28,6 @@
   }
 
   &.slide {
-
     @include mq($from: wide) {
       -webkit-transform: translate3d(40%, 0, 0);
       -o-transform: translate3d(40%, 0, 0);
@@ -48,8 +47,8 @@
     }
 
     opacity: 0;
-    -webkit-transition: all .2s linear;
-    transition: all .2s linear;
+    -webkit-transition: all 0.2s linear;
+    transition: all 0.2s linear;
     visibility: hidden;
     display: block !important;
   }
@@ -57,13 +56,12 @@
   &.slide.show {
     opacity: 1;
     visibility: visible;
-    -webkit-transition: all .2s linear;
-    transition: all .2s linear;
+    -webkit-transition: all 0.2s linear;
+    transition: all 0.2s linear;
 
     -o-transform: translate3d(0%, 0, 0);
     -webkit-transform: translate3d(0%, 0, 0);
     transform: translate3d(0%, 0, 0);
-
 
     .modal-dialog {
       -webkit-transform: none;
@@ -72,7 +70,6 @@
     }
   }
 
-
   .modal-content {
     .modal-header {
       border-bottom: none;
@@ -80,7 +77,12 @@
       padding-right: 24px;
       padding-bottom: 0;
       padding-left: 24px;
+      text-align: left;
 
+      .close {
+        position: absolute;
+        right: 1rem;
+      }
       .modal-profile {
         width: 80px;
         height: 80px;
@@ -104,7 +106,7 @@
       line-height: 1.9;
     }
 
-    .modal-body+.modal-footer {
+    .modal-body + .modal-footer {
       padding-top: 0;
     }
 
@@ -132,10 +134,8 @@
 }
 
 .modal-dialog.modal-full-height {
-
-
   @include mq($from: wide) {
-  width: 40%;
+    width: 40%;
   }
 
   @include mq($from: tablet, $until: wide) {
@@ -145,7 +145,6 @@
   @include mq($until: tablet) {
     width: 90%;
   }
-
 
   height: 100%;
   margin: 0;
@@ -174,7 +173,6 @@
 
     .modal-title {
       font-weight: 300;
-      font-size: 2em;
       color: #fff;
       line-height: 30px;
       width: 80%;
@@ -201,10 +199,8 @@
       padding: 10px;
       background: #f1f3f5;
     }
-
   }
 }
-
 
 .modal-dialog.modal-full {
   width: 100%;
@@ -232,7 +228,6 @@
 
     .modal-title {
       font-weight: 300;
-      font-size: 2em;
       color: #fff;
       line-height: 30px;
     }
@@ -255,6 +250,12 @@
       padding: 10px;
       background: #f1f3f5;
     }
+  }
+}
 
+.modal-nested {
+  .modal-header {
+    position: static;
+    text-align: left;
   }
 }
