@@ -1031,7 +1031,7 @@ export default {
             fields.push(subSchema);
           } else {
             if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = prop.relation;
+              prop.field.fieldOptions.url = prop.relationUrl || prop.relation;
               prop.field.fieldOptions.trackBy = prop.foreignKey;
               prop.field.fieldOptions.searchable = true;
             }
@@ -1041,7 +1041,7 @@ export default {
               placeholder: prop.description || prop.title || _.startCase(key),
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
-                url: prop.relation,
+                url: prop.relationUrl || prop.relation,
                 trackBy: prop.foreignKey || 'code',
                 label: 'label',
                 step: prop.field && prop.field.step,
