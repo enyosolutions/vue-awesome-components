@@ -1,0 +1,23 @@
+.field-group {
+
+    .form-element {
+        .hint {
+            opacity: 0;
+            visibility: hidden;
+            text-align: right;
+            font-size: 75%;
+            color: #999;
+            font-style: italic;
+            --webkit-transition: opacity 200ms linear 200ms;
+            transition: opacity 200ms linear 200ms;
+        }
+
+        &:hover {
+
+            .hint {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+}

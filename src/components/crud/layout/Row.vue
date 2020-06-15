@@ -1,27 +1,38 @@
 <template>
-  <div class="row" :class="computedCols + ' ' + styleClasses" :style="style">
-    <slot></slot>
+  <div class="row" :class="styleClasses + ' ' + computedCols" :style="styleComputed">
+    <div :class="computedCols">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
-import layoutMixin from '../../../mixins/layoutMixin';
-import i18nMixin from '../../../mixins/i18nMixin';
-import { uniqueId } from 'lodash';
+import layoutMixin from "../../../mixins/layoutMixin";
+import i18nMixin from "../../../mixins/i18nMixin";
+import { uniqueId } from "lodash";
 
 export default {
   mixins: [i18nMixin, layoutMixin],
   props: {
-    id: { type: String, default: '' },
+    id: { type: String, default: "" },
+    negativeMargin: { type: Boolean, default: false }
   },
-  computed: {},
+  computed: {
+    styleComputed() {
+      return {
+        marginLeft: this.negativeMargin ? "-15px" : "0px",
+        marginRight: this.negativeMargin ? "-15px" : "0px"
+      };
+    }
+  },
   data() {
     return {
-      fieldId: uniqueId(this.id + '_'),
+      fieldId: uniqueId(this.id + "_")
     };
   },
-  methods: {},
+  methods: {}
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+</style>

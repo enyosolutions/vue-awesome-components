@@ -1,16 +1,10 @@
-<template>
-  <div class="grouped-form">
-    a
-    <template v-for="(group, index4) in groups">
-      {{ groups }}
-      <Group
-        :key="index4"
-        v-bind="group"
-        :class="'group-' + (group.legend || index4)"
-      >
+  <template>
+  <div class="row mb-4">
+    <template v-for="(group, index) in groups">
+      <Group :key="index" v-bind="group">
         <VueFormGenerator
           :schema="getShemaForFields(group.fields)"
-          :model="model"
+          :model.sync="model"
           :options="formOptions"
           tag="div"
         />
@@ -20,26 +14,31 @@
 </template>
 
 <script>
-import Group from './Group.vue';
-import layoutMixin from '../../../mixins/layoutMixin';
-import formLayoutMixin from '../../../mixins/formLayoutMixin';
-import i18nMixin from '../../../mixins/i18nMixin';
-import { uniqueId } from 'lodash';
+import Group from "./Group.vue";
+import Row from "./Row.vue";
+import layoutMixin from "../../../mixins/layoutMixin";
+import formLayoutMixin from "../../../mixins/formLayoutMixin";
+import i18nMixin from "../../../mixins/i18nMixin";
+import { uniqueId } from "lodash";
 
 export default {
-  components: { Group },
+  name: "GroupedForm",
+  components: { Group, Row },
   mixins: [i18nMixin, layoutMixin, formLayoutMixin],
   props: {
-    id: { type: String, default: '' },
-    groups: { type: Array },
+    id: { type: String, default: "" },
+    groups: { type: Array, default: () => [], required: true },
+    formOptions: { type: [String, Object], default: "" },
+    model: { type: Object, required: true },
+    schema: { type: Object, required: true }
   },
   computed: {},
   data() {
     return {
-      fieldId: uniqueId(this.id + '_'),
+      fieldId: uniqueId(this.id + "_")
     };
   },
-  methods: {},
+  methods: {}
 };
 </script>
 

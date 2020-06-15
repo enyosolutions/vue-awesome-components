@@ -1,5 +1,5 @@
 <template>
-  <div :class="computedCols + ' ' + styleClasses" :style="style">
+  <div :class="computedCols + ' ' + styleClasses" :style="styles">
     <slot name="header">
       <ul
         class="nav"
@@ -17,13 +17,12 @@
             :id="'awesome-tab-' + fieldId + index"
             :data-target="'awesome-panel-' + fieldId + index"
             @click.prevent="changeTab(index)"
-            >{{ $t(tab.legend) }}</a
-          >
+          >{{ $t(tab.legend) }}</a>
         </li>
       </ul>
     </slot>
     <slot>
-      <div class="tab-content">
+      <div class="tab-content p-3">
         <div
           v-for="(tab, index) in tabs"
           :key="index"
@@ -36,11 +35,7 @@
             disabled: tab.disabled,
           }"
         >
-          <slot
-            name="content"
-            v-bind:activeTabIndex="activeTabIndex"
-            v-bind:tab="tab"
-          ></slot>
+          <slot name="content" v-bind:activeTabIndex="activeTabIndex" v-bind:tab="tab"></slot>
         </div>
       </div>
     </slot>
@@ -48,9 +43,9 @@
 </template>
 
 <script>
-import layoutMixin from '../../../mixins/layoutMixin';
-import i18nMixin from '../../../mixins/i18nMixin';
-import { uniqueId } from 'lodash';
+import layoutMixin from "../../../mixins/layoutMixin";
+import i18nMixin from "../../../mixins/i18nMixin";
+import { uniqueId } from "lodash";
 
 export default {
   mixins: [i18nMixin, layoutMixin],
@@ -58,26 +53,26 @@ export default {
     // activeTabIndex: {type: Number, default: 0}
     tabs: { type: Array, default: () => [] },
     autoHideTab: { type: Boolean, default: true },
-    navType: { type: String, default: 'tabs' },
-    direction: { type: String, default: 'horizontal' },
-    id: { type: String, default: '' },
+    navType: { type: String, default: "tabs" },
+    direction: { type: String, default: "horizontal" },
+    id: { type: String, default: "" }
   },
   computed: {
     tabsDirection() {
-      return this.direction === 'vertical' ? ' flex-column ' : '';
-    },
+      return this.direction === "vertical" ? " flex-column " : "";
+    }
   },
   data() {
     return {
       activeTabIndex: 0,
-      fieldId: uniqueId(this.id + '_'),
+      fieldId: uniqueId(this.id + "_")
     };
   },
   methods: {
     changeTab(id) {
       this.activeTabIndex = id;
-    },
-  },
+    }
+  }
 };
 </script>
 

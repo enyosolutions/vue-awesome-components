@@ -1,18 +1,14 @@
 <template>
-<div class="base64-upload">
-  <img :src="src"
-    v-if='type == "image"'
-    :style="imageStyle"/>
-    <p
-    v-if='type != "image"'
-    :class="inputClass">
-    {{ name || placeholder }}
-  </p>
-  <input type="file"
-    :disabled="disabled || readonly"
-    :accept="type == 'image' ? 'image/*' : '*'"
-    @change="onChange" />
-</div>
+  <div class="base64-upload">
+    <img :src="src" v-if="type == 'image'" :style="imageStyle" />
+    <p v-if="type != 'image'" :class="inputClass">{{ name || placeholder }}</p>
+    <input
+      type="file"
+      :disabled="disabled || readonly"
+      :accept="type == 'image' ? 'image/*' : '*'"
+      @change="onChange"
+    />
+  </div>
 </template>
 
 <script>
@@ -20,42 +16,41 @@ export default {
   props: {
     imageSrc: String,
     inputClass: String,
-    disabled: String,
-    readonly: String,
+    disabled: [String, Boolean],
+    readonly: [String, Boolean],
     imageStyle: Object,
-    type: {type: String, default: 'image'},
-    placeholder: {type: String, default: 'Choose a file'},
-    accept: {type: String,
-      default: ''}
+    type: { type: String, default: "image" },
+    placeholder: { type: String, default: "Choose a file" },
+    accept: { type: String, default: "" }
   },
   data() {
     return {
       src: this.imageSrc,
-      name: '',
-    }
+      name: ""
+    };
   },
   methods: {
     onChange(event) {
       if (event.target.files && event.target.files[0]) {
-        let file = event.target.files[0]
-        let reader = new FileReader()
+        let file = event.target.files[0];
+        let reader = new FileReader();
 
-        reader.addEventListener('load', e => {
-          this.src = e.target.result
-          let [, base64] = this.src.split(',');
+        reader.addEventListener("load", (e) => {
+          this.src = e.target.result;
+          let [, base64] = this.src.split(",");
           this.name = file.name;
-          this.$emit('change', {
+          this.$emit("change", {
             size: file.size,
             type: file.type,
             name: file.name,
             base64: base64
-          })
-        })
-        reader.readAsDataURL(file)
+          });
+        });
+        reader.readAsDataURL(file);
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>

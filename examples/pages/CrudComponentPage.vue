@@ -11,8 +11,7 @@
           role="tab"
           aria-controls="home"
           aria-selected="true"
-          >Users</a
-        >
+        >Users</a>
       </li>
       <li class="nav-item">
         <a
@@ -23,8 +22,7 @@
           role="tab"
           aria-controls="profile"
           aria-selected="false"
-          >Tickets</a
-        >
+        >Tickets</a>
       </li>
       <li class="nav-item">
         <a
@@ -35,8 +33,7 @@
           role="tab"
           aria-controls="contact"
           aria-selected="false"
-          >List with custom rendering slots</a
-        >
+        >List with custom rendering slots</a>
       </li>
 
       <li class="nav-item">
@@ -48,19 +45,13 @@
           role="tab"
           aria-controls="one-per-row"
           aria-selected="false"
-          >Standalone mode</a
-        >
+        >Standalone mode</a>
       </li>
     </ul>
     <hr />
     <div class="tab-content" id="myTabContent">
-      <div
-        class="tab-pane fade show active"
-        id="home"
-        role="tabpanel"
-        aria-labelledby="home-tab"
-      >
-        <select name="" v-model="modalDisplayModeSelect" class="form-control">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <select name v-model="modalDisplayModeSelect" class="form-control">
           <option
             v-for="val in [
               'modal',
@@ -74,8 +65,7 @@
             ]"
             :key="val"
             :value="val"
-            >{{ val }}</option
-          >
+          >{{ val }}</option>
         </select>
         <CrudComponent
           identity="user"
@@ -91,25 +81,21 @@
         />
       </div>
 
-      <div
-        class="tab-pane fade"
-        id="profile"
-        role="tabpanel"
-        aria-labelledby="profile-tab"
-      >
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
+        <h2>Ticket model with auto props</h2>
         <AutoProps
           :component="CrudComponent"
           :componentProps="{
             identity: 'ticket',
             apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
-            options: { detailPageMode: 'slide' },
+            options: { detailPageMode: 'fullscreen' },
+            model: ticketModel
           }"
           :skip-props="['translations']"
           v-slot="{ userProps }"
         >
           <CrudComponent
-            :model="ticketModel"
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
               dataPath: false,
@@ -120,12 +106,7 @@
         </AutoProps>
       </div>
 
-      <div
-        class="tab-pane fade"
-        id="one-per-row"
-        role="tabpanel"
-        aria-labelledby="contact-tab"
-      >
+      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="contact-tab">
         <button class="btn btn-primary" @click="toggleEdit()">
           <i class="fa fa-cog"></i>
         </button>
@@ -149,29 +130,27 @@
         id="contact"
         role="tabpanel"
         aria-labelledby="contact-tab"
-      >
-        contact tab
-      </div>
+      >contact tab</div>
     </div>
 
     <div class="container"></div>
   </div>
 </template>
 <script>
-import AutoProps from 'vue-enyo-components/components/misc/AutoProps.vue';
-import ticketSchema from '../fixtures/ticket';
-import ticketModel from '../fixtures/ticketModel';
-import userSchema from '../fixtures/user';
-import CrudComponent from 'vue-enyo-components/components/crud/CrudComponent.vue';
-import AwesomeForm from 'vue-enyo-components/components/crud/AwesomeForm.vue';
-import LiveEdit from 'vue-enyo-components/components/form/LiveEdit.vue';
+import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
+import ticketSchema from "../fixtures/ticket";
+import ticketModel from "../fixtures/ticketModel";
+import userSchema from "../fixtures/user";
+import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
+import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: 'CrudComponentPage',
+  name: "CrudComponentPage",
   components: {
     CrudComponent,
     AwesomeForm,
-    AutoProps,
+    AutoProps
   },
   data() {
     return {
@@ -181,91 +160,91 @@ export default {
       ticketModel,
       userSchema,
       showAwesomeForm: false,
-      modalDisplayModeSelect: 'table',
+      modalDisplayModeSelect: "page",
       asList: [
         {
-          picture: 'https://picsum.photos/200?1',
-          name: 'my title',
+          picture: "https://picsum.photos/200?1",
+          name: "my title",
           description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: 'https://mozilla.org',
+          url: "https://mozilla.org",
           myboolean: false,
-          notDisplayedColumn: 'ghosted',
-          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          notDisplayedColumn: "ghosted",
+          object: { foo: "bar", john: "doe", a: { b: 1 } },
           date: new Date(),
           dateTime: new Date(),
           checkbox: true,
-          html: '',
+          html: ""
         },
         {
-          picture: 'https://picsum.photos/200?2',
-          name: 'my title',
+          picture: "https://picsum.photos/200?2",
+          name: "my title",
           description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: 'https://bing.com',
+          url: "https://bing.com",
           myboolean: true,
-          notDisplayedColumn: 'ghosted',
-          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          notDisplayedColumn: "ghosted",
+          object: { foo: "bar", john: "doe", a: { b: 1 } },
           date: new Date(),
           dateTime: new Date(),
-          checkbox: false,
+          checkbox: false
         },
         {
-          picture: 'https://picsum.photos/200?3',
-          name: 'my title',
+          picture: "https://picsum.photos/200?3",
+          name: "my title",
           description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: 'https://google.com',
+          url: "https://google.com",
           myboolean: undefined,
-          notDisplayedColumn: 'ghosted',
-          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
+          notDisplayedColumn: "ghosted",
+          object: { foo: "bar", john: "doe", a: { b: 1 } },
           date: new Date(),
-          dateTime: new Date(),
-        },
+          dateTime: new Date()
+        }
       ],
       options: {
         queryParams: {},
-        mode: 'local',
+        mode: "local",
         stats: false,
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
         customActions: [
           {
-            name: 'validate-ride-comment',
-            label: '',
-            class: 'btn-success',
-            title: 'Valider le commentaire',
-            icon: 'fa fa-check',
+            name: "validate-ride-comment",
+            label: "",
+            class: "btn-success",
+            title: "Valider le commentaire",
+            icon: "fa fa-check",
             action: function(item, context) {
               item.isProviderCommentValid = true;
               context.editItem(item);
-            },
-          },
-        ],
+            }
+          }
+        ]
       },
       nestedSchemas: [
         {
-          name: 'user-view#tickets',
-          label: '',
-          class: '',
-          title: 'Voir les tickets',
-          icon: 'fa fa-car',
-          modelName: 'ticket',
+          name: "user-view#tickets",
+          label: "",
+          class: "",
+          title: "Voir les tickets",
+          icon: "fa fa-car",
+          modelName: "ticket",
           schema: ticketSchema,
           options: {
             url: function(item) {
-              return item && item._id ? `/user/${item._id}/ride` : '';
+              return item && item._id ? `/user/${item._id}/ride` : "";
             },
-            mode: 'local',
+            mode: "local",
             noActions: true,
             noHeaders: false,
-            actions: {},
-          },
-        },
+            actions: {}
+          }
+        }
       ],
-      editField1: 'john doe',
+      editField1: "john doe",
       editField2: `Eric Ries.
       Mark Hunt.
       `,
       editField3: null,
-      editField4: null,
+      editField4: null
     };
   },
   methods: {
@@ -274,14 +253,15 @@ export default {
     },
     toggleEdit() {
       this.showAwesomeForm = !this.showAwesomeForm;
-    },
-  },
+    }
+  }
 };
 </script>
-<style>
-@import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+<style lang="scss">
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+@import "../../src/main.scss";
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
