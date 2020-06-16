@@ -60,6 +60,16 @@
     "vue-router": "^3.0.1",
     "vuex": "^3.4.0"
   },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "semi": true,
+    "useTabs": false,
+    "arrowParens": "always",
+    "singleQuote": true
+  },
   "eslintConfig": {
     "root": true,
     "env": {
