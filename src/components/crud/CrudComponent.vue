@@ -6,19 +6,11 @@
           <h1 class="text-primary" v-if="title !== false">
             <template v-if="_title !== undefined && _title !== null">
               {{ _title }}
-              <i
-                v-if="isRefreshing"
-                class="fa fa-circle-o-notch fa-spin fa-fw"
-                style="color:orange;margin-left:10px"
-              />
+              <i v-if="isRefreshing" class="fa fa-circle-o-notch fa-spin fa-fw" style="color:orange;margin-left:10px" />
             </template>
             <template v-if="_title === undefined || _title === null">
               {{ $t('common.labels.manageTitle') }} {{ _namePlural }}
-              <i
-                v-if="isRefreshing"
-                class="fa fa-circle-o-notch fa-spin fa-fw"
-                style="color:orange;margin-left:10px"
-              />
+              <i v-if="isRefreshing" class="fa fa-circle-o-notch fa-spin fa-fw" style="color:orange;margin-left:10px" />
             </template>
           </h1>
           <div v-if="innerOptions.stats" class="row">
@@ -46,7 +38,7 @@
                     customAction({
                       action,
                       location: 'topright',
-                      id: action.name,
+                      id: action.name
                     })
                   "
                 >
@@ -80,7 +72,7 @@
                 :class="{
                   modal: !_isNested,
                   slide: innerOptions.modalMode === 'slide',
-                  fade: innerOptions.modalMode === 'fade',
+                  fade: innerOptions.modalMode === 'fade'
                 }"
                 tabindex="-1"
                 role="dialog"
@@ -89,9 +81,8 @@
                   :class="{
                     'modal-dialog': !_isNested,
                     'modal-nested': _isNested,
-                    'modal-full-height':
-                      _isNested || innerOptions.modalMode === 'slide',
-                    'modal-lg': innerOptions.modalMode === 'fade',
+                    'modal-full-height': _isNested || innerOptions.modalMode === 'slide',
+                    'modal-lg': innerOptions.modalMode === 'fade'
                   }"
                   role="document"
                 >
@@ -102,12 +93,10 @@
                         class="modal-header"
                         :class="{
                           'bg-primary text-white': !_isNestedDetail,
-                          'bg-secondary': _isNestedDetail,
+                          'bg-secondary': _isNestedDetail
                         }"
                       >
-                        <h4 class="modal-title mt-0">
-                          {{ $t('common.labels.add_a') }} {{ title }}
-                        </h4>
+                        <h4 class="modal-title mt-0">{{ $t('common.labels.add_a') }} {{ title }}</h4>
                         <button
                           v-if="!_noFormActions"
                           type="button"
@@ -115,14 +104,12 @@
                           aria-label="Close"
                           @click="closeModal()"
                         >
-                          <span aria-hidden="true" class="text-white"
-                            >&times;</span
-                          >
+                          <span aria-hidden="true" class="text-white">&times;</span>
                         </button>
                       </div>
                       <div
                         :class="{
-                          'modal-body': !_isNestedDetail,
+                          'modal-body': !_isNestedDetail
                         }"
                       >
                         <slot name="create-form" :selectedItem="selectedItem">
@@ -138,11 +125,7 @@
                       </div>
                       <div class="modal-footer" v-if="!_noFormActions">
                         <slot name="add-modal-footer">
-                          <button
-                            type="button"
-                            class="btn btn-default btn-simple mr-auto"
-                            @click="closeModal()"
-                          >
+                          <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
                             {{ $t('common.buttons.cancel') }}
                           </button>
                           <button type="submit" class="btn btn-primary ml-auto">
@@ -153,16 +136,13 @@
                     </form>
                   </div>
                   <!--  EDITS -->
-                  <div
-                    v-if="viewMode === 'edit' || viewMode === 'view'"
-                    class="modal-content"
-                  >
+                  <div v-if="viewMode === 'edit' || viewMode === 'view'" class="modal-content">
                     <form @submit.prevent="editItem()">
                       <div
                         class="modal-header"
                         :class="{
                           'bg-primary text-white': !_isNestedDetail,
-                          'bg-secondary': _isNestedDetail,
+                          'bg-secondary': _isNestedDetail
                         }"
                       >
                         <h4 v-if="viewMode === 'edit'" class="modal-title mt-0">
@@ -180,23 +160,17 @@
                           aria-label="Close"
                           @click="closeModal()"
                         >
-                          <span aria-hidden="true" class="text-white"
-                            >&times;</span
-                          >
+                          <span aria-hidden="true" class="text-white">&times;</span>
                         </button>
                       </div>
                       <div
                         :class="{
                           'modal-body': !_isNestedDetail,
-                          'view-mode': viewMode === 'view',
+                          'view-mode': viewMode === 'view'
                         }"
                       >
                         <ul
-                          v-if="
-                            nestedSchemas &&
-                              nestedSchemas.length &&
-                              viewMode === 'view'
-                          "
+                          v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
                           class="nav nav-tabs mt-5 mb-4"
                         >
                           <li class="nav-item">
@@ -204,22 +178,18 @@
                               class="nav-link"
                               data-toggle="tab"
                               :class="{
-                                active: activeNestedTab === 'general',
+                                active: activeNestedTab === 'general'
                               }"
                               @click="activeNestedTab = 'general'"
                               >{{ _name }}</a
                             >
                           </li>
-                          <li
-                            v-for="ns in nestedSchemas"
-                            :key="ns.$id"
-                            class="nav-item"
-                          >
+                          <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
                             <a
                               class="nav-link"
                               data-toggle="tab"
                               :class="{
-                                'active show': activeNestedTab === ns.modelName,
+                                'active show': activeNestedTab === ns.modelName
                               }"
                               @click="activeNestedTab = ns.modelName"
                             >
@@ -234,7 +204,7 @@
                               <div
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show': activeNestedTab === 'general',
+                                  'active show': activeNestedTab === 'general'
                                 }"
                               >
                                 <VueFormGenerator
@@ -245,29 +215,21 @@
                               </div>
                             </template>
                             <template
-                              v-if="
-                                nestedSchemas &&
-                                  nestedSchemas.length &&
-                                  viewMode === 'view' &&
-                                  selectedItem
-                              "
+                              v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem"
                             >
                               <div
                                 v-for="ns in nestedSchemas"
                                 :key="ns.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show':
-                                    activeNestedTab === ns.modelName,
+                                  'active show': activeNestedTab === ns.modelName
                                 }"
                               >
                                 <crud-component
                                   v-if="activeNestedTab === ns.modelName"
                                   v-bind="ns"
                                   :parent="selectedItem"
-                                  :crud-needs-refresh.sync="
-                                    nestedCrudNeedsRefresh
-                                  "
+                                  :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                                 >
                                   <div slot="crud-title" />
                                 </crud-component>
@@ -278,18 +240,10 @@
                       </div>
                       <div class="modal-footer" v-if="!_noFormActions">
                         <slot name="edit-modal-footer">
-                          <button
-                            type="button"
-                            class="btn btn-default btn-simple mr-auto"
-                            @click="closeModal()"
-                          >
+                          <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
                             {{ $t('common.buttons.cancel') }}
                           </button>
-                          <button
-                            v-if="viewMode === 'edit'"
-                            type="submit"
-                            class="btn btn-primary ml-auto"
-                          >
+                          <button v-if="viewMode === 'edit'" type="submit" class="btn btn-primary ml-auto">
                             {{ $t('common.buttons.save') }}
                           </button>
                           <button
@@ -361,7 +315,7 @@
                     headers: {},
                     base64: false,
                     label: $t('common.buttons.import'),
-                    class: 'btn btn-success btn-simple btn-block',
+                    class: 'btn btn-success btn-simple btn-block'
                   }"
                   @uploaded="importResponse"
                 />
@@ -413,7 +367,7 @@ const defaultOptions = {
     type: String,
     default: 'body',
     note: `This field dictates where in the response should the component search for the results from the api.
-    \nThis field is directly sent to ajaxTable.`,
+    \nThis field is directly sent to ajaxTable.`
   },
   actions: {
     noActions: false,
@@ -425,14 +379,13 @@ const defaultOptions = {
     export: false,
     import: false,
     dateFilter: true,
-    refresh: true,
-  },
+    refresh: true
+  }
 };
 
 export default {
   name: 'CrudComponent',
-  introduction:
-    'A component to quickly create a table UI with edit capabilities',
+  introduction: 'A component to quickly create a table UI with edit capabilities',
   description: `This component magically create lists and edit data based on a json schema.
 
   ### Usage.
@@ -518,7 +471,7 @@ export default {
   defaultOptions,
   components: {
     EnyoAjaxTable,
-    EnyoCrudStatsSection,
+    EnyoCrudStatsSection
     // VueGoodTable
   },
   mixins: [apiErrors],
@@ -528,45 +481,44 @@ export default {
     primaryKey: {
       type: String,
       default: 'id',
-      note: 'The field to use as a primary key (id / _id)',
+      note: 'The field to use as a primary key (id / _id)'
     },
     model: {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The object that will be used for managing the component',
+      note: 'The object that will be used for managing the component'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
       note:
-        'The json schema that represent the object to display. this is used to personalise form inputs and column displays',
+        'The json schema that represent the object to display. this is used to personalise form inputs and column displays'
     },
     crudNeedsRefresh: {
       type: Boolean,
       default: false,
-      note: 'Define whether the content of the table list should be refreshed',
+      note: 'Define whether the content of the table list should be refreshed'
     },
     nestedSchemas: {
       type: Array,
       required: false,
       default: () => [],
-      note:
-        'An array describing the data that is linked to the nested model. Serves for displaying a detailed object',
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
     },
     parent: {
       type: Object,
       required: false,
       note:
         'The object containing the parent in case of a nested schema.' +
-        "You don't actually to pass this, it's done automatically by the parent component itself",
+        "You don't actually to pass this, it's done automatically by the parent component itself"
     },
     nestedDisplayMode: {
       type: String,
       required: false,
       default: 'table',
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`,
+      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
     },
     translations: {
       type: Object,
@@ -575,14 +527,14 @@ export default {
         'common.labels.manageTitle': 'common.labels.manageTitle',
         'common.buttons.view': 'common.buttons.view',
         'common.buttons.cancel': 'common.buttons.cancel',
-        'common.buttons.close': 'common.buttons.close',
+        'common.buttons.close': 'common.buttons.close'
       }),
-      note: 'Translation labels to use when vue-i18n is not present',
+      note: 'Translation labels to use when vue-i18n is not present'
     },
     options: {
       type: Object,
-      default: () => defaultOptions,
-    },
+      default: () => defaultOptions
+    }
   },
   data() {
     return {
@@ -602,8 +554,8 @@ export default {
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
-        validateAfterChanged: true,
-      },
+        validateAfterChanged: true
+      }
     };
   },
   computed: {
@@ -622,9 +574,7 @@ export default {
       }
 
       if (this.innerModel && this.innerModel.name) {
-        return this.$te(this.innerModel.name)
-          ? this.$t(this.innerModel.name)
-          : _.startCase(this.innerModel.name);
+        return this.$te(this.innerModel.name) ? this.$t(this.innerModel.name) : _.startCase(this.innerModel.name);
       }
 
       if (this.modelName) {
@@ -662,7 +612,7 @@ export default {
           parent: this.parent,
           context: this,
           currentItem: this.selectedItem,
-          items: this.items,
+          items: this.items
         });
       }
       return url;
@@ -671,14 +621,8 @@ export default {
     _selectedItemUrl() {
       let url;
       if (this._url.indexOf('?') > -1) {
-        url = new URL(
-          this._url.indexOf('http') === 0
-            ? this._url
-            : `http://localhost${this._url}`
-        );
-        url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${
-          url.search
-        }`;
+        url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
+        url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
       } else {
         url = `${this._url}/${this.selectedItem[this.primaryKey]}`;
       }
@@ -699,10 +643,7 @@ export default {
     },
 
     _noFormActions() {
-      return (
-        this._isNested &&
-        (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit')
-      );
+      return this._isNested && (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit');
     },
 
     formSchema() {
@@ -711,7 +652,7 @@ export default {
       }
       const parsedFormSchema = this.parseSchema(this.innerSchema);
       return parsedFormSchema;
-    },
+    }
   },
   watch: {
     // call again the method if the route changes
@@ -720,7 +661,7 @@ export default {
     'parent.id': 'loadModel',
     model: 'loadModel',
     options: 'mergeOptions',
-    crudNeedsRefresh: 'refreshComponent',
+    crudNeedsRefresh: 'refreshComponent'
   },
   created() {
     if (!this.$t) {
@@ -752,16 +693,10 @@ export default {
     }
     const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
-      if (
-        this.$route.params.id === 'create' ||
-        this.$route.params.id === 'new'
-      ) {
+      if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
         delete this.$route.params.id;
         if (this.$route.query.item) {
-          this.selectedItem = _.merge(
-            this.selectedItem,
-            this.$route.query.item
-          );
+          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
         }
         this.createFunction({ reset: false });
         return;
@@ -822,18 +757,14 @@ export default {
         if (
           this.$store &&
           this.$store.state &&
-          !this.options.deletePermitted.some(
-            (v) => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0
-          )
+          !this.options.deletePermitted.some((v) => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0)
         ) {
           this.options.actions.delete = false;
         }
       }
       this.innerOptions = _.merge(this.innerOptions, this.options);
       if (this.$route && this.$route.query && this.$route.query.filters) {
-        this.innerOptions.queryParams = _.merge(
-          this.innerOptions.queryParams || this.$route.query.filters
-        );
+        this.innerOptions.queryParams = _.merge(this.$route.query.filters, this.innerOptions.queryParams);
       }
     },
     callbackFunctionForBAse64(e) {
@@ -844,15 +775,12 @@ export default {
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
       this.$notifications.clear();
-      if (
-        (!e.improperData || e.improperData.length === 0) &&
-        (!e.properData || e.properData.length === 0)
-      ) {
+      if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
           title: this.$t('common.messages.no_data_imported', {
-            title: this._name,
+            title: this._name
           }),
-          type: 'warning',
+          type: 'warning'
         });
         return;
       }
@@ -860,9 +788,9 @@ export default {
       if (e.properData.length > 0) {
         this.$notify({
           title: this.$t('common.messages.successfullyImported', {
-            title: this._name,
+            title: this._name
           }),
-          type: 'success',
+          type: 'success'
         });
       }
 
@@ -874,15 +802,12 @@ export default {
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
           this.$notify({
-            title: `${e.improperData.length} ${this.$t(
-              'common.messages.not_imported',
-              {
-                title: this._name,
-              }
-            )}`,
+            title: `${e.improperData.length} ${this.$t('common.messages.not_imported', {
+              title: this._name
+            })}`,
             message,
             type: 'warning',
-            timeout: 30000,
+            timeout: 30000
           });
         }, 0);
       }
@@ -911,15 +836,33 @@ export default {
         .catch(this.apiErrorCallback);
     },
 
+    getModelFromStore(modelId) {
+      if (this.$store && this.$store.state && !this.model) {
+        return this.$store.state.data.models.find((model) => model.identity === modelId || model.modelName === modelId);
+      }
+      return;
+    },
+    getRelationUrl(prop) {
+      if (!prop.relationUrl && !prop.relation) {
+        return;
+      }
+      let relationUrl;
+      if (prop.relationUrl) {
+        relationUrl = prop.relationUrl;
+      } else {
+        const model = this.getModelFromStore(prop.relation);
+        relationUrl = model ? model.url || model.apiUrl : '';
+      }
+      return relationUrl;
+    },
+
     loadModel() {
       if (!this.options) {
         this.options = {};
       }
       this.mergeOptions();
       if (this.$store && this.$store.state && !this.model) {
-        this.innerModel = this.$store.state.data.models.find(
-          (model) => model.modelName === this.modelName
-        );
+        this.innerModel = this.getModelFromStore(this.modelName);
       } else {
         this.innerModel = this.model;
       }
@@ -930,9 +873,7 @@ export default {
       }
 
       this.innerSchema = this.schema || this.innerModel.schema;
-      this.innerOptions.columns = this.parseColumns(
-        this.innerSchema.properties
-      );
+      this.innerOptions.columns = this.parseColumns(this.innerSchema.properties);
 
       if (!this.innerOptions.exportUrl) {
         this.innerOptions.exportUrl = `${this._url}/export`;
@@ -950,24 +891,19 @@ export default {
       // if the crud is nested and should display as a form then remote load the data
       if (
         this.parent &&
-        (this.nestedDisplayMode === 'view' ||
-          this.nestedDisplayMode === 'edit' ||
-          this.nestedDisplayMode === 'object')
+        (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit' || this.nestedDisplayMode === 'object')
       ) {
         this.getNestedItem().then(() => {
-          if (
-            this.nestedDisplayMode === 'view' ||
-            this.nestedDisplayMode === 'object'
-          ) {
+          if (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'object') {
             this.openModal();
           }
           if (this.nestedDisplayMode === 'edit') {
             // this.editFunction(this.selectedItem);
             this.$alert.fire({
               title: this.$t('Nested editing of object is not allowed yet...', {
-                title: this.modelName,
+                title: this.modelName
               }),
-              type: 'success',
+              type: 'success'
             });
           }
         });
@@ -976,20 +912,13 @@ export default {
       if (!this._url) {
         return;
       }
-      if (
-        this.$route &&
-        this.$route.params &&
-        this.$route.params.id &&
-        !this._isNested
-      ) {
+      if (this.$route && this.$route.params && this.$route.params.id && !this._isNested) {
         this.$http
           .get(`${this._url}/${this.$route.params.id}`)
           .then((res) => {
             const matched = this.$route.matched[this.$route.matched.length - 1];
             const data =
-              this.responseField && this.responseField != false
-                ? _.get(res.data, this.responseField)
-                : res.data.body;
+              this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
             if (matched.path.indexOf('/edit') !== -1) {
               this.editFunction(data);
             } else {
@@ -1025,13 +954,13 @@ export default {
             const subSchema = this.parseSchema(prop, `${key}.`);
             subSchema.legend = prop.title || _.startCase(key);
             subSchema.type = 'group';
-            subSchema.styleClasses = `subgroup  ${(prop.field &&
-              prop.field.styleClasses) ||
-              'card'}`;
+            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || 'card'}`;
             fields.push(subSchema);
           } else {
+            let relationUrl = this.getRelationUrl(prop);
+
             if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = prop.relationUrl || prop.relation;
+              prop.field.fieldOptions.url = relationUrl;
               prop.field.fieldOptions.trackBy = prop.foreignKey;
               prop.field.fieldOptions.searchable = true;
             }
@@ -1041,18 +970,17 @@ export default {
               placeholder: prop.description || prop.title || _.startCase(key),
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
-                url: prop.relationUrl || prop.relation,
+                url: relationUrl,
                 trackBy: prop.foreignKey || 'code',
                 label: 'label',
-                step: prop.field && prop.field.step,
+                step: prop.field && prop.field.step
               },
               values:
                 prop.enum ||
                 (prop.items && prop.items.enum) ||
                 (prop.field &&
                   prop.field.fieldOptions &&
-                  (prop.field.fieldOptions.values ||
-                    this.getSelectEnum(prop.field.fieldOptions.enum))) ||
+                  (prop.field.fieldOptions.values || this.getSelectEnum(prop.field.fieldOptions.enum))) ||
                 prop.enum ||
                 (prop.items && prop.items.enum),
               required: prop.field && prop.field.required,
@@ -1062,29 +990,23 @@ export default {
               min: prop.min,
               max: prop.max,
               multi: prop.type === 'array',
-              readonly:
-                this.viewMode === 'view' || (prop.field && prop.field.readonly),
-              disabled:
-                this.viewMode === 'view' || (prop.field && prop.field.readonly),
-              styleClasses:
-                (prop.field && prop.field.styleClasses) ||
-                (size < 8 ? 'col-md-12' : 'col-md-6'),
+              readonly: this.viewMode === 'view' || (prop.field && prop.field.readonly),
+              disabled: this.viewMode === 'view' || (prop.field && prop.field.readonly),
+              styleClasses: (prop.field && prop.field.styleClasses) || (size < 8 ? 'col-md-12' : 'col-md-6'),
               relation: prop.relation,
               foreignKey: prop.foreignKey,
-              group: prop.field && prop.field.group,
+              group: prop.field && prop.field.group
             };
             if (!field.fieldOptions.inputType) {
               field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) ||
-                this.getFormInputType(prop) ||
-                'text';
+                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || 'text';
             }
             if (field.type === 'dateTime') {
               field.fieldOptions.icons = {
                 time: 'fa fa-clock-o',
                 date: 'fa fa-calendar',
                 up: 'fa fa-arrow-up',
-                down: 'fa fa-arrow-down',
+                down: 'fa fa-arrow-down'
               };
             }
             fields.push(field);
@@ -1105,7 +1027,7 @@ export default {
             fields: [],
             ...group,
             legend: this.$t(group.title),
-            type: 'group',
+            type: 'group'
           });
         }
       });
@@ -1161,9 +1083,7 @@ export default {
     },
     getSelectEnum(val) {
       const options =
-        _.isString(val) && val.indexOf('$store') === 0
-          ? _.get(this.$store.state, val.replace('$store.', ''))
-          : val;
+        _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
 
@@ -1216,7 +1136,9 @@ export default {
           }
         }
       }
-
+      if (property.relation) {
+        return 'relation';
+      }
       switch (type) {
         case 'string':
           switch (property.format) {
@@ -1267,32 +1189,20 @@ export default {
 
     goToEditPage(item) {
       if (!this.innerOptions.editPath) {
-        window.history.replaceState(
-          {},
-          null,
-          `${this.parentPath}/${item[this.primaryKey]}/edit`
-        );
+        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
         this.editFunction(item);
         return;
       }
-      this.$router.push(
-        this.innerOptions.editPath.replace(':id', item[this.primaryKey])
-      );
+      this.$router.push(this.innerOptions.editPath.replace(':id', item[this.primaryKey]));
     },
 
     goToViewPage(item) {
       if (!this.innerOptions.viewPath) {
-        window.history.replaceState(
-          {},
-          null,
-          `${this.parentPath}/${item[this.primaryKey]}`
-        );
+        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         this.viewFunction(item);
         return;
       }
-      this.$router.push(
-        this.innerOptions.viewPath.replace(':id', item[this.primaryKey])
-      );
+      this.$router.push(this.innerOptions.viewPath.replace(':id', item[this.primaryKey]));
     },
 
     createItem() {
@@ -1310,19 +1220,16 @@ export default {
         }
       } else {
         // eslint-disable-next-line
-        console.warn(
-          'Unable to find the reference to the schema form on ',
-          this.$route.path
-        );
+        console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       return this.$http
         .post(this._url, this.selectedItem)
         .then(() => {
           Swal.fire({
             title: this.$t('common.messages.successfullyCreated', {
-              title: this.type,
+              title: this.type
             }),
-            type: 'success',
+            type: 'success'
           });
           this.tableNeedsRefresh = true;
           this.statsNeedsRefresh = true;
@@ -1358,9 +1265,9 @@ export default {
         .then(() => {
           Swal.fire({
             title: this.$t('common.messages.successfullyModified', {
-              title: this.type,
+              title: this.type
             }),
-            type: 'success',
+            type: 'success'
           });
           this.tableNeedsRefresh = true;
           this.nestedCrudNeedsRefresh = true;
@@ -1383,9 +1290,7 @@ export default {
         .get(`${this._selectedItemUrl}`)
         .then((res) => {
           this.selectedItem =
-            this.responseField && this.responseField != false
-              ? _.get(res.data, this.responseField)
-              : res.data.body;
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
           this.openModal();
         })
         .catch(this.apiErrorCallback)
@@ -1403,9 +1308,7 @@ export default {
         .get(`${this._selectedItemUrl}`)
         .then((res) => {
           this.selectedItem =
-            this.responseField && this.responseField != false
-              ? _.get(res.data, this.responseField)
-              : res.data.body;
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
           this.openModal();
         })
         .catch(this.apiErrorCallback)
@@ -1419,9 +1322,7 @@ export default {
         .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =
-            this.responseField && this.responseField != false
-              ? _.get(res.data, this.responseField)
-              : res.data.body;
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
         })
         .catch(this.apiErrorCallback)
         .finally(() => {
@@ -1439,7 +1340,7 @@ export default {
         cancelButtonColor: '#d33',
         confirmButtonText: this.$t('common.buttons.yes_delete_it'),
         cancelButtonText: this.$t('common.buttons.cancel'),
-        reverseButtons: true,
+        reverseButtons: true
       }).then((result) => {
         if (result.value) {
           this.$http
@@ -1491,18 +1392,17 @@ export default {
         if (!prop.hidden && !(prop.column && prop.column.hidden)) {
           newCol.field = key;
           newCol.type = this.getColumnType(prop);
-          newCol.label = _.startCase(
-            (prop.column && prop.column.title) || prop.title || key
-          );
+          newCol.label = _.startCase((prop.column && prop.column.title) || prop.title || key);
           newCol.filterOptions = { enabled: false };
           newCol.enum = (prop.column && prop.column.enum) || prop.enum;
-          newCol.sortable =
-            prop.column && prop.column.sortable !== undefined
-              ? prop.column.sortable
-              : true;
+          newCol.sortable = prop.column && prop.column.sortable !== undefined ? prop.column.sortable : true;
           newCol = { ...newCol, ...prop.column };
           if (prop.relation) {
+            console.warn('parsed source', prop);
             newCol.relation = prop.relation;
+            newCol.foreignKey = prop.foreignKey;
+            newCol.relationUrl = this.getRelationUrl(prop);
+            newCol.relationLabel = prop.relationLabel;
           }
           newcolumns.push(newCol);
         }
@@ -1513,12 +1413,12 @@ export default {
           field: 'ACTIONS',
           label: 'Actions',
           filterable: false,
-          enabled: false,
+          enabled: false
         });
       }
       return newcolumns;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss">
