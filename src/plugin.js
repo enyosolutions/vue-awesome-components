@@ -4,7 +4,7 @@ import _ from 'lodash'
 import FieldEnyoSelect from './components/crud/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/FieldJsonTextarea.vue';
-import FieldVSelect from './components/crud/FieldVSelect.vue';
+import FieldVueSelect from './components/crud/FieldVueSelect.vue';
 // import FieldDateTime from './components/crud/FieldDateTime.vue';
 import CrudComponent from './components/crud/CrudComponent.vue';
 
@@ -63,7 +63,8 @@ const GlobalComponents = {
         Vue.component('fieldEnyoSelect', FieldEnyoSelect);
         Vue.component('fieldFileInput', FieldFileInput);
         Vue.component('fieldJsonTextarea', FieldJsonTextarea);
-        Vue.component('FieldVSelect', FieldVSelect);
+        Vue.component('FieldVueSelect', FieldVueSelect);
+        Vue.component('FieldVSelect', FieldVueSelect);
 
         Vue.component('ajax-table', EnyoAjaxTable);
         Vue.component('enyo-ajax-table', EnyoAjaxTable);

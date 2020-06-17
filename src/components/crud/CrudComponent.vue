@@ -347,7 +347,12 @@ import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import $ from 'jquery';
 
 import 'vue-good-table/dist/vue-good-table.css';
+/*
+Deprecated props
 
+- foreignKey
+- modal mode
+*/
 const defaultOptions = {
   mode: 'local',
   url: null,
@@ -570,17 +575,17 @@ export default {
       if (this.innerModel && this.innerModel.singularName) {
         return this.$te(this.innerModel.singularName)
           ? this.$t(this.innerModel.singularName)
-          : _.startCase(this.innerModel.singularName);
+          : _.upperFirst(this.innerModel.singularName);
       }
 
       if (this.innerModel && this.innerModel.name) {
-        return this.$te(this.innerModel.name) ? this.$t(this.innerModel.name) : _.startCase(this.innerModel.name);
+        return this.$te(this.innerModel.name) ? this.$t(this.innerModel.name) : _.upperFirst(this.innerModel.name);
       }
 
       if (this.modelName) {
         return this.$te(`app.labels.${this.modelName}`)
           ? this.$t(`app.labels.${this.modelName}`)
-          : _.startCase(this.modelName);
+          : _.upperFirst(this.modelName);
       }
       return this._title;
     },
@@ -589,13 +594,13 @@ export default {
       if (this.innerModel && this.innerModel.pluralName) {
         return this.$te(this.innerModel.pluralName)
           ? this.$t(this.innerModel.pluralName)
-          : _.startCase(this.innerModel.pluralName);
+          : _.upperFirst(this.innerModel.pluralName);
       }
 
       if (this.modelName) {
         return this.$te(`app.labels.${this.modelName}s`)
           ? this.$t(`app.labels.${this.modelName}s`)
-          : _.startCase(this.modelName + 's');
+          : _.upperFirst(this.modelName + 's');
       }
       return '';
     },
@@ -846,14 +851,44 @@ export default {
       if (!prop.relationUrl && !prop.relation) {
         return;
       }
-      let relationUrl;
       if (prop.relationUrl) {
-        relationUrl = prop.relationUrl;
+        return prop.relationUrl;
       } else {
         const model = this.getModelFromStore(prop.relation);
-        relationUrl = model ? model.url || model.apiUrl : '';
+        return model ? model.url || model.apiUrl : '';
       }
-      return relationUrl;
+    },
+
+    getRelationKey(prop) {
+      if (!prop.relationKey && !prop.relation) {
+        return;
+      }
+      if (prop.relationKey) {
+        return prop.relationKey;
+      }
+      if (prop.foreignKey) {
+        return prop.foreignKey;
+      } else {
+        const model = this.getModelFromStore(prop.relation);
+        return model ? model.primaryKeyField || this.primaryKey : this.primaryKey;
+      }
+    },
+
+    getRelationLabel(prop) {
+      if (!prop.relationLabel && !prop.relation) {
+        return;
+      }
+      if (prop.relationLabel) {
+        return prop.relationLabel;
+      } else {
+        const model = this.getModelFromStore(prop.relation);
+        if (!model.titleField) {
+          console.error('prop', prop, 'is missing titleFiled', model.titleField);
+        } else {
+          console.error('prop', prop, 'has titleFiled', model.titleField);
+        }
+        return model ? model.titleField || 'label' : 'label';
+      }
     },
 
     loadModel() {
@@ -957,12 +992,13 @@ export default {
             subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || 'card'}`;
             fields.push(subSchema);
           } else {
-            let relationUrl = this.getRelationUrl(prop);
-
+            const relationUrl = this.getRelationUrl(prop);
+            const relationKey = this.getRelationKey(prop);
+            const relationLabel = this.getRelationLabel(prop);
             if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = relationUrl;
-              prop.field.fieldOptions.trackBy = prop.foreignKey;
-              prop.field.fieldOptions.searchable = true;
+              prop.field.fieldOptions.url = prop.field.fieldOptions.url || relationUrl;
+              prop.field.fieldOptions.trackBy = prop.field.fieldOptions.trackBy || relationKey;
+              prop.field.fieldOptions.searchable = prop.field.fieldOptions.searchable || true;
             }
             const field = {
               type: (prop.field && prop.field.type) || this.getFormtype(prop),
@@ -971,9 +1007,14 @@ export default {
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
                 url: relationUrl,
-                trackBy: prop.foreignKey || 'code',
-                label: 'label',
-                step: prop.field && prop.field.step
+                trackBy: relationKey || 'id',
+                label: relationLabel,
+                step: prop.field && prop.field.step,
+                relation: prop.relation,
+                foreignKey: relationKey,
+                relationKey,
+                relationLabel,
+                relationUrl
               },
               values:
                 prop.enum ||
@@ -994,7 +1035,9 @@ export default {
               disabled: this.viewMode === 'view' || (prop.field && prop.field.readonly),
               styleClasses: (prop.field && prop.field.styleClasses) || (size < 8 ? 'col-md-12' : 'col-md-6'),
               relation: prop.relation,
-              foreignKey: prop.foreignKey,
+              foreignKey: relationKey,
+              relationKey,
+              relationLabel,
               group: prop.field && prop.field.group
             };
             if (!field.fieldOptions.inputType) {
@@ -1070,6 +1113,10 @@ export default {
       if (property.enum) {
         return 'select';
       }
+
+      if (property.relation || property.relationUrl) {
+        return 'VueSelect';
+      }
       switch (type) {
         case 'string':
           return 'input';
@@ -1081,6 +1128,7 @@ export default {
           return 'input';
       }
     },
+
     getSelectEnum(val) {
       const options =
         _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
@@ -1331,6 +1379,7 @@ export default {
     },
 
     deleteFunction(item) {
+      this.selectedItem = item;
       Swal.fire({
         title: this.$t('common.messages.are_you_sure'),
         text: this.$t('common.messages.wont_be_able_recover'),
@@ -1341,25 +1390,27 @@ export default {
         confirmButtonText: this.$t('common.buttons.yes_delete_it'),
         cancelButtonText: this.$t('common.buttons.cancel'),
         reverseButtons: true
-      }).then((result) => {
-        if (result.value) {
-          this.$http
-            .delete(`${this._selectedItemUrl}`)
-            .then(() => {
-              this.tableNeedsRefresh = true;
-              this.statsNeedsRefresh = true;
-              this.nestedCrudNeedsRefresh = true;
-              this.$forceUpdate();
-            })
-            .catch((err) => {
-              // eslint-disable-next-line
-              console.error(err);
-            })
-            .finally(() => {
-              this.isRefreshing = false;
-            });
-        }
-      });
+      })
+        .then((result) => {
+          if (result.value) {
+            this.$http
+              .delete(`${this._selectedItemUrl}`)
+              .then(() => {
+                this.tableNeedsRefresh = true;
+                this.statsNeedsRefresh = true;
+                this.nestedCrudNeedsRefresh = true;
+                this.$forceUpdate();
+              })
+              .catch((err) => {
+                // eslint-disable-next-line
+                console.error(err);
+              })
+              .finally(() => {
+                this.isRefreshing = false;
+              });
+          }
+        })
+        .finally(() => (this.selectedItem = null));
     },
 
     createFunction(options = { reset: true }) {
@@ -1397,13 +1448,11 @@ export default {
           newCol.enum = (prop.column && prop.column.enum) || prop.enum;
           newCol.sortable = prop.column && prop.column.sortable !== undefined ? prop.column.sortable : true;
           newCol = { ...newCol, ...prop.column };
-          if (prop.relation) {
-            console.warn('parsed source', prop);
-            newCol.relation = prop.relation;
-            newCol.foreignKey = prop.foreignKey;
-            newCol.relationUrl = this.getRelationUrl(prop);
-            newCol.relationLabel = prop.relationLabel;
-          }
+          newCol.relation = prop.relation;
+          newCol.relationKey = this.getRelationKey(prop);
+          newCol.relationUrl = this.getRelationUrl(prop);
+          newCol.relationLabel = this.getRelationLabel(prop);
+
           newcolumns.push(newCol);
         }
       });
@@ -1417,6 +1466,26 @@ export default {
         });
       }
       return newcolumns;
+    },
+
+    confirm(message) {
+      return new Promise((resolve, reject) => {
+        Swal.fire({
+          title: this.$t('common.messages.are_you_sure'),
+          text: message,
+          type: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: this.$t('common.buttons.yes'),
+          cancelButtonText: this.$t('common.buttons.cancel'),
+          reverseButtons: true
+        })
+          .then((result) => {
+            resolve(result.value);
+          })
+          .catch(reject);
+      });
     }
   }
 };

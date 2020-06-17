@@ -746,18 +746,23 @@ export default {
         return this.displayLabelCache[url];
       }
 
-      this.displayLabelCache[url] = this.$http.get(url).then((res) => {
-        const data =
-          this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
-        this.totalCount = res.data.totalCount;
-        const result = `${_.get(data, props.foreignKey)} - ${_.get(data, props.relationLabel)}`;
+      const promise = this.$http
+        .get(url)
+        .then((res) => {
+          const data =
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
+          this.totalCount = res.data.totalCount;
+          const result = `${_.get(data, props.relationKey)} - ${_.get(data, props.relationLabel, '')}`;
 
-        if (result) {
-          this.$set(this.displayLabelCache, url, result);
-        }
-        return result;
-      });
-
+          if (result) {
+            this.$set(this.displayLabelCache, url, result);
+          }
+          return result;
+        })
+        .catch(() => {
+          this.$set(this.displayLabelCache, url, value);
+        });
+      this.$set(this.displayLabelCache, url, promise);
       return this.displayLabelCache[url];
     },
 

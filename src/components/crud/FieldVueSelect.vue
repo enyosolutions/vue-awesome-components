@@ -25,15 +25,16 @@
     <v-select
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
-      :label="fieldOptions.label || 'label'"
+      :label="_label"
       :filterable="!dataUrl"
-      :options="computedOptions"
+      :options="apiOptions"
       :disabled="disabled"
       :required="required"
-      :reduce="(item) => get(item, _trackBy)"
-      @search="searchDebounced"
+      @search="onSearch"
       :value="model[schema.model]"
       @input="updateSelected"
+      :reduce="reduce"
+      :getOptionLabel="formatLabel"
     ></v-select>
   </div>
 </template>
@@ -45,6 +46,7 @@ import vSelect from 'vue-select';
 import _ from 'lodash';
 
 export default {
+  name: 'FieldVueSelect',
   components: { vSelect },
   mixins: [selectMixin, VueFormGenerator.abstractField],
   props: [], // 'schema', 'disabled', 'value' are in the abstract field
@@ -54,7 +56,7 @@ export default {
   },
   data() {
     return {
-      isDataReady: false,
+      isDataReady: false
     };
   },
   computed: {
@@ -64,10 +66,7 @@ export default {
     // we need to override the mixin definition
     internalOptions() {
       return (
-        this.apiOptions ||
-        this.schema.fieldOptions.values ||
-        this.schema.fieldOptions.options ||
-        this.schema.values
+        this.apiOptions || this.schema.fieldOptions.values || this.schema.fieldOptions.options || this.schema.values
       );
     },
     customLabel() {
@@ -91,9 +90,15 @@ export default {
       return (
         this.$props.trackBy ||
         this.fieldOptions.trackBy ||
+        this.fieldOptions.relationKey ||
+        this.schema.relationKey ||
         this.schema.foreignKey
       );
     },
+
+    _label() {
+      return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || 'label';
+    }
   },
   watch: {
     vModelValue(newValue, oldValue) {
@@ -103,22 +108,15 @@ export default {
     },
 
     value(newValue, oldValue) {
-      console.log(
-        '',
-        'INCOMING VALUE REQUESTED IN FIELD SELECT',
-        newValue,
-        oldValue
-      );
       if (newValue != oldValue) {
         this.setIncomingValue(newValue, oldValue);
       } else {
         console.warn('[WARN] ITS THE SAME INCOMING VALUE', newValue, oldValue);
       }
-    },
+    }
   },
   created() {
     this.apiRequestDebounced = _.debounce((value) => {
-      console.log('', 'DEBOUNCED', this);
       return this.loadRemoteEntities(value);
     }, 2000);
   },
@@ -138,26 +136,14 @@ export default {
         return;
       }
 
-      console.log(
-        '',
-        'INCOMING VALUE REQUESTED IN setIncomingValue SELECT',
-        value,
-        oldValue
-      );
-      if (
-        this.dataUrl &&
-        (!this.internalOptions || this.internalOptions.length < 1) &&
-        !loop
-      ) {
-        console.log('', "list is empty i'm going to search more options");
+      if (this.dataUrl && (!this.internalOptions || this.internalOptions.length < 1) && !loop) {
         await this.apiRequestDebounced(value);
       }
       if (Array.isArray(value)) {
         this.internalValue =
           this.internalOptions &&
           this.internalOptions.filter((option) => {
-            const searchKey =
-              typeof option === 'string' ? option : option[this._trackBy];
+            const searchKey = typeof option === 'string' ? option : option[this._trackBy];
             return value.indexOf(searchKey) > -1;
           });
         return;
@@ -165,18 +151,13 @@ export default {
       this.internalValue =
         this.internalOptions &&
         this.internalOptions.find((option) => {
-          const searchKey =
-            typeof option === 'string' ? option : option[this._trackBy];
+          const searchKey = typeof option === 'string' ? option : option[this._trackBy];
           return searchKey == value;
         });
 
-      console.log('incoming value ', value, this.dataUrl, this.internalValue);
-
       if (!this.internalValue && this.dataUrl && !loop) {
-        console.log('[fieldES]', 'remote load', value);
         const ok = await this.apiRequestDebounced(value);
         if (ok) {
-          console.log('', 'take 2', value, this.internalOptions.length);
           this.setIncomingValue(value, null, true);
         }
       }
@@ -188,9 +169,7 @@ export default {
         this.$emit('input', value);
         this.value = value;
       } else if (Array.isArray(value)) {
-        const valueArray = value.map((item) =>
-          this._trackBy && item[this._trackBy] ? item[this._trackBy] : item
-        );
+        const valueArray = value.map((item) => (this._trackBy && item[this._trackBy] ? item[this._trackBy] : item));
         this.$emit('input', valueArray);
         this.value = valueArray;
       } else {
@@ -204,15 +183,13 @@ export default {
       this.search(loading, search, this);
     },
     search(loading, search, vm) {
-      console.log('PRELOADING ...');
-      this.isDataReady = false;
       this.$http
         .get(this.dataUrl, {
-          params: { ...this.fieldOptions.queryParams, search },
+          params: { ...this.fieldOptions.queryParams, search }
         })
         .then((res) => {
-          console.log('api result', res.data);
           this.apiOptions = res.data.body;
+          this.$forceUpdate();
         })
         .finally(() => {
           loading(false);
@@ -221,18 +198,25 @@ export default {
     },
 
     searchDebounced: _.debounce((loading, search, vm) => {
-      console.log('PRELOADING searchDebounced...');
       vm.$http
         .get(this.dataUrl, {
-          params: { ...vm.fieldOptions.queryParams, search },
+          params: { ...vm.fieldOptions.queryParams, search }
         })
         .then((res) => {
-          console.log('api result', res.data);
           vm.apiOptions = res.data.body;
+          this.$forceUpdate();
         })
         .finally(() => loading(false));
     }, 150),
-  },
+
+    formatLabel(item) {
+      return `${item[this._trackBy]} - ${this.get(item, this._label, '')}`;
+    },
+
+    reduce(item) {
+      return this.get(item, this._trackBy);
+    }
+  }
 };
 </script>
 
