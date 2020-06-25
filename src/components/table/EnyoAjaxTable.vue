@@ -588,10 +588,14 @@ export default {
 
         if (col.enum) {
           filterDropdownItems = col.enum;
-          filterDropdownItems = filterDropdownItems.map((e) => ({
-            value: e,
-            text: _.startCase(e)
-          }));
+          filterDropdownItems = filterDropdownItems.map((e) =>
+            _.isObject(e)
+              ? e
+              : {
+                  value: e,
+                  text: _.startCase(e)
+                }
+          );
         }
 
         col.filterOptions = {

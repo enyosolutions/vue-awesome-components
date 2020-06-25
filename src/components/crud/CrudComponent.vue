@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-          <h1 class="text-primary" v-if="title !== false">
+          <h2 class="text-primary mt-0" v-if="title !== false">
             <template v-if="_title !== undefined && _title !== null">
               {{ _title }}
               <i v-if="isRefreshing" class="fa fa-circle-o-notch fa-spin fa-fw" style="color:orange;margin-left:10px" />
@@ -12,7 +12,7 @@
               {{ $t('common.labels.manageTitle') }} {{ _namePlural }}
               <i v-if="isRefreshing" class="fa fa-circle-o-notch fa-spin fa-fw" style="color:orange;margin-left:10px" />
             </template>
-          </h1>
+          </h2>
           <div v-if="innerOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -47,8 +47,8 @@
                 </button>
               </template>
               <button
-                v-if="innerOptions.actions && innerOptions.actions.create"
-                class="btn btn-primary btn-simple"
+                v-if="innerOptions.actions && innerOptions.actions.create && !_isNestedDetail && !_isNestedCreate"
+                class="btn btn-secondary btn-simple"
                 @click="createFunction()"
                 type="button"
               >
@@ -56,9 +56,10 @@
                 {{ $t('common.labels.createNew') }} {{ _name }}
               </button>
             </slot>
+          </div>
 
-            <div class="crudcomponent-detail-section">
-              <!-- <upload-button
+          <div class="crudcomponent-detail-section">
+            <!-- <upload-button
               name="pictureUpload"
               :options="{ upload:true, targetUrl: '/picture/banner', method: 'POST', headers:{}, base64: true, label: 'Upload', class: 'btn btn-success' }"
               @base64='callbackFunctionForBAse64'
@@ -66,222 +67,221 @@
               >
             </upload-button>-->
 
-              <!-- START OF  MODAL -->
+            <!-- START OF  MODAL -->
+            <div
+              :id="modelName + 'formModal'"
+              :class="{
+                modal: !_isNested,
+                slide: innerOptions.modalMode === 'slide' || innerOptions.modalMode === 'fullpage',
+                fade: innerOptions.modalMode === 'fade'
+              }"
+              tabindex="-1"
+              role="dialog"
+            >
               <div
-                :id="modelName + 'formModal'"
                 :class="{
-                  modal: !_isNested,
-                  slide: innerOptions.modalMode === 'slide',
-                  fade: innerOptions.modalMode === 'fade'
+                  'modal-dialog': !_isNested,
+                  'modal-nested': _isNested,
+                  'modal-full-height': _isNested || innerOptions.modalMode === 'slide',
+                  'modal-lg': innerOptions.modalMode === 'fade' && !_isNested,
+                  'modal-full': innerOptions.modalMode === 'fullpage'
                 }"
-                tabindex="-1"
-                role="dialog"
+                role="document"
               >
-                <div
-                  :class="{
-                    'modal-dialog': !_isNested,
-                    'modal-nested': _isNested,
-                    'modal-full-height': _isNested || innerOptions.modalMode === 'slide',
-                    'modal-lg': innerOptions.modalMode === 'fade'
-                  }"
-                  role="document"
-                >
-                  <!--  CREATE -->
-                  <div v-if="viewMode === 'create'" class="modal-content">
-                    <form @submit.prevent="createItem()">
-                      <div
-                        class="modal-header"
-                        :class="{
-                          'bg-primary text-white': !_isNestedDetail,
-                          'bg-secondary': _isNestedDetail
-                        }"
+                <!--  CREATE -->
+                <div v-if="viewMode === 'create'" class="modal-content">
+                  <form @submit.prevent="createItem()">
+                    <div
+                      class="modal-header"
+                      :class="{
+                        'bg-primary text-white': !_isNestedDetail,
+                        'bg-secondary': _isNestedDetail
+                      }"
+                    >
+                      <h4 class="modal-title mt-0">{{ $t('common.labels.add_a') }} {{ title }}</h4>
+                      <button
+                        v-if="!_noFormActions"
+                        type="button"
+                        class="close"
+                        aria-label="Close"
+                        @click="closeModal()"
                       >
-                        <h4 class="modal-title mt-0">{{ $t('common.labels.add_a') }} {{ title }}</h4>
-                        <button
-                          v-if="!_noFormActions"
-                          type="button"
-                          class="close"
-                          aria-label="Close"
-                          @click="closeModal()"
-                        >
-                          <span aria-hidden="true" class="text-white">&times;</span>
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                      </button>
+                    </div>
+                    <div
+                      class="create-mode"
+                      :class="{
+                        'modal-body': !_isNestedCreate,
+                        'modal-body-nested': _isNestedCreate
+                      }"
+                    >
+                      <slot name="create-form" :selectedItem="selectedItem">
+                        <template v-if="formSchema && formSchema.fields">
+                          <VueFormGenerator
+                            ref="form"
+                            :schema.sync="formSchema"
+                            :model="selectedItem"
+                            :options="formOptions"
+                          />
+                        </template>
+                      </slot>
+                    </div>
+                    <div class="modal-footer" v-if="!_noFormActions">
+                      <slot name="add-modal-footer">
+                        <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
+                          {{ $t('common.buttons.cancel') }}
                         </button>
-                      </div>
-                      <div
-                        :class="{
-                          'modal-body': !_isNestedDetail
-                        }"
+                        <button type="submit" class="btn btn-primary ml-auto">
+                          {{ $t('common.buttons.save') }}
+                        </button>
+                      </slot>
+                    </div>
+                  </form>
+                </div>
+                <!--  EDITS -->
+                <div v-if="viewMode === 'edit' || viewMode === 'view'" class="modal-content">
+                  <form @submit.prevent="editItem()">
+                    <div
+                      class="modal-header"
+                      :class="{
+                        'bg-primary text-white': !_isNestedDetail,
+                        'bg-secondary': _isNestedDetail
+                      }"
+                    >
+                      <h4 v-if="viewMode === 'edit'" class="modal-title mt-0">
+                        {{ $t('common.buttons.edit') }}: {{ _name }}
+                        {{ selectedItem[primaryKey] }}
+                      </h4>
+                      <h4 v-if="viewMode === 'view'" class="modal-title mt-0">
+                        {{ $t('common.buttons.view') }}: {{ _name }}
+                        {{ selectedItem[primaryKey] }}
+                      </h4>
+                      <button
+                        v-if="!_noFormActions"
+                        type="button"
+                        class="close"
+                        aria-label="Close"
+                        @click="closeModal()"
                       >
-                        <slot name="create-form" :selectedItem="selectedItem">
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                      </button>
+                    </div>
+                    <div
+                      :class="{
+                        'modal-body': !_isNestedDetail,
+                        'modal-body-nested': _isNestedDetail,
+                        'view-mode': viewMode === 'view'
+                      }"
+                    >
+                      <ul v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'" class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                          <a
+                            class="nav-link"
+                            data-toggle="tab"
+                            :class="{
+                              active: activeNestedTab === 'general'
+                            }"
+                            @click="activeNestedTab = 'general'"
+                            >{{ _name }}</a
+                          >
+                        </li>
+                        <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
+                          <a
+                            class="nav-link"
+                            data-toggle="tab"
+                            :class="{
+                              'active show': activeNestedTab === ns.modelName
+                            }"
+                            @click="activeNestedTab = ns.modelName"
+                          >
+                            <i v-if="ns.icon" :class="ns.icon" />
+                            {{ $t(ns.title || ns.name || ns.modelName) }}
+                          </a>
+                        </li>
+                      </ul>
+                      <slot name="edit-form" :selectedItem="selectedItem">
+                        <div class="tab-content">
                           <template v-if="formSchema && formSchema.fields">
-                            <VueFormGenerator
-                              ref="form"
-                              :schema.sync="formSchema"
-                              :model="selectedItem"
-                              :options="formOptions"
-                            />
-                          </template>
-                        </slot>
-                      </div>
-                      <div class="modal-footer" v-if="!_noFormActions">
-                        <slot name="add-modal-footer">
-                          <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
-                            {{ $t('common.buttons.cancel') }}
-                          </button>
-                          <button type="submit" class="btn btn-primary ml-auto">
-                            {{ $t('common.buttons.save') }}
-                          </button>
-                        </slot>
-                      </div>
-                    </form>
-                  </div>
-                  <!--  EDITS -->
-                  <div v-if="viewMode === 'edit' || viewMode === 'view'" class="modal-content">
-                    <form @submit.prevent="editItem()">
-                      <div
-                        class="modal-header"
-                        :class="{
-                          'bg-primary text-white': !_isNestedDetail,
-                          'bg-secondary': _isNestedDetail
-                        }"
-                      >
-                        <h4 v-if="viewMode === 'edit'" class="modal-title mt-0">
-                          {{ $t('common.buttons.edit') }}: {{ _name }}
-                          {{ selectedItem[primaryKey] }}
-                        </h4>
-                        <h4 v-if="viewMode === 'view'" class="modal-title mt-0">
-                          {{ $t('common.buttons.view') }}: {{ _name }}
-                          {{ selectedItem[primaryKey] }}
-                        </h4>
-                        <button
-                          v-if="!_noFormActions"
-                          type="button"
-                          class="close"
-                          aria-label="Close"
-                          @click="closeModal()"
-                        >
-                          <span aria-hidden="true" class="text-white">&times;</span>
-                        </button>
-                      </div>
-                      <div
-                        :class="{
-                          'modal-body': !_isNestedDetail,
-                          'view-mode': viewMode === 'view'
-                        }"
-                      >
-                        <ul
-                          v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view'"
-                          class="nav nav-tabs mt-5 mb-4"
-                        >
-                          <li class="nav-item">
-                            <a
-                              class="nav-link"
-                              data-toggle="tab"
+                            <div
+                              class="tab-pane nested-tab fade"
                               :class="{
-                                active: activeNestedTab === 'general'
+                                'active show': activeNestedTab === 'general'
                               }"
-                              @click="activeNestedTab = 'general'"
-                              >{{ _name }}</a
                             >
-                          </li>
-                          <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
-                            <a
-                              class="nav-link"
-                              data-toggle="tab"
+                              <VueFormGenerator
+                                :schema.sync="formSchema"
+                                :model="selectedItem"
+                                :options="formOptions"
+                              />
+                            </div>
+                          </template>
+                          <template v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem">
+                            <div
+                              v-for="ns in nestedSchemas"
+                              :key="ns.$id"
+                              class="tab-pane nested-tab fade"
                               :class="{
                                 'active show': activeNestedTab === ns.modelName
                               }"
-                              @click="activeNestedTab = ns.modelName"
                             >
-                              <i v-if="ns.icon" :class="ns.icon" />
-                              {{ $t(ns.title || ns.name || ns.modelName) }}
-                            </a>
-                          </li>
-                        </ul>
-                        <slot name="edit-form" :selectedItem="selectedItem">
-                          <div class="tab-content">
-                            <template v-if="formSchema && formSchema.fields">
-                              <div
-                                class="tab-pane nested-tab fade"
-                                :class="{
-                                  'active show': activeNestedTab === 'general'
-                                }"
+                              <crud-component
+                                v-if="activeNestedTab === ns.modelName"
+                                v-bind="ns"
+                                :parent="selectedItem"
+                                :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                               >
-                                <VueFormGenerator
-                                  :schema.sync="formSchema"
-                                  :model="selectedItem"
-                                  :options="formOptions"
-                                />
-                              </div>
-                            </template>
-                            <template
-                              v-if="nestedSchemas && nestedSchemas.length && viewMode === 'view' && selectedItem"
-                            >
-                              <div
-                                v-for="ns in nestedSchemas"
-                                :key="ns.$id"
-                                class="tab-pane nested-tab fade"
-                                :class="{
-                                  'active show': activeNestedTab === ns.modelName
-                                }"
-                              >
-                                <crud-component
-                                  v-if="activeNestedTab === ns.modelName"
-                                  v-bind="ns"
-                                  :parent="selectedItem"
-                                  :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-                                >
-                                  <div slot="crud-title" />
-                                </crud-component>
-                              </div>
-                            </template>
-                          </div>
-                        </slot>
-                      </div>
-                      <div class="modal-footer" v-if="!_noFormActions">
-                        <slot name="edit-modal-footer">
-                          <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
-                            {{ $t('common.buttons.cancel') }}
-                          </button>
-                          <button v-if="viewMode === 'edit'" type="submit" class="btn btn-primary ml-auto">
-                            {{ $t('common.buttons.save') }}
-                          </button>
-                          <button
-                            v-if="
-                              viewMode === 'view' &&
-                                innerOptions.actions &&
-                                innerOptions.actions.edit &&
-                                !innerOptions.noActions
-                            "
-                            type="button"
-                            class="btn btn-info btn-simple ml-auto"
-                            @click.prevent.stop="goToEditPage(selectedItem)"
-                          >
-                            <i class="fa fa-pencil" />
-                            {{ $t('common.buttons.edit') }}
-                          </button>
-                          <button
-                            v-if="viewMode === 'view'"
-                            type="button"
-                            class="btn btn-primary ml-2"
-                            @click="closeModal()"
-                          >
-                            {{ $t('common.buttons.close') }}
-                          </button>
-                        </slot>
-                      </div>
-                    </form>
-                  </div>
+                                <div slot="crud-title" />
+                              </crud-component>
+                            </div>
+                          </template>
+                        </div>
+                      </slot>
+                    </div>
+                    <div class="modal-footer" v-if="!_noFormActions">
+                      <slot name="edit-modal-footer">
+                        <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
+                          {{ $t('common.buttons.cancel') }}
+                        </button>
+                        <button v-if="viewMode === 'edit'" type="submit" class="btn btn-primary ml-auto">
+                          {{ $t('common.buttons.save') }}
+                        </button>
+                        <button
+                          v-if="
+                            viewMode === 'view' &&
+                              innerOptions.actions &&
+                              innerOptions.actions.edit &&
+                              !innerOptions.noActions
+                          "
+                          type="button"
+                          class="btn btn-info btn-simple ml-auto"
+                          @click.prevent.stop="goToEditPage(selectedItem)"
+                        >
+                          <i class="fa fa-pencil" />
+                          {{ $t('common.buttons.edit') }}
+                        </button>
+                        <button
+                          v-if="viewMode === 'view'"
+                          type="button"
+                          class="btn btn-primary ml-2"
+                          @click="closeModal()"
+                        >
+                          {{ $t('common.buttons.close') }}
+                        </button>
+                      </slot>
+                    </div>
+                  </form>
                 </div>
-                <!-- // .modal-content -->
-                <!-- // .modal-content -->
               </div>
+              <!-- // .modal-content -->
+              <!-- // .modal-content -->
             </div>
           </div>
+
           <!-- END OF create MODAL -->
           <div class="awesome-table">
             <EnyoAjaxTable
-              v-if="!_isNestedDetail"
+              v-if="!_isNestedDetail && !_isNestedCreate"
               :columns="innerOptions.columns"
               :columns-displayed="innerOptions.columnsDisplayed"
               :entity="modelName"
@@ -361,9 +361,10 @@ const defaultOptions = {
   viewPath: null,
   editPath: null,
   queryParams: {},
+  bodyParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  modalMode: 'slide', // fade | slide | full
+  modalMode: 'slide', // fade | slide | fullpage
   columnsDisplayed: 8,
   customInlineActions: [],
   customTopActions: [],
@@ -546,7 +547,7 @@ export default {
       $modal: null,
       parentPath: '',
       selectedItem: {},
-      viewMode: 'view',
+      viewMode: 'list',
       isRefreshing: false,
       tableNeedsRefresh: false,
       statsNeedsRefresh: false,
@@ -575,32 +576,28 @@ export default {
       if (this.innerModel && this.innerModel.singularName) {
         return this.$te(this.innerModel.singularName)
           ? this.$t(this.innerModel.singularName)
-          : _.upperFirst(this.innerModel.singularName);
+          : this.innerModel.singularName;
       }
 
       if (this.innerModel && this.innerModel.name) {
-        return this.$te(this.innerModel.name) ? this.$t(this.innerModel.name) : _.upperFirst(this.innerModel.name);
+        return this.$te(this.innerModel.name) ? this.$t(this.innerModel.name) : this.innerModel.name;
       }
 
       if (this.modelName) {
-        return this.$te(`app.labels.${this.modelName}`)
-          ? this.$t(`app.labels.${this.modelName}`)
-          : _.upperFirst(this.modelName);
+        return this.$te(`app.labels.${this.modelName}`) ? this.$t(`app.labels.${this.modelName}`) : this.modelName;
       }
       return this._title;
     },
 
     _namePlural() {
       if (this.innerModel && this.innerModel.pluralName) {
-        return this.$te(this.innerModel.pluralName)
-          ? this.$t(this.innerModel.pluralName)
-          : _.upperFirst(this.innerModel.pluralName);
+        return this.$te(this.innerModel.pluralName) ? this.$t(this.innerModel.pluralName) : this.innerModel.pluralName;
       }
 
       if (this.modelName) {
         return this.$te(`app.labels.${this.modelName}s`)
           ? this.$t(`app.labels.${this.modelName}s`)
-          : _.upperFirst(this.modelName + 's');
+          : this.modelName + 's';
       }
       return '';
     },
@@ -623,6 +620,21 @@ export default {
       return url;
     },
 
+    _bodyParams() {
+      const body =
+        this.bodyParams ||
+        (this.options && this.options.bodyParams) ||
+        (this.innerOptions && this.innerOptions.bodyParams);
+      if (typeof body === 'function') {
+        return body({
+          parent: this.parent,
+          context: this,
+          currentItem: this.selectedItem,
+          items: this.items
+        });
+      }
+      return body;
+    },
     _selectedItemUrl() {
       let url;
       if (this._url.indexOf('?') > -1) {
@@ -645,6 +657,10 @@ export default {
           this.nestedDisplayMode === 'view' ||
           this.nestedDisplayMode === 'edit')
       );
+    },
+
+    _isNestedCreate() {
+      return this._isNested && (this.selectedItem && this.viewMode === 'create');
     },
 
     _noFormActions() {
@@ -1233,6 +1249,7 @@ export default {
         this.$modal.removeClass('show');
       }
       this.selectedItem = {};
+      this.viewMode = 'list';
     },
 
     goToEditPage(item) {
@@ -1271,7 +1288,7 @@ export default {
         console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       return this.$http
-        .post(this._url, this.selectedItem)
+        .post(this._url, _.merge(this.selectedItem, this._bodyParams))
         .then(() => {
           Swal.fire({
             title: this.$t('common.messages.successfullyCreated', {
@@ -1309,7 +1326,7 @@ export default {
       }
 
       this.$http
-        .put(`${this._selectedItemUrl}`, this.selectedItem)
+        .put(`${this._selectedItemUrl}`, _.merge(this.selectedItem, this._bodyParams))
         .then(() => {
           Swal.fire({
             title: this.$t('common.messages.successfullyModified', {
