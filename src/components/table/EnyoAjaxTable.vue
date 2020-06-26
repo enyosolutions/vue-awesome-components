@@ -104,6 +104,7 @@
         <vue-good-table
           :mode="mode"
           :total-rows="totalCount"
+          :total-records="totalCount"
           style-class="vgt-table table striped"
           :columns="displayedColumns"
           :fixed-header="opts && opts.fixedHeader"
@@ -124,7 +125,8 @@
             ofLabel: this.$t('EnyoAjaxTable.of'),
             pageLabel: this.$t('EnyoAjaxTable.page'),
             allLabel: this.$t('EnyoAjaxTable.all'),
-            perPage: perPage
+            perPage: perPage,
+            mode: 'pages'
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
