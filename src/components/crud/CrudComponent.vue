@@ -384,7 +384,7 @@ const defaultOptions = {
     delete: true,
     export: false,
     import: false,
-    dateFilter: true,
+    dateFilter: false,
     refresh: true
   }
 };
@@ -708,6 +708,9 @@ export default {
   },
   mounted() {
     this.$modal = $(`#${this.modelName}formModal`);
+    if (this.$modal && this.$modal.modal) {
+      this.$modal.modal();
+    }
     this.loadModel();
     if (!this.$route) {
       return;
@@ -898,11 +901,6 @@ export default {
         return prop.relationLabel;
       } else {
         const model = this.getModelFromStore(prop.relation);
-        if (!model.titleField) {
-          console.error('prop', prop, 'is missing titleFiled', model.titleField);
-        } else {
-          console.error('prop', prop, 'has titleFiled', model.titleField);
-        }
         return model ? model.titleField || 'label' : 'label';
       }
     },
@@ -1226,11 +1224,12 @@ export default {
     openModal() {
       if (!this.$modal) {
         this.$modal = $(`#${this.modelName}formModal`);
+        if (this.$modal && this.$modal.modal) {
+          this.$modal.modal();
+        }
       }
       if (this.$modal.modal) {
         this.$modal.modal('show');
-      } else if (this.innerOptions.modalMode == 'slide') {
-        this.$modal.addClass('show');
       } else {
         this.$modal.addClass('show');
       }
@@ -1290,7 +1289,7 @@ export default {
       return this.$http
         .post(this._url, _.merge(this.selectedItem, this._bodyParams))
         .then(() => {
-          Swal.fire({
+          this.$notify({
             title: this.$t('common.messages.successfullyCreated', {
               title: this.type
             }),
@@ -1328,7 +1327,7 @@ export default {
       this.$http
         .put(`${this._selectedItemUrl}`, _.merge(this.selectedItem, this._bodyParams))
         .then(() => {
-          Swal.fire({
+          this.$notify({
             title: this.$t('common.messages.successfullyModified', {
               title: this.type
             }),

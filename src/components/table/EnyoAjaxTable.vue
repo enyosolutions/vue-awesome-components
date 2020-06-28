@@ -4,6 +4,28 @@
       class="card-header"
       :class="'ajax-table-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
     >
+      <div v-if="isRefreshing" style="text-align: center">
+        <div
+          class="progress"
+          style="
+    height: 5px;
+    border-radius: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%
+"
+        >
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            aria-valuenow="100"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style="width: 5%"
+          ></div>
+        </div>
+      </div>
       <h4 class="card-title ajax-table-header">
         <slot name="table-title">
           {{ _tableTitle }}
@@ -39,9 +61,7 @@
               </button>
             </div>
           </div>
-          <div v-if="isRefreshing" style="text-align: center">
-            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color:orange;margin-left:10px" />
-          </div>
+
           <button
             v-if="opts.actions.filter"
             type="button"
@@ -103,8 +123,8 @@
       <div class="table-responsive">
         <vue-good-table
           :mode="mode"
-          :total-rows="totalCount"
-          :total-records="totalCount"
+          :totalRows="totalCount"
+          :totalRecords="totalCount"
           style-class="vgt-table table striped"
           :columns="displayedColumns"
           :fixed-header="opts && opts.fixedHeader"
@@ -436,7 +456,7 @@ export default {
           delete: true,
           export: false,
           import: false,
-          dateFilter: true,
+          dateFilter: false,
           refresh: true
         }
       })
@@ -757,7 +777,9 @@ export default {
         .then((res) => {
           const data =
             this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
-          this.totalCount = res.data.totalCount;
+          if (res.data.totalCount) {
+            this.totalCount = res.data.totalCount;
+          }
           const result = `${_.get(data, props.relationKey)} - ${_.get(data, props.relationLabel, '')}`;
 
           if (result) {
@@ -792,7 +814,7 @@ export default {
           this.data =
             this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
           this.totalCount = res.data.totalCount;
-          if (this.options.SearchDatas && this.mode === 'remote') {
+          if (this.options.saveSearchDatas && this.mode === 'remote') {
             this.$emit('crud-list-updated', this.data);
           }
           this.$emit('dataChanged', this.data);

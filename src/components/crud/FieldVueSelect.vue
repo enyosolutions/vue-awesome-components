@@ -52,7 +52,7 @@ export default {
   props: [], // 'schema', 'disabled', 'value' are in the abstract field
   mounted() {
     console.log('mounted');
-    this.onSearch('', () => null);
+    this.onSearch(this.model[this.schema.model] || '', () => null);
   },
   data() {
     return {

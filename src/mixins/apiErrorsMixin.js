@@ -12,34 +12,48 @@ export default {
                 return;
             }
 
-            let message;
-            if (this.$te(`common.messages.${this.parseErrorResponse(err.response || err.data || err)}`)) {
-                message = this.$t(`common.messages.${this.parseErrorResponse(err.response)}`);
+            const message = this.parseErrorResponse(err.response || err.data || err);
+
+            if (Array.isArray(message)) {
+                message.forEach((m) => {
+                    this.$notify({
+                        title: m,
+                        type: 'warning'
+                    });
+                })
             } else {
-                message = this.parseErrorResponse(err.response || err.data || err);
+                this.$notify({
+                    title: message,
+                    type: 'warning'
+                });
             }
-            this.$notify({
-                title: message,
-                type: 'warning'
-            });
+
         },
+
         parseErrorResponse(err) {
             if (!err) {
                 return '';
             }
+            let messages = [];
             if (err.data) {
                 if (err.data.message) {
-                    return err.data.message;
+                    const m = this.getTranslatedMessage(err.data.message);
+                    messages.push(m);
                 }
-                if (err.data.errors) {
-                    if (err.data.errors[0] && err.data.errors[0].message) {
-                        return err.data.errors[0].message;
-                    }
-                    return JSON.stringify(err.data.errors);
+
+                if (err.data.errors && Array.isArray(err.data.errors)) {
+                    messages = messages.concat(err.data.errors.map(this.getTranslatedMessage));
+                }
+                if (messages.length) {
+                    return messages;
                 }
                 return err.data instanceof String ? err.data : JSON.stringify(err.data);
             }
             return `Error status: ${err.status}`;
+        },
+
+        getTranslatedMessage(message) {
+            return this.$te(`common.messages.${message}`) ? this.$t(`common.messages.${message}`) : message;
         }
     }
 };
