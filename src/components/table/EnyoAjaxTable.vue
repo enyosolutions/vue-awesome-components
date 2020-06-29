@@ -761,7 +761,7 @@ export default {
     },
 
     /**
-     * @description get the label of the field from the api
+     * @description get the label of the field from the api or from the local cache.
      */
     getDisplayLabel(value, props) {
       const url = `${props.relationUrl}/${value}`;
@@ -771,7 +771,6 @@ export default {
       if (props.relationUrl && value && this.displayLabelCache[url]) {
         return this.displayLabelCache[url];
       }
-
       const promise = this.$http
         .get(url)
         .then((res) => {

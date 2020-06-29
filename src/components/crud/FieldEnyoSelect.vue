@@ -66,7 +66,6 @@ export default {
   },
   watch: {
     vModelValue(newValue, oldValue) {
-      console.log('', "INCOMING vModelValue REQUESTED IN FIELD SELECT", newValue, oldValue);
       if (newValue != oldValue) {
         this.setIncomingValue(newValue, oldValue);
       }
@@ -76,7 +75,6 @@ export default {
     },
 
     value(newValue, oldValue) {
-    console.log('', "INCOMING VALUE REQUESTED IN FIELD SELECT", newValue, oldValue);
       if (newValue != oldValue) {
         this.setIncomingValue(newValue, oldValue);
       }
@@ -87,7 +85,6 @@ export default {
   },
   created() {
       this.apiRequestDebounced =  _.debounce((value) => {
-      console.log('', "DEBOUNCED", this);
       return this.loadRemoteEntities(value);
         }, 2000);
   },
@@ -110,9 +107,7 @@ export default {
         console.warn('[WARN] ', 'NEW VALUE => setIncomingValue', oldValue, loop);
       }
 
-       console.log('', "INCOMING VALUE REQUESTED IN setIncomingValue SELECT", value, oldValue);
       if (this.dataUrl && (!this.internalOptions || this.internalOptions.length < 1) && !loop) {
-        console.log('', "list is empty i'm going to search more options");
         await this.apiRequestDebounced(value);
       }
       if (Array.isArray(value)) {
@@ -127,13 +122,10 @@ export default {
         return searchKey == value;
       });
 
-      console.log('incoming value ', value, this.dataUrl,  this.internalValue);
 
       if (!this.internalValue && this.dataUrl && !loop) {
-        console.log('[fieldES]', "remote load", value);
         const ok = await this.apiRequestDebounced(value);
         if (ok) {
-          console.log('', "take 2", value, this.internalOptions.length);
           this.setIncomingValue(value, null, true)
         }
       }
@@ -158,7 +150,6 @@ export default {
   onSearchChange(searchQuery, id) {
     const onSearch = this.fieldOptions.onSearch;
 
-    console.log('onSearch', searchQuery );
     if (typeof onSearch === 'function') {
       onSearch(searchQuery, id, this.options);
     }

@@ -793,7 +793,6 @@ export default {
     },
     callbackFunctionForBAse64(e) {
       // eslint-disable-next-line
-      console.log('Base 64 done', e);
     },
 
     importResponse(e) {
