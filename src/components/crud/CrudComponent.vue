@@ -243,6 +243,7 @@
                         <button type="button" class="btn btn-default btn-simple mr-auto" @click="closeModal()">
                           {{ $t('common.buttons.cancel') }}
                         </button>
+
                         <button v-if="viewMode === 'edit'" type="submit" class="btn btn-primary ml-auto">
                           {{ $t('common.buttons.save') }}
                         </button>
@@ -736,11 +737,7 @@ export default {
     next((vm) => {
       if (vm && vm.closeModal) {
         vm.closeModal();
-      } else {
-        // eslint-disable-next-line
-        console.warn(vm);
       }
-
       //    vm.loadModel();
     });
   },

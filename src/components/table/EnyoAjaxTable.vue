@@ -915,13 +915,15 @@ export default {
     },
 
     onSortChange(params) {
+      const fieldIndex = params[0].columnIndex;
       // eslint-disable-next-line
-      if (this.mode !== 'remote' || !this.columns || !this.columns[0].field) {
+      if (this.mode !== 'remote' || !this.columns || !this.columns[fieldIndex].field) {
         return;
       }
       const sort = {};
-      sort[this.columns[0].field] = params[0].type;
+      sort[this.columns[fieldIndex].field] = params[0].sortType || params[0].type;
       this.updateParams({ sort });
+
       this.getItems();
     },
 
