@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- Latest compiled and minified CSS -->
-    ``
+    <AutoProps :component="AwesomeDisplay" props="{}"> </AutoProps>
     <h3>Simple table</h3>
     <pre style="color:white">
-      < EnyoAjaxTable
+      <AwesomeTable
       :columns="['col1', 'col2', 'col3', 'col4']"
       :rows="[
       {col1: 'qq', col2:'some data', col3: 'oopsie',
@@ -49,7 +49,7 @@
     <h3>Table with custom fields</h3>
     <hr />
     <pre style="color:white">
-         < EnyoAjaxTable
+         <AwesomeTable
       :columns="[{type:'string', field: 'picture'},
         {type: 'url', field: 'url'},
         {type: 'boolean', field: 'myboolean'},
@@ -117,7 +117,7 @@
     <h3>Table with even more custom fields</h3>
     <hr />
     <pre style="color:white">
-         < EnyoAjaxTable
+         <AwesomeTable
       :columns="[{type:'image', field: 'picture'},
         {type: 'checkbox', field: 'checkbox'},
         {type: 'html', field: 'html'},
@@ -178,13 +178,16 @@
     <hr />
 
     <pre style="color:white">
-           < EnyoAjaxTable
-      :columns="[{type:'number', field: 'userId'},
+           <AwesomeTable
+      :columns="[
+      {field: 'userId',
+      type: 'number',
+      },
        {type: 'number', field: 'id'},
        {type: 'boolean', field: 'completed'},
        {type: 'string', field: 'title'}]"
        url="https://jsonplaceholder.typicode.com/todos"
-       responseField=""
+       :apiResponseConfig="{ dataPath: '' }"
        :options="{
         fixedHeader: true,
         maxHeight: '50vh',
@@ -192,15 +195,37 @@
         }"
     />
     </pre>
+
+    <br />
+    <h3>Relations</h3>
+    <hr />
+
     <AwesomeTable
       :columns="[
-        { type: 'number', field: 'userId' },
+        {
+          type: 'relation',
+          field: 'userId',
+          relationUrl: 'https://jsonplaceholder.typicode.com/users',
+          relationKey: 'id',
+          relationLabel: 'username',
+          onClickUrl: '/app/users',
+        },
         { type: 'number', field: 'id' },
         { type: 'boolean', field: 'completed' },
+        {
+          type: 'relation',
+          field: 'completed',
+          relationKey: 'id',
+          relationLabel: 'name',
+          store: [
+            { id: true, name: 'completed' },
+            { id: false, name: 'Not completed' },
+          ],
+        },
         { type: 'string', field: 'title' },
       ]"
       url="https://jsonplaceholder.typicode.com/todos"
-      responseField=""
+      :apiResponseConfig="{ dataPath: '' }"
       :options="{
         fixedHeader: true,
         maxHeight: '50vh',
@@ -212,19 +237,21 @@
 
 <script>
 import AwesomeTable from '../../src/components/table/AwesomeTable.vue';
+import AwesomeDisplay from '../../src/components/crud/display/AwesomeDisplay.vue';
+import AutoProps from '../../src/components/misc/AutoProps.vue';
 
 export default {
   name: 'AjaxTableDemo',
-  components: { AwesomeTable },
+  components: { AwesomeTable, AutoProps },
   props: {},
   mounted() {},
   data() {
-    return {};
+    return { AwesomeDisplay };
   },
 };
 </script>
 
-<style lang="css">
+<style lang="scss">
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 table {
@@ -263,10 +290,7 @@ table {
   > thead > tr > th,
   > tfoot > tr > th {
     border-bottom-width: 1px;
-    font-size: $font-size-small;
     text-transform: uppercase;
-    color: $dark-gray;
-    font-weight: $font-weight-normal;
     padding-bottom: 5px;
     border-top: none !important;
     border-bottom: none;
@@ -274,7 +298,7 @@ table {
   }
 
   .td-actions .btn {
-    @include opacity(0.36);
+    opacity: 0.36;
 
     &.btn-xs {
       padding-left: 3px;
@@ -291,7 +315,7 @@ table {
 
     &:hover {
       .td-actions .btn {
-        @include opacity(1);
+        opacity: 1;
       }
     }
   }
@@ -312,10 +336,7 @@ table {
 
     thead > tr > th {
       border-bottom-width: 1px;
-      font-size: $font-size-small;
       text-transform: uppercase;
-      color: $dark-gray;
-      font-weight: $font-weight-normal;
       padding-bottom: 5px;
       border-top: none !important;
       border-bottom: none;

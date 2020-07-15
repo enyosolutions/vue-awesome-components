@@ -489,12 +489,11 @@ function getTypeString(variable) {
   height: 100vh;
   width: 30vw;
   overflow: auto;
-  padding: 5px 10px;
+  padding: 60px 10px 50px 10px;
   background: #fff;
   z-index: 10;
   box-shadow: -1px 0px 2px #999;
   margin: 0;
-  padding-bottom: 50px;
 }
 
 .docked-auto-props {

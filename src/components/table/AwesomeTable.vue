@@ -186,6 +186,15 @@
             />
           </div>
           <template slot="table-row" slot-scope="props">
+            <awesome-display
+              v-bind="props.column"
+              :apiResponseConfig="apiResponseConfig"
+              :apiRequestHeaders="apiRequestHeaders"
+              :value="props.formattedRow[props.column.field]"
+              :clickEvent="clickOnLine(props.row)"
+            >
+            </awesome-display>
+
             <span v-if="props.column.field === 'ACTIONS'" class="text-right">
               <slot name="table-row-actions" :item="props.row">
                 <template v-if="opts && opts.customInlineActions">
@@ -241,75 +250,6 @@
               </button>
             </span>
             <span
-              v-else-if="props.column.type === 'image'"
-              class="pointer"
-              @click="clickOnLine(props.row)"
-            >
-              <img
-                :src="props.formattedRow[props.column.field]"
-                alt="image"
-                class="ajax-table-img"
-              />
-            </span>
-            <div
-              v-else-if="props.column.type === 'boolean'"
-              class="text-avoid-overflow"
-              :data-value="props.formattedRow[props.column.field]"
-            >
-              <i
-                class="fa"
-                :class="{
-                  'fa-check text-success':
-                    props.formattedRow[props.column.field],
-                  'fa-times text-danger':
-                    !props.formattedRow[props.column.field] &&
-                    props.formattedRow[props.column.field] !== undefined,
-                }"
-              ></i>
-            </div>
-            <div
-              v-else-if="props.column.type === 'url'"
-              class="text-avoid-overflow"
-            >
-              <a
-                :href="props.formattedRow[props.column.field]"
-                target="_blank"
-                class="ajax-table-href"
-                >{{ props.formattedRow[props.column.field] }}</a
-              >
-            </div>
-            <div
-              v-else-if="props.column.type === 'html'"
-              class="pointer"
-              @click="clickOnLine(props.row)"
-              v-html="props.formattedRow[props.column.field]"
-            ></div>
-            <div
-              v-else-if="props.column.type === 'relation'"
-              class="text-avoid-overflow"
-            >
-              <router-link
-                :to="
-                  '/app' +
-                    props.column.relation +
-                    '/' +
-                    props.formattedRow[props.column.field]
-                "
-                class="ajax-table-href"
-              >
-                <span class="badge badge-info">
-                  {{
-                    props.column.listName
-                      ? getLovValue(
-                          props.formattedRow[props.column.field],
-                          props.column.listName
-                        )
-                      : props.formattedRow[props.column.field]
-                  }}
-                </span>
-              </router-link>
-            </div>
-            <span
               v-else-if="
                 props.column.type === 'list-of-value' ||
                   props.column.type === 'lov'
@@ -323,7 +263,6 @@
                 )
               }}</span
             >
-
             <span
               v-else-if="props.column.type === 'list-of-data'"
               class="pointer"
@@ -335,56 +274,6 @@
                 )
               }}</span
             >
-            <div
-              v-else-if="props.column.type === 'object'"
-              class="pointer text-avoid-overflow"
-              @click="clickOnLine(props.row)"
-            >
-              |
-              <template
-                v-for="(value, key) of props.formattedRow[props.column.field]"
-                class="label label-info"
-              >
-                <div :key="key">
-                  <label>{{ key }}:</label>
-                  <label class="text-primary">{{ value }}</label> |
-                </div>
-              </template>
-            </div>
-            <div
-              v-else-if="props.column.type === 'checkbox'"
-              class="pointer text-avoid-overflow"
-              @click="clickOnLine(props.row)"
-            >
-              <input
-                v-if="props.formattedRow[props.column.field] === true"
-                class="ajax-table-checkbox"
-                type="checkbox"
-                checked
-                disabled
-              />
-              <input
-                class="ajax-table-checkbox"
-                v-else
-                type="checkbox"
-                disabled
-              />
-            </div>
-            <div
-              v-else
-              class="pointer text-avoid-overflow"
-              :class="
-                props.column.class +
-                  ' ajax-table-col-' +
-                  props.column.field +
-                  ' ajax-table-col-value-' +
-                  props.formattedRow[props.column.field]
-              "
-              :style="props.column.style"
-              @click="clickOnLine(props.row)"
-            >
-              {{ props.formattedRow[props.column.field] }}
-            </div>
           </template>
           <div slot="emptystate">
             {{ $t('AwesomeTable.empty') }}
@@ -404,6 +293,7 @@ import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions } from '../../mixins/defaultProps';
 
 import _ from 'lodash';
+import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
 export default {
   name: 'AwesomeTable',
@@ -415,10 +305,10 @@ export default {
   <template slot="table-subtitle"></template>
   <template slot="table-row-actions"></template>
 
-  <!-- END OF ARRAY -->
   </AwesomeTable>
   `,
   components: {
+    AwesomeDisplay,
     DateRangePicker,
     VueGoodTable,
   },
