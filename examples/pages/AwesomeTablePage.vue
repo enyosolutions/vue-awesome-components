@@ -179,12 +179,15 @@
 
     <pre style="color:white">
            <AwesomeTable
-      :columns="[{type:'number', field: 'userId'},
+      :columns="[
+      {field: 'userId',
+      type: 'number',
+      },
        {type: 'number', field: 'id'},
        {type: 'boolean', field: 'completed'},
        {type: 'string', field: 'title'}]"
        url="https://jsonplaceholder.typicode.com/todos"
-       responseField=""
+       :apiResponseConfig="{ dataPath: '' }"
        :options="{
         fixedHeader: true,
         maxHeight: '50vh',
@@ -192,15 +195,37 @@
         }"
     />
     </pre>
+
+    <br />
+    <h3>Relations</h3>
+    <hr />
+
     <AwesomeTable
       :columns="[
-        { type: 'number', field: 'userId' },
+        {
+          type: 'relation',
+          field: 'userId',
+          relationUrl: 'https://jsonplaceholder.typicode.com/users',
+          relationKey: 'id',
+          relationLabel: 'username',
+          onClickUrl: '/app/users',
+        },
         { type: 'number', field: 'id' },
         { type: 'boolean', field: 'completed' },
+        {
+          type: 'relation',
+          field: 'completed',
+          relationKey: 'id',
+          relationLabel: 'name',
+          store: [
+            { id: true, name: 'completed' },
+            { id: false, name: 'Not completed' },
+          ],
+        },
         { type: 'string', field: 'title' },
       ]"
       url="https://jsonplaceholder.typicode.com/todos"
-      responseField=""
+      :apiResponseConfig="{ dataPath: '' }"
       :options="{
         fixedHeader: true,
         maxHeight: '50vh',

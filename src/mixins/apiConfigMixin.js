@@ -70,7 +70,7 @@ export default {
 
     _translatedServerParams() {
       const translatedParams = {};
-      Object.keys(this.serverParams).forEach(field => {
+      Object.keys(this.serverParams || {}).forEach(field => {
         const newKey = this.apiRequestConfig[field + "Field"] || field;
         translatedParams[newKey] = this.serverParams[field];
       });

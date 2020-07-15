@@ -29,6 +29,15 @@
     v-bind="$props"
     :value="$props.value"
   ></display-checkbox>
+  <display-relation
+    v-else-if="$props.type === 'relation'"
+    v-bind="$props"
+    :relation="relation"
+    :relationKey="relationKey"
+    :relationUrl="relationUrl"
+    :relationLabel="relationLabel"
+    :value="$props.value"
+  ></display-relation>
   <display-default
     v-bind="$props"
     v-else
@@ -38,18 +47,20 @@
 
 <script>
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import apiConfigMixin from '../../../mixins/apiConfigMixin';
 
 import DisplayImage from './DisplayImage';
 import DisplayBoolean from './DisplayBoolean';
 import DisplayUrl from './DisplayUrl';
 import DisplayHtml from './DisplayHtml';
 import DisplayObject from './DisplayObject';
+import DisplayRelation from './DisplayRelation';
 import DisplayCheckbox from './DisplayCheckbox';
 import DisplayDefault from './DisplayDefault';
 
 export default {
   name: 'AwesomeDisplay',
-  mixins: [awesomeDisplayMixin],
+  mixins: [awesomeDisplayMixin, apiConfigMixin],
   components: {
     DisplayCheckbox,
     DisplayBoolean,
@@ -57,6 +68,7 @@ export default {
     DisplayUrl,
     DisplayHtml,
     DisplayObject,
+    DisplayRelation,
     DisplayDefault,
   },
 };

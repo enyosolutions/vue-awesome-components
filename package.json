@@ -121,6 +121,15 @@
         {
           "args": "none"
         }
+      ],
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
       ]
     },
     "parserOptions": {

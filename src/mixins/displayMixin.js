@@ -2,7 +2,7 @@ export default {
   props: {
     options: {
     },
-    value: [String, Boolean, Array],
+    value: [String, Boolean, Array, Object, Number],
     type: {
       type: String,
       values: ['image',
@@ -14,10 +14,16 @@ export default {
     },
     src: String,
     row: Array,
-    relation: String,
     field: String,
-    style: String,
-    class: String
+    styles: String,
+    classes: String,
+    relation: String,
+    relationUrl: String,
+    relationLabel: String,
+    relationKey: String,
+    storePath: String,
+    store: Array,
+    onClickUrl: [String, Function]
   },
   data() {
     return {

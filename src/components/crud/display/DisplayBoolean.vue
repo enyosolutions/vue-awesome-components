@@ -1,5 +1,11 @@
 <template>
-  <div class="text-avoid-overflow" v-bind="$props" :data-value="$props.value">
+  <div
+    class="text-avoid-overflow"
+    v-bind="$props"
+    :data-value="$props.value"
+    :class="$props.classes"
+    :style="$props.styles"
+  >
     <i
       class="fa"
       :class="{

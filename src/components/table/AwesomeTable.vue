@@ -187,11 +187,10 @@
           </div>
           <template slot="table-row" slot-scope="props">
             <awesome-display
-              :type="props.column.type"
+              v-bind="props.column"
+              :apiResponseConfig="apiResponseConfig"
+              :apiRequestHeaders="apiRequestHeaders"
               :value="props.formattedRow[props.column.field]"
-              :field="props.column.field"
-              :class="props.column.class"
-              :style="props.column.style"
               :clickEvent="clickOnLine(props.row)"
             >
             </awesome-display>
@@ -250,31 +249,6 @@
                 <i class="fa fa-trash text-danger" />
               </button>
             </span>
-            <div
-              v-else-if="props.column.type === 'relation'"
-              class="text-avoid-overflow"
-            >
-              <router-link
-                :to="
-                  '/app' +
-                    props.column.relation +
-                    '/' +
-                    props.formattedRow[props.column.field]
-                "
-                class="ajax-table-href"
-              >
-                <span class="badge badge-info">
-                  {{
-                    props.column.listName
-                      ? getLovValue(
-                          props.formattedRow[props.column.field],
-                          props.column.listName
-                        )
-                      : props.formattedRow[props.column.field]
-                  }}
-                </span>
-              </router-link>
-            </div>
             <span
               v-else-if="
                 props.column.type === 'list-of-value' ||
