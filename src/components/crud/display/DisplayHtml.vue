@@ -1,5 +1,5 @@
 <template>
-    <div class="pointer" v-html="$props.value"></div>
+    <div v-bind="$props" class="pointer" v-html="$props.value"></div>
 </template>
 
 <script>

@@ -14,6 +14,7 @@ export default {
     },
     src: String,
     row: Array,
+    relation: String,
     field: String,
     style: String,
     class: String
