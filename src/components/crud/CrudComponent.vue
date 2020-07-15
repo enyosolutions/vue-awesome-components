@@ -1061,6 +1061,7 @@ export default {
     },
 
     deleteFunction(item) {
+     this.selectedItem = item;
       Swal.fire({
         title: this.$t("AwesomeDefault.messages.are_you_sure"),
         text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
@@ -1089,7 +1090,8 @@ export default {
               this.isRefreshing = false;
             });
         }
-      });
+      })
+      .finally(() => (this.selectedItem = null));
     },
 
     onCustomAction(body) {
