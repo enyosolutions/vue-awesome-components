@@ -20,7 +20,7 @@
     "lodash": "^4.17.19",
     "luxon": "^1.24.1",
     "marked": "^0.6.1",
-    "moment": "^2.24.0",
+    "moment": "^2.27.0",
     "qs": "^6.6.0",
     "sweetalert2": "^8.2.6",
     "vue-base64-file-upload": "^1.0.4",
