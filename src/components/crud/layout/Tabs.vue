@@ -1,28 +1,25 @@
 <template>
   <div :class="computedCols + ' ' + styleClasses" :style="styles">
     <slot name="header">
-      <ul
-        class="nav"
-        :class="'nav-' + navType + tabsDirection"
-        v-if="!autoHideTab || tabs.length > 1"
-      >
+      <ul class="nav" :class="'nav-' + navType + tabsDirection" v-if="!autoHideTab || tabs.length > 1">
         <li class="nav-item" v-for="(tab, index) in tabs" :key="index">
           <a
             v-if="!tab.hidden"
             class="nav-link show"
             :class="{
               active: activeTabIndex === index,
-              disabled: tab.disabled,
+              disabled: tab.disabled
             }"
             :id="'awesome-tab-' + fieldId + index"
             :data-target="'awesome-panel-' + fieldId + index"
             @click.prevent="changeTab(index)"
-          >{{ $t(tab.legend) }}</a>
+            >{{ $t(tab.legend) }}</a
+          >
         </li>
       </ul>
     </slot>
     <slot>
-      <div class="tab-content p-3">
+      <div class="tab-content" :class="tabs && tabs.length > 1 ? 'pl-3 pr-3 pb-3' : ''">
         <div
           v-for="(tab, index) in tabs"
           :key="index"
@@ -32,7 +29,7 @@
           :id="'awesome-panel-' + fieldId + index"
           :class="{
             'show active': activeTabIndex === index,
-            disabled: tab.disabled,
+            disabled: tab.disabled
           }"
         >
           <slot name="content" v-bind:activeTabIndex="activeTabIndex" v-bind:tab="tab"></slot>

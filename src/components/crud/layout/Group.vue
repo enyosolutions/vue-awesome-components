@@ -2,9 +2,7 @@
   <div class="awesome-layout-group" :class="computedCols + ' ' + wrapperClasses" :style="styles">
     <div
       v-if="theme === 'card'"
-      :class="
-        styleClasses + ' ' + (theme === 'card' ? ' card card-primary' : '')
-      "
+      :class="styleClasses + ' ' + (theme === 'card' ? ' card card-primary m-t-0' : '')"
       :style="styles"
     >
       <div class="card-header" :class="headerClasses">{{ $t(legend) }}</div>
