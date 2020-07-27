@@ -24,7 +24,7 @@ export default {
         return {
             internalValue: '',
             isLoading: false,
-            apiOptions: []
+            apiOptions: null
         };
     },
 
@@ -41,10 +41,7 @@ export default {
 
     computed: {
         computedOptions() {
-            if (this._dataUrl) {
-                return this.apiOptions
-            }
-            return this.options || [];
+            return this.apiOptions || this.options || [];
         },
 
         internalOptions() {
@@ -106,7 +103,7 @@ export default {
             /* eslint-disable-next-line */
             if (this.dataUrl) {
                 this.isLoading = true;
-                const promise = this.$http.get(this.dataUrl, { params: { search: searchString } });
+                const promise = this.$http.get(this.dataUrl, { params: { listOfValues: true, search: searchString } });
                 promise.then(res => {
                     this.apiOptions = res.data.body;
                     this.isLoading = false;

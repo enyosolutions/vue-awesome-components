@@ -1,0 +1,49 @@
+{
+  "AwesomeDefault": {
+    "messages": {
+      "are_you_sure": "Are you sure ?",
+      "wont_be_able_recover": "This action cannot be reverted",
+      "successfullyCreated": "Successfully created.",
+      "successfullyModified": "Successfully modified.",
+      "successfullyImported": "successfullyImported",
+      "no_data_imported": "no_data_imported",
+      "not_imported": "not_imported"
+    }
+  },
+  "AwesomeTable": {
+    "buttons": {
+      "filters": "filters",
+      "refresh": "refresh",
+      "excel-currentpage": "excel-currentpage",
+      "searchInput": "Search",
+      "view": "view",
+      "cancel": "cancel",
+      "close": "close"
+    },
+    "next": "next",
+    "prev": "prev",
+    "rows_per_page": "Rows per page",
+    "of": "of",
+    "page": "page",
+    "all": "all",
+    "empty": "empty",
+    "searchInput": "Search"
+  },
+  "EnyoCrudComponent": {
+    "labels": {
+      "manageTitle": "Manage",
+      "createNew": "Create a new"
+    },
+    "buttons": {
+      "yes_delete_it": "Yes i confirm",
+      "view": "Open",
+      "cancel": "Cancel",
+      "close": "Close",
+      "edit": "Edit",
+      "save": "Save"
+    },
+    "messages": {
+      "successfullyModified": "Successfully modified."
+    }
+  }
+}

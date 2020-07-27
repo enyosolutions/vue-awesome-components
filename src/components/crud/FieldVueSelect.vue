@@ -23,7 +23,7 @@
     -->
 
     <v-select
-      v-if="!isAjax || isDataReady"
+      v-if="(!isAjax || isDataReady) && !readonly"
       v-bind="fieldOptions"
       :label="_label"
       :filterable="!dataUrl"
@@ -36,18 +36,32 @@
       :reduce="reduce"
       :getOptionLabel="formatLabel"
     ></v-select>
+
+    <awesome-display
+      v-if="readonly"
+      type="relation"
+      :relationUrl="dataUrl"
+      :onClickUrl="'/app/' + this.schema.relation"
+      :relationKey="_trackBy"
+      :relationLabel="_label"
+      :value="_values"
+      innerStyles="Array.isArray(model[schema.model]) ? '' : display:block; width: 100%;font-size:90%"
+    >
+    </awesome-display>
   </div>
 </template>
 <script>
 /* eslint-disable */
 import VueFormGenerator from 'vue-form-generator';
+
+import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import selectMixin from '../../mixins/selectMixin';
 import vSelect from 'vue-select';
 import _ from 'lodash';
 
 export default {
   name: 'FieldVueSelect',
-  components: { vSelect },
+  components: { vSelect, AwesomeDisplay },
   mixins: [selectMixin, VueFormGenerator.abstractField],
   props: [], // 'schema', 'disabled', 'value' are in the abstract field
   mounted() {
@@ -98,6 +112,12 @@ export default {
 
     _label() {
       return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || 'label';
+    },
+
+    _values() {
+      return Array.isArray(this.model[this.schema.model])
+        ? this.model[this.schema.model].map((v) => v[this._trackBy])
+        : this.model[this.schema.model];
     }
   },
   watch: {
@@ -189,7 +209,7 @@ export default {
         })
         .then((res) => {
           this.apiOptions = res.data.body;
-          this.$forceUpdate();
+          // this.$forceUpdate();
         })
         .finally(() => {
           loading(false);

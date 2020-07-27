@@ -43,7 +43,7 @@
                   "
                 >
                   <i v-if="action.icon" :class="action.icon" />
-                  <span v-html="action.label ? $t(action.label) : ''"></span>
+                  <span v-html="getActionLabel(action)"></span>
                 </button>
               </template>
               <button
@@ -140,7 +140,7 @@
                   </form>
                 </div>
                 <!--  EDITS -->
-                <div v-if="viewMode === 'edit' || viewMode === 'view'" class="modal-content">
+                <div v-if="viewMode === 'edit' || viewMode === 'view' || _isNestedDetail" class="modal-content">
                   <form @submit.prevent="editItem()">
                     <div
                       class="modal-header"
@@ -661,7 +661,7 @@ export default {
     },
 
     _isNestedCreate() {
-      return this._isNested && (this.selectedItem && this.viewMode === 'create');
+      return this._isNested && this.selectedItem && this.viewMode === 'create';
     },
 
     _noFormActions() {
@@ -726,9 +726,14 @@ export default {
         this.createFunction({ reset: false });
         return;
       }
-      this.parentPath = matched.path.replace('/edit', '').replace('/:id', '');
+      this.parentPath = matched.path;
+      this.parentPath = this.parentPath.replace('/edit', '').replace('/:id', '');
     } else {
       this.parentPath = matched.path;
+    }
+
+    if (this._isNestedDetail && this.viewMode === 'detail') {
+      this.viewMode = this.nestedDisplayMode;
     }
   },
 
@@ -736,9 +741,9 @@ export default {
     // eslint-disable-next-line
     next((vm) => {
       if (vm && vm.closeModal) {
-        vm.closeModal();
+        //  vm.closeModal();
       }
-      //    vm.loadModel();
+      //    vm.loadModel();`
     });
   },
   beforeRouteLeave(to, from, next) {
@@ -1498,6 +1503,13 @@ export default {
           })
           .catch(reject);
       });
+    },
+
+    getActionLabel(action) {
+      if (action.label) {
+        return this.$te(action.label) ? this.$t(action.label) : action.label;
+      }
+      return '';
     }
   }
 };

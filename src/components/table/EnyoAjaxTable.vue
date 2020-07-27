@@ -168,9 +168,7 @@
                   :data-tooltip="action.title || action.label"
                   @click="$emit('customAction', { action, location: 'tabletop' })"
                 >
-                  <i v-if="action.icon" :class="action.icon" /><span
-                    v-html="action.label ? $t(action.label) : ''"
-                  ></span>
+                  <i v-if="action.icon" :class="action.icon" /><span v-html="getActionLabel(action)"></span>
                 </button>
               </template>
             </template>
@@ -270,19 +268,16 @@
               @click="clickOnLine(props.row)"
               v-html="props.formattedRow[props.column.field]"
             ></div>
+
             <div v-else-if="props.column.type === 'relation'" class="text-avoid-overflow">
-              <router-link
-                :to="'/app/' + props.column.relation + '/' + props.formattedRow[props.column.field]"
-                class="ajax-table-href"
-              >
-                <span class="badge badge-info">
-                  {{
-                    props.column.listName
-                      ? getLovValue(props.formattedRow[props.column.field], props.column.listName)
-                      : getDisplayLabel(props.formattedRow[props.column.field], props.column)
-                  }}
-                </span>
-              </router-link>
+              <AwesomeDisplay
+                v-bind="props.column"
+                type="relation"
+                :onClickUrl="'/app/' + props.column.relation"
+                :value="props.formattedRow[props.column.field]"
+                :displayLabelCache.sync="displayLabelCache"
+                @clickEvent="clickOnLine(props.row)"
+              ></AwesomeDisplay>
             </div>
             <span
               v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
@@ -347,8 +342,11 @@ import DateRangePicker from 'vue2-daterange-picker';
 import { VueGoodTable } from 'vue-good-table';
 import qs from 'qs';
 import moment from 'moment';
-import apiErrors from '../../mixins/apiErrorsMixin';
 import _ from 'lodash';
+
+import apiErrors from '../../mixins/apiErrorsMixin';
+
+import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
 export default {
   name: 'EnyoAjaxTable',
@@ -365,7 +363,8 @@ export default {
   `,
   components: {
     DateRangePicker,
-    VueGoodTable
+    VueGoodTable,
+    AwesomeDisplay
   },
   mixins: [apiErrors],
   props: {
@@ -1004,6 +1003,13 @@ export default {
       x.setAttribute('download', 'somedata.csv');
       document.body.appendChild(x);
       x.click();
+    },
+
+    getActionLabel(action) {
+      if (action.label) {
+        return this.$te(action.label) ? this.$t(action.label) : action.label;
+      }
+      return '';
     }
   }
 };
