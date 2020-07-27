@@ -2,10 +2,7 @@
   <div class="card ajax-table-card">
     <div
       class="card-header"
-      :class="
-        'ajax-table-header ' +
-          (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
-      "
+      :class="'ajax-table-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
     >
       <h3 class="card-title ajax-table-header text-primary text-left">
         <slot name="table-title">
@@ -24,11 +21,7 @@
             >
               Columns
             </button>
-            <div
-              class="dropdown-menu"
-              aria-labelledby="dropdownMenuButton"
-              style="max-height:100vh; overflow: auto;"
-            >
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height:100vh; overflow: auto;">
               <button
                 v-for="(col, index) in formattedColumns"
                 :key="index"
@@ -37,7 +30,7 @@
                 href="#"
                 :class="{
                   'text-light bg-primary': columnsState[col.field],
-                  'bg-info': col.field === 'ACTIONS',
+                  'bg-info': col.field === 'ACTIONS'
                 }"
                 :disabled="col.field === 'ACTIONS'"
                 @click="toggleColumn(col.field)"
@@ -47,10 +40,7 @@
             </div>
           </div>
           <div v-if="isRefreshing" style="text-align: center">
-            <i
-              class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-              style="color:orange;margin-left:10px"
-            />
+            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color:orange;margin-left:10px" />
           </div>
           <button
             v-if="_actions.filter"
@@ -60,24 +50,15 @@
             @click="toggleFilter()"
           >
             <i class="fa fa-filter" />
-            {{ $t('AwesomeTable.buttons.filters') }}
+            {{ $t("AwesomeTable.buttons.filters") }}
           </button>
           <div class="dropdown">
-            <button
-              v-if="_actions && _actions.refresh"
-              class="btn btn-link btn-alt-style"
-              @click="getItems()"
-            >
+            <button v-if="_actions && _actions.refresh" class="btn btn-link btn-alt-style" @click="getItems()">
               <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t('AwesomeTable.buttons.refresh') }}
+              {{ $t("AwesomeTable.buttons.refresh") }}
             </button>
             <button
-              v-if="
-                _actions &&
-                  (_actions.export ||
-                    _actions.import ||
-                    _actions.dropdownActions)
-              "
+              v-if="_actions && (_actions.export || _actions.import || _actions.dropdownActions)"
               id="dropdownMenuButton"
               class="btn btn-secondary btn-main-style dropdown-toggle"
               type="button"
@@ -86,7 +67,7 @@
               aria-expanded="false"
             >
               <i class="fa fa-plus" />
-              {{ $t('AwesomeTable.more') }}
+              {{ $t("AwesomeTable.more") }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
@@ -96,7 +77,7 @@
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t('AwesomeTable.buttons.excel') }}
+                {{ $t("AwesomeTable.buttons.excel") }}
               </button>
 
               <button
@@ -105,7 +86,7 @@
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t('AwesomeTable.buttons.excel-currentpage') }}
+                {{ $t("AwesomeTable.buttons.excel-currentpage") }}
               </button>
             </div>
           </div>
@@ -127,11 +108,11 @@
           :max-height="opts.maxHeight"
           :rows="data || []"
           :filter-options="{
-            enabled: _actions.filter,
+            enabled: _actions.filter
           }"
           :search-options="{
             enabled: _actions.search,
-            placeholder: this.$t('AwesomeTable.searchInput'),
+            placeholder: this.$t('AwesomeTable.searchInput')
           }"
           :pagination-options="{
             enabled: opts && opts.pagination,
@@ -141,7 +122,7 @@
             ofLabel: this.$t('AwesomeTable.of'),
             pageLabel: this.$t('AwesomeTable.page'),
             allLabel: this.$t('AwesomeTable.all'),
-            perPage: perPage,
+            perPage: perPage
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
@@ -153,19 +134,14 @@
             <template v-if="opts && opts.customTableTopActions">
               <template v-for="(action, index) in opts.customTableTopActions">
                 <button
-                  v-if="
-                    !action.canDisplay ||
-                      action.canDisplay({ item: props.row }, this)
-                  "
+                  v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)"
                   :key="index"
                   class="btn btn-xs btn-main-style"
                   :class="action.class"
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
                   :data-tooltip="action.title || action.label"
-                  @click="
-                    $emit('customAction', { action, location: 'tabletop' })
-                  "
+                  @click="$emit('customAction', { action, location: 'tabletop' })"
                 >
                   <i v-if="action.icon" :class="action.icon" /><span
                     v-html="action.label ? $t(action.label) : ''"
@@ -191,7 +167,7 @@
               :apiResponseConfig="apiResponseConfig"
               :apiRequestHeaders="apiRequestHeaders"
               :value="props.formattedRow[props.column.field]"
-              :clickEvent="clickOnLine(props.row)"
+              @clickEvent="clickOnLine(props.row)"
             >
             </awesome-display>
 
@@ -200,10 +176,7 @@
                 <template v-if="opts && opts.customInlineActions">
                   <template v-for="(action, index) in opts.customInlineActions">
                     <button
-                      v-if="
-                        !action.canDisplay ||
-                          action.canDisplay({ item: props.row }, this)
-                      "
+                      v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)"
                       :key="index"
                       class="btn btn-xs btn-alt-style"
                       :class="action.class"
@@ -216,7 +189,7 @@
                           item: props.row,
                           location: 'inline',
                           props,
-                          id: action.name + '-' + props.index,
+                          id: action.name + '-' + props.index
                         })
                       "
                     >
@@ -229,54 +202,38 @@
               </slot>
               <button
                 v-if="_actions.view"
-                class="btn btn-xs btn-alt-style btn-icon"
+                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                 @click="$emit('view', props.row)"
               >
                 <i class="fa fa-eye text-info" />
               </button>
               <button
                 v-if="_actions.edit"
-                class="btn btn-xs btn-alt-style btn-icon"
+                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                 @click="$emit('edit', props.row)"
               >
-                <i class="fa fa-pencil fa fa-pencil" />
+                <i class="fa fa-pencil fa fa-pencil text-primary" />
               </button>
               <button
                 v-if="_actions.delete"
-                class="btn btn-xs btn-alt-style btn-icon"
+                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                 @click="$emit('delete', props.row)"
               >
                 <i class="fa fa-trash text-danger" />
               </button>
             </span>
             <span
-              v-else-if="
-                props.column.type === 'list-of-value' ||
-                  props.column.type === 'lov'
-              "
+              v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
               class="pointer"
               @click="clickOnLine(props.row)"
-              >{{
-                getLovValue(
-                  props.formattedRow[props.column.field],
-                  props.column.listName
-                )
-              }}</span
+              >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
             >
-            <span
-              v-else-if="props.column.type === 'list-of-data'"
-              class="pointer"
-              @click="clickOnLine(props.row)"
-              >{{
-                getDataValue(
-                  props.formattedRow[props.column.field],
-                  props.column.listName
-                )
-              }}</span
-            >
+            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props.row)">{{
+              getDataValue(props.formattedRow[props.column.field], props.column.listName)
+            }}</span>
           </template>
           <div slot="emptystate">
-            {{ $t('AwesomeTable.empty') }}
+            {{ $t("AwesomeTable.empty") }}
           </div>
         </vue-good-table>
       </div>
@@ -284,19 +241,19 @@
   </div>
 </template>
 <script>
-import DateRangePicker from 'vue2-daterange-picker';
-import { VueGoodTable } from 'vue-good-table';
-import moment from 'moment';
-import apiErrors from '../../mixins/apiErrorsMixin';
-import apiListMixin from '../../mixins/apiListMixin';
-import i18nMixin from '../../mixins/i18nMixin';
-import { defaultActions } from '../../mixins/defaultProps';
+import DateRangePicker from "vue2-daterange-picker";
+import { VueGoodTable } from "vue-good-table";
+import moment from "moment";
+import apiErrors from "../../mixins/apiErrorsMixin";
+import apiListMixin from "../../mixins/apiListMixin";
+import i18nMixin from "../../mixins/i18nMixin";
+import { defaultActions } from "../../mixins/defaultProps";
 
-import _ from 'lodash';
-import AwesomeDisplay from '../crud/display/AwesomeDisplay';
+import _ from "lodash";
+import AwesomeDisplay from "../crud/display/AwesomeDisplay";
 
 export default {
-  name: 'AwesomeTable',
+  name: "AwesomeTable",
   token: `
   <AwesomeTable  :title="title" :columns="tableColumns" :rows="dataSource" :needsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
@@ -310,42 +267,42 @@ export default {
   components: {
     AwesomeDisplay,
     DateRangePicker,
-    VueGoodTable,
+    VueGoodTable
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
     columns: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     columnsDisplayed: {
       type: Number,
-      default: 8,
+      default: 8
     },
     rows: { type: Array, default: () => [] },
-    url: { type: String, default: '' },
+    url: { type: String, default: "" },
     entity: {
       type: String,
-      default: '',
+      default: "",
       note:
-        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations',
+        "Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations"
     },
-    title: { type: String, default: '' },
+    title: { type: String, default: "" },
     translations: {
       type: Object,
       default: () => ({
-        'AwesomeTable.buttons.filters': 'Filter',
-        'AwesomeTable.buttons.refresh': 'Refresh',
-        'AwesomeTable.buttons.excel-currentpage': 'Export current page',
-        'AwesomeTable.searchInput': 'AwesomeTable.searchInput',
-        'AwesomeTable.next': 'Next',
-        'AwesomeTable.prev': 'Previous',
-        'AwesomeTable.rows_per_page': 'Rows per page',
-        'AwesomeTable.of': 'of',
-        'AwesomeTable.page': 'page',
-        'AwesomeTable.all': 'all',
-        'AwesomeTable.empty': 'empty',
-      }),
+        "AwesomeTable.buttons.filters": "Filter",
+        "AwesomeTable.buttons.refresh": "Refresh",
+        "AwesomeTable.buttons.excel-currentpage": "Export current page",
+        "AwesomeTable.searchInput": "AwesomeTable.searchInput",
+        "AwesomeTable.next": "Next",
+        "AwesomeTable.prev": "Previous",
+        "AwesomeTable.rows_per_page": "Rows per page",
+        "AwesomeTable.of": "of",
+        "AwesomeTable.page": "page",
+        "AwesomeTable.all": "all",
+        "AwesomeTable.empty": "empty"
+      })
     },
     autoRefresh: { type: Boolean, default: false },
     autoRefreshInterval: { type: Number, default: 1 },
@@ -355,41 +312,41 @@ export default {
     exportUrl: { type: String, default: undefined },
     needsRefresh: {
       type: Boolean,
-      default: false,
+      default: false
     },
     perPage: {
       type: [String, Number],
-      default: 20,
+      default: 20
     },
     limit: {
       type: [String, Number],
-      default: 1000,
+      default: 1000
     },
     options: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
     defaultOptions: {
       type: Object,
       default: () => ({
         fixedHeader: false,
-        maxHeight: '',
+        maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         filterInitiallyOn: false,
-        saveSearchDatas: false,
-      }),
+        saveSearchDatas: false
+      })
     },
     actions: {
       type: Object,
       default: () => defaultActions,
-      note: 'actions active in this instance',
+      note: "actions active in this instance"
     },
 
     mode: {
-      default: 'local',
-      type: String,
-    },
+      default: "local",
+      type: String
+    }
   },
   data() {
     return {
@@ -398,9 +355,9 @@ export default {
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: moment()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
-      defaultEndDate: moment().format('YYYY-MM-DD'),
+        .subtract(7, "days")
+        .format("YYYY-MM-DD"),
+      defaultEndDate: moment().format("YYYY-MM-DD"),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
         filters: {},
@@ -408,25 +365,25 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === 'remote' ? this.perPage : this.limit, // how many items I'm showing per page
+        perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
       data: [],
       refreshHandle: null,
       numberOfRefreshCalls: 0,
       datePicker: {
         locale: {
-          direction: 'ltr', // direction of text
-          format: 'DD-MM-YYYY', // fomart of the dates displayed
-          separator: ' - ', // separator between the two ranges
-          applyLabel: 'Appliquer',
-          cancelLabel: 'Annuler',
-          weekLabel: 'W',
-          customRangeLabel: 'Custom Range',
+          direction: "ltr", // direction of text
+          format: "DD-MM-YYYY", // fomart of the dates displayed
+          separator: " - ", // separator between the two ranges
+          applyLabel: "Appliquer",
+          cancelLabel: "Annuler",
+          weekLabel: "W",
+          customRangeLabel: "Custom Range",
           daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
-          firstDay: 1, // ISO first day of week - see moment documenations for details
-        },
-      },
+          firstDay: 1 // ISO first day of week - see moment documenations for details
+        }
+      }
     };
   },
   computed: {
@@ -437,8 +394,8 @@ export default {
     _tableTitle() {
       return (
         this.title ||
-        (this.$te && this.$te('app.labels.' + this.entity)
-          ? this.$t('app.labels.' + this.entity)
+        (this.$te && this.$te("app.labels." + this.entity)
+          ? this.$t("app.labels." + this.entity)
           : _.startCase(this.entity))
       );
     },
@@ -454,7 +411,7 @@ export default {
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
-        console.error('AwesomeTable MISSING COLUMNS');
+        console.error("AwesomeTable MISSING COLUMNS");
         return [];
       }
       const newcolumns = this.columns.map((col) => {
@@ -471,25 +428,25 @@ export default {
           col.label = _.startCase(col.field);
         }
 
-        if (col.type && col.type === 'datetime') {
+        if (col.type && col.type === "datetime") {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format('lll');
+            return moment(value).format("lll");
           };
         }
 
-        if (col.type && col.type === 'date') {
+        if (col.type && col.type === "date") {
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format('DD-MM-YYYY');
+            return moment(value).format("DD-MM-YYYY");
           };
         }
 
-        if (col.type && col.type === 'object') {
+        if (col.type && col.type === "object") {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -503,7 +460,7 @@ export default {
           };
         }
 
-        if (col.type && col.type === 'relation') {
+        if (col.type && col.type === "relation") {
           // eslint-disable-next-line
           col.sortFn = (x, y, col, rowX, rowY) => {
             // x - row1 value for column
@@ -517,27 +474,26 @@ export default {
           };
         }
 
-        if (col.type && col.type === 'checkbox') {
+        if (col.type && col.type === "checkbox") {
           col.sortable = false;
         }
 
-        let filterDropdownItems =
-          col.filterOptions && col.filterOptions.filterDropdownItems;
-        if (col.type && (col.type === 'list-of-value' || col.type === 'lov')) {
+        let filterDropdownItems = col.filterOptions && col.filterOptions.filterDropdownItems;
+        if (col.type && (col.type === "list-of-value" || col.type === "lov")) {
           filterDropdownItems = this.$store.state.listOfValues[col.listName];
           if (filterDropdownItems) {
             filterDropdownItems = filterDropdownItems.map((e) => ({
               value: e.code,
-              text: e.label || e.code || e,
+              text: e.label || e.code || e
             }));
           }
         }
 
-        if (col.type && col.type === 'list-of-data') {
+        if (col.type && col.type === "list-of-data") {
           filterDropdownItems = this.$store.state.data[col.listName];
           filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e.code,
-            text: e.label || e.code || e,
+            text: e.label || e.code || e
           }));
         }
 
@@ -545,16 +501,13 @@ export default {
           filterDropdownItems = col.enum;
           filterDropdownItems = filterDropdownItems.map((e) => ({
             value: e,
-            text: _.startCase(e),
+            text: _.startCase(e)
           }));
         }
 
         col.filterOptions = {
-          enabled:
-            col.filterable !== undefined
-              ? col.filterable && this.filterable
-              : this.filterable,
-          filterDropdownItems,
+          enabled: col.filterable !== undefined ? col.filterable && this.filterable : this.filterable,
+          filterDropdownItems
         };
         return col;
       });
@@ -564,14 +517,11 @@ export default {
           this.$set(this.columnsState, col.field, idx < this.columnsDisplayed);
         });
       }
-      if (
-        !newcolumns.find((col) => col.field === 'ACTIONS') &&
-        !this._actions.noActions
-      ) {
+      if (!newcolumns.find((col) => col.field === "ACTIONS") && !this._actions.noActions) {
         newcolumns.push({
-          field: 'ACTIONS',
-          label: 'Actions',
-          filterOptions: { enabled: false },
+          field: "ACTIONS",
+          label: "Actions",
+          filterOptions: { enabled: false }
         });
         // eslint-disable-next-line
         this.columnsState.ACTIONS = true;
@@ -585,14 +535,10 @@ export default {
     displayedColumns() {
       this.columnsState;
       if (this.canHideColumns) {
-        const cols = this.formattedColumns.filter(
-          (col) => this.columnsState[col.field]
-        );
+        const cols = this.formattedColumns.filter((col) => this.columnsState[col.field]);
 
         if (!this.columnsState.ACTIONS) {
-          const actions = this.formattedColumns.find(
-            (col) => col.field === 'ACTIONS'
-          );
+          const actions = this.formattedColumns.find((col) => col.field === "ACTIONS");
           if (actions) {
             cols.push(actions);
           }
@@ -600,7 +546,7 @@ export default {
         return cols;
       }
       return this.formattedColumns;
-    },
+    }
   },
   watch: {
     // needsRefresh: "refreshLocalData",
@@ -608,9 +554,9 @@ export default {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();
     },
-    entity: 'entityChanged',
+    entity: "entityChanged",
     // store: changed => {},
-    rows: 'refreshLocalData',
+    rows: "refreshLocalData"
   },
   created() {
     if (!this.$t) {
@@ -628,9 +574,7 @@ export default {
     }
   },
   beforeMount() {
-    const userLang = window.navigator
-      ? navigator.language || navigator.userLanguage
-      : 'en';
+    const userLang = window.navigator ? navigator.language || navigator.userLanguage : "en";
     moment.locale(userLang);
   },
   mounted() {
@@ -646,8 +590,8 @@ export default {
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
           this.$notify({
-            title: 'too much calls, aborting tracking',
-            type: 'warning',
+            title: "too much calls, aborting tracking",
+            type: "warning"
           });
           clearInterval(this.refreshHandle);
           this.refreshHandle = null;
@@ -687,7 +631,7 @@ export default {
     // editItem(item) {},
 
     clickOnLine(item) {
-      this._actions.view && this.$emit('view', item);
+      this._actions.view && this.$emit("view", item);
     },
 
     getLovValue(item, listName) {
@@ -708,9 +652,7 @@ export default {
       if (!item || !this.$store.state.data[listName]) {
         return item;
       }
-      const value = this.$store.state.data[listName].find(
-        (elm) => elm[this.primaryKey] === item || elm.code === item
-      );
+      const value = this.$store.state.data[listName].find((elm) => elm[this.primaryKey] === item || elm.code === item);
       if (!value) {
         return item;
       }
@@ -723,12 +665,12 @@ export default {
     },
 
     onColumnFilter(params) {
-      if (this.mode !== 'remote') {
+      if (this.mode !== "remote") {
         return;
       }
       this.updateParams({
         filters: _.cloneDeep(params.columnFilters),
-        page: 0,
+        page: 0
       });
       this.getItems();
     },
@@ -736,16 +678,11 @@ export default {
     onSortChange(params) {
       const fieldIndex = params[0].columnIndex;
       // eslint-disable-next-line
-      if (
-        this.mode !== 'remote' ||
-        !this.columns ||
-        !this.columns[fieldIndex].field
-      ) {
+      if (this.mode !== "remote" || !this.columns || !this.columns[fieldIndex].field) {
         return;
       }
       const sort = {};
-      sort[this.columns[fieldIndex].field] =
-        params[0].sortType || params[0].type;
+      sort[this.columns[fieldIndex].field] = params[0].sortType || params[0].type;
       this.updateParams({ sort });
       this.getItems();
     },
@@ -755,17 +692,13 @@ export default {
       if (!value) {
         return;
       }
-      this.serverParams.range.startDate = value.startDate
-        .toISOString()
-        .slice(0, 10);
-      this.serverParams.range.endDate = value.endDate
-        .toISOString()
-        .slice(0, 10);
+      this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
+      this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
       this.getItems();
     },
 
     hasValue(item, column) {
-      return item[column.toLowerCase()] !== 'undefined';
+      return item[column.toLowerCase()] !== "undefined";
     },
 
     itemValue(item, column) {
@@ -774,23 +707,23 @@ export default {
 
     exportCallBack() {
       if (!this.exportUrl) {
-        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
+        this.$notify({ title: "[WARN] missing export url", type: "warning" });
         return;
       }
       this.$http
         .get(this.exportUrl, {})
         .then((res) => {
           if (res.data.url) {
-            const link = document.createElement('a');
-            link.download = `${this.entity || ''}_export`;
+            const link = document.createElement("a");
+            link.download = `${this.entity || ""}_export`;
             link.href = res.data.url;
             link.click();
             link.remove();
           }
         })
         .catch(this.apiErrorCallback);
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss">

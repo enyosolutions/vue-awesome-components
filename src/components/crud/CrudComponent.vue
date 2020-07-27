@@ -50,12 +50,7 @@
             @itemValidationFailed="onItemValidationFailed"
           />
         </div>
-        <div
-          class="col-12"
-          v-show="
-            !(displayMode !== 'table' && mergedOptions.detailPageMode === 'page')
-          "
-        >
+        <div class="col-12" v-show="!(displayMode !== 'table' && mergedOptions.detailPageMode === 'page')">
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -80,7 +75,7 @@
                     customAction({
                       action,
                       location: 'topright',
-                      id: action.name,
+                      id: action.name
                     })
                   "
                 >
@@ -88,13 +83,9 @@
                   <span v-html="action.label ? $t(action.label) : ''"></span>
                 </button>
               </template>
-              <button
-                v-if="_actions.create"
-                class="btn btn-primary btn-main-style mb-1"
-                @click="goToCreatePage()"
-              >
+              <button v-if="_actions.create" class="btn btn-primary btn-main-style mb-1" @click="goToCreatePage()">
                 <i class="fa fa-plus" />
-                {{ $t('EnyoCrudComponent.labels.createNew') }} {{ _name }}
+                {{ $t("EnyoCrudComponent.labels.createNew") }} {{ _name }}
               </button>
             </slot>
           </div>
@@ -116,10 +107,7 @@
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
-            :title="
-              _title ||
-                $t('EnyoCrudComponent.labels.manageTitle') + ' ' + _titlePlural
-            "
+            :title="_title || $t('EnyoCrudComponent.labels.manageTitle') + ' ' + _titlePlural"
             name="ajax-table"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -140,8 +128,7 @@
                   headers: {},
                   base64: false,
                   label: $t('EnyoCrudComponent.buttons.import'),
-                  class:
-                    'btn btn-main-style btn btn-link text-success  btn-block',
+                  class: 'btn btn-main-style btn btn-link text-success  btn-block'
                 }"
                 @uploaded="importResponse"
               />
@@ -151,7 +138,7 @@
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t('EnyoCrudComponent.buttons.excel-template') }}
+                {{ $t("EnyoCrudComponent.buttons.excel-template") }}
               </button>
             </template>
 
@@ -545,19 +532,20 @@ export default {
         this.goToCreatePage({ reset: false });
         return;
       }
-      this.parentPath = matched.path.replace("/edit", "").replace("/:id", "");
+
+      this.parentPath = matched.path;
+      this.parentPath = this.parentPath.replace("/edit", "").replace("/:id", "");
     } else {
       this.parentPath = matched.path;
+    }
+
+    if (this._isNestedDetail && this.viewMode === "detail") {
+      this.viewMode = this.nestedDisplayMode;
     }
   },
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
-    next((vm) => {
-      if (vm && vm.closeModal) {
-        vm.closeModal();
-      }
-      //    vm.loadModel();
-    });
+    next((vm) => {});
   },
   beforeRouteLeave(to, from, next) {
     next((vm) => {
@@ -575,7 +563,7 @@ export default {
         this.loadModel();
       }
 
-      this.tableNeedsRefresh = true;
+      this.tableNeedsRefresh = false;
       this.statsNeedsRefresh = true;
       this.awesomeEditNeedsRefresh = true;
       this.nestedCrudNeedsRefresh = true;
@@ -1061,7 +1049,7 @@ export default {
     },
 
     deleteFunction(item) {
-     this.selectedItem = item;
+      this.selectedItem = item;
       Swal.fire({
         title: this.$t("AwesomeDefault.messages.are_you_sure"),
         text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
@@ -1072,26 +1060,27 @@ export default {
         confirmButtonText: this.$t("EnyoCrudComponent.buttons.yes_delete_it"),
         cancelButtonText: this.$t("EnyoCrudComponent.buttons.cancel"),
         reverseButtons: true
-      }).then((result) => {
-        if (result.value) {
-          this.$http
-            .delete(`${this._selectedItemUrl}/${item[this.primaryKey]}`)
-            .then(() => {
-              this.tableNeedsRefresh = true;
-              this.statsNeedsRefresh = true;
-              this.nestedCrudNeedsRefresh = true;
-              this.$forceUpdate();
-            })
-            .catch((err) => {
-              // eslint-disable-next-line
-              console.error(err);
-            })
-            .finally(() => {
-              this.isRefreshing = false;
-            });
-        }
       })
-      .finally(() => (this.selectedItem = null));
+        .then((result) => {
+          if (result.value) {
+            this.$http
+              .delete(`${this._selectedItemUrl}/${item[this.primaryKey]}`)
+              .then(() => {
+                this.tableNeedsRefresh = true;
+                this.statsNeedsRefresh = true;
+                this.nestedCrudNeedsRefresh = true;
+                this.$forceUpdate();
+              })
+              .catch((err) => {
+                // eslint-disable-next-line
+                console.error(err);
+              })
+              .finally(() => {
+                this.isRefreshing = false;
+              });
+          }
+        })
+        .finally(() => (this.selectedItem = null));
     },
 
     onCustomAction(body) {

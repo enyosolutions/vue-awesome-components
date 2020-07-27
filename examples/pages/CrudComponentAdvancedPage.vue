@@ -1,27 +1,140 @@
 <template>
   <div id="app">
     <h1>CrudComponent component examples</h1>
-    <AutoProps
-      :component="CrudComponent"
-      :componentProps="{
-        identity: 'ticket',
-        apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
-        options: { detailPageMode: 'fullscreen' },
-        model: ticketModel
-      }"
-      :skip-props="['translations']"
-      :docked="true"
-      v-slot="{ userProps }"
-    >
-      <CrudComponent
-        url="http://localhost:3000/tickets"
-        :apiResponseConfig="{
-          dataPath: false,
-          totalCountPath: 'headers.x-total-count'
-        }"
-        v-bind="userProps"
-      />
-    </AutoProps>
+    <ul class="nav nav-pills" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a
+          class="nav-link active"
+          id="home-tab"
+          data-toggle="tab"
+          href="#home"
+          role="tab"
+          aria-controls="home"
+          aria-selected="true"
+          >Users</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="profile-tab"
+          data-toggle="tab"
+          href="#profile"
+          role="tab"
+          aria-controls="profile"
+          aria-selected="false"
+          >Tickets</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="contact-tab"
+          data-toggle="tab"
+          href="#contact"
+          role="tab"
+          aria-controls="contact"
+          aria-selected="false"
+          >List with custom rendering slots</a
+        >
+      </li>
+
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="one-per-row-tab"
+          data-toggle="tab"
+          href="#one-per-row"
+          role="tab"
+          aria-controls="one-per-row"
+          aria-selected="false"
+          >Standalone mode</a
+        >
+      </li>
+    </ul>
+    <hr />
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <select name v-model="modalDisplayModeSelect" class="form-control">
+          <option
+            v-for="val in [
+              'modal',
+              'sidebar',
+              'page',
+              'fullscreen',
+              'sidebar-left',
+              'sidebar-right',
+              'fade', // deprecated
+              'slide' // deprecated
+            ]"
+            :key="val"
+            :value="val"
+            >{{ val }}</option
+          >
+        </select>
+        <CrudComponent
+          identity="user"
+          :schema="userSchema"
+          :columns="['col1', 'col2', 'col3']"
+          url="http://localhost:3000/users"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect }"
+        />
+      </div>
+
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <!--  url="https://jsonplaceholder.typicode.com/photos" -->
+        <h2>Ticket model with auto props</h2>
+        <AutoProps
+          :component="CrudComponent"
+          :componentProps="{
+            identity: 'ticket',
+            apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
+            options: { detailPageMode: 'fullscreen' },
+            model: ticketModel
+          }"
+          :skip-props="['translations']"
+          :docked="false"
+          v-slot="{ userProps }"
+        >
+          <CrudComponent
+            url="http://localhost:3000/tickets"
+            :apiResponseConfig="{
+              dataPath: false,
+              totalCountPath: 'headers.x-total-count'
+            }"
+            v-bind="userProps"
+          />
+        </AutoProps>
+      </div>
+
+      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="contact-tab">
+        <button class="btn btn-primary" @click="toggleEdit">
+          <i class="fa fa-cog"></i>
+        </button>
+        <AwesomeForm
+          v-if="showAwesomeForm"
+          identity="ticket"
+          :model="ticketModel"
+          :item="{ id: 666087 }"
+          mode="edit"
+          displayMode="modal"
+          url="http://localhost:3000/tickets"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+        />
+      </div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">contact tab</div>
+    </div>
+
+    <div class="container"></div>
   </div>
 </template>
 <script>
@@ -30,12 +143,14 @@ import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
 import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: "CrudComponentAdvancedPage",
+  name: "CrudComponentPage",
   components: {
     CrudComponent,
+    AwesomeForm,
     AutoProps
   },
   data() {

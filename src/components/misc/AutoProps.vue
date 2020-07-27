@@ -5,11 +5,7 @@
         <div :is="component" v-bind="mergedProps" />
       </slot>
     </div>
-    <section
-      v-if="merged.props"
-      class="props"
-      :class="{ 'prop-section-docked': dockedComputed }"
-    >
+    <section v-if="merged.props" class="props" :class="{ 'prop-section-docked': dockedComputed }">
       <table :is="dockedComputed && !debug ? 'div' : 'table'">
         <tr :is="rowDisplayMode" class="proprow props-header">
           <div class="component-name" v-if="dockedComputed">
@@ -33,36 +29,17 @@
           </td>
         </tr>
         <template v-for="(propinfo, propname) in merged.props">
-          <tr
-            v-if="skipProps.indexOf(propname) === -1"
-            :key="propname"
-            class="proprow"
-            :is="rowDisplayMode"
-          >
-            <td
-              :is="colDisplayMode"
-              class="propcol name"
-              :class="{ required: propinfo.required }"
-            >
+          <tr v-if="skipProps.indexOf(propname) === -1" :key="propname" class="proprow" :is="rowDisplayMode">
+            <td :is="colDisplayMode" class="propcol name" :class="{ required: propinfo.required }">
               <span>{{ propname }}</span>
             </td>
 
-            <td
-              :is="dockedComputed && !debug ? 'div' : 'tr'"
-              class="propcol default"
-            >
+            <td :is="dockedComputed && !debug ? 'div' : 'tr'" class="propcol default">
               <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
               <template v-if="propinfo.type === 'string'">
-                <template
-                  v-if="propinfo.values && Array.isArray(propinfo.values)"
-                >
+                <template v-if="propinfo.values && Array.isArray(propinfo.values)">
                   <select v-model="inputedProps[propname]">
-                    <option
-                      v-for="val in propinfo.values"
-                      :value="val"
-                      v-bind:key="val"
-                      >{{ val }}</option
-                    >
+                    <option v-for="val in propinfo.values" :value="val" v-bind:key="val">{{ val }}</option>
                   </select>
                 </template>
                 <template v-if="!propinfo.values">
@@ -74,19 +51,13 @@
                   />
                 </template>
               </template>
-              <template
-                v-else-if="
-                  propinfo.type === 'object' || propinfo.type === 'array'
-                "
-              >
+              <template v-else-if="propinfo.type === 'object' || propinfo.type === 'array'">
                 <textarea
                   rows="10"
                   type="text"
                   class="form-control input-xs"
                   :value="JSON.stringify(mergedProps[propname], null, 2)"
-                  @input="
-                    ($event) => setProp($event, propname, mergedProps[propname])
-                  "
+                  @input="($event) => setProp($event, propname, mergedProps[propname])"
                 />
               </template>
               <template v-else-if="propinfo.type == 'boolean'">
@@ -139,25 +110,13 @@
 
       <div class="props-footer row m-0">
         <div class="form-check mr-3">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            value=""
-            v-model="isDocked"
-            id="defaultCheck2"
-          />
+          <input class="form-check-input" type="checkbox" value="" v-model="isDocked" id="defaultCheck2" />
           <label class="form-check-label" for="defaultCheck2">
             Docked
           </label>
         </div>
         <div class="form-check">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            value=""
-            v-model="debug"
-            id="defaultCheck1"
-          />
+          <input class="form-check-input" type="checkbox" value="" v-model="debug" id="defaultCheck1" />
           <label class="form-check-label" for="defaultCheck1">
             Extra infos
           </label>
@@ -168,120 +127,102 @@
 </template>
 <script>
 export default {
-  name: 'AutoProps',
+  name: "AutoProps",
   model: {
-    prop: 'componentProps',
-    event: 'input',
+    prop: "componentProps",
+    event: "input"
   },
   props: {
     component: {
       type: Object,
-      required: true,
+      required: true
     },
     documentation: {
-      type: Object,
+      type: Object
     },
     ignoreMixins: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     skipProps: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     docked: {
       type: Boolean,
-      default: true,
+      default: true
     },
     componentProps: {
       type: Object,
       required: false,
-      default: () => ({}),
-    },
+      default: () => ({})
+    }
   },
 
   data() {
     return {
       merged: this.process(this.component, this.documentation),
-      typesForCodeTag: ['array', 'object', 'function'],
+      typesForCodeTag: ["array", "object", "function"],
       defaultProps: {},
       inputedProps: {},
       debug: false,
-      isDocked: true,
+      isDocked: undefined
     };
   },
   mounted() {
     if (this.merged.props) {
       this.defaultProps = this.getDefaultProps();
-      this.inputedProps = Object.assign(
-        {},
-        this.defaultProps,
-        this.componentProps
-      );
+      this.inputedProps = Object.assign({}, this.defaultProps, this.componentProps);
       this.updateModel();
     }
     if (this.dockedComputed) {
-      document.body.classList.add('docked-auto-props');
+      document.body.classList.add("docked-auto-props");
     }
   },
   getDoc(component, documentation, ignoreMixins) {
     return this.methods.process(component, documentation, ignoreMixins);
   },
   beforeDestroy() {
-    document.body.classList.remove('docked-auto-props');
+    document.body.classList.remove("docked-auto-props");
   },
   watch: {
     dockedComputed() {
       if (this.dockedComputed) {
-        document.body.classList.add('docked-auto-props');
+        document.body.classList.add("docked-auto-props");
       } else {
-        document.body.classList.remove('docked-auto-props');
+        document.body.classList.remove("docked-auto-props");
       }
-    },
+    }
   },
   computed: {
     mergedProps() {
       try {
-        return Object.assign(
-          {},
-          this.defaultProps,
-          this.componentProps,
-          this.inputedProps
-        );
+        return Object.assign({}, this.defaultProps, this.componentProps, this.inputedProps);
       } catch (err) {
         console.warn(err);
         return {};
       }
     },
     rowDisplayMode() {
-      return this.docked && !this.debug ? 'div' : 'tr';
+      return this.docked && !this.debug ? "div" : "tr";
     },
 
     colDisplayMode() {
-      return this.docked && !this.debug ? 'div' : 'td';
+      return this.docked && !this.debug ? "div" : "td";
     },
     dockedComputed() {
-      return this.isDocked !== undefined && this.isDocked !== null
-        ? this.isDocked
-        : this.docked;
-    },
+      return this.isDocked !== undefined && this.isDocked !== null ? this.isDocked : this.docked;
+    }
   },
   methods: {
     getDefaultProps() {
       const defaultProps = {};
       Object.keys(this.merged.props).forEach((propName) => {
         const propInfo = this.merged.props[propName];
-        if (
-          !this.componentProps[propName] &&
-          propInfo.default &&
-          propInfo.default !== 'undefined'
-        ) {
+        if (!this.componentProps[propName] && propInfo.default && propInfo.default !== "undefined") {
           let prop = propInfo.default;
-          if (
-            ['array', 'object'].indexOf(propInfo.type) > -1 &&
-            typeof prop === 'function'
-          ) {
+          if (["array", "object"].indexOf(propInfo.type) > -1 && typeof prop === "function") {
             prop = prop();
           }
           try {
@@ -298,8 +239,7 @@ export default {
     process(component, documentation, ignoreMixins) {
       const m = this.merge(component, documentation);
       if (!(ignoreMixins || this.ignoreMixins)) {
-        if (m.mixins)
-          m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
+        if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
       }
       if (m.props) m.props = this.processProps(m.props);
       return m;
@@ -312,8 +252,8 @@ export default {
         Math,
         match.map((x) => x.length)
       );
-      const re = new RegExp(`^[ \\t]{${indent}}`, 'gm');
-      return indent > 0 ? text.replace(re, '') : text;
+      const re = new RegExp(`^[ \\t]{${indent}}`, "gm");
+      return indent > 0 ? text.replace(re, "") : text;
     },
     getPropsFromMixins(mixins) {
       return mixins.reduce((map, mixin) => {
@@ -333,7 +273,7 @@ export default {
           values: v.values,
           default: this.getDefault(v.default, v.type, objInfo),
           // defaultTypeStr - this will be sets from the function which is on line above (getDefault)
-          note: v.note || '',
+          note: v.note || ""
         });
 
         map[k] = objInfo;
@@ -348,15 +288,12 @@ export default {
       const typeStr = this.getType(type);
       const dTypeStr = getTypeString(d);
 
-      if (typeof d === 'undefined') return 'undefined';
+      if (typeof d === "undefined") return "undefined";
 
       // if default is function
-      if (dTypeStr === 'function') {
+      if (dTypeStr === "function") {
         // if there are types object or array and not function
-        if (
-          ['array', 'object'].some((i) => typeStr.includes(i)) &&
-          !typeStr.includes('function')
-        ) {
+        if (["array", "object"].some((i) => typeStr.includes(i)) && !typeStr.includes("function")) {
           // get result from function
           const dResult = d();
 
@@ -364,7 +301,7 @@ export default {
           return JSON.stringify(dResult, null, 2);
         }
 
-        objInfo.defaultTypeStr = 'function';
+        objInfo.defaultTypeStr = "function";
         // if not array or object then just get function in text format
         return d.toString();
       }
@@ -376,13 +313,13 @@ export default {
     // works for all types
     getType(t) {
       // for null and undefined
-      if (t == undefined) return 'any';
+      if (t == undefined) return "any";
 
-      if (getTypeString(t) === 'function') {
+      if (getTypeString(t) === "function") {
         return getTypeString(t());
       }
       if (Array.isArray(t)) {
-        return t.map(this.getType).join('|');
+        return t.map(this.getType).join("|");
       }
 
       return getTypeString(t);
@@ -391,19 +328,19 @@ export default {
       return Object.assign({}, a, b);
     },
     hasMixins(component) {
-      return typeof component.mixins !== 'undefined';
+      return typeof component.mixins !== "undefined";
     },
     updateModel() {
-      this.$emit('input', this.mergedProps);
+      this.$emit("input", this.mergedProps);
     },
 
     setProp(event, prop, value) {
       this.$set(this.inputedProps, prop, value);
-      if (event.target.nodeName === 'TEXTAREA') {
+      if (event.target.nodeName === "TEXTAREA") {
         this.$set(this.inputedProps, prop, JSON.parse(event.target.value));
       }
-    },
-  },
+    }
+  }
 };
 
 function getTypeString(variable) {

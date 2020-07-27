@@ -30,6 +30,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/crudcomponent">Crud component</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/crudcomponent-advanced">Crud component advanced</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -42,17 +45,17 @@
 </template>
 <script>
 export default {
-  name: 'App',
+  name: "App",
   components: {},
   data() {
     return {};
   },
-  methods: {},
+  methods: {}
 };
 </script>
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

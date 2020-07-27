@@ -11,7 +11,13 @@
 }
 
 .btn-link:hover,
-.btn-link:focus,
+.btn-link:focus
  {
   text-decoration: none;
+}
+
+.btn-simple {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
 }

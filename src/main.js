@@ -1,7 +1,10 @@
 // Import the styles directly. (Or you could add them via script tags.)
 import "bootstrap/scss/bootstrap.scss";
 import './assets/css/font-awesome.min.css';
-import './assets/css/bootstrap-theme.min.css';
+import './assets/css/material-dashboard.min.css';
+// import './assets/css/material-dashboard-dark.min.css';
+// import './assets/css/paper-dashboard.min.css';
+// import './assets/css/light-bootstrap-dashboard.css';
 import "./main.scss";
 
 import Vue from "vue";
@@ -71,6 +74,10 @@ const router = new VueRouter({
     {
       path: "/awesometable",
       component: () => import("../examples/pages/AwesomeTablePage.vue")
+    },
+    {
+      path: "/crudcomponent-advanced",
+      component: () => import("../examples/pages/CrudComponentAdvancedPage")
     },
     {
       path: "/crudcomponent",
