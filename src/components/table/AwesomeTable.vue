@@ -98,6 +98,9 @@
     </div>
 
     <div class="card-body ajax-table-card-body">
+
+      <awesome-filter v-if="true || _actions.filter && _actions.advancedFilter && filterable" :fields="columns" @update-filter="advancedFiltering"/>
+
       <div class="table-responsive">
         <vue-good-table
           :mode="mode"
@@ -131,6 +134,18 @@
           @on-search="onSearch"
         >
           <div slot="table-actions">
+
+            <date-range-picker
+                    v-if="_actions.filter && _actions.dateFilter && filterable"
+                    class="form-group vgt-date-range"
+                    :placeholder="$t('AwesomeTable.daterange.start')"
+                    :start-date="defaultStartDate"
+                    :end-date="defaultEndDate"
+                    :locale-data="datePicker.locale"
+                    :opens="'left'"
+                    @update="onDateFilter"
+            />
+
             <template v-if="opts && opts.customTableTopActions">
               <template v-for="(action, index) in opts.customTableTopActions">
                 <button
@@ -149,17 +164,6 @@
                 </button>
               </template>
             </template>
-
-            <date-range-picker
-              v-if="_actions.filter && _actions.dateFilter && filterable"
-              class="form-group vgt-date-range"
-              :placeholder="$t('AwesomeTable.daterange.start')"
-              :start-date="defaultStartDate"
-              :end-date="defaultEndDate"
-              :locale-data="datePicker.locale"
-              :opens="'left'"
-              @update="onDateFilter"
-            />
           </div>
           <template slot="table-row" slot-scope="props">
             <awesome-display
@@ -251,6 +255,7 @@ import { defaultActions } from "../../mixins/defaultProps";
 
 import _ from "lodash";
 import AwesomeDisplay from "../crud/display/AwesomeDisplay";
+import AwesomeFilter from "../misc/AwesomeFilter";
 
 export default {
   name: "AwesomeTable",
@@ -267,7 +272,8 @@ export default {
   components: {
     AwesomeDisplay,
     DateRangePicker,
-    VueGoodTable
+    VueGoodTable,
+    AwesomeFilter
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
@@ -611,6 +617,14 @@ export default {
   },
   methods: {
     startCase: _.startCase,
+
+    advancedFiltering(filters) {
+      this.updateParams({
+        filters: _.cloneDeep(filters),
+        page: 0
+      });
+      this.getItems();
+    },
 
     toggleFilter() {
       this.filterable = !this.filterable;
