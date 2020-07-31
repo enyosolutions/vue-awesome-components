@@ -1,6 +1,7 @@
 <template>
     <div class="awesome-filter">
         {{currentField.type}}
+        {{currentFilter.value}}
         {{currentValue}}
         <div class="filtering mb-4">
             <h6 class="card-subtitle text-muted mb-2">Filter data</h6>
@@ -37,21 +38,19 @@
                                     Filter value
                                 </label>
                             </div>
-                            <date-range-picker
-                                    v-if="currentField.type === 'datetime'"
-                                    class="form-group vgt-date-range"
-                                    placeholder="Filter value"
-                                    v-model="currentValue"
-                            />
+                            <datetime
+                                    v-if="(currentField.type === 'datetime' || currentField.type === 'date') && currentFilter.value !== '$notBetween' && currentFilter.value !== '$between'"
+                                    class="form-group" v-model="currentValue"
+                                    :input-class=" ' form-control'"
+                                    auto
+                                    title="Filter value"
+                                    input-id="date"
+                            >
+                            </datetime>
+                            <!-- ADD DATE RANGE PICKER IF filter is $between or $notBetween -->
+                            <!-- ADD SELECT FOR RELATION / OBJECT -->
                         </div>
                         <input v-else v-model="currentValue" class="form-control" type="text" placeholder="Filter value">
-                        <!--<div v-if="Object.keys(currentField).length">
-                            RELATION
-                            OBJECT
-                            DATETIME
-                            <input v-else type="text" class="form-control" placeholder="Value">
-                        </div> -->
-                        <!-- <input type="text" class="form-control" placeholder="Value" v-model="currentValue">-->
                     </div>
                     <div class="col">
                         <button :disabled="!(Object.keys(currentField).keys() && Object.keys(currentFilter).length)" @click.prevent="addFilter()" type="button" class="btn btn-primary btn-block">Add filter</button>
@@ -79,11 +78,11 @@
 
 <script>
   import _ from 'lodash';
-  import DateRangePicker from "vue2-daterange-picker";
+  import { Datetime } from 'vue-datetime';
   export default {
     name: "AwesomeFilter",
     components: {
-      DateRangePicker
+      Datetime,
     },
     props: {
       fields: Array
