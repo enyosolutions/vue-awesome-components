@@ -1,5 +1,7 @@
 <template>
     <div class="awesome-filter">
+        {{currentField.type}}
+        {{currentValue}}
         <div class="filtering mb-4">
             <h6 class="card-subtitle text-muted mb-2">Filter data</h6>
             <form class="container">
@@ -22,24 +24,34 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="filter">
                             <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">Filters</a>
-                            <a href="" @click.prevent="currentFilter = filter" class="dropdown-item" v-for="filter in filters" :key="filter.value">{{filter.text}}</a>
+                            <a href="" @click.prevent="currentFilter = filter" class="dropdown-item" v-for="filter in getFilters" :key="filter.value">{{filter.text}}</a>
                         </div>
                     </div>
                     <div class="col">
-                        <!--<div v-if="Object.keys(currentField).length">
-                            BOOLEAN
-                            <div v-if="currentField.type === 'boolean'" class="form-check mr-3">
-                                <input class="ajax-table-checkbox" type="checkbox" id="checkbox" v-model="test" />
-                                <label class="form-check-label" for="checkbox">
-                                    Checkbox
+                        <div v-if="Object.keys(currentField).length">
+                            <input v-if="currentField.type === 'number'" v-model="currentValue" type="number" class="form-control" placeholder="Filter value">
+                            <input v-if="currentField.type === 'text'"  v-model="currentValue" type="text" class="form-control" placeholder="Filter value">
+                            <div v-if="currentField.type === 'boolean'" class="form-element field-checkbox">
+                                <input v-model="currentValue" type="checkbox" class="ajax-table-checkbox form-control" id="checkbox">
+                                <label for="checkbox" class="form-check-label">
+                                    Filter value
                                 </label>
                             </div>
+                            <date-range-picker
+                                    v-if="currentField.type === 'datetime'"
+                                    class="form-group vgt-date-range"
+                                    placeholder="Filter value"
+                                    v-model="currentValue"
+                            />
+                        </div>
+                        <input v-else v-model="currentValue" class="form-control" type="text" placeholder="Filter value">
+                        <!--<div v-if="Object.keys(currentField).length">
                             RELATION
                             OBJECT
                             DATETIME
                             <input v-else type="text" class="form-control" placeholder="Value">
                         </div> -->
-                        <input type="text" class="form-control" placeholder="Value" v-model="currentValue">
+                        <!-- <input type="text" class="form-control" placeholder="Value" v-model="currentValue">-->
                     </div>
                     <div class="col">
                         <button :disabled="!(Object.keys(currentField).keys() && Object.keys(currentFilter).length)" @click.prevent="addFilter()" type="button" class="btn btn-primary btn-block">Add filter</button>
@@ -67,8 +79,12 @@
 
 <script>
   import _ from 'lodash';
+  import DateRangePicker from "vue2-daterange-picker";
   export default {
     name: "AwesomeFilter",
+    components: {
+      DateRangePicker
+    },
     props: {
       fields: Array
     },
@@ -77,7 +93,7 @@
         {text: 'Equals', value: '$eq'},
         {text: 'Not equals', value: '$ne'},
         {text: 'Is', value: '$is'},
-        {text: 'Not', value: '$not'},
+        {text: 'Is not', value: '$not'},
         {text: 'Greater', value: '$gt'},
         {text: 'Greater or equals', value: '$gte'},
         {text: 'Less than', value: '$lt'},
@@ -92,6 +108,13 @@
         {text: 'Like insensitive', value: '$iLike'},
         {text: 'Not like insensitive', value: '$notILike'}
       ],
+      rules: {
+        text: ['$eq', '$ne'],
+        datetime: ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte', '$between', '$notBetween'],
+        number: ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte', '$between', '$notBetween'],
+        boolean: ['$eq', '$ne', '$is', '$not'],
+        global: ['$is', '$not', '$like', '$notLike', '$startsWith', '$endsWith', '$substring', '$iLike', '$notILike'],
+      },
       currentField: {},
       currentValue: "",
       currentFilter: {},
@@ -121,11 +144,32 @@
         const advancedFilters = {};
         this.selectedFilters.forEach(filter => {
           const parsedFilter = {[filter.field.field]: {[filter.filter.value]: filter.value }}
-          _.merge(advancedFilters, parsedFilter);
+          if (_.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)) {
+            advancedFilters[filter.field.field][filter.filter.value] = _.flattenDeep([advancedFilters[filter.field.field][filter.filter.value], filter.value]);
+          } else {
+            _.merge(advancedFilters, parsedFilter);
+          }
         })
         this.$emit('update-filter', advancedFilters);
       }
-    }
+    },
+    computed: {
+      getFilters () {
+        if (this.currentField && Object.keys(this.currentField).length) {
+          return _.filter(this.filters, (filter) => {
+            if (_.includes(this.rules[this.currentField.type], filter.value) || _.includes(this.rules.global, filter.value)) {
+              return filter;
+            }
+          });
+        }
+        return this.filters;
+      }
+    },
+    watch: {
+      currentField() {
+        this.currentValue = "";
+      }
+    },
   }
 </script>
 
