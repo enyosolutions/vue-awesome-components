@@ -10,6 +10,7 @@ export const defaultActions = {
   import: false,
   dateFilter: true,
   refresh: true,
-  advancedFilter: true,
+  advancedFilters: true,
+  columnsFilters: true
 };
 

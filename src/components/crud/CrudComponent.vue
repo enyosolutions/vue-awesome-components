@@ -97,7 +97,7 @@
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
-            :api-query-headers="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
             :apiRequestConfig="apiRequestConfig"
             :apiResponseConfig="apiResponseConfig"
             :needs-refresh.sync="tableNeedsRefresh"

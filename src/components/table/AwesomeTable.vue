@@ -8,6 +8,9 @@
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
+        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems()">
+          <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
+        </button>
         <div class="btn-group btn-group-sm float-right">
           <slot name="table-top-actions" />
           <div v-if="canHideColumns" class="dropdown">
@@ -42,23 +45,47 @@
           <div v-if="isRefreshing" style="text-align: center">
             <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color:orange;margin-left:10px" />
           </div>
-          <button
-            v-if="_actions.filter"
-            type="button"
-            class="btn btn-link btn-alt-style"
-            :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
-            @click="toggleFilter()"
+          <popper
+            trigger="clickToOpen"
+            :options="{
+              placement: 'bottom',
+              modifiers: { offset: { offset: '0,10px' } }
+            }"
+            ref="filterPopover"
           >
-            <i class="fa fa-filter" />
-            {{ $t("AwesomeTable.buttons.filters") }}
-          </button>
-          <div class="dropdown">
-            <button v-if="_actions && _actions.refresh" class="btn btn-link btn-alt-style" @click="getItems()">
-              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("AwesomeTable.buttons.refresh") }}
-            </button>
             <button
-              v-if="_actions && (_actions.export || _actions.import || _actions.dropdownActions)"
+              slot="reference"
+              v-if="_actions.filter"
+              type="button"
+              class="btn btn-link btn-alt-style dropdown-toggle"
+              :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+              aria-haspopup="true"
+              aria-expanded="false"
+              id="advancedFilterButton"
+              @click="toggleAdvancedFilters"
+            >
+              <i class="fa fa-filter" />
+              {{ $t("AwesomeTable.buttons.filters") }}
+            </button>
+
+            <div class="popper card mt-0" style="z-index: 1;">
+              <awesome-filter
+                class="card-body"
+                :displayFilters="false"
+                id="advancedFilterComponent"
+                v-if="true || (_actions.filter && _actions.advancedFilter && filterable)"
+                :fields="columns"
+                @update-filter="advancedFiltering"
+                v-model="advancedFilters"
+              />
+            </div>
+          </popper>
+
+          <div class="dropdown">
+            <button
+              v-if="
+                _actions && (_actions.export || _actions.import || _actions.columnsFilters || _actions.dropdownActions)
+              "
               id="dropdownMenuButton"
               class="btn btn-secondary btn-main-style dropdown-toggle"
               type="button"
@@ -71,6 +98,16 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
+              <button
+                v-if="_actions.columnsFilters"
+                type="button"
+                class="btn btn-link btn-alt-style"
+                :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+                @click="toggleFilter()"
+              >
+                <i class="fa fa-filter" />
+                {{ $t("AwesomeTable.buttons.columnsFilters") }}
+              </button>
               <button
                 v-if="_actions && _actions.export"
                 class="btn btn-link text-success btn-main-style btn-block"
@@ -98,8 +135,13 @@
     </div>
 
     <div class="card-body ajax-table-card-body">
-
-      <awesome-filter v-if="true || _actions.filter && _actions.advancedFilter && filterable" :fields="columns" @update-filter="advancedFiltering"/>
+      <awesome-filter
+        :editFilters="false"
+        id="advancedFilterComponent"
+        v-if="true || (_actions.filter && _actions.advancedFilters && filterable)"
+        :fields="columns"
+        v-model="advancedFilters"
+      />
 
       <div class="table-responsive">
         <vue-good-table
@@ -134,34 +176,34 @@
           @on-search="onSearch"
         >
           <div slot="table-actions">
-
             <date-range-picker
-                    v-if="_actions.filter && _actions.dateFilter && filterable"
-                    class="form-group vgt-date-range"
-                    :placeholder="$t('AwesomeTable.daterange.start')"
-                    :start-date="defaultStartDate"
-                    :end-date="defaultEndDate"
-                    :locale-data="datePicker.locale"
-                    :opens="'left'"
-                    @update="onDateFilter"
+              v-if="_actions.filter && _actions.dateFilter && filterable"
+              class="form-group vgt-date-range"
+              :placeholder="$t('AwesomeTable.daterange.start')"
+              :start-date="defaultStartDate"
+              :end-date="defaultEndDate"
+              :locale-data="datePicker.locale"
+              :opens="'left'"
+              @update="onDateFilter"
             />
 
             <template v-if="opts && opts.customTableTopActions">
               <template v-for="(action, index) in opts.customTableTopActions">
-                <button
-                  v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)"
-                  :key="index"
-                  class="btn btn-xs btn-main-style"
-                  :class="action.class"
-                  :data-title="action.title || action.label"
-                  :tooltip="action.title || action.label"
-                  :data-tooltip="action.title || action.label"
-                  @click="$emit('customAction', { action, location: 'tabletop' })"
-                >
-                  <i v-if="action.icon" :class="action.icon" /><span
-                    v-html="action.label ? $t(action.label) : ''"
-                  ></span>
-                </button>
+                <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
+                  <button
+                    :key="index"
+                    class="btn btn-xs btn-main-style"
+                    :class="action.class"
+                    :data-title="action.title || action.label"
+                    :tooltip="action.title || action.label"
+                    :data-tooltip="action.title || action.label"
+                    @click="$emit('customAction', { action, location: 'tabletop' })"
+                  >
+                    <i v-if="action.icon" :class="action.icon" /><span
+                      v-html="action.label ? $t(action.label) : ''"
+                    ></span>
+                  </button>
+                </template>
               </template>
             </template>
           </div>
@@ -179,28 +221,29 @@
               <slot name="table-row-actions" :item="props.row">
                 <template v-if="opts && opts.customInlineActions">
                   <template v-for="(action, index) in opts.customInlineActions">
-                    <button
-                      v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)"
-                      :key="index"
-                      class="btn btn-xs btn-alt-style"
-                      :class="action.class"
-                      :id="action.name + '-' + props.index"
-                      :data-title="action.title || action.label"
-                      :data-tooltip="action.title || action.label"
-                      @click="
-                        $emit('customAction', {
-                          action,
-                          item: props.row,
-                          location: 'inline',
-                          props,
-                          id: action.name + '-' + props.index
-                        })
-                      "
-                    >
-                      <i v-if="action.icon" :class="action.icon" /><span
-                        v-html="action.label ? $t(action.label) : ''"
-                      ></span>
-                    </button>
+                    <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
+                      <button
+                        :key="index"
+                        class="btn btn-xs btn-alt-style"
+                        :class="action.class"
+                        :id="action.name + '-' + props.index"
+                        :data-title="action.title || action.label"
+                        :data-tooltip="action.title || action.label"
+                        @click="
+                          $emit('customAction', {
+                            action,
+                            item: props.row,
+                            location: 'inline',
+                            props,
+                            id: action.name + '-' + props.index
+                          })
+                        "
+                      >
+                        <i v-if="action.icon" :class="action.icon" /><span
+                          v-html="action.label ? $t(action.label) : ''"
+                        ></span>
+                      </button>
+                    </template>
                   </template>
                 </template>
               </slot>
@@ -248,6 +291,8 @@
 import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import moment from "moment";
+import Popper from "vue-popperjs";
+
 import apiErrors from "../../mixins/apiErrorsMixin";
 import apiListMixin from "../../mixins/apiListMixin";
 import i18nMixin from "../../mixins/i18nMixin";
@@ -273,7 +318,8 @@ export default {
     AwesomeDisplay,
     DateRangePicker,
     VueGoodTable,
-    AwesomeFilter
+    AwesomeFilter,
+    popper: Popper
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
@@ -389,7 +435,8 @@ export default {
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
           firstDay: 1 // ISO first day of week - see moment documenations for details
         }
-      }
+      },
+      advancedFilters: []
     };
   },
   computed: {
@@ -589,6 +636,11 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
+    if (this.apiQueryParams && Object.keys(this.apiQueryParams).length > 0) {
+      Object.keys(this.apiQueryParams).forEach((field) => {
+        this.advancedFilters.push({ [field]: this.apiQueryParams[field] });
+      });
+    }
     this.refreshLocalData();
 
     if (this.autoRefresh) {
@@ -619,6 +671,7 @@ export default {
     startCase: _.startCase,
 
     advancedFiltering(filters) {
+      this.$refs["filterPopover"].doClose();
       this.updateParams({
         filters: _.cloneDeep(filters),
         page: 0
@@ -642,6 +695,7 @@ export default {
       });
     },
 
+    toggleAdvancedFilters() {},
     // editItem(item) {},
 
     clickOnLine(item) {
@@ -683,7 +737,7 @@ export default {
         return;
       }
       this.updateParams({
-        filters: _.cloneDeep(params.columnFilters),
+        filters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
       this.getItems();

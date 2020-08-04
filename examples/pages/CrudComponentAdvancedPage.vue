@@ -82,7 +82,7 @@
             totalCountPath: 'headers.x-total-count'
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-          :options="{ detailPageMode: modalDisplayModeSelect }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
         />
       </div>
 
