@@ -8,6 +8,7 @@ import './assets/css/material-dashboard.min.css';
 import "./main.scss";
 
 import Vue from "vue";
+import qs from 'qs';
 // eslint-disable-next-line
 import VueI18n from "vue-i18n";
 import axios from "axios";
@@ -62,6 +63,14 @@ Vue.config.productionTip = false;
 
 const router = new VueRouter({
   mode: "history",
+  parseQuery(query) {
+    return qs.parse(query);
+  },
+  stringifyQuery(query) {
+    var result = qs.stringify(query);
+
+    return result ? ('?' + result) : '';
+  },
   routes: [
     {
       path: "/",

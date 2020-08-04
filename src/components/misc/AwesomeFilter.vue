@@ -1,8 +1,10 @@
 <template>
   <div class="awesome-filter">
+    <!--
     {{ currentField.type }}
     {{ currentFilter.value }}
     {{ currentValue }}
+    -->
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">Filter data</h6>
       <form class="container">
@@ -110,13 +112,13 @@
         </div>
       </form>
     </div>
-    <div class="active-filter" v-if="displayFilters && value && value.length">
+    <div class="active-filter" v-if="displayFilters && selectedFilters && selectedFilters.length">
       <h6 class="card-subtitle mb-2 text-muted">Active Filters</h6>
-      <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in value" :key="index">
+      <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in selectedFilters" :key="index">
         <div class="chip-content">
-          {{ filter.field.label }}
+          {{ filter.field ? filter.field.label : "" }}
           <strong class="ml-3 mr-3">
-            {{ filter.filter.text }}
+            {{ filter.filter ? filter.filter.text : "" }}
           </strong>
           {{ filter.value || '""' }}
           <button type="button" @click.prevent="removeFilter(filter)">
@@ -148,10 +150,10 @@ export default {
       { text: "Not equals", value: "$ne" },
       { text: "Is", value: "$is" },
       { text: "Is not", value: "$not" },
-      { text: "Greater", value: "$gt" },
-      { text: "Greater or equals", value: "$gte" },
-      { text: "Less than", value: "$lt" },
-      { text: "Less than or equals", value: "$lte" },
+      { text: ">", value: "$gt" },
+      { text: "Greater or equals ", value: "$gte" },
+      { text: "Lesser than", value: "$lt" },
+      { text: "Lesser or equals", value: "$lte" },
       { text: "Between", value: "$between" },
       { text: "Not between", value: "$notBetween" },
       { text: "Contains", value: "$like" },
@@ -228,8 +230,31 @@ export default {
   },
   watch: {
     value() {
-      this.selectedFilters = this.value;
+      if (!this.value || !this.value.length) {
+        return;
+      }
+      this.selectedFilters = this.value.map((element) => {
+        if (element.filter) {
+          return element;
+        }
+        const filter = {};
+        const [key, data] = Object.entries(element)[0];
+        const [op, value] = typeof data === "object" ? Object.entries(data)[0] : ["$eq", data];
+        const field = this.fields.find((e) => e.field === key);
+
+        if (field) {
+          filter.field = field;
+          const operator = this.filters.find((e) => e.value === op);
+          if (operator) {
+            filter.filter = operator;
+            filter.value = value;
+          }
+        }
+        console.log(filter);
+        return filter;
+      });
     },
+
     currentField() {
       this.currentValue = "";
     }

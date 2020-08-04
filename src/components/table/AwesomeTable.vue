@@ -72,7 +72,7 @@
               <awesome-filter
                 class="card-body"
                 :displayFilters="false"
-                id="advancedFilterComponent"
+                id="advancedFilterComponentDisplay"
                 v-if="true || (_actions.filter && _actions.advancedFilter && filterable)"
                 :fields="columns"
                 @update-filter="advancedFiltering"
@@ -636,9 +636,9 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
-    if (this.apiQueryParams && Object.keys(this.apiQueryParams).length > 0) {
-      Object.keys(this.apiQueryParams).forEach((field) => {
-        this.advancedFilters.push({ [field]: this.apiQueryParams[field] });
+    if (this.apiQueryParams && this.apiQueryParams._filters && Object.keys(this.apiQueryParams._filters).length > 0) {
+      Object.keys(this.apiQueryParams._filters).forEach((field) => {
+        this.advancedFilters.push({ [field]: this.apiQueryParams._filters[field] });
       });
     }
     this.refreshLocalData();
