@@ -95,6 +95,7 @@
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :routerMode="mergedOptions.routerMode"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
@@ -166,6 +167,7 @@ import "vue-good-table/dist/vue-good-table.css";
 const defaultOptions = {
   mode: "local", // Deprecated use dataPaginationMode
   dataPaginationMode: "local",
+  defaultOptions: true,
   url: null,
   columns: null,
   createPath: null,
@@ -588,11 +590,11 @@ export default {
         }
       }
       this.mergedOptions = _.merge({}, defaultOptions, this.mergedOptions, this.options);
-      if (this.$route && this.$route.query && this.$route.query._filters) {
+      if (this.$route && this.$route.query && this.$route.query.filters) {
         this.mergedOptions.queryParams = _.merge(
           this.mergedOptions.queryParams,
-          { _filters: this.$route.query._filters },
-          { _fields: this.$route.query._fields }
+          { filters: this.$route.query.filters },
+          { fields: this.$route.query.fields }
         );
       }
     },

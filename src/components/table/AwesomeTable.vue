@@ -58,7 +58,7 @@
               v-if="_actions.filter"
               type="button"
               class="btn btn-link btn-alt-style dropdown-toggle"
-              :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+              :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
               aria-haspopup="true"
               aria-expanded="false"
               id="advancedFilterButton"
@@ -66,6 +66,7 @@
             >
               <i class="fa fa-filter" />
               {{ $t("AwesomeTable.buttons.filters") }}
+              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : "" }}
             </button>
 
             <div class="popper card mt-0" style="z-index: 1;">
@@ -155,6 +156,9 @@
           :filter-options="{
             enabled: _actions.filter
           }"
+          :sort-options="{
+            initialSortBy: initialSortBy
+          }"
           :search-options="{
             enabled: _actions.search,
             placeholder: this.$t('AwesomeTable.searchInput')
@@ -167,7 +171,8 @@
             ofLabel: this.$t('AwesomeTable.of'),
             pageLabel: this.$t('AwesomeTable.page'),
             allLabel: this.$t('AwesomeTable.all'),
-            perPage: perPage
+            perPage: parseInt(serverParams.perPage) || perPage,
+            setCurrentPage: parseInt(serverParams.page) || undefined
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
@@ -599,6 +604,22 @@ export default {
         return cols;
       }
       return this.formattedColumns;
+    },
+
+    initialSortBy() {
+      if (this.serverParams.sort) {
+        const [[field, direction]] = Object.entries(this.serverParams.sort);
+        return { field, type: direction };
+      }
+      return undefined;
+    },
+
+    advancedFiltersCount() {
+      return (this.advancedFilters && this.advancedFilters.length) || 0;
+    },
+
+    advancedFiltersFormated() {
+      return AwesomeFilter.methods.parseFilter(this.advancedFilters, { dispatch: false });
     }
   },
   watch: {
@@ -636,9 +657,9 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
-    if (this.apiQueryParams && this.apiQueryParams._filters && Object.keys(this.apiQueryParams._filters).length > 0) {
-      Object.keys(this.apiQueryParams._filters).forEach((field) => {
-        this.advancedFilters.push({ [field]: this.apiQueryParams._filters[field] });
+    if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
+      Object.keys(this.apiQueryParams.filters).forEach((field) => {
+        this.advancedFilters.push({ [field]: this.apiQueryParams.filters[field] });
       });
     }
     this.refreshLocalData();
@@ -667,6 +688,7 @@ export default {
   beforeDestroy() {
     clearInterval(this.refreshHandle);
   },
+
   methods: {
     startCase: _.startCase,
 
@@ -737,20 +759,31 @@ export default {
         return;
       }
       this.updateParams({
-        filters: _.cloneDeep(params.columnsFilters),
+        columnFilters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
       this.getItems();
     },
 
     onSortChange(params) {
-      const fieldIndex = params[0].columnIndex;
+      // second param is a deprecated one
+      const fieldIndex = params[0].field || params[0].columnIndex;
+      const field = this.columns.find((c) => c.field === fieldIndex);
       // eslint-disable-next-line
-      if (this.mode !== "remote" || !this.columns || !this.columns[fieldIndex].field) {
+      if (!field) {
         return;
       }
       const sort = {};
-      sort[this.columns[fieldIndex].field] = params[0].sortType || params[0].type;
+
+      // second param is a deprecated one
+      sort[field.field] = params[0].type || params[0].sortType;
+      if (this.routerMode) {
+        this.$router.push({ query: { ...this.$route.query, sort } });
+      }
+      // eslint-disable-next-line
+      if (this.mode !== "remote") {
+        return;
+      }
       this.updateParams({ sort });
       this.getItems();
     },

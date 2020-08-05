@@ -150,7 +150,7 @@ export default {
       { text: "Not equals", value: "$ne" },
       { text: "Is", value: "$is" },
       { text: "Is not", value: "$not" },
-      { text: ">", value: "$gt" },
+      { text: "Greater than", value: "$gt" },
       { text: "Greater or equals ", value: "$gte" },
       { text: "Lesser than", value: "$lt" },
       { text: "Lesser or equals", value: "$lte" },
@@ -196,7 +196,7 @@ export default {
       this.parseFilter(this.selectedFilters);
     },
 
-    parseFilter(selectedFilters) {
+    parseFilter(selectedFilters, options = { dispatch: true }) {
       const advancedFilters = {};
       selectedFilters.forEach((filter) => {
         const parsedFilter = { [filter.field.field]: { [filter.filter.value]: filter.value } };
@@ -209,10 +209,15 @@ export default {
           _.merge(advancedFilters, parsedFilter);
         }
       });
-      this.$emit("update-filter", advancedFilters);
-      this.$emit("input", selectedFilters);
+
+      if (options.dispatch) {
+        this.$emit("update-filter", advancedFilters);
+        this.$emit("input", selectedFilters);
+      }
+      return advancedFilters;
     }
   },
+
   computed: {
     getFilters() {
       if (this.currentField && Object.keys(this.currentField).length) {

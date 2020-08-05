@@ -12,6 +12,11 @@
     }
 }
 
+.btn-awtable-inline-action {
+  padding: 3px 1px;
+  line-height: 1;
+}
+
 @media(max-width: 720px) {
     .vgt-global-search {
         justify-content: flex-end;
@@ -22,7 +27,6 @@
         }
     }
 }
-
 
 
 .table-upgrade {
