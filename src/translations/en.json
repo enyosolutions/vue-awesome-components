@@ -18,7 +18,8 @@
       "searchInput": "Search",
       "view": "view",
       "cancel": "cancel",
-      "close": "close"
+      "close": "close",
+      "columnsFilters": "Toggle columns filters"
     },
     "next": "next",
     "prev": "prev",
@@ -27,7 +28,8 @@
     "page": "page",
     "all": "all",
     "empty": "empty",
-    "searchInput": "Search"
+    "searchInput": "Search",
+    "more": "More actions"
   },
   "EnyoCrudComponent": {
     "labels": {

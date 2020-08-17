@@ -40,6 +40,10 @@ export default {
         "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
+    routerMode: {
+      type: Boolean,
+      default: true,
+    },
     entity: {
       type: String,
       default: "",
@@ -94,7 +98,7 @@ export default {
     params() {
       // eslint-disable-next-line
       console.info(
-        "BC this.params is deprecated, use this.apiQueryParams instead"
+        "BC this.params is deprecated, use this.apiQueryParams instead", this.params
       );
       return this.apiQueryParams;
     },
@@ -121,7 +125,10 @@ export default {
     },
     entity: "entityChanged",
     // store: changed => {},
-    rows: "refreshLocalData"
+    rows: "refreshLocalData",
+    $route(to) {
+      this.connectRouteToPagination(to);
+    }
   },
 
   created() {
@@ -143,6 +150,10 @@ export default {
 
   mounted() {
     this.refreshLocalData();
+    if (this.routerMode) {
+      this.connectRouteToPagination(this.$route);
+    }
+
   },
   beforeDestroy() { },
   methods: {
@@ -226,12 +237,15 @@ export default {
       this.$emit("itemClicked", item);
     },
 
-    updateParams(newProps) {
+    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, filters: undefined }) {
+      const columnFilters = newProps.columnFilters || {};
+      delete newProps.columnFilters;
       this.serverParams = Object.assign(
         {},
         this.apiQueryParams,
         this.serverParams,
-        newProps
+        newProps,
+        columnFilters
       );
     },
 
@@ -242,6 +256,10 @@ export default {
     },
 
     onPageChange(params) {
+      window.App = { vue: this };
+      if (this.routerMode) {
+        this.$router.push({ query: { ...this.$route.query, page: params.currentPage } });
+      }
       if (this.mode !== "remote") {
         return;
       }
@@ -250,6 +268,9 @@ export default {
     },
 
     onPerPageChange(params) {
+      if (this.routerMode) {
+        this.$router.push({ query: { ...this.$route.query, perPage: params.currentPerPage } });
+      }
       if (this.mode !== "remote") {
         return;
       }
@@ -258,6 +279,9 @@ export default {
     },
 
     onSearch(params) {
+      if (this.routerMode) {
+        this.$router.push({ query: { ...this.$route.query, search: params.searchTerm } });
+      }
       if (this.mode !== "remote") {
         return;
       }
@@ -266,7 +290,16 @@ export default {
       this.getItems();
     },
 
-
+    connectRouteToPagination(to) {
+      if (this.routerMode) {
+        this.updateParams({
+          page: to.query.page, search: to.query.search,
+          perPage: to.query.perPage,
+          sort: to.query.sort,
+          filters: to.query.filters,
+        });
+      }
+    },
 
     exportCurrentArrayToExcel() {
       let CsvString = "";

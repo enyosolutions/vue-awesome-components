@@ -6,7 +6,7 @@ module.exports = {
         id: {
             $id: 'id',
             // type: ['object', 'string'],
-            type: 'integer',
+            type: 'number',
             title: 'numéro utlisateur',
             description: 'Identifiant utilisateur',
         },

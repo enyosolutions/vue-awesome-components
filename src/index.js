@@ -16,8 +16,13 @@ import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 
 import AwesomeTable from './components/table/AwesomeTable.vue';
 
+import FormGenerator from './components/form/form-generator';
+
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 import rolesMixin from './mixins/rolesMixin';
+
+
+
 import install from './plugin';
 
 const VueEnyoComponents = {
@@ -40,6 +45,7 @@ const VueEnyoComponents = {
   rolesMixin,
   TableAndChartsCard,
   UploadButton,
+  FormGenerator,
 }
 
 export {
@@ -63,6 +69,7 @@ export {
   TableAndChartsCard,
   UploadButton,
   VueEnyoComponents,
+  FormGenerator,
 }
 
 export default VueEnyoComponents;
