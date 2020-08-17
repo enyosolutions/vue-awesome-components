@@ -55,7 +55,7 @@
           >
             <button
               slot="reference"
-              v-if="_actions.filter"
+              v-if="_actions.filter && _actions.advancedFiltering"
               type="button"
               class="btn btn-link btn-alt-style dropdown-toggle"
               :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
@@ -74,7 +74,6 @@
                 class="card-body"
                 :displayFilters="false"
                 id="advancedFilterComponentDisplay"
-                v-if="true || (_actions.filter && _actions.advancedFilter && filterable)"
                 :fields="columns"
                 @update-filter="advancedFiltering"
                 v-model="advancedFilters"
@@ -134,12 +133,11 @@
         <slot name="table-subtitle" />
       </p>
     </div>
-
     <div class="card-body ajax-table-card-body">
       <awesome-filter
         :editFilters="false"
         id="advancedFilterComponent"
-        v-if="true || (_actions.filter && _actions.advancedFilters && filterable)"
+        v-if="_actions.filter && _actions.advancedFiltering"
         :fields="columns"
         v-model="advancedFilters"
       />

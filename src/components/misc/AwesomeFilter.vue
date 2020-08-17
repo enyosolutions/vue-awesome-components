@@ -1,14 +1,9 @@
 <template>
   <div class="awesome-filter">
-    <!--
-    {{ currentField.type }}
-    {{ currentFilter.value }}
-    {{ currentValue }}
-    -->
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">Filter data</h6>
       <form class="container">
-        <div class="row justify-content-between">
+        <div class="row">
           <div class="dropdown col">
             <button
               class="btn btn-primary btn-block dropdown-toggle"
@@ -59,8 +54,8 @@
           <div class="col">
             <div v-if="Object.keys(currentField).length">
               <input
-                v-if="currentField.type === 'number'"
-                v-model="currentValue"
+                v-if="currentField.type === 'number' && currentFilter.value !== '$between' && currentFilter.value !== '$notBetween'"
+                v-model.number="currentValue"
                 type="number"
                 class="form-control"
                 placeholder="Filter value"
@@ -72,6 +67,22 @@
                 class="form-control"
                 placeholder="Filter value"
               />
+              <div class="form-element"
+                v-if="currentField.type === 'number' && (currentFilter.value === '$between' || currentFilter.value === '$notBetween')"
+              >
+                <input
+                        v-model.number="currentValue.from"
+                        type="number"
+                        class="form-control"
+                        placeholder="From"
+                />
+                <input
+                        v-model.number="currentValue.to"
+                        type="number"
+                        class="form-control"
+                        placeholder="To"
+                />
+              </div>
               <div v-if="currentField.type === 'boolean'" class="form-element">
                 <select v-model="currentValue" class="form-control">
                   <option value="true">true</option>
@@ -79,28 +90,37 @@
                   <option :value="'NULL'">Null</option>
                 </select>
               </div>
-              <datetime
-                v-if="
-                  (currentField.type === 'datetime' || currentField.type === 'date') &&
+              <div class="form-element"
+                      v-if="(currentField.type === 'datetime' || currentField.type === 'date') &&
                     currentFilter.value !== '$notBetween' &&
-                    currentFilter.value !== '$between'
-                "
-                class="form-group"
-                v-model="currentValue"
-                :input-class="' form-control'"
-                auto
-                title="Filter value"
-                input-id="date"
+                    currentFilter.value !== '$between'">
+                <datetime
+                        v-model="currentValue"
+                        :input-class="' form-control'"
+                        auto
+                        title="Filter value"
+                        input-id="date"
+                >
+                </datetime>
+              </div>
+              <div class="form-element"
+                v-if="(currentField.type === 'datetime' || currentField.type === 'date') &&
+                (currentFilter.value === '$notBetween' || currentFilter.value === '$between')"
               >
-              </datetime>
-              <!-- ADD DATE RANGE PICKER IF filter is $between or $notBetween -->
+                <date-range-picker
+                        class="form-group vgt-date-range"
+                        :start-date="dateRangePicker.startDate"
+                        :end-date="dateRangePicker.endDate"
+                        :locale-data="dateRangePicker.locale"
+                        @update="onDateFilter"
+                />
+              </div>
               <!-- ADD SELECT FOR RELATION / OBJECT -->
             </div>
             <input v-else v-model="currentValue" class="form-control" type="text" placeholder="Filter value" />
           </div>
           <div class="col awesome-filter-add-block">
             <button
-              id="awesome-filter-add-button"
               :disabled="!Object.keys(currentField).length"
               @click.prevent="addFilter()"
               type="button"
@@ -116,11 +136,18 @@
       <h6 class="card-subtitle mb-2 text-muted">Active Filters</h6>
       <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in selectedFilters" :key="index">
         <div class="chip-content">
-          {{ filter.field ? filter.field.label : "" }}
-          <strong class="ml-3 mr-3">
+          <span>{{ filter.field ? filter.field.label : "" }}</span>
+          <strong class="ml-2 mr-2">
             {{ filter.filter ? filter.filter.text : "" }}
           </strong>
-          {{ filter.value || '""' }}
+          <div v-if="typeof filter.value === 'object'">
+            <span v-for="(value, index) in filter.value" :key="index">
+              {{value}}
+            </span>
+          </div>
+          <div v-else>
+            <span>{{ filter.value || '""' }}</span>
+          </div>
           <button type="button" @click.prevent="removeFilter(filter)">
             <i class="fa fa-times-circle"></i>
           </button>
@@ -133,10 +160,15 @@
 <script>
 import _ from "lodash";
 import { Datetime } from "vue-datetime";
+import DateRangePicker from "vue2-daterange-picker";
+import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css'
+import moment from "moment";
+
 export default {
   name: "AwesomeFilter",
   components: {
-    Datetime
+    Datetime,
+    DateRangePicker
   },
   props: {
     fields: Array,
@@ -174,7 +206,23 @@ export default {
     currentField: {},
     currentValue: "",
     currentFilter: { text: "Equals", value: "$eq" },
-    selectedFilters: []
+    selectedFilters: [],
+    dateRangePicker: {
+      startDate: moment(),
+      endDate: moment().add(7, 'days'),
+      locale: {
+        direction: "ltr", // direction of text
+        format: "DD-MM-YYYY", // fomart of the dates displayed
+        separator: " - ", // separator between the two ranges
+        applyLabel: "Appliquer",
+        cancelLabel: "Annuler",
+        weekLabel: "W",
+        customRangeLabel: "Custom Range",
+        daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
+        monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
+        firstDay: 1 // ISO first day of week - see moment documenations for details
+      }
+    },
   }),
   methods: {
     addFilter() {
@@ -215,6 +263,16 @@ export default {
         this.$emit("input", selectedFilters);
       }
       return advancedFilters;
+    },
+
+    onDateFilter(value) {
+      if (!value) {
+        return;
+      }
+      this.currentValue = {
+        "from": value.startDate.toISOString().slice(0, 10),
+        "to": value.endDate.toISOString().slice(0, 10)
+      };
     }
   },
 
@@ -255,13 +313,31 @@ export default {
             filter.value = value;
           }
         }
-        console.log(filter);
         return filter;
       });
     },
 
-    currentField() {
-      this.currentValue = "";
+    currentField(newValue, oldValue) {
+      if (Object.keys(oldValue).length && oldValue.type !== newValue.type) {
+        if (Object.keys(this.currentField).length) {
+          if (this.currentField.type === 'datetime' || this.currentField.type === 'date') {
+            this.currentValue = new Date().toISOString();
+          } else {
+            this.currentValue = "";
+          }
+        } else {
+          this.currentValue = "";
+        }
+      }
+    },
+
+    currentFilter(newFilter) {
+      if (newFilter.value === '$between' || newFilter.value === '$notBetween') {
+        this.currentValue = {
+          "from": "",
+          "to": "",
+        }
+      }
     }
   }
 };
@@ -272,17 +348,6 @@ export default {
   text-align: left;
   h6 {
     text-transform: initial;
-  }
-  .filtering {
-    .form-inline {
-      justify-content: space-between;
-      .dropdown {
-        width: 25%;
-      }
-      .form-control {
-        width: 25%;
-      }
-    }
   }
   strong {
     font-weight: bold;
@@ -310,6 +375,13 @@ export default {
       display: inline-flex;
       height: 100%;
       max-width: 100%;
+      text-align: center;
+      span {
+        display: inline-block;
+        padding: 2px 4px;
+        margin: 0 2px;
+        background-color: rgba(#000000, .2);
+      }
       button {
         margin-right: -4px;
         appearance: none;
@@ -366,12 +438,12 @@ export default {
     padding: 0;
     .awesome-filter-add-block {
       flex: auto;
-    }
-    #awesome-filter-add-button {
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      justify-content: center;
+      button {
+        display: block;
+        margin-top: 15px;
+        text-align: center;
+        justify-content: center;
+      }
     }
   }
 }
