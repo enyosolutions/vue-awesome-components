@@ -606,8 +606,12 @@ export default {
 
     initialSortBy() {
       if (this.serverParams.sort) {
-        const [[field, direction]] = Object.entries(this.serverParams.sort);
-        return { field, type: direction };
+        const entries = Object.entries(this.serverParams.sort);
+        if (entries.length) {
+          const [[field, direction]] = entries;
+          return { field, type: direction };
+        }
+        return undefined;
       }
       return undefined;
     },
@@ -622,6 +626,9 @@ export default {
   },
   watch: {
     // needsRefresh: "refreshLocalData",
+    /**
+     * @deprecated
+     */
     params() {
       this.serverParams = _.merge({}, this.serverParams, this.params);
       this.getItems();

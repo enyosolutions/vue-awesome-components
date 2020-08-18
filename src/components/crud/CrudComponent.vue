@@ -280,7 +280,6 @@ export default {
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
-    identity: { type: String, required: false },
     modelName: {
       type: String,
       required: false,
@@ -382,7 +381,8 @@ export default {
         validateAfterLoad: false,
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
-      }
+      },
+      identity: "",
     };
   },
   computed: {
