@@ -1,6 +1,13 @@
 <template>
   <div class="text-avoid-overflow awesome-display-relation" v-bind="$props">
-    <span v-if="$props.value" class="badge badge-info">
+    <router-link v-if="$props.value && !$props.onClickUrl"
+                 :to="'/app/' + $props.relation + '/' + $props.value"
+    >
+      <span class="badge badge-info">
+        {{ _label }}
+      </span>
+    </router-link>
+    <span v-if="$props.value && $props.onClickUrl" class="badge badge-info">
       {{ _label }}
     </span>
     <router-link

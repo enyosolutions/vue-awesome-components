@@ -4,7 +4,7 @@
       class="card-header"
       :class="'ajax-table-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
     >
-      <h3 class="card-title ajax-table-header text-primary text-left">
+      <h3 class="card-title ajax-table-header text-left">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
@@ -16,7 +16,7 @@
           <div v-if="canHideColumns" class="dropdown">
             <button
               id="dropdownMenuButton"
-              class="btn btn-secondary btn-simple dropdown-toggle"
+              class="btn btn-simple dropdown-toggle"
               type="button"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -57,7 +57,7 @@
               slot="reference"
               v-if="_actions.filter && _actions.advancedFiltering"
               type="button"
-              class="btn btn-link btn-alt-style dropdown-toggle"
+              class="btn btn-simple dropdown-toggle"
               :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
               aria-haspopup="true"
               aria-expanded="false"
@@ -87,7 +87,7 @@
                 _actions && (_actions.export || _actions.import || _actions.columnsFilters || _actions.dropdownActions)
               "
               id="dropdownMenuButton"
-              class="btn btn-secondary btn-main-style dropdown-toggle"
+              class="btn dropdown-toggle"
               type="button"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -101,7 +101,7 @@
               <button
                 v-if="_actions.columnsFilters"
                 type="button"
-                class="btn btn-link btn-alt-style"
+                class="btn btn-simple"
                 :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
                 @click="toggleFilter()"
               >
@@ -110,7 +110,7 @@
               </button>
               <button
                 v-if="_actions && _actions.export"
-                class="btn btn-link text-success btn-main-style btn-block"
+                class="btn btn-simple text-success btn-main-style btn-block"
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -119,7 +119,7 @@
 
               <button
                 v-if="_actions && _actions.export"
-                class="btn btn-link text-success btn-main-style btn-block"
+                class="btn btn-simple text-success btn-main-style btn-block"
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
@@ -628,7 +628,10 @@ export default {
     },
     entity: "entityChanged",
     // store: changed => {},
-    rows: "refreshLocalData"
+    rows: "refreshLocalData",
+    advancedFilters(value) {
+      this.advancedFiltering(value);
+    }
   },
   created() {
     if (!this.$t) {
@@ -856,9 +859,24 @@ export default {
 
 .ajax-table-header.card-header.colored-header {
   color: white;
-
   * {
     color: white;
+  }
+  .dropdown-menu {
+    a {
+      color: #000;
+    }
+    button {
+      color: #000;
+      i {
+        color: #000;
+      }
+    }
+  }
+  .awesome-filter {
+    * {
+      color: #495057;
+    }
   }
 }
 
