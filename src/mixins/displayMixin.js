@@ -10,7 +10,8 @@ export default {
         'url',
         'html',
         'object',
-        'checkbox',]
+        'checkbox',
+        'relation',]
     },
     src: String,
     row: Array,
