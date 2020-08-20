@@ -318,7 +318,6 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      {{item}} {{selectedItem}}
                       <slot name="create-form" :selectedItem="selectedItem">
                         <template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
