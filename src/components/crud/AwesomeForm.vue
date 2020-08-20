@@ -322,7 +322,7 @@
                         <template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
                               ref="form"
-                              :schema.sync="createFormSchema"
+                              :schema.sync="formSchema"
                               :model="selectedItem"
                               :options="formOptions"
                               tag="div"
