@@ -15,11 +15,13 @@
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
+            @bulkEdit="goToBulkEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemBulkEdit="onItemBulkEdit"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -28,7 +30,7 @@
 
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'edit' || displayMode === 'create'"
+            v-if="displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit'"
             :mode="displayMode"
             :displayMode="mergedOptions.detailPageMode"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
@@ -39,11 +41,13 @@
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
+            @bulkEdit="goToBulkEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemBulkEdit="onItemBulkEdit"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -114,6 +118,8 @@
             @view="goToViewPage"
             @edit="goToEditPage"
             @delete="goToDeletePage"
+            @bulkDelete="goToBulkDeletePage"
+            @bulkEdit="goToBulkEditPage"
             @customAction="onCustomAction"
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
@@ -1004,6 +1010,16 @@ export default {
       return;
     },
 
+    goToBulkEditPage(items, options = { reset: true }) {
+      if (this.mergedOptions.bulkEditPath) {
+        return this.$router.push(this.mergedOptions.bulkEditPath);
+      }
+      this.setDisplayMode("bulkEdit", items);
+      if (this.updateRouter) {
+        window.history.replaceState({}, null, `${this.parentPath}/bulkEdit`)
+      }
+    },
+
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.deletePath.replace(":id", item[this.primaryKey]));
@@ -1011,6 +1027,10 @@ export default {
 
       this.deleteFunction(item);
       return;
+    },
+
+    goToBulkDeletePage(items) {
+      this.bulkDeleteFunction(items);
     },
 
     goToEditPage(item) {
@@ -1050,6 +1070,43 @@ export default {
         });
     },
 
+    bulkDeleteFunction(items) {
+      Swal.fire({
+        title: this.$t("AwesomeDefault.messages.are_you_sure"),
+        text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "var(--primary)",
+        cancelButtonColor: "#eee",
+        confirmButtonText: this.$t("EnyoCrudComponent.buttons.yes_delete_it"),
+        cancelButtonText: this.$t("EnyoCrudComponent.buttons.cancel"),
+        reverseButtons: true
+      })
+          .then((result) => {
+            if (result.value) {
+              items.forEach((item) => {
+                this.selectedItem = item;
+                this.$http
+                    .delete(`${this._selectedItemUrl}`)
+                    .then(() => {
+                      this.tableNeedsRefresh = true;
+                      this.statsNeedsRefresh = true;
+                      this.nestedCrudNeedsRefresh = true;
+                      this.$forceUpdate();
+                    })
+                    .catch((err) => {
+                      // eslint-disable-next-line
+                      console.error(err);
+                    })
+                    .finally(() => {
+                      this.isRefreshing = false;
+                    });
+              });
+            }
+          })
+          .finally(() => (this.selectedItem = null));
+    },
+
     deleteFunction(item) {
       this.selectedItem = item;
       Swal.fire({
@@ -1066,7 +1123,7 @@ export default {
         .then((result) => {
           if (result.value) {
             this.$http
-              .delete(`${this._selectedItemUrl}/${item[this.primaryKey]}`)
+              .delete(`${this._selectedItemUrl}`)
               .then(() => {
                 this.tableNeedsRefresh = true;
                 this.statsNeedsRefresh = true;
@@ -1118,6 +1175,12 @@ export default {
       // eslint-disable-next-line
       console.log("EVENT", "onItemCreated", item);
     },
+
+    onItemBulkEdit(...args) {
+      // eslint-disable-next-line
+      console.log("EVENT", "onItemBulkEdit", args);
+    },
+
     onItemEdited(...args) {
       // eslint-disable-next-line
       console.log("EVENT", "onItemEdited", args);

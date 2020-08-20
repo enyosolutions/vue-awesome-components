@@ -144,6 +144,7 @@
 
       <div class="table-responsive">
         <vue-good-table
+          :ref="'table-'+entity"
           :mode="mode"
           :total-rows="totalCount"
           style-class="vgt-table table striped"
@@ -172,12 +173,40 @@
             perPage: parseInt(serverParams.perPage) || perPage,
             setCurrentPage: parseInt(serverParams.page) || undefined
           }"
+          :select-options="{
+            enabled: true,
+            selectOnCheckboxOnly: true,
+            selectionInfoClass: 'awesome-table-selection',
+            selectionText: this.$t('AwesomeTable.bulk.row-select'),
+            clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
+            disableSelectInfo: false,
+            selectAllByGroup: true,
+          }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
           @on-column-filter="onColumnFilter"
           @on-per-page-change="onPerPageChange"
           @on-search="onSearch"
+          @on-selected-rows-change="onSelectionChanged"
         >
+          <div slot="selected-row-actions">
+            <button
+                v-if="_actions.bulkDelete"
+                class="btn btn-primary btn-simple"
+                @click="$emit('bulkDelete', selectedRows)"
+            >
+              <i class="fa fa-trash" />
+              {{$t('AwesomeTable.bulk.delete')}}
+            </button>
+            <button
+              v-if="_actions.bulkEdit"
+              class="btn btn-primary btn-simple"
+              @click="$emit('bulkEdit', selectedRows)"
+            >
+              <i class="fa fa-pencil"></i>
+              {{$t('AwesomeTable.bulk.edit')}}
+            </button>
+          </div>
           <div slot="table-actions">
             <date-range-picker
               v-if="_actions.filter && _actions.dateFilter && filterable"
@@ -439,7 +468,8 @@ export default {
           firstDay: 1 // ISO first day of week - see moment documenations for details
         }
       },
-      advancedFilters: []
+      advancedFilters: [],
+      selectedRows: [],
     };
   },
   computed: {
@@ -869,5 +899,12 @@ export default {
 
 .font-awesome {
   color: #6c757d;
+}
+
+.awesome-table-selection {
+  background-color: transparent !important;
+  border: none !important;
+  color: black !important;
+  font-size: 0.8rem !important;
 }
 </style>

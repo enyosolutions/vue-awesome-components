@@ -298,6 +298,54 @@
                     </div>
                   </form>
                 </div>
+                <div v-if="mode === 'bulkEdit'" class="modal-content">
+                  <form @submit.prevent="bulkEditItems()">
+                    <div class="modal-header bg-primary text-white">
+                      <h3
+                          class="text-left mt-0 modal-title"
+                          :title="
+                          $t('EnyoCrudComponent.labels.add_a') + ' '.title
+                        "
+                      >{{ $t('EnyoCrudComponent.labels.add_a') }} {{ title }}</h3>
+                      <button
+                          v-if="!standalone && !_isEmbedded"
+                          type="button"
+                          class="close"
+                          aria-label="Close"
+                          @click="cancel()"
+                      >
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      {{item}} {{selectedItem}}
+                      <slot name="create-form" :selectedItem="selectedItem">
+                        <template v-if="formSchema && formSchema.fields">
+                          <VueFormGenerator
+                              ref="form"
+                              :schema.sync="createFormSchema"
+                              :model="selectedItem"
+                              :options="formOptions"
+                              tag="div"
+                          />
+                        </template>
+                      </slot>
+                    </div>
+                    <div class="modal-footer" v-if="!_isEmbedded">
+                      <slot name="add-modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-default btn-main-style mr-auto"
+                            @click="cancel()"
+                        >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
+                        <button
+                            type="submit"
+                            class="btn btn-primary ml-auto"
+                        >{{ $t('EnyoCrudComponent.buttons.save') }}</button>
+                      </slot>
+                    </div>
+                  </form>
+                </div>
               </div>
               <!-- // .modal-content -->
               <!-- // .modal-content -->
@@ -342,6 +390,7 @@ const defaultOptions = {
   createPath: null,
   viewPath: null,
   editPath: null,
+  bulkEditPath: null,
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
@@ -364,7 +413,7 @@ export default {
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin],
   props: {
-    item: { type: Object, required: true },
+    item: { type: [Object, Array], required: true },
     title: { type: String, required: false, default: undefined },
     pageTitle: { type: String, required: false, default: undefined },
     identity: { type: String, required: true },
@@ -429,7 +478,7 @@ export default {
       required: true,
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
-        return ["create", "edit", "view"].indexOf(value) !== -1;
+        return ["create", "edit", "view", "bulkEdit"].indexOf(value) !== -1;
       }
     },
     displayMode: {
@@ -641,7 +690,7 @@ export default {
     model: "loadModel",
     options: "mergeOptions",
     crudNeedsRefresh: "refreshComponent",
-    item: "loadModel"
+    item: "loadModel",
   },
   created() {
     if (!this.$http) {
@@ -669,6 +718,15 @@ export default {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
           }
           this.$emit("create", this.selectedItem, { reset: false });
+
+          return;
+        }
+        if (this.$route.params.id === "bulkEdit") {
+          delete this.$route.params.id;
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+          this.$emit("bulkEdit", this.selectedItem, { reset: false });
 
           return;
         }
@@ -848,7 +906,11 @@ export default {
         this.nestedViewFunction();
       }
 
-      this.selectedItem = this.item;
+      if(this.mode !== 'bulkEdit') {
+        this.selectedItem = this.item;
+      } else {
+        this.selectedItem = {};
+      }
       if (!this._url) {
         return;
       }
@@ -1261,6 +1323,57 @@ export default {
       // return false;
     },
 
+    bulkEditItems() {
+      if (!this._url) {
+        // eslint-disable-next-line
+        console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
+        return false;
+      }
+      if (this.$refs.form) {
+        const errors = this.$refs.form.validate();
+        if (errors.length > 0) {
+          // eslint-disable-next-line
+          console.error("CRUDCOMPONENT ERROR:: validation errors", error);
+          return;
+        }
+      } else {
+        // eslint-disable-next-line
+        console.warn("Unable to find the reference to the schema form on ", this.$route.path);
+      }
+      this.item.forEach(element => {
+        if (element[this.primaryKey]) {
+          element = _.merge(element, this.selectedItem);
+          this.$http
+          .put(`${this._url}/${element[this.primaryKey]}`, element)
+          .then((res) => {
+            this.$emit(this.identity + "-item-updated", res.data);
+            Swal.fire({
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 3000,
+              title: this.$t("AwesomeDefault.messages.successfullyModified", {
+                title: this.type
+              }),
+              type: "success"
+            });
+            this.tableNeedsRefresh = true;
+            this.nestedCrudNeedsRefresh = true;
+            this.$forceUpdate();
+            this.$emit("itemBulkEdited", element, {
+              context: this.mode
+            });
+            this.closeModal();
+          })
+          .catch(this.apiErrorCallback)
+          .finally(() => {
+            this.isRefreshing = false;
+          })
+          return false;
+        }
+      })
+    },
+
     editItem() {
       if (!this._url) {
         // eslint-disable-next-line
@@ -1324,6 +1437,10 @@ export default {
 
     deleteFunction(item) {
       this.$emit("delete", item);
+    },
+
+    bulkEditFunction(items) {
+      this.$emit("bulkEdit", items);
     },
 
     getNestedItem() {

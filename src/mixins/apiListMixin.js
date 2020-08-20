@@ -90,7 +90,7 @@ export default {
         page: 1, // what page I want to show
         perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
-      data: []
+      data: [],
     };
   },
   computed: {
@@ -288,6 +288,12 @@ export default {
       let search = params.searchTerm;
       this.updateParams({ search, page: 1 });
       this.getItems();
+    },
+
+    onSelectionChanged(selection) {
+      if (selection) {
+        this.selectedRows = selection.selectedRows;
+      }
     },
 
     connectRouteToPagination(to) {
