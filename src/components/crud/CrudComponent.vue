@@ -15,13 +15,12 @@
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
-            @bulkEdit="goToBulkEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
-            @itemBulkEdit="onItemBulkEdit"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -36,18 +35,18 @@
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             createPageLayoutComputed
             :item="selectedItem"
+            :bulk-items="selectedItems"
             :needs-refresh="awesomeEditNeedsRefresh"
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
-            @bulkEdit="goToBulkEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
-            @itemBulkEdit="onItemBulkEdit"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -371,6 +370,7 @@ export default {
     return {
       parentPath: "",
       selectedItem: {},
+      selectedItems: [],
       previousDisplayMode: "",
       displayMode: "table",
       isRefreshing: false,
@@ -984,8 +984,12 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       this.previousDisplayMode = this.displayMode || "table";
-      if (item) {
+      if (item && mode !== 'bulkEdit') {
         this.selectedItem = item;
+        this.selectedItems = [];
+      } else {
+        this.selectedItem = {};
+        this.selectedItems = item
       }
       this.displayMode = mode;
       if (mode === "table") {
@@ -1015,9 +1019,6 @@ export default {
         return this.$router.push(this.mergedOptions.bulkEditPath);
       }
       this.setDisplayMode("bulkEdit", items);
-      if (this.updateRouter) {
-        window.history.replaceState({}, null, `${this.parentPath}/bulkEdit`)
-      }
     },
 
     goToDeletePage(item) {
@@ -1068,6 +1069,31 @@ export default {
         .finally(() => {
           this.isRefreshing = false;
         });
+    },
+
+    bulkEditFunction(item) {
+      this.$http
+              .put(`${this._url}/${item[this.primaryKey]}`, item)
+              .then((res) => {
+                this.$emit(this.identity + "-item-updated", res.data);
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  title: this.$t("AwesomeDefault.messages.successfullyModified", {
+                    title: this.type
+                  }),
+                  type: "success"
+                });
+                this.tableNeedsRefresh = true;
+                this.nestedCrudNeedsRefresh = true;
+                this.$forceUpdate();
+              })
+              .catch(this.apiErrorCallback)
+              .finally(() => {
+                this.isRefreshing = false;
+              });
     },
 
     bulkDeleteFunction(items) {
@@ -1176,9 +1202,8 @@ export default {
       console.log("EVENT", "onItemCreated", item);
     },
 
-    onItemBulkEdit(...args) {
-      // eslint-disable-next-line
-      console.log("EVENT", "onItemBulkEdit", args);
+    onItemsBulkEdited(item) {
+      this.bulkEditFunction(item);
     },
 
     onItemEdited(...args) {

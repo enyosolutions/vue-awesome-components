@@ -412,7 +412,8 @@ export default {
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin],
   props: {
-    item: { type: [Object, Array], required: true },
+    item: { type: Object, required: true },
+    bulkItems: { type: Array, required: false },
     title: { type: String, required: false, default: undefined },
     pageTitle: { type: String, required: false, default: undefined },
     identity: { type: String, required: true },
@@ -1339,36 +1340,11 @@ export default {
         // eslint-disable-next-line
         console.warn("Unable to find the reference to the schema form on ", this.$route.path);
       }
-      this.item.forEach(element => {
+      this.bulkItems.forEach(element => {
         if (element[this.primaryKey]) {
           element = _.merge(element, this.selectedItem);
-          this.$http
-          .put(`${this._url}/${element[this.primaryKey]}`, element)
-          .then((res) => {
-            this.$emit(this.identity + "-item-updated", res.data);
-            Swal.fire({
-              toast: true,
-              position: "top-end",
-              showConfirmButton: false,
-              timer: 3000,
-              title: this.$t("AwesomeDefault.messages.successfullyModified", {
-                title: this.type
-              }),
-              type: "success"
-            });
-            this.tableNeedsRefresh = true;
-            this.nestedCrudNeedsRefresh = true;
-            this.$forceUpdate();
-            this.$emit("itemBulkEdited", element, {
-              context: this.mode
-            });
-            this.closeModal();
-          })
-          .catch(this.apiErrorCallback)
-          .finally(() => {
-            this.isRefreshing = false;
-          })
-          return false;
+          this.$emit("itemsBulkEdited", element);
+          this.closeModal();
         }
       })
     },
