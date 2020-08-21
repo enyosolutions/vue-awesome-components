@@ -12,8 +12,8 @@
   },
   "AwesomeTable": {
     "buttons": {
-      "filters": "filters",
-      "refresh": "refresh",
+      "filters": "Filters",
+      "refresh": "Refresh",
       "excel-currentpage": "excel-currentpage",
       "searchInput": "Search",
       "view": "view",

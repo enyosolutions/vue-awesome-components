@@ -75,7 +75,7 @@
                       <slot name="add-modal-footer">
                         <button
                           type="button"
-                          class="btn btn-default btn-main-style mr-auto"
+                          class="btn btn-default btn-simple mr-auto"
                           @click="cancel()"
                         >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
                         <button
@@ -267,7 +267,7 @@
                         <button
                           v-if="!standalone"
                           type="button"
-                          class="btn btn-default btn-main-style mr-auto"
+                          class="btn btn-default btn-simple mr-auto"
                           @click="cancel()"
                         >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
                         <button
@@ -325,6 +325,7 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
+import relationMixin from "../../mixins/relationMixin";
 
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
@@ -362,7 +363,7 @@ export default {
     Row,
     GroupedForm
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin],
   props: {
     item: { type: Object, required: true },
     title: { type: String, required: false, default: undefined },
@@ -902,9 +903,12 @@ export default {
               fields.push(subSchema);
             }
           } else {
+            const relationUrl = this.getRelationUrl(prop);
+            const relationKey = this.getRelationKey(prop);
+            const relationLabel = this.getRelationLabel(prop);
             if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = prop.relation;
-              prop.field.fieldOptions.trackBy = prop.foreignKey;
+              prop.field.fieldOptions.url = relationUrl || prop.relation;
+              prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
               prop.field.fieldOptions.searchable = true;
             }
             const field = {
@@ -913,11 +917,15 @@ export default {
               placeholder: prop.description || prop.title || _.startCase(key),
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
-                url: prop.relation,
-                trackBy: prop.foreignKey || "id",
-                label: "label", // key label for enyo select
-                name: "label", // key label for native select
+                url: relationUrl || prop.relation,
+                trackBy: relationKey || prop.foreignKey || "id",
+                label: relationLabel || "label", // key label for enyo select
+                name: relationLabel || "label", // key label for native select
                 step: prop.field && prop.field.step,
+                foreignKey: relationKey,
+                relationKey,
+                relationLabel,
+                relationUrl,
                 readonly: this.mode === "view" || (prop.field && prop.field.readonly),
                 disabled: this.mode === "view" || (prop.field && prop.field.disabled)
               },
@@ -944,7 +952,9 @@ export default {
                   ? "col-12"
                   : "col-6",
               relation: prop.relation,
-              foreignKey: prop.foreignKey,
+              foreignKey: relationKey || prop.foreignKey,
+              relationKey,
+              relationLabel,
               group: prop.field ? prop.field.group : undefined
             };
             if (!field.fieldOptions.inputType) {
@@ -1042,7 +1052,9 @@ export default {
           }
         }
       }
-
+      if (property.relation || property.relationUrl) {
+        return 'VSelect';
+      }
       if (property.enum) {
         return "select";
       }
@@ -1112,7 +1124,9 @@ export default {
           }
         }
       }
-
+      if (property.relation) {
+        return 'relation';
+      }
       switch (type) {
         case "string":
           switch (property.format) {

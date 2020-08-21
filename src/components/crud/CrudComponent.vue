@@ -65,7 +65,7 @@
                 <button
                   v-for="(action, index) in options.customTopRightActions"
                   :key="index"
-                  class="btn btn-link btn-main-style"
+                  class="btn btn-simple btn-main-style"
                   :class="action.class"
                   :id="action.name"
                   :data-title="action.title || action.label"
@@ -83,7 +83,7 @@
                   <span v-html="action.label ? $t(action.label) : ''"></span>
                 </button>
               </template>
-              <button v-if="_actions.create" class="btn btn-primary btn-main-style mb-1" @click="goToCreatePage()">
+              <button v-if="_actions.create" class="btn btn-secondary btn-simple" @click="goToCreatePage()">
                 <i class="fa fa-plus" />
                 {{ $t("EnyoCrudComponent.labels.createNew") }} {{ _name }}
               </button>
@@ -129,7 +129,7 @@
                   headers: {},
                   base64: false,
                   label: $t('EnyoCrudComponent.buttons.import'),
-                  class: 'btn btn-main-style btn btn-link text-success  btn-block'
+                  class: 'btn btn-main-style btn btn-simple text-success  btn-block'
                 }"
                 @uploaded="importResponse"
               />
@@ -155,6 +155,7 @@ import _ from "lodash";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
+import relationMixin from "../../mixins/relationMixin";
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
 import Swal from "sweetalert2/dist/sweetalert2.js";
@@ -275,11 +276,10 @@ export default {
     EnyoCrudStatsSection,
     AwesomeForm
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
-    identity: { type: String, required: false },
     modelName: {
       type: String,
       required: false,
@@ -381,7 +381,8 @@ export default {
         validateAfterLoad: false,
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
-      }
+      },
+      identity: "",
     };
   },
   computed: {
@@ -757,9 +758,12 @@ export default {
             subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || "card"}`;
             fields.push(subSchema);
           } else {
+            const relationUrl = this.getRelationUrl(prop);
+            const relationKey = this.getRelationKey(prop);
+            const relationLabel = this.getRelationLabel(prop);
             if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = prop.relationUrl || prop.relation;
-              prop.field.fieldOptions.trackBy = prop.foreignKey;
+              prop.field.fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
+              prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
               prop.field.fieldOptions.searchable = true;
             }
             const field = {
@@ -768,13 +772,18 @@ export default {
               placeholder: prop.description || prop.title || _.startCase(key),
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
-                url: prop.relationUrl || prop.relation,
-                trackBy: prop.foreignKey || "id",
-                label: "label", // key label for enyo select
-                name: "label", // key label for native select
+                url: relationUrl || prop.relationUrl || prop.relation,
+                trackBy: relationKey || prop.foreignKey || "id",
+                label: relationLabel || "label", // key label for enyo select
+                name: relationLabel || "label", // key label for native select
                 step: prop.field && prop.field.step,
                 readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
-                disabled: this.displayMode === "view" || (prop.field && prop.field.readonly)
+                disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
+                relation: prop.relation,
+                foreignKey: relationKey,
+                relationKey,
+                relationLabel,
+                relationUrl
               },
               values:
                 (prop.field &&
@@ -794,7 +803,9 @@ export default {
               disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
               styleClasses: (prop.field && prop.field.styleClasses) || (size < 8 ? "col-12" : "col-6"),
               relation: prop.relation,
-              foreignKey: prop.foreignKey,
+              foreignKey: relationKey || prop.foreignKey,
+              relationKey,
+              relationLabel,
               group: prop.field ? prop.field.group : undefined
             };
             if (!field.fieldOptions.inputType) {
@@ -887,6 +898,9 @@ export default {
       if (property.enum) {
         return "select";
       }
+      if (property.relation || property.relationUrl) {
+        return 'VSelect';
+      }
       switch (type) {
         case "string":
           return "input";
@@ -954,7 +968,9 @@ export default {
           }
         }
       }
-
+      if (property.relation) {
+        return 'relation';
+      }
       switch (type) {
         case "string":
           switch (property.format) {
@@ -1159,6 +1175,9 @@ export default {
           newCol = { ...newCol, ...prop.column };
           if (prop.relation) {
             newCol.relation = prop.relation;
+            newCol.relationKey = this.getRelationKey(prop);
+            newCol.relationUrl = this.getRelationUrl(prop);
+            newCol.relationLabel = this.getRelationLabel(prop);
           }
           newcolumns.push(newCol);
         }
