@@ -44,6 +44,7 @@
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
             @itemsBulkEdited="onItemsBulkEdited"
@@ -120,6 +121,7 @@
             @bulkDelete="goToBulkDeletePage"
             @bulkEdit="goToBulkEditPage"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
           >
@@ -186,6 +188,7 @@ const defaultOptions = {
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
+  customBulkActions: [],
   customTopActions: [],
   customTabletopActions: []
 };
@@ -1171,6 +1174,12 @@ export default {
     onCustomAction(body) {
       const { action } = body;
       this.$emit(this.identity + "-custom-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
+    onCustomBulkAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-bulk-action", action);
       return action && action.action && action.action(body, this);
     },
 

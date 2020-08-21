@@ -396,6 +396,7 @@ const defaultOptions = {
   modalMode: "slide", // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
   columnsDisplayed: 8,
   customInlineActions: [],
+  customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
   responseField: "body"

@@ -190,6 +190,27 @@
           @on-selected-rows-change="onSelectionChanged"
         >
           <div slot="selected-row-actions">
+            <template v-if="opts && opts.customBulkActions">
+              <template v-for="(action, index) in opts.customBulkActions">
+                <button
+                        :key="index"
+                        class="btn btn-primary btn-simple"
+                        :class="action.class"
+                        :id="action.name + '-' + index"
+                        :data-title="action.title || action.label"
+                        :data-tooltip="action.title || action.label"
+                        @click="$emit('customBulkAction', {
+                          action,
+                          items: selectedRows,
+                          location: 'bulk',
+                          id: action.name + '-' + index
+                        })"
+                >
+                  <i v-if="action.icon" :class="action.icon" />
+                  <span v-html="action.label ? $t(action.label) : ''"></span>
+                </button>
+              </template>
+            </template>
             <button
                 v-if="_actions.bulkDelete"
                 class="btn btn-primary btn-simple"
@@ -417,6 +438,7 @@ export default {
         maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
+        customBulkActions: [],
         filterInitiallyOn: false,
         saveSearchDatas: false
       })
