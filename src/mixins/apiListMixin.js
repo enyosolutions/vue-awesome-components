@@ -319,7 +319,7 @@ export default {
       CsvString = `data:application/csv,${encodeURIComponent(CsvString)}`;
       const x = document.createElement("A");
       x.setAttribute("href", CsvString);
-      x.setAttribute("download", "somedata.csv");
+      x.setAttribute("download", `${this.entity || this.$options.name}.csv`);
       document.body.appendChild(x);
       x.click();
     }
