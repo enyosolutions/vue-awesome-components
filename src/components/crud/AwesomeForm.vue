@@ -322,6 +322,7 @@
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
+import parseMixin from "../../mixins/parseMixin";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
@@ -363,7 +364,7 @@ export default {
     Row,
     GroupedForm
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
     item: { type: Object, required: true },
     title: { type: String, required: false, default: undefined },
@@ -873,164 +874,6 @@ export default {
             this.needsRefresh = false;
           });
       }
-    },
-
-    parseSchema(schema, prefix = "") {
-      if (!schema.properties) {
-        return [];
-      }
-      if (prefix && schema.$schema) {
-        // console.warn("possible recursive parseSchema call", schema);
-        return;
-      }
-      let fields = [];
-      const size = Object.keys(schema.properties).length;
-      Object.keys(schema.properties).forEach((key) => {
-        if ([this.primaryKey].indexOf(key) === -1) {
-          const prop = schema.properties[key];
-          if (prop.field && prop.field.hidden) {
-            return;
-          }
-          if (prop.type === "object" && !(prop.field && prop.field.type)) {
-            const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
-            subSchema.legend = prop.title || _.startCase(key);
-            subSchema.type = "group";
-            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || "card"}`;
-            // if layout is activated, then do not group fields
-            if (this.layout) {
-              fields = fields.concat(subSchema.fields);
-            } else {
-              fields.push(subSchema);
-            }
-          } else {
-            const relationUrl = this.getRelationUrl(prop);
-            const relationKey = this.getRelationKey(prop);
-            const relationLabel = this.getRelationLabel(prop);
-            if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = relationUrl || prop.relation;
-              prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
-              prop.field.fieldOptions.searchable = true;
-            }
-            const field = {
-              type: (prop.field && prop.field.type) || this.getFormtype(prop),
-              label: prop.title || prop.description || _.startCase(key),
-              placeholder: prop.description || prop.title || _.startCase(key),
-              fieldOptions: (prop.field && prop.field.fieldOptions) || {
-                placeholder: prop.description || prop.title || _.startCase(key),
-                url: relationUrl || prop.relation,
-                trackBy: relationKey || prop.foreignKey || "id",
-                label: relationLabel || "label", // key label for enyo select
-                name: relationLabel || "label", // key label for native select
-                step: prop.field && prop.field.step,
-                foreignKey: relationKey,
-                relationKey,
-                relationLabel,
-                relationUrl,
-                readonly: this.mode === "view" || (prop.field && prop.field.readonly),
-                disabled: this.mode === "view" || (prop.field && prop.field.disabled)
-              },
-              values:
-                (prop.field &&
-                  prop.field.fieldOptions &&
-                  (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum))) ||
-                prop.enum ||
-                (prop.items && prop.items.enum) ||
-                [],
-              required: prop.field && prop.field.required,
-              hint: prop.description,
-              model: prefix + key,
-              validator: prop.field && prop.field.validator,
-              min: prop.min,
-              max: prop.max,
-              multi: prop.type === "array",
-              readonly: this.mode === "view" || (prop.field && prop.field.readonly),
-              disabled: this.mode === "view" || (prop.field && prop.field.readonly),
-              styleClasses:
-                (prop.field && prop.field.styleClasses) || this.layout
-                  ? ""
-                  : size < 8 || this.layout
-                  ? "col-12"
-                  : "col-6",
-              relation: prop.relation,
-              foreignKey: relationKey || prop.foreignKey,
-              relationKey,
-              relationLabel,
-              group: prop.field ? prop.field.group : undefined
-            };
-            if (!field.fieldOptions.inputType) {
-              field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || "text";
-            }
-            if (
-              prop.type === "boolean" &&
-              (field.type === "select" || field.type === "enyoSelect") &&
-              (!field.values || !field.values.length)
-            ) {
-              field.values = [
-                { id: true, label: "Yes" },
-                { id: false, label: "No" },
-                { id: "", label: "-" }
-              ];
-            }
-            if (field.type === "dateTime") {
-              field.fieldOptions.icons = {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
-              };
-            }
-            if (field.type === "enyoSelect" && !field.fieldOptions.options) {
-              field.options = field.values;
-            }
-            fields.push(field);
-          }
-        }
-      });
-      // let groups = this.parseSchemaGroups(schema);
-      // groups = this.distributeFieldsInGroups(groups, fields);
-
-      return { fields };
-    },
-
-    parseSchemaGroups(schema) {
-      let groups = [];
-      if (!schema.formGroups) {
-        return {};
-      }
-      schema.formGroups.forEach((group) => {
-        if (!groups[group.id]) {
-          groups.push({
-            fields: [],
-            ...group,
-            legend: this.$t(group.title),
-            type: "group"
-          });
-        }
-      });
-      if (groups.length < 1) {
-        groups = [{ legend: "", fields: schema.fields }];
-      }
-      return groups;
-    },
-
-    distributeFieldsInGroups(groups, fields) {
-      fields.forEach((f) => {
-        if (f.group) {
-          const keys = f.group.split(".");
-          let targetGroup = { groups };
-          keys.forEach((key) => {
-            targetGroup = _.find(targetGroup.groups, { id: key });
-          });
-          if (targetGroup) {
-            if (!targetGroup.fields) {
-              targetGroup.fields = [];
-            }
-            targetGroup.fields.push(f);
-          }
-        }
-      });
-      return groups;
     },
 
     getShemaForFields(fields) {
