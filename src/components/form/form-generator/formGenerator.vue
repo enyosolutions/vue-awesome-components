@@ -135,19 +135,27 @@ export default {
   computed: {
     fields() {
       if (this.schema && this.schema.fields) {
+        if (this.schema.mode) {
+          this.schema.fields.forEach(field => {
+            field.mode = this.schema.mode;
+          })
+        }
         return this.schema.fields;
       }
+      return {};
     },
 
     groups() {
       if (this.schema && this.schema.groups) {
         return this.schema.groups;
       }
+      return {};
     },
     styleClasses() {
       if (this.schema && this.schema.styleClasses) {
         return this.schema.styleClasses;
       }
+      return {};
     }
   },
 
@@ -169,7 +177,7 @@ export default {
                 () => {}
               );
             } else {
-              if (child.clearValidationErrors) {
+              if (this.child && this.child.clearValidationErrors) {
                 this.clearValidationErrors();
               }
             }

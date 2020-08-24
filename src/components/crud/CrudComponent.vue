@@ -7,6 +7,7 @@
             v-bind="$props"
             v-if="displayMode === 'view'"
             :mode="displayMode"
+            :identity="identity"
             :displayMode="mergedOptions.detailPageMode"
             :layout="viewPageLayoutComputed"
             :item="selectedItem"
@@ -30,6 +31,7 @@
             v-bind="$props"
             v-if="displayMode === 'edit' || displayMode === 'create'"
             :mode="displayMode"
+            :identity="identity"
             :displayMode="mergedOptions.detailPageMode"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             createPageLayoutComputed

@@ -585,6 +585,7 @@ export default {
       }
       const parsedFormSchema = this.parseSchema(this.innerSchema);
       parsedFormSchema.styleClasses = "row";
+      parsedFormSchema.mode = this.mode
       parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
         if (!field.styleClasses || field.styleClasses.indexOf("col-") === -1) {
           field.styleClasses = `${field.styleClasses || ""} col-12`;
