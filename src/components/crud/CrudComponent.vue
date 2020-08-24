@@ -20,6 +20,7 @@
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -28,12 +29,13 @@
 
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'edit' || displayMode === 'create'"
+            v-if="displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit'"
             :mode="displayMode"
             :displayMode="mergedOptions.detailPageMode"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             createPageLayoutComputed
             :item="selectedItem"
+            :bulk-items="selectedItems"
             :needs-refresh="awesomeEditNeedsRefresh"
             :standalone="false"
             @create="goToCreatePage"
@@ -42,8 +44,10 @@
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -114,7 +118,10 @@
             @view="goToViewPage"
             @edit="goToEditPage"
             @delete="goToDeletePage"
+            @bulkDelete="goToBulkDeletePage"
+            @bulkEdit="goToBulkEditPage"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
           >
@@ -182,6 +189,7 @@ const defaultOptions = {
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
+  customBulkActions: [],
   customTopActions: [],
   customTabletopActions: []
 };
@@ -365,6 +373,7 @@ export default {
     return {
       parentPath: "",
       selectedItem: {},
+      selectedItems: [],
       previousDisplayMode: "",
       displayMode: "table",
       isRefreshing: false,
@@ -994,8 +1003,12 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       this.previousDisplayMode = this.displayMode || "table";
-      if (item) {
+      if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
+        this.selectedItems = [];
+      } else {
+        this.selectedItem = {};
+        this.selectedItems = item;
       }
       this.displayMode = mode;
       if (mode === "table") {
@@ -1020,6 +1033,13 @@ export default {
       return;
     },
 
+    goToBulkEditPage(items, options = { reset: true }) {
+      if (this.mergedOptions.bulkEditPath) {
+        return this.$router.push(this.mergedOptions.bulkEditPath);
+      }
+      this.setDisplayMode("bulkEdit", items);
+    },
+
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.deletePath.replace(":id", item[this.primaryKey]));
@@ -1027,6 +1047,10 @@ export default {
 
       this.deleteFunction(item);
       return;
+    },
+
+    goToBulkDeletePage(items) {
+      this.bulkDeleteFunction(items);
     },
 
     goToEditPage(item) {
@@ -1066,6 +1090,68 @@ export default {
         });
     },
 
+    bulkEditFunction(item) {
+      this.$http
+        .put(`${this._url}/${item[this.primaryKey]}`, item)
+        .then((res) => {
+          this.$emit(this.identity + "-item-updated", res.data);
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t("AwesomeDefault.messages.successfullyModified", {
+              title: this.type
+            }),
+            type: "success"
+          });
+          this.tableNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
+          this.$forceUpdate();
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
+    },
+
+    bulkDeleteFunction(items) {
+      Swal.fire({
+        title: this.$t("AwesomeDefault.messages.are_you_sure"),
+        text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "var(--primary)",
+        cancelButtonColor: "#eee",
+        confirmButtonText: this.$t("EnyoCrudComponent.buttons.yes_delete_it"),
+        cancelButtonText: this.$t("EnyoCrudComponent.buttons.cancel"),
+        reverseButtons: true
+      })
+        .then((result) => {
+          if (result.value) {
+            items.forEach((item) => {
+              this.selectedItem = item;
+              this.$http
+                .delete(`${this._selectedItemUrl}`)
+                .then(() => {
+                  this.tableNeedsRefresh = true;
+                  this.statsNeedsRefresh = true;
+                  this.nestedCrudNeedsRefresh = true;
+                  this.$forceUpdate();
+                })
+                .catch((err) => {
+                  // eslint-disable-next-line
+                  console.error(err);
+                })
+                .finally(() => {
+                  this.isRefreshing = false;
+                });
+            });
+          }
+        })
+        .finally(() => (this.selectedItem = null));
+    },
+
     deleteFunction(item) {
       this.selectedItem = item;
       Swal.fire({
@@ -1082,7 +1168,7 @@ export default {
         .then((result) => {
           if (result.value) {
             this.$http
-              .delete(`${this._selectedItemUrl}/${item[this.primaryKey]}`)
+              .delete(`${this._selectedItemUrl}`)
               .then(() => {
                 this.tableNeedsRefresh = true;
                 this.statsNeedsRefresh = true;
@@ -1104,6 +1190,12 @@ export default {
     onCustomAction(body) {
       const { action } = body;
       this.$emit(this.identity + "-custom-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
+    onCustomBulkAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-bulk-action", action);
       return action && action.action && action.action(body, this);
     },
 
@@ -1134,6 +1226,11 @@ export default {
       // eslint-disable-next-line
       console.log("EVENT", "onItemCreated", item);
     },
+
+    onItemsBulkEdited(item) {
+      this.bulkEditFunction(item);
+    },
+
     onItemEdited(...args) {
       // eslint-disable-next-line
       console.log("EVENT", "onItemEdited", args);
@@ -1192,6 +1289,28 @@ export default {
         });
       }
       return newcolumns;
+    },
+
+    $notify(message) {
+      const payload = _.isObject(message)
+        ? {
+            timer: 3000,
+            title: message,
+            type: "success",
+            ...message, // Placement is important to guarantee theat the display is always a notification
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          }
+        : {
+            timer: 3000,
+            type: "info",
+            title: message,
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          };
+      Swal.fire(payload);
     }
   }
 };

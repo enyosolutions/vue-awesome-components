@@ -218,6 +218,7 @@ export default {
         maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
+        customBulkActions: [],
         saveSearchDatas: false,
       })
     }
