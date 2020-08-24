@@ -987,12 +987,12 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       this.previousDisplayMode = this.displayMode || "table";
-      if (item && mode !== 'bulkEdit') {
+      if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
         this.selectedItems = [];
       } else {
         this.selectedItem = {};
-        this.selectedItems = item
+        this.selectedItems = item;
       }
       this.displayMode = mode;
       if (mode === "table") {
@@ -1076,27 +1076,27 @@ export default {
 
     bulkEditFunction(item) {
       this.$http
-              .put(`${this._url}/${item[this.primaryKey]}`, item)
-              .then((res) => {
-                this.$emit(this.identity + "-item-updated", res.data);
-                Swal.fire({
-                  toast: true,
-                  position: "top-end",
-                  showConfirmButton: false,
-                  timer: 3000,
-                  title: this.$t("AwesomeDefault.messages.successfullyModified", {
-                    title: this.type
-                  }),
-                  type: "success"
-                });
-                this.tableNeedsRefresh = true;
-                this.nestedCrudNeedsRefresh = true;
-                this.$forceUpdate();
-              })
-              .catch(this.apiErrorCallback)
-              .finally(() => {
-                this.isRefreshing = false;
-              });
+        .put(`${this._url}/${item[this.primaryKey]}`, item)
+        .then((res) => {
+          this.$emit(this.identity + "-item-updated", res.data);
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t("AwesomeDefault.messages.successfullyModified", {
+              title: this.type
+            }),
+            type: "success"
+          });
+          this.tableNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
+          this.$forceUpdate();
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
     },
 
     bulkDeleteFunction(items) {
@@ -1111,29 +1111,29 @@ export default {
         cancelButtonText: this.$t("EnyoCrudComponent.buttons.cancel"),
         reverseButtons: true
       })
-          .then((result) => {
-            if (result.value) {
-              items.forEach((item) => {
-                this.selectedItem = item;
-                this.$http
-                    .delete(`${this._selectedItemUrl}`)
-                    .then(() => {
-                      this.tableNeedsRefresh = true;
-                      this.statsNeedsRefresh = true;
-                      this.nestedCrudNeedsRefresh = true;
-                      this.$forceUpdate();
-                    })
-                    .catch((err) => {
-                      // eslint-disable-next-line
-                      console.error(err);
-                    })
-                    .finally(() => {
-                      this.isRefreshing = false;
-                    });
-              });
-            }
-          })
-          .finally(() => (this.selectedItem = null));
+        .then((result) => {
+          if (result.value) {
+            items.forEach((item) => {
+              this.selectedItem = item;
+              this.$http
+                .delete(`${this._selectedItemUrl}`)
+                .then(() => {
+                  this.tableNeedsRefresh = true;
+                  this.statsNeedsRefresh = true;
+                  this.nestedCrudNeedsRefresh = true;
+                  this.$forceUpdate();
+                })
+                .catch((err) => {
+                  // eslint-disable-next-line
+                  console.error(err);
+                })
+                .finally(() => {
+                  this.isRefreshing = false;
+                });
+            });
+          }
+        })
+        .finally(() => (this.selectedItem = null));
     },
 
     deleteFunction(item) {
@@ -1270,6 +1270,28 @@ export default {
         });
       }
       return newcolumns;
+    },
+
+    $notify(message) {
+      const payload = _.isObject(message)
+        ? {
+            timer: 3000,
+            title: message,
+            type: "success",
+            ...message, // Placement is important to guarantee theat the display is always a notification
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          }
+        : {
+            timer: 3000,
+            type: "info",
+            title: message,
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          };
+      Swal.fire(payload);
     }
   }
 };
