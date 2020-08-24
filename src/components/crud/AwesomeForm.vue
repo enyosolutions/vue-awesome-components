@@ -270,6 +270,31 @@
                           class="btn btn-default btn-simple mr-auto"
                           @click="cancel()"
                         >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
+                        <template v-if="mergedOptions.customInlineActions">
+                          <template v-for="(action, index) in mergedOptions.customInlineActions">
+                            <button
+                              type="button"
+                              :key="index"
+                              class="btn btn-primary btn-alt-style"
+                              :class="action.class"
+                              :id="action.name + '-' + index"
+                              :data-title="action.title || action.label"
+                              :data-tooltip="action.title || action.label"
+                              @click="
+                                $emit('customAction', {
+                                  action,
+                                  item: selectedItem,
+                                  location: 'inline',
+                                  id: action.name + '-' + index
+                                });
+                                closeModal();
+                              "
+                            >
+                              <i v-if="action.icon" :class="action.icon"></i>
+                              <span>{{action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                            </button>
+                          </template>
+                        </template>
                         <button
                           v-if="mode === 'edit'"
                           type="submit"
