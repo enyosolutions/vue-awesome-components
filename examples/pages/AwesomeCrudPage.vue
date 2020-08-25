@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <h1>CrudComponent component examples</h1>
+    <h1>AwesomeCrud component examples</h1>
     <AutoProps
-      :component="CrudComponent"
+      :component="AwesomeCrud"
       :componentProps="{
         identity: 'ticket',
         apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
@@ -13,7 +13,7 @@
       :docked="true"
       v-slot="{ userProps }"
     >
-      <CrudComponent
+      <AwesomeCrud
         url="http://localhost:3000/tickets"
         :apiResponseConfig="{
           dataPath: false,
@@ -29,18 +29,18 @@ import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
-import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: "CrudComponentAdvancedPage",
+  name: "AwesomeCrudPage",
   components: {
-    CrudComponent,
+    AwesomeCrud,
     AutoProps
   },
   data() {
     return {
-      CrudComponent,
+      AwesomeCrud,
       LiveEdit,
       ticketSchema,
       ticketModel,

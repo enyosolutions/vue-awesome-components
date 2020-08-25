@@ -42,7 +42,7 @@ import EnyoCard from '@/components/card/EnyoCard.vue';
 import EnyoChartCard from '@/components/card/EnyoChartCard.vue';
 import EnyoStatsCard from '@/components/card/EnyoStatsCard.vue';
 
-import CrudComponent from '@/components/crud/CrudComponent.vue';
+import AwesomeCrud from '@/components/crud/AwesomeCrud.vue';
 import PropDoc from '@/components/misc/PropDoc.vue';
 
 export default {
@@ -56,14 +56,14 @@ export default {
   data() {
     return {
       components: [
-        CrudComponent,
+        AwesomeCrud,
         AwesomeTable,
         TableAndChartsCard,
         EnyoChartCard,
         EnyoStatsCard,
         LiveEdit,
       ],
-      // components: [CrudComponent, AwesomeTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
+      // components: [AwesomeCrud, AwesomeTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };
   },
 };

@@ -1,15 +1,15 @@
 ---
 {
-  "title": "Enyo crud component - configuration",
+  "title": "Awesome Crud - configuration",
   "lang": "en-US"
 }
 ---
 
 
-# Vue Crud component configuration
+# Vue Awesome Crud configuration
 
 
-The crud component configuration schema.
+The awesome crud configuration schema.
 
 
 ```

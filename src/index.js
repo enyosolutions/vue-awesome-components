@@ -1,7 +1,7 @@
 import FieldEnyoSelect from './components/crud/fields/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/fields/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/fields/FieldJsonTextarea.vue';
-import CrudComponent from './components/crud/CrudComponent.vue';
+import AwesomeCrud from './components/crud/AwesomeCrud.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
 import AutoProps from './components/misc/AutoProps.vue';
 
@@ -31,10 +31,10 @@ const VueEnyoComponents = {
   AutoProps,
   AwesomeForm,
   AwesomeTable,
-  CrudComponent,
+  AwesomeCrud,
   EnyoCard,
-  EnyoCrudComponent: CrudComponent,
-  AwesomeCrud: CrudComponent,
+  EnyoCrudComponent: AwesomeCrud,
+  CrudComponent: AwesomeCrud,
   EnyoCrudStatsSection,
   EnyoSelect,
   FieldEnyoSelect,
@@ -54,9 +54,9 @@ export {
   AwesomeForm,
   AwesomeTable as AjaxTable,
   AwesomeTable,
-  CrudComponent as EnyoCrudComponent,
-  CrudComponent as AwesomeCrud,
-  CrudComponent,
+  AwesomeCrud as EnyoCrudComponent,
+  AwesomeCrud as CrudComponent,
+  AwesomeCrud,
   EnyoCard,
   EnyoCrudStatsSection,
   EnyoSelect,

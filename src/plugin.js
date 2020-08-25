@@ -7,7 +7,7 @@ import FieldJsonTextarea from './components/crud/fields/FieldJsonTextarea.vue';
 import FieldDateTime from './components/crud/fields/fieldDateTime.vue';
 import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 // import FieldDateRange from './components/crud/fields/fieldDateRange.vue';
-import CrudComponent from './components/crud/CrudComponent.vue';
+import AwesomeCrud from './components/crud/AwesomeCrud.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
 
 import FormGenerator from './components/form/form-generator';
@@ -40,8 +40,8 @@ const install = (Vue, options) => {
 
 
   if (options) {
-    if (options['CrudComponent'] && options['CrudComponent'].props) {
-      CrudComponent.props = _.merge(CrudComponent.props, options['CrudComponent'].props);
+    if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
+      AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
 
     if (options['AwesomeTable'] && options['AwesomeTable'].props) {
@@ -78,7 +78,8 @@ const install = (Vue, options) => {
   Vue.component('AwesomeForm', AwesomeForm);
 
 
-  Vue.component('crud-component', CrudComponent);
+  Vue.component('crud-component', AwesomeCrud);
+  Vue.component('awesome-crud', AwesomeCrud);
 
   if (!Vue.prototype.$http) {
     Vue.prototype.$http = axios.create({});

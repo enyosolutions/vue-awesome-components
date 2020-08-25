@@ -206,13 +206,13 @@
                                 'active show': activeNestedTab === ns.identity
                               }"
                             >
-                              <crud-component
+                              <AwesomeCrud
                                 v-bind="ns"
                                 :parent="selectedItem"
                                 :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                               >
                                 <div slot="crud-title" />
-                              </crud-component>
+                              </AwesomeCrud>
                             </div>
                           </template>
                         </div>
@@ -354,6 +354,7 @@ import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
 
 import "vue-good-table/dist/vue-good-table.css";
+import AwesomeCrud from "./AwesomeCrud";
 
 const defaultOptions = {
   mode: "local",
@@ -379,6 +380,7 @@ export default {
   name: "AwesomeForm",
   introduction: "A component to quickly create a table UI with edit capabilities",
   components: {
+    AwesomeCrud,
     Column,
     Tabs,
     Row,
@@ -856,7 +858,7 @@ export default {
       }
 
       if (!this._model && !this.schema) {
-        // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
+        // console.warn("AWESOME CRUD ERROR", `model ${this.name} not found`);
         return;
       }
 
@@ -1114,14 +1116,14 @@ export default {
     createItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
+        console.warn("AWESOMECRUD ERROR:: No url for submitting");
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("CRUDCOMPONENT ERROR:: validation errors", error);
+          console.error("AWESOMECRUD ERROR:: validation errors", error);
           return;
         }
       } else {
@@ -1162,14 +1164,14 @@ export default {
     bulkEditItems() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
+        console.warn("AWESOMECRUD ERROR:: No url for submitting");
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("CRUDCOMPONENT ERROR:: validation errors", error);
+          console.error("AWESOMECRUD ERROR:: validation errors", error);
           return;
         }
       } else {
@@ -1188,19 +1190,19 @@ export default {
     editItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
+        console.warn("AWESOMECRUD ERROR:: No url for submitting");
         return false;
       }
       if (!this.selectedItem[this.primaryKey]) {
         // eslint-disable-next-line
-        console.warn("CRUDCOMPONENT ERROR:: No primary key on this them", this.selectedItem, this.primaryKey);
+        console.warn("AWESOMECRUD ERROR:: No primary key on this them", this.selectedItem, this.primaryKey);
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("CRUDCOMPONENT ERROR:: validation errors", errors);
+          console.error("AWESOMECRUD ERROR:: validation errors", errors);
           return;
         }
       }

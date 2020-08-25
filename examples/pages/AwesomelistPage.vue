@@ -216,7 +216,7 @@
 import ticketSchema from '../fixtures/ticket';
 import userSchema from '../fixtures/user';
 import AwesomeList from '@/components/table/AwesomeList.vue';
-// import CrudComponent from "@/components/crud/CrudComponent.vue";
+// import AwesomeCrud from "@/components/crud/AwesomeCrud.vue";
 
 export default {
   name: 'AwesomelistPage',

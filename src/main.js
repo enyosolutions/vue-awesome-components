@@ -43,7 +43,7 @@ Vue.use(VueFormGenerator, {
 });
 
 
-Vue.use(VueEnyoComponents, { 'CrudComponent': { extends: { props: { primaryKey: { type: String, default: 'tintin' } } } } });
+Vue.use(VueEnyoComponents, { 'AwesomeCrud': { extends: { props: { primaryKey: { type: String, default: 'tintin' } } } } });
 
 Vue.config.productionTip = false;
 
@@ -85,20 +85,20 @@ const router = new VueRouter({
       component: () => import("../examples/pages/AwesomeTablePage.vue")
     },
     {
-      path: "/crudcomponent-advanced",
-      component: () => import("../examples/pages/CrudComponentAdvancedPage")
+      path: "/awesomecrud-advanced",
+      component: () => import("../examples/pages/AwesomeCrudAdvancedPage")
     },
     {
-      path: "/crudcomponent",
-      component: () => import("../examples/pages/CrudComponentPage")
+      path: "/awesomecrud",
+      component: () => import("../examples/pages/AwesomeCrudPage")
     },
     {
-      path: "/crudcomponent/:id",
-      component: () => import("../examples/pages/CrudComponentPage")
+      path: "/awesomecrud/:id",
+      component: () => import("../examples/pages/AwesomeCrudPage")
     },
     {
-      path: "/crudcomponent/:id/edit",
-      component: () => import("../examples/pages/CrudComponentPage")
+      path: "/awesomecrud/:id/edit",
+      component: () => import("../examples/pages/AwesomeCrudPage")
     }
   ]
 });

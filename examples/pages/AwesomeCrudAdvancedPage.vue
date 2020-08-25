@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>CrudComponent component examples</h1>
+    <h1>AwesomeCrud component examples</h1>
     <ul class="nav nav-pills" id="myTab" role="tablist">
       <li class="nav-item">
         <a
@@ -72,7 +72,7 @@
             >{{ val }}</option
           >
         </select>
-        <CrudComponent
+        <AwesomeCrud
           identity="user"
           :schema="userSchema"
           :columns="['col1', 'col2', 'col3']"
@@ -90,7 +90,7 @@
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
         <h2>Ticket model with auto props</h2>
         <AutoProps
-          :component="CrudComponent"
+          :component="AwesomeCrud"
           :componentProps="{
             identity: 'ticket',
             apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
@@ -101,7 +101,7 @@
           :docked="false"
           v-slot="{ userProps }"
         >
-          <CrudComponent
+          <AwesomeCrud
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
               dataPath: false,
@@ -132,7 +132,7 @@
         />
       </div>
       <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
-        <CrudComponent
+        <AwesomeCrud
           identity="photos"
           :schema="photoSchema"
           url="http://localhost:3000/photos"
@@ -155,20 +155,20 @@ import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
 import photoSchema from "../fixtures/photo";
-import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
 import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: "CrudComponentPage",
+  name: "AwesomeCrudAdvancedPage",
   components: {
-    CrudComponent,
+    AwesomeCrud,
     AwesomeForm,
     AutoProps
   },
   data() {
     return {
-      CrudComponent,
+      AwesomeCrud,
       LiveEdit,
       ticketSchema,
       ticketModel,
