@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     clickOnItem(item) {
-      this.$emit('view', item);
+      this.$emit('on-awesome-display-clicked', item);
     }
   }
 };

@@ -1,58 +1,65 @@
 <template>
-	<div class="form-element" :class="[fieldRowClasses]">
-		<label 
-v-if="fieldTypeHasLabel" 
-:for="fieldID" :class="field.labelClasses">
-			<slot 
-name="label" 
-:field="field" :getValueFromOption="getValueFromOption"></slot>
-			<slot 
-name="help" 
-:field="field" :getValueFromOption="getValueFromOption"></slot>
-		</label>
+  <div class="form-element" :class="[fieldRowClasses]">
+    <label v-if="fieldTypeHasLabel" :for="fieldID" :class="field.labelClasses">
+      <slot name="label" :field="field" :getValueFromOption="getValueFromOption"></slot>
+      <slot name="help" :field="field" :getValueFromOption="getValueFromOption"></slot>
+    </label>
+    <awesome-display
+      v-if="field.mode === 'view'"
+      :type="fieldType"
+      :value="model[field.model]"
+      :relation="field.fieldOptions.relation"
+      :relation-url="field.fieldOptions.relationUrl"
+      :relation-key="field.fieldOptions.relationKey"
+      :relation-label="field.fieldOptions.relationLabel"
+    >
+    </awesome-display>
+    <div class="field-content" v-else>
+      <div class="field-wrap">
+        <component
+          ref="child"
+          :is="fieldType"
+          :model="model"
+          :schema="field"
+          :form-options="options"
+          :event-bus="eventBus"
+          :field-i-d="fieldID"
+          @field-touched="onFieldTouched"
+          @errors-updated="onChildValidated"
+        ></component>
+        <div v-if="buttonsAreVisible" class="buttons">
+          <button
+            v-for="(btn, index) in field.buttons"
+            @click="buttonClickHandler(btn, field, $event)"
+            :class="btn.classes"
+            :key="index"
+            v-text="btn.label"
+          ></button>
+        </div>
+      </div>
 
-		<div class="field-content">
-			<div class="field-wrap">
-				<component
-					ref="child"
-					:is="fieldType"
-					:model="model"
-					:schema="field"
-					:form-options="options"
-					:event-bus="eventBus"
-					:field-i-d="fieldID"
-					@field-touched="onFieldTouched"
-					@errors-updated="onChildValidated"></component>
-				<div v-if="buttonsAreVisible" class="buttons">
-					<button
-						v-for="(btn, index) in field.buttons"
-						@click="buttonClickHandler(btn, field, $event)"
-						:class="btn.classes"
-						:key="index"
-						v-text="btn.label"></button>
-				</div>
-			</div>
+      <template v-if="fieldHasHint">
+        <slot name="hint" :field="field" :getValueFromOption="getValueFromOption"></slot>
+      </template>
 
-			<template v-if="fieldHasHint">
-				<slot 
-name="hint" 
-:field="field" :getValueFromOption="getValueFromOption"></slot>
-			</template>
-
-			<template v-if="fieldHasErrors">
-				<slot name="errors" :childErrors="childErrors" :field="field" :getValueFromOption="getValueFromOption"></slot>
-			</template>
-		</div>
-	</div>
+      <template v-if="fieldHasErrors">
+        <slot name="errors" :childErrors="childErrors" :field="field" :getValueFromOption="getValueFromOption"></slot>
+      </template>
+    </div>
+  </div>
 </template>
 <script>
 import { get as objGet, isArray, isFunction, isNil } from "lodash";
 import { slugifyFormID } from "./utils/schema";
 import formMixin from "./formMixin.js";
+import AwesomeDisplay from "../../crud/display/AwesomeDisplay";
 
 export default {
   name: "form-element",
   mixins: [formMixin],
+  components: {
+    AwesomeDisplay
+  },
   props: {
     model: {
       type: Object,
@@ -96,7 +103,17 @@ export default {
     },
     // Get type of field 'field-xxx'. It'll be the name of HTML element
     fieldType() {
-      return "field-" + this.field.type;
+      if (this.field.mode === "view") {
+        if (this.field.viewOptions && this.field.viewOptions.type) {
+          return this.field.viewOptions.type;
+        }
+        if (this.field.fieldOptions.relation) {
+          return "relation";
+        }
+        return this.field.fieldOptions.inputType;
+      } else {
+        return "field-" + this.field.type;
+      }
     },
     // Should field type have a label?
     fieldTypeHasLabel() {
