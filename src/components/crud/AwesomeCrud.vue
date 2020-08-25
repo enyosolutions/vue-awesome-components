@@ -108,6 +108,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :actions="_actions"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
@@ -222,7 +223,10 @@ const defaultOptions = {
   customTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: "view",
-  dataMode: "table"
+  dataMode: "table",
+  listOptions: {
+    fields: []
+  },
 };
 
 export default {
@@ -515,6 +519,15 @@ export default {
     },
 
     tableColumnsComputed() {
+      if (this.mergedOptions.dataMode === 'list') {
+        const allColumns = this.parseColumns(this.schemaComputed.properties);
+        let columns = [];
+        this.mergedOptions.listOptions.fields.forEach(field => {
+          columns.push(_.filter(allColumns, ['field', field]));
+        })
+        columns = _.flatten(columns);
+        return columns;
+      }
       return this.parseColumns(this.schemaComputed.properties);
     },
 

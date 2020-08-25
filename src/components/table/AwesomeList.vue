@@ -1,6 +1,5 @@
 <template>
   <div class="awesome-list-card awesome-list-component awesome-list">
-    {{columns}}
     <div
       :class="
         'awesome-list-header ' +
@@ -108,18 +107,19 @@
           }"
             >
               <div class="card-body">
-                <p class="card-text" v-for="(data, key) in item" :key="key">
-                  {{ key }} :
-                  <AwesomeDisplay
-                    :type="getColumn(key).type"
-                    :value="data"
-                    :relation="getColumn(key).relation"
-                    :relation-label="getColumn(key).relationLabel"
-                    :relation-url="getColumn(key).relationUrl"
-                    :relation-key="getColumn(key).relationKey"
-                  >
-                  </AwesomeDisplay>
-                </p>
+                <div v-for="(itemData, key) in getAllowColumn(item)" :key="key">
+                    {{ key }} :
+                    <AwesomeDisplay
+                      :type="getColumn(key).type"
+                      :value="itemData"
+                      :relation="getColumn(key).relation"
+                      :relation-label="getColumn(key).relationLabel"
+                      :relation-url="getColumn(key).relationUrl"
+                      :relation-key="getColumn(key).relationKey"
+                    >
+                    </AwesomeDisplay>
+                </div>
+                <p v-if="getAllowColumn(item)" class="card-text">{{ $t('AwesomeList.no-data')}}</p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
@@ -231,7 +231,7 @@ export default {
         customBulkActions: [],
         saveSearchDatas: false,
       })
-    }
+    },
   },
   data() {
     return {
@@ -259,8 +259,9 @@ export default {
     },
 
     _pageCount() {
-      return this.perPage && this.totalCount
-        ? Math.ceil(this.totalCount / this.perPage)
+      const perPage = parseInt(this.serverParams.perPage) || this.perPage;
+      return perPage && this.totalCount
+        ? Math.ceil(this.totalCount / perPage)
         : 0;
     },
     itemWrapperClasses() {
@@ -287,13 +288,14 @@ export default {
           this.serverParams && this.serverParams.page
             ? this.serverParams.page
             : 1;
-        const startIndex = (currentPage - 1) * this.perPage;
+        const perPage = parseInt(this.serverParams.perPage) || this.perPage
+        const startIndex = (currentPage - 1) * perPage;
         if (!this.data) {
           return [];
         }
         return this.mode === "remote"
           ? this.data
-          : this.data.slice(startIndex, startIndex + this.perPage);
+          : this.data.slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -315,6 +317,18 @@ export default {
   },
   beforeDestroy() {},
   methods: {
+    getAllowColumn(item) {
+      let columns = {};
+      Object.keys(item).forEach(key => {
+        this.columns.forEach(column => {
+          if (column.field === key) {
+            columns = Object.assign(columns, _.pick(item, [key]))
+          }
+        })
+      })
+      return columns;
+    },
+
     getColumn(key) {
       const column = _.filter(this.columns, ['field', key]);
       return column[0] ? column[0]: column;

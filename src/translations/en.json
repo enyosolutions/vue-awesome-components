@@ -54,5 +54,8 @@
     "messages": {
       "successfullyModified": "Successfully modified."
     }
+  },
+  "AwesomeList": {
+    "no-data": "No columns selected"
   }
 }
