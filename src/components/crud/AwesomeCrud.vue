@@ -95,8 +95,32 @@
               </button>
             </slot>
           </div>
+          <AwesomeList
+            v-if="mergedOptions.dataMode === 'list'"
+            :url="_url"
+            :perPage="10"
+            :columns="tableColumnsComputed"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :actions="_actions"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :export-url="mergedOptions.exportUrl"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :styles="{
+              listWrapperClasses: 'row',
+              itemWrapperClasses: 'col-3',
+              }"
+            >
+
+          </AwesomeList>
           <AwesomeTable
-            v-if="!_isNestedDetail"
+            v-if="!_isNestedDetail && mergedOptions.dataMode === 'table'"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -173,6 +197,7 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
+import AwesomeList from "../table/AwesomeList";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -196,7 +221,8 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view"
+  tableRowClickAction: "view",
+  dataMode: "table"
 };
 
 export default {
@@ -287,7 +313,8 @@ export default {
   components: {
     AwesomeTable,
     EnyoCrudStatsSection,
-    AwesomeForm
+    AwesomeForm,
+    AwesomeList
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {

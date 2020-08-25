@@ -1,5 +1,6 @@
 <template>
   <div class="awesome-list-card awesome-list-component awesome-list">
+    {{columns}}
     <div
       :class="
         'awesome-list-header ' +
@@ -106,15 +107,19 @@
              'height': _itemHeight
           }"
             >
-              <img
-                class="card-img-top"
-                v-if="fields.image"
-                :src="item[fields.image]"
-                :alt="item[fields.title]"
-              />
               <div class="card-body">
-                <h5 class="card-title" v-if="item[fields.title]">{{ item[fields.title] }}</h5>
-                <p class="card-text">{{ item[fields.description] }}</p>
+                <p class="card-text" v-for="(data, key) in item" :key="key">
+                  {{ key }} :
+                  <AwesomeDisplay
+                    :type="getColumn(key).type"
+                    :value="data"
+                    :relation="getColumn(key).relation"
+                    :relation-label="getColumn(key).relationLabel"
+                    :relation-url="getColumn(key).relationUrl"
+                    :relation-key="getColumn(key).relationKey"
+                  >
+                  </AwesomeDisplay>
+                </p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
@@ -154,6 +159,7 @@
 import apiErrors from "../../mixins/apiErrorsMixin";
 import i18nMixin from "../../mixins/i18nMixin";
 import apiListMixin from "../../mixins/apiListMixin";
+import AwesomeDisplay from "../crud/display/AwesomeDisplay";
 import Paginate from "vuejs-paginate";
 import _ from "lodash";
 
@@ -162,9 +168,13 @@ export default {
   token: `
 
   `,
-  components: { Paginate },
+  components: { Paginate, AwesomeDisplay },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
+    columns: {
+      type: Array,
+      default: () => []
+    },
     perRow: {
       type: Number,
       default: 3
@@ -226,7 +236,8 @@ export default {
   data() {
     return {
       itemsPerRow: 3,
-      page: 0
+      page: 0,
+      data: [],
     };
   },
   computed: {
@@ -275,7 +286,7 @@ export default {
         const currentPage =
           this.serverParams && this.serverParams.page
             ? this.serverParams.page
-            : 0;
+            : 1;
         const startIndex = (currentPage - 1) * this.perPage;
         if (!this.data) {
           return [];
@@ -291,7 +302,8 @@ export default {
     }
   },
   watch: {
-    'perRow': 'resetItemsPerRow'
+    'perRow': 'resetItemsPerRow',
+    rows: 'refreshLocalData'
   },
   created() {},
   beforeMount() {},
@@ -299,9 +311,14 @@ export default {
     if (this.perRow) {
       this.resetItemsPerRow();
     }
+    this.refreshLocalData();
   },
   beforeDestroy() {},
   methods: {
+    getColumn(key) {
+      const column = _.filter(this.columns, ['field', key]);
+      return column[0] ? column[0]: column;
+    },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;
     },
