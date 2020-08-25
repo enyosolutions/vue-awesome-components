@@ -1,7 +1,7 @@
 <template>
   <div class="awesome-filter">
     <div class="filtering" v-if="editFilters">
-      <h6 class="card-subtitle text-muted mb-2">Filter data</h6>
+      <h6 class="card-subtitle text-muted mb-2">{{$t("AwesomeFilter.filter-data")}}</h6>
       <form class="container">
         <div class="dropdown column">
           <button
@@ -11,10 +11,10 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            {{ Object.keys(currentField).length ? currentField.label : "Fields" }}
+            {{ Object.keys(currentField).length ? currentField.label : $t("AwesomeFilter.fields") }}
           </button>
           <div class="dropdown-menu" aria-labelledby="field">
-            <a href="" @click.prevent="currentField = {}" class="dropdown-item">Fields</a>
+            <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{$t("AwesomeFilter.fields")}}</a>
             <a
               href=""
               @click.prevent="currentField = field"
@@ -36,10 +36,10 @@
             aria-expanded="false"
             :disabled="!(currentField && currentField.field)"
           >
-            {{ Object.keys(currentFilter).length ? currentFilter.text : "Filters" }}
+            {{ Object.keys(currentFilter).length ? currentFilter.text : $t("AwesomeFilter.filters") }}
           </button>
           <div class="dropdown-menu" aria-labelledby="filter">
-            <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">Filters</a>
+            <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">{{$t("AwesomeFilter.filters")}}</a>
             <a
               href=""
               @click.prevent="currentFilter = filter"
@@ -57,7 +57,7 @@
               v-model.number="currentValue"
               type="number"
               class="form-control"
-              placeholder="Filter value"
+              :placeholder="$t('AwesomeFilter.filter-value')"
             />
             <!-- TYPE STRING/TEXT -->
             <input
@@ -65,7 +65,7 @@
               v-model="currentValue"
               type="text"
               class="form-control"
-              placeholder="Filter value"
+              :placeholder="$t('AwesomeFilter.filter-value')"
             />
             <!-- TYPE STRING/TEXT WITH ENUM -->
             <div class="dropdown" v-if="(currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') && currentField.enum">
@@ -76,10 +76,10 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                {{ Object.keys(currentValue).length ? currentValue : "Fields" }}
+                {{ Object.keys(currentValue).length ? currentValue : $t("AwesomeFilter.values") }}
               </button>
               <div class="dropdown-menu" aria-labelledby="field">
-                <a href="" @click.prevent="currentValue = ''" class="dropdown-item">Fields</a>
+                <a href="" @click.prevent="currentValue = ''" class="dropdown-item">{{$t("AwesomeFilter.values")}}</a>
                 <a
                   href=""
                   @click.prevent="currentValue = field"
@@ -99,13 +99,13 @@
                 v-model.number="currentValue.from"
                 type="number"
                 class="form-control"
-                placeholder="From"
+                :placeholder="$t('AwesomeFilter.from')"
               />
               <input
                 v-model.number="currentValue.to"
                 type="number"
                 class="form-control"
-                placeholder="To"
+                :placeholder="$t('AwesomeFilter.to')"
               />
             </div>
             <!-- TYPE BOOLEAN -->
@@ -146,7 +146,7 @@
             </div>
             <!-- ADD SELECT FOR RELATION / OBJECT -->
           </div>
-          <input v-else v-model="currentValue" class="form-control" type="text" placeholder="Filter value"/>
+          <input v-else v-model="currentValue" class="form-control" type="text" :placeholder="$t('AwesomeFilter.filter-value')"/>
         </div>
       </form>
       <div class="awesome-filter-add-block">
@@ -156,12 +156,12 @@
           type="button"
           class="btn btn-primary btn-block"
         >
-          Add filter
+          {{$t("AwesomeFilter.add-filter")}}
         </button>
       </div>
     </div>
     <div class="active-filter" v-if="displayFilters && advancedFilters && advancedFilters.length">
-      <h6 class="card-subtitle mb-2 text-muted">Active Filters</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{$t("AwesomeFilter.active-filter")}}</h6>
       <div class="chip-groups">
         <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in advancedFilters" :key="index">
           <div class="chip-content">
@@ -193,9 +193,11 @@
   import DateRangePicker from "vue2-daterange-picker";
   import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css'
   import moment from "moment";
+  import i18nMixin from "../../mixins/i18nMixin";
 
   export default {
     name: "AwesomeFilter",
+    mixins: [i18nMixin],
     components: {
       Datetime,
       DateRangePicker
@@ -207,23 +209,23 @@
       editFilters: {type: Boolean, default: true},
       // value: Array
     },
-    data: () => ({
+    data: (vm) => ({
       filters: [
-        {text: "Equals", value: "$eq"},
-        {text: "Not equals", value: "$ne"},
-        {text: "Is", value: "$is"},
-        {text: "Is not", value: "$not"},
-        {text: "Greater than", value: "$gt"},
-        {text: "Greater or equals ", value: "$gte"},
-        {text: "Lesser than", value: "$lt"},
-        {text: "Lesser or equals", value: "$lte"},
-        {text: "Between", value: "$between"},
-        {text: "Not between", value: "$notBetween"},
-        {text: "Contains", value: "$like"},
-        {text: "Does not contains", value: "$notLike"},
-        {text: "Starts with", value: "$startsWith"},
-        {text: "Ends with", value: "$endsWith"},
-        {text: "Contains also", value: "$substring"},
+        {text: vm.$t("AwesomeFilter.equals"), value: "$eq"},
+        {text: vm.$t("AwesomeFilter.not-equals"), value: "$ne"},
+        {text: vm.$t("AwesomeFilter.is"), value: "$is"},
+        {text: vm.$t("AwesomeFilter.is-not"), value: "$not"},
+        {text: vm.$t("AwesomeFilter.greater-than"), value: "$gt"},
+        {text: vm.$t("AwesomeFilter.greater-or-equals"), value: "$gte"},
+        {text: vm.$t("AwesomeFilter.lesser-than"), value: "$lt"},
+        {text: vm.$t("AwesomeFilter.lesser-or-equals"), value: "$lte"},
+        {text: vm.$t("AwesomeFilter.between"), value: "$between"},
+        {text: vm.$t("AwesomeFilter.not-between"), value: "$notBetween"},
+        {text: vm.$t("AwesomeFilter.contains"), value: "$like"},
+        {text: vm.$t("AwesomeFilter.not-contains"), value: "$notLike"},
+        {text: vm.$t("AwesomeFilter.starts-with"), value: "$startsWith"},
+        {text: vm.$t("AwesomeFilter.ends-with"), value: "$endsWith"},
+        {text: vm.$t("AwesomeFilter.contains-also"), value: "$substring"},
       ],
       rules: {
         text: ["$eq", "$ne", "$like", "$notLike", "$startsWith", "$endsWith", "$substring"],
@@ -233,7 +235,7 @@
       },
       currentField: {},
       currentValue: "",
-      currentFilter: {text: "Equals", value: "$eq"},
+      currentFilter: {text: vm.$t("AwesomeFilter.equals"), value: "$eq"},
       selectedFilters: [],
       dateRangePicker: {
         startDate: moment(),
@@ -242,10 +244,10 @@
           direction: "ltr", // direction of text
           format: "DD-MM-YYYY", // fomart of the dates displayed
           separator: " - ", // separator between the two ranges
-          applyLabel: "Appliquer",
-          cancelLabel: "Annuler",
-          weekLabel: "W",
-          customRangeLabel: "Custom Range",
+          applyLabel: vm.$t("dateRangePicker.applyLabel"),
+          cancelLabel: vm.$t("dateRangePicker.cancelLabel"),
+          weekLabel: vm.$t("dateRangePicker.weekLabel"),
+          customRangeLabel: vm.$t("dateRangePicker.customRangeLabel"),
           daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
           monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
           firstDay: 1 // ISO first day of week - see moment documenations for details
@@ -263,7 +265,7 @@
           this.selectedFilters.push(filter);
           this.currentField = {};
           this.currentValue = "";
-          this.currentFilter = {text: "Equals", value: "$eq"};
+          this.currentFilter = {text: this.$t("AwesomeFilter.equals"), value: "$eq"};
           this.parseFilter(this.selectedFilters);
         }
       },
@@ -326,7 +328,7 @@
             this.currentValue = new Date().toISOString();
           } else if(newField.type === 'boolean') {
             this.currentValue = true;
-            this.currentFilter = {text: "Is", value: "$is"};
+            this.currentFilter = {text: this.$t("AwesomeFilter.is"), value: "$is"};
           } else {
             this.currentValue = "";
           }
