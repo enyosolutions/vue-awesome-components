@@ -8,7 +8,7 @@
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
-        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems()">
+        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems(true)">
           <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
         </button>
         <div class="btn-group btn-group-sm float-right">
@@ -141,7 +141,6 @@
         :fields="columns"
         v-model="advancedFilters"
       />
-
       <div class="table-responsive">
         <vue-good-table
           :ref="'table-'+entity"
@@ -263,15 +262,17 @@
             </template>
           </div>
           <template slot="table-row" slot-scope="props">
-            <awesome-display
-              v-bind="props.column"
-              :apiResponseConfig="apiResponseConfig"
-              :apiRequestHeaders="apiRequestHeaders"
-              :value="props.formattedRow[props.column.field]"
-            >
-            </awesome-display>
+            <Skeleton v-if="useSkeleton" :count="1" :loading="true"></Skeleton>
+            <template v-else>
+              <awesome-display
+                v-bind="props.column"
+                :apiResponseConfig="apiResponseConfig"
+                :apiRequestHeaders="apiRequestHeaders"
+                :value="props.formattedRow[props.column.field]"
+              >
+              </awesome-display>
 
-            <span v-if="props.column.field === 'ACTIONS'" class="text-right">
+              <span v-if="props.column.field === 'ACTIONS'" class="text-right">
               <slot name="table-row-actions" :item="props.row">
                 <template v-if="opts && opts.customInlineActions">
                   <template v-for="(action, index) in opts.customInlineActions">
@@ -294,8 +295,8 @@
                         "
                       >
                         <i v-if="action.icon" :class="action.icon" /><span
-                          v-html="action.label ? $t(action.label) : ''"
-                        ></span>
+                        v-html="action.label ? $t(action.label) : ''"
+                      ></span>
                       </button>
                     </template>
                   </template>
@@ -323,15 +324,16 @@
                 <i class="fa fa-trash text-danger" />
               </button>
             </span>
-            <span
-              v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
-              class="pointer"
-              @click="clickOnLine(props)"
+              <span
+                v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
+                class="pointer"
+                @click="clickOnLine(props)"
               >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
-            >
-            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
+              >
+              <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
               getDataValue(props.formattedRow[props.column.field], props.column.listName)
             }}</span>
+            </template>
           </template>
           <div slot="emptystate">
             {{ $t("AwesomeTable.empty") }}
@@ -346,6 +348,7 @@ import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import moment from "moment";
 import Popper from "vue-popperjs";
+import { Skeleton } from 'vue-loading-skeleton';
 
 import apiErrors from "../../mixins/apiErrorsMixin";
 import apiListMixin from "../../mixins/apiListMixin";
@@ -373,7 +376,8 @@ export default {
     DateRangePicker,
     VueGoodTable,
     AwesomeFilter,
-    popper: Popper
+    popper: Popper,
+    Skeleton
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
@@ -759,7 +763,7 @@ export default {
         filters: _.cloneDeep(filters),
         page: 0
       });
-      this.getItems();
+      this.getItems(true);
     },
 
     toggleFilter() {
@@ -768,7 +772,7 @@ export default {
       if (!this.filterable) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
-        this.getItems();
+        this.getItems(true);
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
@@ -823,7 +827,7 @@ export default {
         columnFilters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
-      this.getItems();
+      this.getItems(true);
     },
 
     onSortChange(params) {
@@ -846,7 +850,7 @@ export default {
         return;
       }
       this.updateParams({ sort });
-      this.getItems();
+      this.getItems(true);
     },
 
     onDateFilter(value) {
@@ -856,7 +860,7 @@ export default {
       }
       this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
       this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
-      this.getItems();
+      this.getItems(true);
     },
 
     hasValue(item, column) {

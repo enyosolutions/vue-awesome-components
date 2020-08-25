@@ -91,6 +91,7 @@ export default {
         perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
       data: [],
+      useSkeleton: false,
     };
   },
   computed: {
@@ -185,7 +186,10 @@ export default {
     },
 
     /** GET ENTITY ITEMS */
-    getItems() {
+    getItems(useSkeleton = false) {
+      if (useSkeleton) {
+        this.useSkeleton = useSkeleton;
+      }
       this.$emit("refresh");
       // if i got a refresh function
       if (this.refresh) {
@@ -224,6 +228,7 @@ export default {
           console.warn(err);
         })
         .finally(() => {
+          this.useSkeleton = false;
           this.isRefreshing = false;
         });
     },
