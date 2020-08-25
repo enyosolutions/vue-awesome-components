@@ -9,4 +9,4 @@
 # Vue Crud component Examples
 
 
-<CrudComponentDemo />
+<AwesomeCrudDemo />

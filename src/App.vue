@@ -28,10 +28,10 @@
             <a class="nav-link" href="/awesometable">AwesomeTable</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/crudcomponent">Crud component</a>
+            <a class="nav-link" href="/awesomecrud">Crud component</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/crudcomponent-advanced">Crud component advanced</a>
+            <a class="nav-link" href="/awesomecrud-advanced">Crud component advanced</a>
           </li>
         </ul>
       </div>

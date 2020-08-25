@@ -12,7 +12,7 @@
 The crud component is one of the most powerful components of the package. It allows you to quickly build and CRUD capable interface in vue, with a table list, and forms for creating / editing items.
 
 <video width="800" height="600" controls autoplay="true">
-  <source src="./crudcomponent-demo.mp4" type="video/mp4">
+  <source src="./awesomecrud-demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -34,7 +34,7 @@ This component magically create lists and edit data based on a json schema.
 
   ### 1 - configuration with the router
 
-  #### 1.1 Connecting the crudComponent to the router
+  #### 1.1 Connecting the AwesomeCrud to the router
 
 
   ```
@@ -42,7 +42,7 @@ This component magically create lists and edit data based on a json schema.
   {
    name: 'contact',
    path: 'contact',
-   component: CrudComponent,
+   component: AwesomeCrud,
    beforeEnter: authGuard,
    props: {
      modelName: 'contact',
@@ -58,7 +58,7 @@ This component magically create lists and edit data based on a json schema.
    children: [{
      name: 'contact-view',
      path: ':id',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        modelName: 'contact',
        options: {
@@ -71,7 +71,7 @@ This component magically create lists and edit data based on a json schema.
    }, {
      name: 'contact-edit',
      path: ':id/edit',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        modelName: 'contact',
        options: {
@@ -117,7 +117,7 @@ This component magically create lists and edit data based on a json schema.
     appRoute.children.push({
       name: model.name,
       path: model.route || model.name,
-      component: CrudComponent,
+      component: AwesomeCrud,
       beforeEnter: authGuard,
       props: {
         name: model.name,
@@ -129,7 +129,7 @@ This component magically create lists and edit data based on a json schema.
       children: [{
         name: `${model.name}-view`,
         path: ':id',
-        component: CrudComponent,
+        component: AwesomeCrud,
         props: {
           name: model.name,
           modelName: model.modelName || model.name,
@@ -140,7 +140,7 @@ This component magically create lists and edit data based on a json schema.
       }, {
         name: `${model.name}-edit`,
         path: ':id/edit',
-        component: CrudComponent,
+        component: AwesomeCrud,
         props: {
           name: model.name,
           modelName: model.modelName || model.name,
@@ -191,5 +191,5 @@ This component magically create lists and edit data based on a json schema.
 
 ## props
 
-<ComponentDoc :component="'EnyoCrudComponent'" />
+<ComponentDoc :component="'AwesomeCrud'" />
 

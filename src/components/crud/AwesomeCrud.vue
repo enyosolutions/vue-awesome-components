@@ -200,7 +200,7 @@ const defaultOptions = {
 };
 
 export default {
-  name: "CrudComponent",
+  name: "AwesomeCrud",
   introduction: "A component to quickly create a table UI with edit capabilities",
   description: `This component magically create lists and edit data based on a json schema.
 
@@ -240,7 +240,7 @@ export default {
   {
    name: 'contact',
    path: 'contact',
-   component: CrudComponent,
+   component: AwesomeCrud,
    beforeEnter: authGuard,
    props: {
      identity: 'contact',
@@ -256,7 +256,7 @@ export default {
    children: [{
      name: 'contact-view',
      path: ':id',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        identity: 'contact',
        options: {
@@ -269,7 +269,7 @@ export default {
    }, {
      name: 'contact-edit',
      path: ':id/edit',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        identity: 'contact',
        options: {

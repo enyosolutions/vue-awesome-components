@@ -23,8 +23,8 @@
 - Make sure that if a crud page does not have an edit/create/view action, also it does not have the route for doing so
 Ex: if on product i set edit:false then the route /product/:id/edit should not exist
 
-- Bring back client side form validation for CrudComponent
-- remove dependency from bootstrap for CrudComponent <Badge text="HARD" color="danger"/>
+- Bring back client side form validation for AwesomeCrud
+- remove dependency from bootstrap for AwesomeCrud <Badge text="HARD" color="danger"/>
 - remove dependency from some useless components (Ex: Card)
 
 - Create list component for listing items (like in search results)
