@@ -6,6 +6,7 @@
     </label>
     <awesome-display
       v-if="field.mode === 'view'"
+      v-bind="field.viewOptions"
       :type="fieldType"
       :value="model[field.model]"
       :relation="field.fieldOptions.relation"

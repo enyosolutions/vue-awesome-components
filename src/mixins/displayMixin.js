@@ -14,6 +14,8 @@ export default {
     },
     src: String,
     row: Array,
+    format: [String, Function],
+    inputFormat: String,
     field: String,
     styles: String,
     classes: String,

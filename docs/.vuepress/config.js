@@ -62,6 +62,10 @@ module.exports = {
                 path: "/guide/crudcomponent/schema-configuration.md"
               },
               {
+                title: "Configuration Options",
+                path: "/guide/crudcomponent/configuration-options.md"
+              },
+              {
                 title: "Examples",
                 path: "/guide/crudcomponent/examples.md"
               }

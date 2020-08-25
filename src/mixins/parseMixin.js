@@ -102,6 +102,7 @@ export default {
               field.options = field.values;
             }
             field.viewOptions = prop.field && prop.field.viewOptions || {
+              ...prop.column,
               type: this.getColumnType(prop),
               classes: (prop.column && prop.column.classes),
               styles: (prop.column && prop.column.styles)

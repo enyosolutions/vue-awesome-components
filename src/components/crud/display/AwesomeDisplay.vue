@@ -5,6 +5,8 @@
   <display-html v-else-if="$props.type === 'html'" v-bind="$props" :value="$props.value"></display-html>
   <display-object v-else-if="$props.type === 'object'" v-bind="$props" :value="$props.value"></display-object>
   <display-checkbox v-else-if="$props.type === 'checkbox'" v-bind="$props" :value="$props.value"></display-checkbox>
+  <display-date v-else-if="$props.type === 'date'" v-bind="$props" :value="$props.value"></display-date>
+  <display-date v-else-if="$props.type === 'datetime'" v-bind="$props" :value="$props.value"></display-date>
   <display-relation
     v-else-if="$props.type === 'relation'"
     v-bind="$props"
@@ -23,6 +25,7 @@ import apiConfigMixin from "../../../mixins/apiConfigMixin";
 
 import DisplayImage from "./DisplayImage";
 import DisplayBoolean from "./DisplayBoolean";
+import DisplayDate from "./DisplayDate";
 import DisplayUrl from "./DisplayUrl";
 import DisplayHtml from "./DisplayHtml";
 import DisplayObject from "./DisplayObject";
@@ -41,7 +44,8 @@ export default {
     DisplayHtml,
     DisplayObject,
     DisplayRelation,
-    DisplayDefault
+    DisplayDefault,
+    DisplayDate
   },
   methods: {
     onClick(row) {

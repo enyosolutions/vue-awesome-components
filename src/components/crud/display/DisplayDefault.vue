@@ -2,8 +2,10 @@
   <div
     class="pointer text-avoid-overflow"
     v-bind="$props"
-    :class="$props.class + ' ajax-table-col-' + $props.field + ' ajax-table-col-value-' + valueClass"
-    :style="$props.style"
+    :class="
+      $props.class + ' ajax-table-col-' + $props.field + ' ajax-table-col-value-' + valueClass + ' ' + $props.classes
+    "
+    :style="$props.styles"
     @click="$emit('clicked', $props)"
   >
     {{ $props.value || "..." }}
