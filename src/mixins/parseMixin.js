@@ -101,6 +101,11 @@ export default {
             if (field.type === "enyoSelect" && !field.fieldOptions.options) {
               field.options = field.values;
             }
+            field.viewOptions = prop.field && prop.field.viewOptions || {
+              type: this.getColumnType(prop),
+              classes: (prop.column && prop.column.classes),
+              styles: (prop.column && prop.column.styles)
+            }
             fields.push(field);
           }
         }

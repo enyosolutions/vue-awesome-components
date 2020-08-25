@@ -11,7 +11,7 @@
           role="tab"
           aria-controls="home"
           aria-selected="true"
-          >Users</a
+          >Users (Change detail page display mode)</a
         >
       </li>
       <li class="nav-item">
@@ -23,19 +23,19 @@
           role="tab"
           aria-controls="profile"
           aria-selected="false"
-          >Tickets</a
+          >Tickets (Uses custom layout system)</a
         >
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
-          id="contact-tab"
+          id="photos-tab"
           data-toggle="tab"
-          href="#contact"
+          href="#photos"
           role="tab"
-          aria-controls="contact"
+          aria-controls="photos"
           aria-selected="false"
-          >List with custom rendering slots</a
+          >Photos</a
         >
       </li>
 
@@ -112,7 +112,7 @@
         </AutoProps>
       </div>
 
-      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="contact-tab">
+      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="photos-tab">
         <button class="btn btn-primary" @click="toggleEdit">
           <i class="fa fa-cog"></i>
         </button>
@@ -131,7 +131,19 @@
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
         />
       </div>
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">contact tab</div>
+      <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+        <CrudComponent
+          identity="photos"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
+        />
+      </div>
     </div>
 
     <div class="container"></div>
@@ -142,6 +154,7 @@ import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
+import photoSchema from "../fixtures/photo";
 import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
 import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
@@ -160,6 +173,7 @@ export default {
       ticketSchema,
       ticketModel,
       userSchema,
+      photoSchema,
       showAwesomeForm: false,
       modalDisplayModeSelect: "page",
       asList: [

@@ -119,6 +119,7 @@
             @customAction="onCustomAction"
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
+            @onRowClicked="onTableRowClicked"
           >
             <template slot="table-top-more-actions">
               <upload-button
@@ -186,7 +187,8 @@ const defaultOptions = {
   columnsDisplayed: 8,
   customInlineActions: [],
   customTopActions: [],
-  customTabletopActions: []
+  customTabletopActions: [],
+  tableRowClickAction: "view"
 };
 
 export default {
@@ -385,7 +387,7 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
       },
-      identity: "",
+      identity: ""
     };
   },
   computed: {
@@ -753,7 +755,7 @@ export default {
         return "select";
       }
       if (property.relation || property.relationUrl) {
-        return 'VSelect';
+        return "VSelect";
       }
       switch (type) {
         case "string":
@@ -823,7 +825,7 @@ export default {
         }
       }
       if (property.relation) {
-        return 'relation';
+        return "relation";
       }
       switch (type) {
         case "string":
@@ -1013,6 +1015,28 @@ export default {
       this.$emit("list-updated", datas);
       this.$emit(this.identity + "-list-updated", datas);
     },
+
+    onTableRowClicked(props) {
+      const { column, row } = props; // rowIndex and event are also available
+      if (column && ["url", "relation"].indexOf(column.type) > -1) {
+        return;
+      }
+
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit("on-table-row-clicked", row);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(row);
+          break;
+        case "view":
+          this.goToViewPage(row);
+          break;
+        case "default":
+          this.goToViewPage(row);
+          break;
+      }
+      // TODO allow custom oninline action to be available on click ?
+    }
     // transform the schema into a format accepted by the ajaxtable
   }
 };

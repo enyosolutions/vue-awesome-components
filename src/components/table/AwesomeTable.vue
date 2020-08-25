@@ -177,6 +177,7 @@
           @on-column-filter="onColumnFilter"
           @on-per-page-change="onPerPageChange"
           @on-search="onSearch"
+          @on-cell-click="clickOnLine"
         >
           <div slot="table-actions">
             <date-range-picker
@@ -216,7 +217,6 @@
               :apiResponseConfig="apiResponseConfig"
               :apiRequestHeaders="apiRequestHeaders"
               :value="props.formattedRow[props.column.field]"
-              @clickEvent="clickOnLine(props.row)"
             >
             </awesome-display>
 
@@ -275,10 +275,10 @@
             <span
               v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
               class="pointer"
-              @click="clickOnLine(props.row)"
+              @click="clickOnLine(props)"
               >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
             >
-            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props.row)">{{
+            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
               getDataValue(props.formattedRow[props.column.field], props.column.listName)
             }}</span>
           </template>
@@ -728,8 +728,8 @@ export default {
     toggleAdvancedFilters() {},
     // editItem(item) {},
 
-    clickOnLine(item) {
-      this._actions.view && this.$emit("view", item);
+    clickOnLine(props, props2) {
+      this.$emit("onRowClicked", props, props2);
     },
 
     getLovValue(item, listName) {
