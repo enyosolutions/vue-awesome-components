@@ -6,7 +6,7 @@
       :componentProps="{
         identity: 'ticket',
         apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
-        options: { detailPageMode: 'fullscreen' },
+        options: this.options,
         model: ticketModel
       }"
       :skip-props="['translations']"
@@ -91,16 +91,32 @@ export default {
         stats: false,
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
-        customActions: [
+        customInlineActions: [
           {
             name: "validate-ride-comment",
             label: "",
-            class: "btn-success",
+            class: "btn-success btn-icon",
             title: "Valider le commentaire",
             icon: "fa fa-check",
-            action: function(item, context) {
+            action: function({ item }, context) {
               item.isProviderCommentValid = true;
               context.editItem(item);
+            }
+          }
+        ],
+        customBulkActions: [
+          {
+            name: "validate-multiple-rides-comment",
+            label: "Validate",
+            class: "btn-success",
+            title: "Valider le commentaire",
+            icon: "fa fa-play mr-1",
+            action: function({ items }, context) {
+              console.log(context);
+              context.$notify({
+                title: `${items.length} to treat as a custom action`,
+                type: items.length > 10 ? "success" : "error"
+              });
             }
           }
         ]

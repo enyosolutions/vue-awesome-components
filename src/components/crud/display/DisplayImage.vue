@@ -1,5 +1,5 @@
 <template>
-  <div v-bind="$props">
+  <div v-bind="$props" :class="$props.classes" :style="$props.styles">
     <span class="pointer">
       <img :src="$props.src" alt="image" class="ajax-table-img" />
     </span>
@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import awesomeDisplayMixin from "../../../mixins/displayMixin";
 
 export default {
-  name: 'DisplayImage',
-  mixins: [awesomeDisplayMixin],
+  name: "DisplayImage",
+  mixins: [awesomeDisplayMixin]
 };
 </script>
 

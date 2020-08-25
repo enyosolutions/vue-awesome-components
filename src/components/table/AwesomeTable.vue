@@ -144,6 +144,7 @@
 
       <div class="table-responsive">
         <vue-good-table
+          :ref="'table-'+entity"
           :mode="mode"
           :total-rows="totalCount"
           style-class="vgt-table table striped"
@@ -172,12 +173,63 @@
             perPage: parseInt(serverParams.perPage) || perPage,
             setCurrentPage: parseInt(serverParams.page) || undefined
           }"
+          :select-options="{
+            enabled: true,
+            selectOnCheckboxOnly: true,
+            selectionInfoClass: 'awesome-table-selection',
+            selectionText: this.$t('AwesomeTable.bulk.row-select'),
+            clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
+            disableSelectInfo: false,
+            selectAllByGroup: true,
+          }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
           @on-column-filter="onColumnFilter"
           @on-per-page-change="onPerPageChange"
           @on-search="onSearch"
+          @on-cell-click="clickOnLine"
+          @on-selected-rows-change="onSelectionChanged"
+
         >
+          <div slot="selected-row-actions">
+            <template v-if="opts && opts.customBulkActions">
+              <template v-for="(action, index) in opts.customBulkActions">
+                <button
+                        :key="index"
+                        class="btn btn-primary btn-simple"
+                        :class="action.class"
+                        :id="action.name + '-' + index"
+                        :data-title="action.title || action.label"
+                        :data-tooltip="action.title || action.label"
+                        @click="$emit('customBulkAction', {
+                          action,
+                          items: selectedRows,
+                          location: 'bulk',
+                          id: action.name + '-' + index
+                        })"
+                >
+                  <i v-if="action.icon" :class="action.icon" />
+                  <span v-html="action.label ? $t(action.label) : ''"></span>
+                </button>
+              </template>
+            </template>
+            <button
+                v-if="_actions.bulkDelete"
+                class="btn btn-primary btn-simple"
+                @click="$emit('bulkDelete', selectedRows)"
+            >
+              <i class="fa fa-trash" />
+              {{$t('AwesomeTable.bulk.delete')}}
+            </button>
+            <button
+              v-if="_actions.bulkEdit"
+              class="btn btn-primary btn-simple"
+              @click="$emit('bulkEdit', selectedRows)"
+            >
+              <i class="fa fa-pencil"></i>
+              {{$t('AwesomeTable.bulk.edit')}}
+            </button>
+          </div>
           <div slot="table-actions">
             <date-range-picker
               v-if="_actions.filter && _actions.dateFilter && filterable"
@@ -216,7 +268,6 @@
               :apiResponseConfig="apiResponseConfig"
               :apiRequestHeaders="apiRequestHeaders"
               :value="props.formattedRow[props.column.field]"
-              @clickEvent="clickOnLine(props.row)"
             >
             </awesome-display>
 
@@ -275,10 +326,10 @@
             <span
               v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
               class="pointer"
-              @click="clickOnLine(props.row)"
+              @click="clickOnLine(props)"
               >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
             >
-            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props.row)">{{
+            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
               getDataValue(props.formattedRow[props.column.field], props.column.listName)
             }}</span>
           </template>
@@ -388,6 +439,7 @@ export default {
         maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
+        customBulkActions: [],
         filterInitiallyOn: false,
         saveSearchDatas: false
       })
@@ -439,7 +491,8 @@ export default {
           firstDay: 1 // ISO first day of week - see moment documenations for details
         }
       },
-      advancedFilters: []
+      advancedFilters: [],
+      selectedRows: [],
     };
   },
   computed: {
@@ -728,8 +781,8 @@ export default {
     toggleAdvancedFilters() {},
     // editItem(item) {},
 
-    clickOnLine(item) {
-      this._actions.view && this.$emit("view", item);
+    clickOnLine(props, props2) {
+      this.$emit("onRowClicked", props, props2);
     },
 
     getLovValue(item, listName) {
@@ -894,5 +947,12 @@ export default {
 
 .font-awesome {
   color: #6c757d;
+}
+
+.awesome-table-selection {
+  background-color: transparent !important;
+  border: none !important;
+  color: black !important;
+  font-size: 0.8rem !important;
 }
 </style>

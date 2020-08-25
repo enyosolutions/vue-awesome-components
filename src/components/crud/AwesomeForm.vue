@@ -14,12 +14,9 @@
                   displayMode === 'sidebar' ||
                   displayMode === 'sidebar-left' ||
                   displayMode === 'sidebar-right',
-                'modal fade':
-                  displayMode === 'fade' ||
-                  displayMode === 'modal' ||
-                  displayMode === 'fullscreen',
+                'modal fade': displayMode === 'fade' || displayMode === 'modal' || displayMode === 'fullscreen',
                 'page  fade': displayMode === 'page',
-                show: this.show,
+                show: this.show
               }"
               tabindex="-1"
               role="dialog"
@@ -35,19 +32,16 @@
                     displayMode === 'sidebar-left',
                   'modal-full': displayMode === 'fullscreen',
 
-                  'modal-lg': displayMode === 'modal' || displayMode === 'fade',
+                  'modal-lg': displayMode === 'modal' || displayMode === 'fade'
                 }"
                 role="document"
               >
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
-                      <h3
-                        class="text-left mt-0 modal-title"
-                        :title="
-                          $t('EnyoCrudComponent.labels.add_a') + ' '.title
-                        "
-                      >{{ $t('EnyoCrudComponent.labels.add_a') }} {{ title }}</h3>
+                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title }}
+                      </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
@@ -73,15 +67,12 @@
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
                       <slot name="add-modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-default btn-simple mr-auto"
-                          @click="cancel()"
-                        >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
-                        <button
-                          type="submit"
-                          class="btn btn-primary ml-auto"
-                        >{{ $t('EnyoCrudComponent.buttons.save') }}</button>
+                        <button type="button" class="btn btn-default btn-simple mr-auto" @click="cancel()">
+                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-auto">
+                          {{ $t("AwesomeCrud.buttons.save") }}
+                        </button>
                       </slot>
                     </div>
                   </form>
@@ -90,14 +81,12 @@
                 <div v-if="mode === 'edit' || mode === 'view'" class="modal-content">
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white">
-                      <h3
-                        v-if="mode === 'edit'"
-                        class="text-left modal-title mt-0"
-                      >{{ $t('EnyoCrudComponent.buttons.edit') }}</h3>
-                      <h3
-                        v-if="mode === 'view'"
-                        class="text-left modal-title mt-0"
-                      >{{ $t('EnyoCrudComponent.buttons.view') }}</h3>
+                      <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
+                        {{ $t("AwesomeCrud.labels.edit") }}
+                      </h3>
+                      <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
+                        {{ $t("AwesomeCrud.labels.view") }}
+                      </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
@@ -110,32 +99,16 @@
                     </div>
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
-                        v-if="
-                          nestedSchemas &&
-                            nestedSchemas.length &&
-                            mode === 'view'
-                        "
+                        v-if="nestedSchemas && nestedSchemas.length && mode === 'view'"
                         class="nav nav-tabs mt-5 mb-4"
                       >
                         <li class="nav-item">
-                          <a
-                            class="nav-link active"
-                            data-toggle="tab"
-                            @click="activeNestedTab = 'general'"
-                          >
-                            {{
-                            $te('app.labels.' + identity)
-                            ? $te('app.labels.' + identity)
-                            : _.startCase(identity)
-                            }}
+                          <a class="nav-link active" data-toggle="tab" @click="activeNestedTab = 'general'">
+                            {{ $te("app.labels." + identity) ? $te("app.labels." + identity) : _.startCase(identity) }}
                           </a>
                         </li>
                         <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
-                          <a
-                            class="nav-link"
-                            data-toggle="tab"
-                            @click="activeNestedTab = ns.identity"
-                          >
+                          <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.identity">
                             <i v-if="ns.icon" :class="ns.icon" />
                             {{ $t(ns.title || ns.name || ns.identity) }}
                           </a>
@@ -154,8 +127,8 @@
                                           legend: '',
                                           ...column,
                                           cols: null,
-                                          styleClasses: 'p-0 m-0',
-                                        },
+                                          styleClasses: 'p-0 m-0'
+                                        }
                                       ]
                                     "
                                     :class="column.childStyleClasses"
@@ -163,9 +136,7 @@
                                     <template v-slot:content="{ tab, activeTabIndex }">
                                       <template v-if="tab.fields">
                                         <VueFormGenerator
-                                          :schema="
-                                            getShemaForFields(column.fields)
-                                          "
+                                          :schema="getShemaForFields(column.fields)"
                                           :model="selectedItem"
                                           :options="formOptions"
                                           tag="div"
@@ -178,9 +149,7 @@
                                             <template v-if="row.fields">
                                               <div>
                                                 <VueFormGenerator
-                                                  :schema="
-                                                    getShemaForFields(row.fields)
-                                                    "
+                                                  :schema="getShemaForFields(row.fields)"
                                                   :model="selectedItem"
                                                   :options="formOptions"
                                                   tag="div"
@@ -213,15 +182,11 @@
                             </template>
                           </div>
 
-                          <template
-                            v-if="
-                              formSchema && formSchema.fields && !this.layout
-                            "
-                          >
+                          <template v-if="formSchema && formSchema.fields && !this.layout">
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': activeNestedTab === 'general',
+                                'active show': activeNestedTab === 'general'
                               }"
                             >
                               <VueFormGenerator
@@ -232,28 +197,19 @@
                               />
                             </div>
                           </template>
-                          <template
-                            v-if="
-                              nestedSchemas &&
-                                nestedSchemas.length &&
-                                mode === 'view' &&
-                                selectedItem
-                            "
-                          >
+                          <template v-if="nestedSchemas && nestedSchemas.length && mode === 'view' && selectedItem">
                             <div
                               v-for="ns in nestedSchemas"
                               :key="ns.$id"
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': activeNestedTab === ns.identity,
+                                'active show': activeNestedTab === ns.identity
                               }"
                             >
                               <crud-component
                                 v-bind="ns"
                                 :parent="selectedItem"
-                                :crud-needs-refresh.sync="
-                                  nestedCrudNeedsRefresh
-                                "
+                                :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                               >
                                 <div slot="crud-title" />
                               </crud-component>
@@ -269,7 +225,9 @@
                           type="button"
                           class="btn btn-default btn-simple mr-auto"
                           @click="cancel()"
-                        >{{ $t('EnyoCrudComponent.buttons.cancel') }}</button>
+                        >
+                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                        </button>
                         <template v-if="mergedOptions.customInlineActions">
                           <template v-for="(action, index) in mergedOptions.customInlineActions">
                             <button
@@ -291,34 +249,71 @@
                               "
                             >
                               <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : "" }}</span>
                             </button>
                           </template>
                         </template>
+                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-auto">
+                          {{ $t("AwesomeCrud.buttons.save") }}
+                        </button>
                         <button
-                          v-if="mode === 'edit'"
-                          type="submit"
-                          class="btn btn-primary ml-auto"
-                        >{{ $t('EnyoCrudComponent.buttons.save') }}</button>
-                        <button
-                          v-if="
-                            mode === 'view' &&
-                              _actions.edit &&
-                              !mergedOptions.noActions
-                          "
+                          v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-auto"
                           @click.prevent.stop="$emit('edit', selectedItem)"
                         >
                           <i class="fa fa-pencil" />
-                          {{ $t('EnyoCrudComponent.buttons.edit') }}
+                          {{ $t("AwesomeCrud.buttons.edit") }}
                         </button>
                         <button
                           v-if="mode === 'view' && !standalone"
                           type="button"
                           class="btn btn-primary ml-2"
                           @click="closeModal()"
-                        >{{ $t('EnyoCrudComponent.buttons.close') }}</button>
+                        >
+                          {{ $t("AwesomeCrud.buttons.close") }}
+                        </button>
+                      </slot>
+                    </div>
+                  </form>
+                </div>
+                <div v-if="mode === 'bulkEdit'" class="modal-content">
+                  <form @submit.prevent="bulkEditItems()">
+                    <div class="modal-header bg-primary text-white">
+                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title }}
+                      </h3>
+                      <button
+                        v-if="!standalone && !_isEmbedded"
+                        type="button"
+                        class="close"
+                        aria-label="Close"
+                        @click="cancel()"
+                      >
+                        <span aria-hidden="true" class="text-white">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <slot name="create-form" :selectedItem="selectedItem">
+                        <template v-if="formSchema && formSchema.fields">
+                          <VueFormGenerator
+                            ref="form"
+                            :schema.sync="formSchema"
+                            :model="selectedItem"
+                            :options="formOptions"
+                            tag="div"
+                          />
+                        </template>
+                      </slot>
+                    </div>
+                    <div class="modal-footer" v-if="!_isEmbedded">
+                      <slot name="add-modal-footer">
+                        <button type="button" class="btn btn-default btn-main-style mr-auto" @click="cancel()">
+                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-auto">
+                          {{ $t("AwesomeCrud.buttons.save") }}
+                        </button>
                       </slot>
                     </div>
                   </form>
@@ -331,9 +326,7 @@
           <!-- END OF create MODAL -->
           <div
             :id="identity + 'Backdrop'"
-            v-if="
-              displayMode !== 'page' && displayMode !== 'fullscreen' && show
-            "
+            v-if="displayMode !== 'page' && displayMode !== 'fullscreen' && show"
             class="modal-backdrop backdrop-custom show"
             :class="displayMode"
             style="background: #111;"
@@ -347,6 +340,7 @@
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
+import parseMixin from "../../mixins/parseMixin";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
@@ -368,12 +362,14 @@ const defaultOptions = {
   createPath: null,
   viewPath: null,
   editPath: null,
+  bulkEditPath: null,
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
   modalMode: "slide", // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
   columnsDisplayed: 8,
   customInlineActions: [],
+  customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
   responseField: "body"
@@ -388,9 +384,10 @@ export default {
     Row,
     GroupedForm
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
     item: { type: Object, required: true },
+    bulkItems: { type: Array, required: false },
     title: { type: String, required: false, default: undefined },
     pageTitle: { type: String, required: false, default: undefined },
     identity: { type: String, required: true },
@@ -443,10 +440,16 @@ export default {
       type: Object,
       required: false,
       default: () => ({
-        "EnyoCrudComponent.labels.manageTitle": "EnyoCrudComponent.labels.manageTitle",
-        "EnyoCrudComponent.buttons.view": "EnyoCrudComponent.buttons.view",
-        "EnyoCrudComponent.buttons.cancel": "EnyoCrudComponent.buttons.cancel",
-        "EnyoCrudComponent.buttons.close": "EnyoCrudComponent.buttons.close"
+        AwesomeCrud: {
+          labels: {
+            manageTitle: "Manage"
+          },
+          buttons: {
+            view: "View",
+            cancel: "Cancel",
+            close: "Close"
+          }
+        }
       }),
       note: "Translation labels to use when vue-i18n is not present"
     },
@@ -455,7 +458,7 @@ export default {
       required: true,
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
-        return ["create", "edit", "view"].indexOf(value) !== -1;
+        return ["create", "edit", "view", "bulkEdit"].indexOf(value) !== -1;
       }
     },
     displayMode: {
@@ -609,6 +612,7 @@ export default {
       }
       const parsedFormSchema = this.parseSchema(this.innerSchema);
       parsedFormSchema.styleClasses = "row";
+      parsedFormSchema.mode = this.mode;
       parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
         if (!field.styleClasses || field.styleClasses.indexOf("col-") === -1) {
           field.styleClasses = `${field.styleClasses || ""} col-12`;
@@ -695,6 +699,15 @@ export default {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
           }
           this.$emit("create", this.selectedItem, { reset: false });
+
+          return;
+        }
+        if (this.$route.params.id === "bulkEdit") {
+          delete this.$route.params.id;
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+          this.$emit("bulkEdit", this.selectedItem, { reset: false });
 
           return;
         }
@@ -874,7 +887,11 @@ export default {
         this.nestedViewFunction();
       }
 
-      this.selectedItem = this.item;
+      if (this.mode !== "bulkEdit") {
+        this.selectedItem = this.item;
+      } else {
+        this.selectedItem = {};
+      }
       if (!this._url) {
         return;
       }
@@ -900,164 +917,6 @@ export default {
       }
     },
 
-    parseSchema(schema, prefix = "") {
-      if (!schema.properties) {
-        return [];
-      }
-      if (prefix && schema.$schema) {
-        // console.warn("possible recursive parseSchema call", schema);
-        return;
-      }
-      let fields = [];
-      const size = Object.keys(schema.properties).length;
-      Object.keys(schema.properties).forEach((key) => {
-        if ([this.primaryKey].indexOf(key) === -1) {
-          const prop = schema.properties[key];
-          if (prop.field && prop.field.hidden) {
-            return;
-          }
-          if (prop.type === "object" && !(prop.field && prop.field.type)) {
-            const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
-            subSchema.legend = prop.title || _.startCase(key);
-            subSchema.type = "group";
-            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || "card"}`;
-            // if layout is activated, then do not group fields
-            if (this.layout) {
-              fields = fields.concat(subSchema.fields);
-            } else {
-              fields.push(subSchema);
-            }
-          } else {
-            const relationUrl = this.getRelationUrl(prop);
-            const relationKey = this.getRelationKey(prop);
-            const relationLabel = this.getRelationLabel(prop);
-            if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = relationUrl || prop.relation;
-              prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
-              prop.field.fieldOptions.searchable = true;
-            }
-            const field = {
-              type: (prop.field && prop.field.type) || this.getFormtype(prop),
-              label: prop.title || prop.description || _.startCase(key),
-              placeholder: prop.description || prop.title || _.startCase(key),
-              fieldOptions: (prop.field && prop.field.fieldOptions) || {
-                placeholder: prop.description || prop.title || _.startCase(key),
-                url: relationUrl || prop.relation,
-                trackBy: relationKey || prop.foreignKey || "id",
-                label: relationLabel || "label", // key label for enyo select
-                name: relationLabel || "label", // key label for native select
-                step: prop.field && prop.field.step,
-                foreignKey: relationKey,
-                relationKey,
-                relationLabel,
-                relationUrl,
-                readonly: this.mode === "view" || (prop.field && prop.field.readonly),
-                disabled: this.mode === "view" || (prop.field && prop.field.disabled)
-              },
-              values:
-                (prop.field &&
-                  prop.field.fieldOptions &&
-                  (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum))) ||
-                prop.enum ||
-                (prop.items && prop.items.enum) ||
-                [],
-              required: prop.field && prop.field.required,
-              hint: prop.description,
-              model: prefix + key,
-              validator: prop.field && prop.field.validator,
-              min: prop.min,
-              max: prop.max,
-              multi: prop.type === "array",
-              readonly: this.mode === "view" || (prop.field && prop.field.readonly),
-              disabled: this.mode === "view" || (prop.field && prop.field.readonly),
-              styleClasses:
-                (prop.field && prop.field.styleClasses) || this.layout
-                  ? ""
-                  : size < 8 || this.layout
-                  ? "col-12"
-                  : "col-6",
-              relation: prop.relation,
-              foreignKey: relationKey || prop.foreignKey,
-              relationKey,
-              relationLabel,
-              group: prop.field ? prop.field.group : undefined
-            };
-            if (!field.fieldOptions.inputType) {
-              field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || "text";
-            }
-            if (
-              prop.type === "boolean" &&
-              (field.type === "select" || field.type === "enyoSelect") &&
-              (!field.values || !field.values.length)
-            ) {
-              field.values = [
-                { id: true, label: "Yes" },
-                { id: false, label: "No" },
-                { id: "", label: "-" }
-              ];
-            }
-            if (field.type === "dateTime") {
-              field.fieldOptions.icons = {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
-              };
-            }
-            if (field.type === "enyoSelect" && !field.fieldOptions.options) {
-              field.options = field.values;
-            }
-            fields.push(field);
-          }
-        }
-      });
-      // let groups = this.parseSchemaGroups(schema);
-      // groups = this.distributeFieldsInGroups(groups, fields);
-
-      return { fields };
-    },
-
-    parseSchemaGroups(schema) {
-      let groups = [];
-      if (!schema.formGroups) {
-        return {};
-      }
-      schema.formGroups.forEach((group) => {
-        if (!groups[group.id]) {
-          groups.push({
-            fields: [],
-            ...group,
-            legend: this.$t(group.title),
-            type: "group"
-          });
-        }
-      });
-      if (groups.length < 1) {
-        groups = [{ legend: "", fields: schema.fields }];
-      }
-      return groups;
-    },
-
-    distributeFieldsInGroups(groups, fields) {
-      fields.forEach((f) => {
-        if (f.group) {
-          const keys = f.group.split(".");
-          let targetGroup = { groups };
-          keys.forEach((key) => {
-            targetGroup = _.find(targetGroup.groups, { id: key });
-          });
-          if (targetGroup) {
-            if (!targetGroup.fields) {
-              targetGroup.fields = [];
-            }
-            targetGroup.fields.push(f);
-          }
-        }
-      });
-      return groups;
-    },
-
     getShemaForFields(fields) {
       const fieldsDefinition = this.formSchema.fields.filter((f) => {
         return fields.indexOf(f.model) > -1;
@@ -1078,7 +937,7 @@ export default {
         }
       }
       if (property.relation || property.relationUrl) {
-        return 'VSelect';
+        return "VSelect";
       }
       if (property.enum) {
         return "select";
@@ -1150,7 +1009,7 @@ export default {
         }
       }
       if (property.relation) {
-        return 'relation';
+        return "relation";
       }
       switch (type) {
         case "string":
@@ -1300,6 +1159,32 @@ export default {
       // return false;
     },
 
+    bulkEditItems() {
+      if (!this._url) {
+        // eslint-disable-next-line
+        console.warn("CRUDCOMPONENT ERROR:: No url for submitting");
+        return false;
+      }
+      if (this.$refs.form) {
+        const errors = this.$refs.form.validate();
+        if (errors.length > 0) {
+          // eslint-disable-next-line
+          console.error("CRUDCOMPONENT ERROR:: validation errors", error);
+          return;
+        }
+      } else {
+        // eslint-disable-next-line
+        console.warn("Unable to find the reference to the schema form on ", this.$route.path);
+      }
+      this.bulkItems.forEach((element) => {
+        if (element[this.primaryKey]) {
+          element = _.merge(element, this.selectedItem);
+          this.$emit("itemsBulkEdited", element);
+          this.closeModal();
+        }
+      });
+    },
+
     editItem() {
       if (!this._url) {
         // eslint-disable-next-line
@@ -1363,6 +1248,10 @@ export default {
 
     deleteFunction(item) {
       this.$emit("delete", item);
+    },
+
+    bulkEditFunction(items) {
+      this.$emit("bulkEdit", items);
     },
 
     getNestedItem() {

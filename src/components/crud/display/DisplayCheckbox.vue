@@ -1,5 +1,5 @@
 <template>
-  <div class="pointer text-avoid-overflow" v-bind="$props">
+  <div class="pointer text-avoid-overflow" :class="$props.classes" :style="$props.styles" v-bind="$props">
     <label v-if="$props.value === true">
       <input class="ajax-table-checkbox" type="checkbox" checked disabled />
     </label>
@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import awesomeDisplayMixin from "../../../mixins/displayMixin";
 
 export default {
-  name: 'DisplayCheckbox',
-  mixins: [awesomeDisplayMixin],
+  name: "DisplayCheckbox",
+  mixins: [awesomeDisplayMixin]
 };
 </script>
 
