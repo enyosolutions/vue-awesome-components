@@ -124,6 +124,18 @@ The crud component configuration schema.
               example: 'username',
             },
           },
+          viewOptions: {
+            title: 'Options to be used on custom forms fields like view mode',
+             properties: {
+            type: {
+              type: 'string',
+              title:
+                'The type that links to the field option. In case of a dateTime selector, this would be date or datetime',
+              enum: ['date', 'datetime'],
+            }
+          }
+
+          }
         },
         validator: {
           type: 'Array',
@@ -146,6 +158,10 @@ The crud component configuration schema.
           title: 'The type of the column, comming from https://vue-generators.gitbook.io/vue-generators/fields',
           enum: ['image', 'string', 'number', 'date', 'datetime', 'list-of-value'],
         },
+        format: {
+          type: 'string',
+          title: 'Extra configuration for the item'
+        }
         hidden: {
           type: 'string',
           title: 'If the form field is displayed',
