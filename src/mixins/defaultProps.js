@@ -11,6 +11,8 @@ export const defaultActions = {
   dateFilter: true,
   refresh: true,
   advancedFiltering: true,
-  columnsFilters: true
+  columnsFilters: true,
+  bulkDelete: true,
+  bulkEdit: true,
 };
 
