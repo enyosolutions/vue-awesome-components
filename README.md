@@ -76,7 +76,7 @@ yarn run lint
 
 ### migration guide:
 
-#### awsome crud
+#### awesome crud
 
 ##### props
 modelName and name  becomes `identity`
