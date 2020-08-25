@@ -858,7 +858,7 @@ export default {
       }
 
       if (!this._model && !this.schema) {
-        // console.warn("CRUD COMPONENT ERROR", `model ${this.name} not found`);
+        // console.warn("AWESOME CRUD ERROR", `model ${this.name} not found`);
         return;
       }
 

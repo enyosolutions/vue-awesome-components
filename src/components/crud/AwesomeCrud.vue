@@ -206,12 +206,12 @@ export default {
 
   ### Usage.
 
-  There are 3 ways of using the Crud Component.
-  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
+  There are 3 ways of using the Awesome Crud.
+  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based awesome crud.
 
-  If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
+  If you want to further personalize your page, it's possible to create your own component, use the awesome crud in the body, and then use slots to create the desired features.
 
-  The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
+  The 3rd way of reusing the Awesome Crud if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
   Whatever the reason for you to modify the component, we suggest that you copy the html code as source for your edits.
 
   ### Actions
@@ -233,10 +233,10 @@ export default {
 
   ### custom actions
 
-  In addition to the default actions on a crud component it's also possible to create custom actions.
+  In addition to the default actions on a awesome crud it's also possible to create custom actions.
   `,
   token: `
-  // example of route for crud component
+  // example of route for awesome crud
   {
    name: 'contact',
    path: 'contact',
@@ -701,7 +701,7 @@ export default {
       }
 
       if (!this._model && !this.schema) {
-        console.warn("CRUD COMPONENT ERROR", `model ${this.identity} not found`);
+        console.warn("AWESOME CRUD ERROR", `model ${this.identity} not found`);
         return;
       }
 

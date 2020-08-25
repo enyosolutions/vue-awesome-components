@@ -1,12 +1,12 @@
 ---
 {
-  "title": "Enyo crud component - Examples",
+  "title": "Awesome Crud - Examples",
   "lang": "en-US"
 }
 ---
 
 
-# Vue Crud component Examples
+# Vue Awesome Crud Examples
 
 
 <AwesomeCrudDemo />

@@ -1,15 +1,15 @@
 ---
 {
-  "title": "Enyo crud component",
+  "title": "Awesome Crud",
   "lang": "en-US"
 }
 ---
 
 
-# Vue Crud component
+# Vue Awesome Crud
 
 
-The crud component is one of the most powerful components of the package. It allows you to quickly build and CRUD capable interface in vue, with a table list, and forms for creating / editing items.
+The Awesome Crud is one of the most powerful components of the package. It allows you to quickly build and CRUD capable interface in vue, with a table list, and forms for creating / editing items.
 
 <video width="800" height="600" controls autoplay="true">
   <source src="./awesomecrud-demo.mp4" type="video/mp4">
@@ -24,12 +24,12 @@ This component magically create lists and edit data based on a json schema.
   ## Initialisation
 
 
-  There are 3 ways of using the Crud Component.
-  - 1 - The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
+  There are 3 ways of using the Awesome Crud.
+  - 1 - The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based awesome crud
 
-  - 2 - If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
+  - 2 - If you want to further personalize your page, it's possible to create your own component, use the awesome crud in the body, and then use slots to create the desired features.
 
-  - 3 - The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
+  - 3 - The 3rd way of reusing the awesome crud if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
   Whatever the reason for you to modify the component, we suggest that you read the html code as source for your edits. Then you can extend it/
 
   ### 1 - configuration with the router
@@ -38,7 +38,7 @@ This component magically create lists and edit data based on a json schema.
 
 
   ```
-  // example of route for crud component
+  // example of route for awsome crud
   {
    name: 'contact',
    path: 'contact',
@@ -185,7 +185,7 @@ This component magically create lists and edit data based on a json schema.
 
   ### custom actions
 
-  In addition to the default actions on a crud component it's also possible to create custom actions.
+  In addition to the default actions on a awesome crud it's also possible to create custom actions.
 
 
 

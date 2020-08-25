@@ -76,13 +76,13 @@ yarn run lint
 
 ### migration guide:
 
-#### crud component
+#### awsome crud
 
 ##### props
 modelName and name  becomes `identity`
 `displayMode`  becomes `mode`
 
-#### crud component
+#### awesome crud
 
 ##### props
 modelName and name  becomes `identity`
