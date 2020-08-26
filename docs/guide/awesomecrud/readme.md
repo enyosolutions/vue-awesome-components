@@ -101,7 +101,7 @@ This component magically create lists and edit data based on a json schema.
       viewPath: null,
       stats: false,
       modalMode: 'slide', // fade | slide
-      dataMode: 'table', // list | table  
+      initialDisplayMode: 'table', // list | table  
       nestedDisplayMode: 'list', // list | object
       actions: {
         noActions: false,
@@ -162,7 +162,7 @@ This component magically create lists and edit data based on a json schema.
  ### Display mode
 
    `modalMode: 'slide', // fade | slide`
-   `dataMode: 'table', // list | table`  
+   `displayMode: 'table', // list | table`  
 
  ### fields types
 

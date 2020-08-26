@@ -167,7 +167,7 @@
             totalCountPath: 'headers.x-total-count'
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', dataMode: 'list' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'list' }"
           :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
         />
       </div>

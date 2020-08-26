@@ -98,12 +98,12 @@
             </slot>
           </div>
           <AwesomeList
-            v-if="mergedOptions.dataMode === 'list'"
+            v-if="mergedOptions.initialDisplayMode === 'list'"
             :url="_url"
             :perPage="10"
             :identity="identity"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :columns="tableColumnsComputed"
+            :columns="listFieldsComputed"
             :fields="listOptions.fields"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
@@ -125,7 +125,7 @@
           >
           </AwesomeList>
           <AwesomeTable
-            v-if="!_isNestedDetail && mergedOptions.dataMode === 'table'"
+            v-if="!_isNestedDetail && mergedOptions.initialDisplayMode === 'table'"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -227,7 +227,6 @@ const defaultOptions = {
   customTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: "view",
-  dataMode: "table"
 };
 
 const listOptions = {
@@ -531,20 +530,20 @@ export default {
       return parsedFormSchema;
     },
 
-    tableColumnsComputed() {
-      if (this.mergedOptions.dataMode === "list") {
+    listFieldsComputed() {
         const allColumns = this.parseColumns(this.schemaComputed.properties);
         let columns = [];
-        // if fields is not an array then skip the columns preparation
         if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
-          return [];
+            return [];
         }
         this.listOptions.fields.forEach((field) => {
-          columns.push(_.filter(allColumns, ["field", field]));
+            columns.push(_.filter(allColumns, ["field", field]));
         });
         columns = _.flatten(columns);
         return columns;
-      }
+    },
+
+    tableColumnsComputed() {
       return this.parseColumns(this.schemaComputed.properties);
     },
 

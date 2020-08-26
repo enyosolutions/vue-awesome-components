@@ -91,7 +91,6 @@
       </p>
     </div>
 
-    <div class>
       <div class="list-responsive card-deck" :class="styles.listWrapperClasses" v-if="_paginatedItems">
         <div
           class="pointer"
@@ -117,20 +116,20 @@
                   <h5 class="card-title" v-if="fields && fields.title && item[fields.title]">{{ item[fields.title] }}</h5>
                 <p class="card-text" v-if="fields && fields.description && item[fields.description]">{{ item[fields.description] }}</p>
                 <template v-if="columns && columns.length">
-                  <div v-for="(itemData, key) in getAllowColumn(item)" :key="key">
+                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
                       {{ key }} :
                       <AwesomeDisplay
-                        :type="getColumn(key).type"
+                        :type="getField(key).type"
                         :value="itemData"
-                        :relation="getColumn(key).relation"
-                        :relation-label="getColumn(key).relationLabel"
-                        :relation-url="getColumn(key).relationUrl"
-                        :relation-key="getColumn(key).relationKey"
+                        :relation="getField(key).relation"
+                        :relation-label="getField(key).relationLabel"
+                        :relation-url="getField(key).relationUrl"
+                        :relation-key="getField(key).relationKey"
                       >
                       </AwesomeDisplay>
                   </div>
                 </template>
-                <p v-if="getAllowColumn(item)" class="card-text">{{ $t('AwesomeList.no-data')}}</p>
+                <p v-if="!Object.keys(fields).length" class="card-text">{{ $t('AwesomeList.labels.noData')}}</p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
@@ -163,7 +162,6 @@
           :next-link-class="'page-link'"
         ></paginate>
       </nav>
-    </div>
   </div>
 </template>
 <script>
@@ -338,21 +336,21 @@ export default {
   },
   beforeDestroy() {},
   methods: {
-    getAllowColumn(item) {
-      let columns = {};
+    getAllowedFields(item) {
+      let fields = {};
       Object.keys(item).forEach(key => {
         this.columns.forEach(column => {
           if (column.field === key) {
-            columns = Object.assign(columns, _.pick(item, [key]))
+            fields = Object.assign(fields, _.pick(item, [key]))
           }
         })
       })
-      return columns;
+      return fields;
     },
 
-    getColumn(key) {
-      const column = _.filter(this.columns, ['field', key]);
-      return column[0] ? column[0]: column;
+    getField(key) {
+      const field = _.filter(this.columns, ['field', key]);
+      return field[0] ? field[0]: field;
     },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;
@@ -400,6 +398,9 @@ export default {
 </script>
 <style lang="scss">
 .awesome-list-component {
+  .list-responsive {
+    width: 100%;
+  }
   .pagination {
     justify-content: center;
   }

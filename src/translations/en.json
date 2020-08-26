@@ -56,6 +56,8 @@
     }
   },
   "AwesomeList": {
-    "no-data": "No columns selected"
+    "labels": {
+      "noData": "No fields selected"
+    }
   }
 }
