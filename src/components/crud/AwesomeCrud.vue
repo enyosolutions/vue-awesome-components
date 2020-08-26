@@ -99,7 +99,10 @@
             v-if="mergedOptions.dataMode === 'list'"
             :url="_url"
             :perPage="10"
+            :identity="identity"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :columns="tableColumnsComputed"
+            :fields="listOptions.fields"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
             :apiRequestConfig="apiRequestConfig"
@@ -112,13 +115,12 @@
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :styles="{
               listWrapperClasses: 'row',
-              itemWrapperClasses: 'col-3',
-              }"
-            >
-
+              itemWrapperClasses: 'col-3'
+            }"
+            @itemClicked="onListItemClicked"
+          >
           </AwesomeList>
           <AwesomeTable
             v-if="!_isNestedDetail && mergedOptions.dataMode === 'table'"
@@ -214,7 +216,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table",
+  initialDisplayMode: "table", // table | list
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -223,10 +225,11 @@ const defaultOptions = {
   customTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: "view",
-  dataMode: "table",
-  listOptions: {
-    fields: []
-  },
+  dataMode: "table"
+};
+
+const listOptions = {
+  fields: []
 };
 
 export default {
@@ -329,6 +332,11 @@ export default {
       required: false,
       note: "Deprecated use identity"
     },
+    identity: {
+      type: String,
+      required: false,
+      note: "Deprecated use identity"
+    },
     nestedDisplayMode: {
       type: String,
       required: false,
@@ -404,6 +412,10 @@ export default {
     options: {
       type: Object,
       default: () => defaultOptions
+    },
+    listOptions: {
+      type: Object,
+      default: () => listOptions
     },
     actions: {
       type: Object,
@@ -519,12 +531,16 @@ export default {
     },
 
     tableColumnsComputed() {
-      if (this.mergedOptions.dataMode === 'list') {
+      if (this.mergedOptions.dataMode === "list") {
         const allColumns = this.parseColumns(this.schemaComputed.properties);
         let columns = [];
-        this.mergedOptions.listOptions.fields.forEach(field => {
-          columns.push(_.filter(allColumns, ['field', field]));
-        })
+        // if fields is not an array then skip the columns preparation
+        if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
+          return [];
+        }
+        this.listOptions.fields.forEach((field) => {
+          columns.push(_.filter(allColumns, ["field", field]));
+        });
         columns = _.flatten(columns);
         return columns;
       }
@@ -719,7 +735,7 @@ export default {
         .then((res) => {
           if (res.data.url) {
             const link = document.createElement("a");
-            link.download = `${this.entity}_export`;
+            link.download = `${this.identity}_export`;
             link.href = res.data.url;
             link.click();
             link.remove();
@@ -904,7 +920,7 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
-      this.previousDisplayMode = this.displayMode || "table";
+      this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
         this.selectedItems = [];
@@ -1107,7 +1123,9 @@ export default {
      */
     onEditDisplayCancelled(item, { context }) {
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== context ? this.previousDisplayMode : "table",
+        this.previousDisplayMode && this.previousDisplayMode !== context
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
@@ -1117,14 +1135,16 @@ export default {
       // eslint-disable-next-line
       console.log("@cancel event treated", this.previousDisplayMode);
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== "view" ? this.previousDisplayMode : "table",
+        this.previousDisplayMode && this.previousDisplayMode !== "view"
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
     },
 
     onItemCreated(item) {
-      this.setDisplayMode("table", item);
+      this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
       // eslint-disable-next-line
       console.log("EVENT", "onItemCreated", item);
     },
@@ -1176,6 +1196,22 @@ export default {
           break;
         case "default":
           this.goToViewPage(row);
+          break;
+      }
+    },
+
+    onListItemClicked(item) {
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit("on-list-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
           break;
       }
     },

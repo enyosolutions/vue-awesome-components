@@ -94,6 +94,7 @@
     <div class>
       <div class="list-responsive card-deck" :class="styles.listWrapperClasses" v-if="_paginatedItems">
         <div
+          class="pointer"
           v-for="(item, index) in _paginatedItems"
           :key="index"
           :class="itemWrapperClasses"
@@ -106,19 +107,29 @@
              'height': _itemHeight
           }"
             >
+              <img
+               class="card-img-top"
+                v-if="fields && fields.image"
+                :src="item[fields.image]"
+                :alt="item[fields.title]"
+              />
               <div class="card-body">
-                <div v-for="(itemData, key) in getAllowColumn(item)" :key="key">
-                    {{ key }} :
-                    <AwesomeDisplay
-                      :type="getColumn(key).type"
-                      :value="itemData"
-                      :relation="getColumn(key).relation"
-                      :relation-label="getColumn(key).relationLabel"
-                      :relation-url="getColumn(key).relationUrl"
-                      :relation-key="getColumn(key).relationKey"
-                    >
-                    </AwesomeDisplay>
-                </div>
+                  <h5 class="card-title" v-if="fields && fields.title && item[fields.title]">{{ item[fields.title] }}</h5>
+                <p class="card-text" v-if="fields && fields.description && item[fields.description]">{{ item[fields.description] }}</p>
+                <template v-if="columns && columns.length">
+                  <div v-for="(itemData, key) in getAllowColumn(item)" :key="key">
+                      {{ key }} :
+                      <AwesomeDisplay
+                        :type="getColumn(key).type"
+                        :value="itemData"
+                        :relation="getColumn(key).relation"
+                        :relation-label="getColumn(key).relationLabel"
+                        :relation-url="getColumn(key).relationUrl"
+                        :relation-key="getColumn(key).relationKey"
+                      >
+                      </AwesomeDisplay>
+                  </div>
+                </template>
                 <p v-if="getAllowColumn(item)" class="card-text">{{ $t('AwesomeList.no-data')}}</p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
@@ -242,12 +253,22 @@ export default {
   },
   computed: {
     _listTitle() {
-      return (
-        this.title ||
-        (this.$te && this.$te("app.labels." + this.entity)
-          ? this.$t("app.labels." + this.entity)
-          : _.startCase(this.entity))
-      );
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.singularName) {
+        return this.$te(this._model.singularName)
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return "";
     },
 
     _itemHeight() {
@@ -386,6 +407,7 @@ export default {
   .awesome-list-item {
     position: relative;
     overflow: hidden;
+    cursor: pointer;
   }
   .col-12 {
     .awesome-list-item {
