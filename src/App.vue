@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <a class="navbar-brand" href="/">Home</a>
       <button
@@ -33,13 +33,14 @@
           <li class="nav-item">
             <a class="nav-link" href="/awesomecrud-advanced">Awesome Crud advanced</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/awesomekanban">Awesome Kanban</a>
+          </li>
         </ul>
       </div>
     </nav>
     <div class="container">
-      <div id="app">
-        <router-view></router-view>
-      </div>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -53,13 +54,21 @@ export default {
   methods: {}
 };
 </script>
-<style>
-#app {
+<style lang="scss">
+.app {
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  .container {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 20px;
+  }
 }
 </style>
