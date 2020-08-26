@@ -1,7 +1,7 @@
 <template>
   <div class="awesome-filter">
     <div class="filtering" v-if="editFilters">
-      <h6 class="card-subtitle text-muted mb-2">{{$t("AwesomeFilter.filter-data")}}</h6>
+      <h6 class="card-subtitle text-muted mb-2">{{$t("AwesomeFilter.labels.filterData")}}</h6>
       <form class="container">
         <div class="dropdown column">
           <button
@@ -11,10 +11,10 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            {{ Object.keys(currentField).length ? currentField.label : $t("AwesomeFilter.fields") }}
+            {{ Object.keys(currentField).length ? currentField.label : $t("AwesomeFilter.labels.fields") }}
           </button>
           <div class="dropdown-menu" aria-labelledby="field">
-            <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{$t("AwesomeFilter.fields")}}</a>
+            <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{$t("AwesomeFilter.labels.fields")}}</a>
             <a
               href=""
               @click.prevent="currentField = field"
@@ -36,10 +36,10 @@
             aria-expanded="false"
             :disabled="!(currentField && currentField.field)"
           >
-            {{ Object.keys(currentFilter).length ? currentFilter.text : $t("AwesomeFilter.filters") }}
+            {{ Object.keys(currentFilter).length ? currentFilter.text : $t("AwesomeFilter.labels.filters") }}
           </button>
           <div class="dropdown-menu" aria-labelledby="filter">
-            <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">{{$t("AwesomeFilter.filters")}}</a>
+            <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">{{$t("AwesomeFilter.labels.filters")}}</a>
             <a
               href=""
               @click.prevent="currentFilter = filter"
@@ -57,7 +57,7 @@
               v-model.number="currentValue"
               type="number"
               class="form-control"
-              :placeholder="$t('AwesomeFilter.filter-value')"
+              :placeholder="$t('AwesomeFilter.labels.filterValue')"
             />
             <!-- TYPE STRING/TEXT -->
             <input
@@ -65,7 +65,7 @@
               v-model="currentValue"
               type="text"
               class="form-control"
-              :placeholder="$t('AwesomeFilter.filter-value')"
+              :placeholder="$t('AwesomeFilter.labels.filterValue')"
             />
             <!-- TYPE STRING/TEXT WITH ENUM -->
             <div class="dropdown" v-if="(currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') && currentField.enum">
@@ -76,10 +76,10 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                {{ Object.keys(currentValue).length ? currentValue : $t("AwesomeFilter.values") }}
+                {{ Object.keys(currentValue).length ? currentValue : $t("AwesomeFilter.labels.values") }}
               </button>
               <div class="dropdown-menu" aria-labelledby="field">
-                <a href="" @click.prevent="currentValue = ''" class="dropdown-item">{{$t("AwesomeFilter.values")}}</a>
+                <a href="" @click.prevent="currentValue = ''" class="dropdown-item">{{$t("AwesomeFilter.labels.values")}}</a>
                 <a
                   href=""
                   @click.prevent="currentValue = field"
@@ -99,13 +99,13 @@
                 v-model.number="currentValue.from"
                 type="number"
                 class="form-control"
-                :placeholder="$t('AwesomeFilter.from')"
+                :placeholder="$t('AwesomeFilter.labels.from')"
               />
               <input
                 v-model.number="currentValue.to"
                 type="number"
                 class="form-control"
-                :placeholder="$t('AwesomeFilter.to')"
+                :placeholder="$t('AwesomeFilter.labels.to')"
               />
             </div>
             <!-- TYPE BOOLEAN -->
@@ -146,7 +146,7 @@
             </div>
             <!-- ADD SELECT FOR RELATION / OBJECT -->
           </div>
-          <input v-else v-model="currentValue" class="form-control" type="text" :placeholder="$t('AwesomeFilter.filter-value')"/>
+          <input v-else v-model="currentValue" class="form-control" type="text" :placeholder="$t('AwesomeFilter.labels.filterValue')"/>
         </div>
       </form>
       <div class="awesome-filter-add-block">
@@ -156,12 +156,12 @@
           type="button"
           class="btn btn-primary btn-block"
         >
-          {{$t("AwesomeFilter.add-filter")}}
+          {{$t("AwesomeFilter.labels.addFilter")}}
         </button>
       </div>
     </div>
     <div class="active-filter" v-if="displayFilters && advancedFilters && advancedFilters.length">
-      <h6 class="card-subtitle mb-2 text-muted">{{$t("AwesomeFilter.active-filter")}}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{$t("AwesomeFilter.labels.activeFilter")}}</h6>
       <div class="chip-groups">
         <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in advancedFilters" :key="index">
           <div class="chip-content">
@@ -211,21 +211,21 @@
     },
     data: (vm) => ({
       filters: [
-        {text: vm.$t("AwesomeFilter.equals"), value: "$eq"},
-        {text: vm.$t("AwesomeFilter.not-equals"), value: "$ne"},
-        {text: vm.$t("AwesomeFilter.is"), value: "$is"},
-        {text: vm.$t("AwesomeFilter.is-not"), value: "$not"},
-        {text: vm.$t("AwesomeFilter.greater-than"), value: "$gt"},
-        {text: vm.$t("AwesomeFilter.greater-or-equals"), value: "$gte"},
-        {text: vm.$t("AwesomeFilter.lesser-than"), value: "$lt"},
-        {text: vm.$t("AwesomeFilter.lesser-or-equals"), value: "$lte"},
-        {text: vm.$t("AwesomeFilter.between"), value: "$between"},
-        {text: vm.$t("AwesomeFilter.not-between"), value: "$notBetween"},
-        {text: vm.$t("AwesomeFilter.contains"), value: "$like"},
-        {text: vm.$t("AwesomeFilter.not-contains"), value: "$notLike"},
-        {text: vm.$t("AwesomeFilter.starts-with"), value: "$startsWith"},
-        {text: vm.$t("AwesomeFilter.ends-with"), value: "$endsWith"},
-        {text: vm.$t("AwesomeFilter.contains-also"), value: "$substring"},
+        {text: vm.$t("AwesomeFilter.filters.equals"), value: "$eq"},
+        {text: vm.$t("AwesomeFilter.filters.not-equals"), value: "$ne"},
+        {text: vm.$t("AwesomeFilter.filters.is"), value: "$is"},
+        {text: vm.$t("AwesomeFilter.filters.is-not"), value: "$not"},
+        {text: vm.$t("AwesomeFilter.filters.greater-than"), value: "$gt"},
+        {text: vm.$t("AwesomeFilter.filters.greater-or-equals"), value: "$gte"},
+        {text: vm.$t("AwesomeFilter.filters.lesser-than"), value: "$lt"},
+        {text: vm.$t("AwesomeFilter.filters.lesser-or-equals"), value: "$lte"},
+        {text: vm.$t("AwesomeFilter.filters.between"), value: "$between"},
+        {text: vm.$t("AwesomeFilter.filters.not-between"), value: "$notBetween"},
+        {text: vm.$t("AwesomeFilter.filters.contains"), value: "$like"},
+        {text: vm.$t("AwesomeFilter.filters.not-contains"), value: "$notLike"},
+        {text: vm.$t("AwesomeFilter.filters.starts-with"), value: "$startsWith"},
+        {text: vm.$t("AwesomeFilter.filters.ends-with"), value: "$endsWith"},
+        {text: vm.$t("AwesomeFilter.filters.contains-also"), value: "$substring"},
       ],
       rules: {
         text: ["$eq", "$ne", "$like", "$notLike", "$startsWith", "$endsWith", "$substring"],
@@ -235,7 +235,7 @@
       },
       currentField: {},
       currentValue: "",
-      currentFilter: {text: vm.$t("AwesomeFilter.equals"), value: "$eq"},
+      currentFilter: {text: vm.$t("AwesomeFilter.filters.equals"), value: "$eq"},
       selectedFilters: [],
       dateRangePicker: {
         startDate: moment(),
@@ -265,7 +265,7 @@
           this.selectedFilters.push(filter);
           this.currentField = {};
           this.currentValue = "";
-          this.currentFilter = {text: this.$t("AwesomeFilter.equals"), value: "$eq"};
+          this.currentFilter = {text: this.$t("AwesomeFilter.filters.equals"), value: "$eq"};
           this.parseFilter(this.selectedFilters);
         }
       },
@@ -328,7 +328,7 @@
             this.currentValue = new Date().toISOString();
           } else if(newField.type === 'boolean') {
             this.currentValue = true;
-            this.currentFilter = {text: this.$t("AwesomeFilter.is"), value: "$is"};
+            this.currentFilter = {text: this.$t("AwesomeFilter.filters.is"), value: "$is"};
           } else {
             this.currentValue = "";
           }
