@@ -18,6 +18,7 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
+            @closeRequested="onViewDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
@@ -45,6 +46,7 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
+            @closeRequested="onEditDisplayCancelled"
             @customAction="onCustomAction"
             @customBulkAction="onCustomBulkAction"
             @itemCreated="onItemCreated"
@@ -402,8 +404,7 @@ export default {
           },
           buttons: {
             view: "View",
-            cancel: "Cancel",
-            close: "Close"
+            cancel: "Cancel"
           }
         }
       }),
