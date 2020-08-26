@@ -8,7 +8,7 @@
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
-        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems(true)">
+        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems({useSkeleton: true})">
           <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
         </button>
         <div class="btn-group btn-group-sm float-right">
@@ -763,7 +763,7 @@ export default {
         filters: _.cloneDeep(filters),
         page: 0
       });
-      this.getItems(true);
+      this.getItems({useSkeleton: true});
     },
 
     toggleFilter() {
@@ -772,7 +772,7 @@ export default {
       if (!this.filterable) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
-        this.getItems(true);
+        this.getItems({useSkeleton: true});
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
@@ -827,7 +827,7 @@ export default {
         columnFilters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
-      this.getItems(true);
+      this.getItems({useSkeleton: true});
     },
 
     onSortChange(params) {
@@ -850,7 +850,7 @@ export default {
         return;
       }
       this.updateParams({ sort });
-      this.getItems(true);
+      this.getItems({useSkeleton: true});
     },
 
     onDateFilter(value) {
@@ -860,7 +860,7 @@ export default {
       }
       this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
       this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
-      this.getItems(true);
+      this.getItems({useSkeleton: true});
     },
 
     hasValue(item, column) {

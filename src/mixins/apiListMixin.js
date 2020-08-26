@@ -186,9 +186,9 @@ export default {
     },
 
     /** GET ENTITY ITEMS */
-    getItems(useSkeleton = false) {
-      if (useSkeleton) {
-        this.useSkeleton = useSkeleton;
+    getItems(options = {useSkeleton: false}) {
+      if (options.useSkeleton) {
+        this.useSkeleton = options.useSkeleton;
       }
       this.$emit("refresh");
       // if i got a refresh function
