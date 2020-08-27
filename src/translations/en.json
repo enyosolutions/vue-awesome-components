@@ -54,5 +54,10 @@
     "messages": {
       "successfullyModified": "Successfully modified."
     }
+  },
+  "AwesomeList": {
+    "labels": {
+      "noData": "No fields selected"
+    }
   }
 }

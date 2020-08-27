@@ -38,6 +38,18 @@
           >Photos</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="list-tab"
+          data-toggle="tab"
+          href="#list"
+          role="tab"
+          aria-controls="list"
+          aria-selected="false"
+          >AwesomeList</a
+        >
+      </li>
 
       <li class="nav-item">
         <a
@@ -142,6 +154,21 @@
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
           :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
+          :actions="{ view: true, itemButton: true }"
+        />
+      </div>
+      <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+        <AwesomeCrud
+          identity="photo"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'list' }"
+          :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
         />
       </div>
     </div>

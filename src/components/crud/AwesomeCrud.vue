@@ -1,8 +1,8 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div class="row awesomecrud-detail-secton">
-        <div class="col-12">
+      <div class="row ">
+        <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
             v-if="displayMode === 'view'"
@@ -18,6 +18,7 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
+            @closeRequested="onViewDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
@@ -45,6 +46,7 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
+            @closeRequested="onEditDisplayCancelled"
             @customAction="onCustomAction"
             @customBulkAction="onCustomBulkAction"
             @itemCreated="onItemCreated"
@@ -56,7 +58,10 @@
             @itemValidationFailed="onItemValidationFailed"
           />
         </div>
-        <div class="col-12" v-show="!(displayMode !== 'table' && mergedOptions.detailPageMode === 'page')">
+        <div
+          class="col-12"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
+        >
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -95,8 +100,35 @@
               </button>
             </slot>
           </div>
+          <AwesomeList
+            v-if="!_isNestedDetail && displayMode === 'list'"
+            :url="_url"
+            :perPage="10"
+            :identity="identity"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :columns="listFieldsComputed"
+            :fields="listOptions.fields"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :actions="_actions"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :export-url="mergedOptions.exportUrl"
+            :styles="{
+              listWrapperClasses: 'row',
+              itemWrapperClasses: 'col-3'
+            }"
+            @itemClicked="onListItemClicked"
+          >
+          </AwesomeList>
           <AwesomeTable
-            v-if="!_isNestedDetail"
+            v-if="!_isNestedDetail && displayMode === 'table'"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -173,6 +205,7 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
+import AwesomeList from "../table/AwesomeList";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -188,7 +221,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table",
+  initialDisplayMode: "table", // table | list
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -197,6 +230,10 @@ const defaultOptions = {
   customTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: "view"
+};
+
+const listOptions = {
+  fields: []
 };
 
 export default {
@@ -287,13 +324,19 @@ export default {
   components: {
     AwesomeTable,
     EnyoCrudStatsSection,
-    AwesomeForm
+    AwesomeForm,
+    AwesomeList
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
     modelName: {
+      type: String,
+      required: false,
+      note: "Deprecated use identity"
+    },
+    identity: {
       type: String,
       required: false,
       note: "Deprecated use identity"
@@ -363,8 +406,7 @@ export default {
           },
           buttons: {
             view: "View",
-            cancel: "Cancel",
-            close: "Close"
+            cancel: "Cancel"
           }
         }
       }),
@@ -373,6 +415,10 @@ export default {
     options: {
       type: Object,
       default: () => defaultOptions
+    },
+    listOptions: {
+      type: Object,
+      default: () => listOptions
     },
     actions: {
       type: Object,
@@ -402,7 +448,8 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
       },
-      identity: ""
+      identity: "",
+      supportedDataDisplayModes: ["table", "list"]
     };
   },
   computed: {
@@ -487,6 +534,19 @@ export default {
       return parsedFormSchema;
     },
 
+    listFieldsComputed() {
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
+        return [];
+      }
+      this.listOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
+    },
+
     tableColumnsComputed() {
       return this.parseColumns(this.schemaComputed.properties);
     },
@@ -544,7 +604,7 @@ export default {
       return;
     }
 
-    // this.displayMode = this.mergedOptions.initialDisplayMode;
+    this.displayMode = this.mergedOptions.initialDisplayMode;
     const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
       if (this.$route.params.id === "create" || this.$route.params.id === "new") {
@@ -679,7 +739,7 @@ export default {
         .then((res) => {
           if (res.data.url) {
             const link = document.createElement("a");
-            link.download = `${this.entity}_export`;
+            link.download = `${this.identity}_export`;
             link.href = res.data.url;
             link.click();
             link.remove();
@@ -864,7 +924,7 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
-      this.previousDisplayMode = this.displayMode || "table";
+      this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
         this.selectedItems = [];
@@ -1067,7 +1127,11 @@ export default {
      */
     onEditDisplayCancelled(item, { context }) {
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== context ? this.previousDisplayMode : "table",
+        this.previousDisplayMode &&
+          this.previousDisplayMode !== context &&
+          this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
@@ -1077,14 +1141,16 @@ export default {
       // eslint-disable-next-line
       console.log("@cancel event treated", this.previousDisplayMode);
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== "view" ? this.previousDisplayMode : "table",
+        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
     },
 
     onItemCreated(item) {
-      this.setDisplayMode("table", item);
+      this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
       // eslint-disable-next-line
       console.log("EVENT", "onItemCreated", item);
     },
@@ -1136,6 +1202,22 @@ export default {
           break;
         case "default":
           this.goToViewPage(row);
+          break;
+      }
+    },
+
+    onListItemClicked(item) {
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit("on-list-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
           break;
       }
     },
