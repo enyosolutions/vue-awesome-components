@@ -76,7 +76,7 @@
                 id="advancedFilterComponentDisplay"
                 :fields="columns"
                 @update-filter="advancedFiltering"
-                v-model="advancedFilters"
+                :advanced-filters="advancedFilters"
               />
             </div>
           </popper>
@@ -139,7 +139,8 @@
         id="advancedFilterComponent"
         v-if="_actions.filter && _actions.advancedFiltering"
         :fields="columns"
-        v-model="advancedFilters"
+        @update-filter="advancedFiltering"
+        :advanced-filters="advancedFilters"
       />
       <div class="table-responsive">
         <vue-good-table
@@ -693,9 +694,6 @@ export default {
     entity: "entityChanged",
     // store: changed => {},
     rows: "refreshLocalData",
-    advancedFilters(value) {
-      this.advancedFiltering(value);
-    }
   },
   created() {
     if (!this.$t) {
@@ -723,9 +721,25 @@ export default {
       return;
     }
     if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
+      const tempFilters = [];
       Object.keys(this.apiQueryParams.filters).forEach((field) => {
-        this.advancedFilters.push({ [field]: this.apiQueryParams.filters[field] });
+        tempFilters.push({ [field]: this.apiQueryParams.filters[field] });
       });
+      this.advancedFilters = tempFilters.map((element) => {
+        const filter = {};
+        const [key, data] = Object.entries(element)[0];
+        const [op, value] = typeof data === "object" ? Object.entries(data)[0] : ["$eq", data];
+        const field = this.columns.find((e) => e.field === key);
+        if (field) {
+          filter.field = field;
+          const operator = AwesomeFilter.data().filters.find((e) => e.value === op);
+          if (operator) {
+            filter.filter = operator;
+            filter.value = value;
+          }
+        }
+        return filter;
+      })
     }
     this.refreshLocalData();
 
@@ -757,10 +771,11 @@ export default {
   methods: {
     startCase: _.startCase,
 
-    advancedFiltering(filters) {
+    advancedFiltering(parsedFilters, filters) {
+      this.advancedFilters = filters;
       this.$refs["filterPopover"].doClose();
       this.updateParams({
-        filters: _.cloneDeep(filters),
+        filters: _.cloneDeep(parsedFilters),
         page: 0
       });
       this.getItems({useSkeleton: true});
@@ -854,7 +869,6 @@ export default {
     },
 
     onDateFilter(value) {
-      // console.log("new value", value);
       if (!value) {
         return;
       }

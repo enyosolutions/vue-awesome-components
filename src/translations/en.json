@@ -10,6 +10,36 @@
       "not_imported": "not_imported"
     }
   },
+  "AwesomeFilter": {
+    "labels": {
+      "filterData": "Filter data",
+      "filterValue": "Filter value",
+      "fields": "Fields",
+      "filters": "Filters",
+      "values": "Values",
+      "activeFilter": "Active Filters",
+      "addFilter": "Add filter",
+      "from": "From",
+      "to": "To"
+    },
+    "filters": {
+      "equals": "Equals",
+      "not-equals": "Not equals",
+      "is": "Is",
+      "is-not": "Is not",
+      "greater-than": "Greater than",
+      "greater-or-equals": "Greater or equals",
+      "lesser-than": "Lesser than",
+      "lesser-or-equals": "Lesser or equals",
+      "between": "Between",
+      "not-between": "Not Between",
+      "contains": "Contains",
+      "not-contains": "Does not contains",
+      "starts-with": "Starts with",
+      "ends-with": "Ends with",
+      "contains-also": "Contains also"
+    },
+  },
   "AwesomeTable": {
     "buttons": {
       "filters": "Filters",
@@ -54,6 +84,12 @@
     "messages": {
       "successfullyModified": "Successfully modified."
     }
+  },
+  "dateRangePicker": {
+    "applyLabel": "Apply",
+    "cancelLabel": "Cancel",
+    "weekLabel": "W",
+    "customRangeLabel": "Custom Range"
   },
   "AwesomeList": {
     "labels": {
