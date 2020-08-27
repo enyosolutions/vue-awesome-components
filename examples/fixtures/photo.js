@@ -33,95 +33,79 @@ module.exports = {
     id: {
       $id: "id",
       type: "integer",
-      title: "numéro de course",
-      description: "Identifiant de la course",
+      title: "Id",
+      description: "",
       field: {
         group: "infos"
       }
     },
-    type: {
+
+    author: {
       type: "string",
-      title: "Type de ticket",
-      description: "type de ticket",
+      title: "Author",
+      description: "Author of the picture",
+      column: {
+        type: 'string'
+      },
       field: {
         required: true,
         group: "infos.metaData"
       }
     },
-    status: {
-      type: "string",
-      title: "Statut",
-      description: "Statut du ticket",
-      enum: ["new", "opened", "treated", "archived"],
-      field: {
-        group: "details",
-        enum: ["new", "opened", "treated", "archived"],
-        required: true,
-        type: "select"
-      }
-    },
-    regionId: {
+
+    "width": {
       type: "integer",
-      title: "numéro région",
-      description: "Identifiant de la région de course",
+      title: "Witdh",
+
       field: {
-        group: "details",
         required: true
       }
     },
-    userId: {
+    height: {
       type: "integer",
-      relation: "/user",
-      title: "numéro utilisateur",
-      description: "Identifiant utilisateur",
-      foreignKey: "_id",
-      label: "email",
+      title: "Witdh",
       field: {
-        required: false,
-        type: "EnyoSelect",
-        group: "infos.metaData",
-        fieldOptions: {
-          trackBy: "_id",
-          label: "email"
-        }
-      }
-    },
-    subject: {
-      type: "string",
-      title: "Sujet",
-      description: "Sujet du ticket",
-      field: {
-        group: "message",
         required: true
       }
     },
-    body: {
+
+    url: {
       type: "string",
-      title: "Message",
-      description: "Texte saisi dans le ticket",
+      title: "Url",
+      format: 'url',
+      column: {
+        type: 'url'
+      },
       field: {
-        group: "message",
+        required: true
+      }
+    },
+    download_url: {
+      type: "string",
+      format: 'url',
+      title: "download url",
+      column: {
+        type: 'image'
+      },
+      field: {
         required: true,
         type: "textArea"
       },
-      createdOn: {
-        type: ["string", "object"],
-        format: "date-time",
-        readonly: true,
-        column: { type: "datetime" },
-        field: {
-          group: "metaData"
+    },
+    notes: {
+      type: "string",
+      title: "Notes",
+      column: {
+        type: 'text'
+      },
+      field: {
+        required: true,
+        type: "textArea",
+        viewOptions: {
+          type: 'html'
         }
       },
-      lastModifiedOn: {
-        type: ["string", "object"],
-        format: "date-time",
-        readonly: true,
-        column: { type: "datetime" },
-        field: {
-          group: "metaData"
-        }
-      }
     }
+
   }
 };

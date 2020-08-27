@@ -59,9 +59,15 @@
     "all": "all",
     "empty": "empty",
     "searchInput": "Search",
-    "more": "More actions"
+    "more": "More actions",
+    "bulk": {
+      "row-select": "row(s) selected",
+      "clear": "clear",
+      "delete": "delete",
+      "edit": "edit"
+    }
   },
-  "EnyoCrudComponent": {
+  "AwesomeCrud": {
     "labels": {
       "manageTitle": "Manage",
       "createNew": "Create a new"
@@ -72,7 +78,8 @@
       "cancel": "Cancel",
       "close": "Close",
       "edit": "Edit",
-      "save": "Save"
+      "save": "Save",
+      "bulkEdit": "Multiple Edit"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
@@ -83,5 +90,10 @@
     "cancelLabel": "Cancel",
     "weekLabel": "W",
     "customRangeLabel": "Custom Range"
+  },
+  "AwesomeList": {
+    "labels": {
+      "noData": "No fields selected"
+    }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>CrudComponent component examples</h1>
+    <h1>AwesomeCrud component examples</h1>
     <ul class="nav nav-pills" id="myTab" role="tablist">
       <li class="nav-item">
         <a
@@ -11,7 +11,7 @@
           role="tab"
           aria-controls="home"
           aria-selected="true"
-          >Users</a
+          >Users (Change detail page display mode)</a
         >
       </li>
       <li class="nav-item">
@@ -23,19 +23,31 @@
           role="tab"
           aria-controls="profile"
           aria-selected="false"
-          >Tickets</a
+          >Tickets (Uses custom layout system)</a
         >
       </li>
       <li class="nav-item">
         <a
           class="nav-link"
-          id="contact-tab"
+          id="photos-tab"
           data-toggle="tab"
-          href="#contact"
+          href="#photos"
           role="tab"
-          aria-controls="contact"
+          aria-controls="photos"
           aria-selected="false"
-          >List with custom rendering slots</a
+          >Photos</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="list-tab"
+          data-toggle="tab"
+          href="#list"
+          role="tab"
+          aria-controls="list"
+          aria-selected="false"
+          >AwesomeList</a
         >
       </li>
 
@@ -72,7 +84,7 @@
             >{{ val }}</option
           >
         </select>
-        <CrudComponent
+        <AwesomeCrud
           identity="user"
           :schema="userSchema"
           :columns="['col1', 'col2', 'col3']"
@@ -90,7 +102,7 @@
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
         <h2>Ticket model with auto props</h2>
         <AutoProps
-          :component="CrudComponent"
+          :component="AwesomeCrud"
           :componentProps="{
             identity: 'ticket',
             apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
@@ -101,7 +113,7 @@
           :docked="false"
           v-slot="{ userProps }"
         >
-          <CrudComponent
+          <AwesomeCrud
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
               dataPath: false,
@@ -112,7 +124,7 @@
         </AutoProps>
       </div>
 
-      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="contact-tab">
+      <div class="tab-pane fade" id="one-per-row" role="tabpanel" aria-labelledby="photos-tab">
         <button class="btn btn-primary" @click="toggleEdit">
           <i class="fa fa-cog"></i>
         </button>
@@ -131,7 +143,34 @@
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
         />
       </div>
-      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">contact tab</div>
+      <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+        <AwesomeCrud
+          identity="photos"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
+          :actions="{ view: true, itemButton: true }"
+        />
+      </div>
+      <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+        <AwesomeCrud
+          identity="photo"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'list' }"
+          :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
+        />
+      </div>
     </div>
 
     <div class="container"></div>
@@ -142,24 +181,26 @@ import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
-import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import photoSchema from "../fixtures/photo";
+import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
 import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: "CrudComponentPage",
+  name: "AwesomeCrudAdvancedPage",
   components: {
-    CrudComponent,
+    AwesomeCrud,
     AwesomeForm,
     AutoProps
   },
   data() {
     return {
-      CrudComponent,
+      AwesomeCrud,
       LiveEdit,
       ticketSchema,
       ticketModel,
       userSchema,
+      photoSchema,
       showAwesomeForm: false,
       modalDisplayModeSelect: "page",
       asList: [

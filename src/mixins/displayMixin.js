@@ -14,6 +14,8 @@ export default {
     },
     src: String,
     row: Array,
+    format: [String, Function],
+    inputFormat: String,
     field: String,
     styles: String,
     classes: String,
@@ -31,7 +33,7 @@ export default {
   },
   methods: {
     clickOnItem(item) {
-      this.$emit('view', item);
+      this.$emit('on-awesome-display-clicked', item);
     }
   }
 };

@@ -91,9 +91,9 @@
       </p>
     </div>
 
-    <div class>
       <div class="list-responsive card-deck" :class="styles.listWrapperClasses" v-if="_paginatedItems">
         <div
+          class="pointer"
           v-for="(item, index) in _paginatedItems"
           :key="index"
           :class="itemWrapperClasses"
@@ -107,14 +107,29 @@
           }"
             >
               <img
-                class="card-img-top"
-                v-if="fields.image"
+               class="card-img-top"
+                v-if="fields && fields.image"
                 :src="item[fields.image]"
                 :alt="item[fields.title]"
               />
               <div class="card-body">
-                <h5 class="card-title" v-if="item[fields.title]">{{ item[fields.title] }}</h5>
-                <p class="card-text">{{ item[fields.description] }}</p>
+                  <h5 class="card-title" v-if="fields && fields.title && item[fields.title]">{{ item[fields.title] }}</h5>
+                <p class="card-text" v-if="fields && fields.description && item[fields.description]">{{ item[fields.description] }}</p>
+                <template v-if="columns && columns.length">
+                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                      {{ key }} :
+                      <AwesomeDisplay
+                        :type="getField(key).type"
+                        :value="itemData"
+                        :relation="getField(key).relation"
+                        :relation-label="getField(key).relationLabel"
+                        :relation-url="getField(key).relationUrl"
+                        :relation-key="getField(key).relationKey"
+                      >
+                      </AwesomeDisplay>
+                  </div>
+                </template>
+                <p v-if="!Object.keys(fields).length" class="card-text">{{ $t('AwesomeList.labels.noData')}}</p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
@@ -147,13 +162,13 @@
           :next-link-class="'page-link'"
         ></paginate>
       </nav>
-    </div>
   </div>
 </template>
 <script>
 import apiErrors from "../../mixins/apiErrorsMixin";
 import i18nMixin from "../../mixins/i18nMixin";
 import apiListMixin from "../../mixins/apiListMixin";
+import AwesomeDisplay from "../crud/display/AwesomeDisplay";
 import Paginate from "vuejs-paginate";
 import _ from "lodash";
 
@@ -162,9 +177,13 @@ export default {
   token: `
 
   `,
-  components: { Paginate },
+  components: { Paginate, AwesomeDisplay },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
+    columns: {
+      type: Array,
+      default: () => []
+    },
     perRow: {
       type: Number,
       default: 3
@@ -218,24 +237,36 @@ export default {
         maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
+        customBulkActions: [],
         saveSearchDatas: false,
       })
-    }
+    },
   },
   data() {
     return {
       itemsPerRow: 3,
-      page: 0
+      page: 0,
+      data: [],
     };
   },
   computed: {
     _listTitle() {
-      return (
-        this.title ||
-        (this.$te && this.$te("app.labels." + this.entity)
-          ? this.$t("app.labels." + this.entity)
-          : _.startCase(this.entity))
-      );
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.singularName) {
+        return this.$te(this._model.singularName)
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return "";
     },
 
     _itemHeight() {
@@ -243,12 +274,16 @@ export default {
         this.itemsPerRow === 1
           ? this.listModeItemHeight
           : this.gridModeItemHeight;
+          if (!height) {
+            return 'auto';
+          }
       return _.isString(height) ? height : height + "px";
     },
 
     _pageCount() {
-      return this.perPage && this.totalCount
-        ? Math.ceil(this.totalCount / this.perPage)
+      const perPage = parseInt(this.serverParams.perPage) || this.perPage;
+      return perPage && this.totalCount
+        ? Math.ceil(this.totalCount / perPage)
         : 0;
     },
     itemWrapperClasses() {
@@ -274,14 +309,15 @@ export default {
         const currentPage =
           this.serverParams && this.serverParams.page
             ? this.serverParams.page
-            : 0;
-        const startIndex = (currentPage - 1) * this.perPage;
+            : 1;
+        const perPage = parseInt(this.serverParams.perPage) || this.perPage
+        const startIndex = (currentPage - 1) * perPage;
         if (!this.data) {
           return [];
         }
         return this.mode === "remote"
           ? this.data
-          : this.data.slice(startIndex, startIndex + this.perPage);
+          : this.data.slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -290,7 +326,8 @@ export default {
     }
   },
   watch: {
-    'perRow': 'resetItemsPerRow'
+    'perRow': 'resetItemsPerRow',
+    rows: 'refreshLocalData'
   },
   created() {},
   beforeMount() {},
@@ -298,9 +335,26 @@ export default {
     if (this.perRow) {
       this.resetItemsPerRow();
     }
+    this.refreshLocalData();
   },
   beforeDestroy() {},
   methods: {
+    getAllowedFields(item) {
+      let fields = {};
+      Object.keys(item).forEach(key => {
+        this.columns.forEach(column => {
+          if (column.field === key) {
+            fields = Object.assign(fields, _.pick(item, [key]))
+          }
+        })
+      })
+      return fields;
+    },
+
+    getField(key) {
+      const field = _.filter(this.columns, ['field', key]);
+      return field[0] ? field[0]: field;
+    },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;
     },
@@ -347,6 +401,9 @@ export default {
 </script>
 <style lang="scss">
 .awesome-list-component {
+  .list-responsive {
+    width: 100%;
+  }
   .pagination {
     justify-content: center;
   }
@@ -354,6 +411,7 @@ export default {
   .awesome-list-item {
     position: relative;
     overflow: hidden;
+    cursor: pointer;
   }
   .col-12 {
     .awesome-list-item {

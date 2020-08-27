@@ -1,5 +1,5 @@
 <template>
-  <div class="pointer text-avoid-overflow" v-bind="$props">
+  <div class="pointer text-avoid-overflow" :class="$props.classes" :style="$props.styles" v-bind="$props">
     |
     <template v-for="(value, key) of $props.value" class="label label-info">
       <div :key="key">
@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import awesomeDisplayMixin from "../../../mixins/displayMixin";
 
 export default {
-  name: 'DisplayObject',
-  mixins: [awesomeDisplayMixin],
+  name: "DisplayObject",
+  mixins: [awesomeDisplayMixin]
 };
 </script>
 

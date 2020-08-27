@@ -26,7 +26,7 @@ module.exports = {
     nav: [
       { text: "Home", link: "/" },
       { text: "Components", link: "/guide/" },
-      { text: "CrudComponent", link: "/guide/crudcomponent/" },
+      { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
       { text: "AjaxTable", link: "/guide/ajaxtable/" },
       {
         text: "Github",
@@ -51,19 +51,23 @@ module.exports = {
         sidebarDepth: 2, // optional, defaults to 1
         children: [
           {
-            title: "CrudComponent",
-            path: "/guide/crudcomponent/",
+            title: "AwesomeCrud",
+            path: "/guide/awesomecrud/",
             sidebarDepth: 2,
             collapsable: false,
             children: [
-              { title: "Introduction", path: "/guide/crudcomponent/" },
+              { title: "Introduction", path: "/guide/awesomecrud/" },
               {
                 title: "Configuration of the schema",
-                path: "/guide/crudcomponent/schema-configuration.md"
+                path: "/guide/awesomecrud/schema-configuration.md"
+              },
+              {
+                title: "Configuration Options",
+                path: "/guide/awesomecrud/configuration-options.md"
               },
               {
                 title: "Examples",
-                path: "/guide/crudcomponent/examples.md"
+                path: "/guide/awesomecrud/examples.md"
               }
             ]
           },

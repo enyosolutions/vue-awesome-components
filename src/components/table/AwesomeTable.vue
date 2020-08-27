@@ -8,7 +8,7 @@
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
-        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems()">
+        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems({useSkeleton: true})">
           <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
         </button>
         <div class="btn-group btn-group-sm float-right">
@@ -142,9 +142,9 @@
         @update-filter="advancedFiltering"
         :advanced-filters="advancedFilters"
       />
-
       <div class="table-responsive">
         <vue-good-table
+          :ref="'table-'+entity"
           :mode="mode"
           :total-rows="totalCount"
           style-class="vgt-table table striped"
@@ -173,12 +173,63 @@
             perPage: parseInt(serverParams.perPage) || perPage,
             setCurrentPage: parseInt(serverParams.page) || undefined
           }"
+          :select-options="{
+            enabled: true,
+            selectOnCheckboxOnly: true,
+            selectionInfoClass: 'awesome-table-selection',
+            selectionText: this.$t('AwesomeTable.bulk.row-select'),
+            clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
+            disableSelectInfo: false,
+            selectAllByGroup: true,
+          }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
           @on-column-filter="onColumnFilter"
           @on-per-page-change="onPerPageChange"
           @on-search="onSearch"
+          @on-cell-click="clickOnLine"
+          @on-selected-rows-change="onSelectionChanged"
+
         >
+          <div slot="selected-row-actions">
+            <template v-if="opts && opts.customBulkActions">
+              <template v-for="(action, index) in opts.customBulkActions">
+                <button
+                        :key="index"
+                        class="btn btn-primary btn-simple"
+                        :class="action.class"
+                        :id="action.name + '-' + index"
+                        :data-title="action.title || action.label"
+                        :data-tooltip="action.title || action.label"
+                        @click="$emit('customBulkAction', {
+                          action,
+                          items: selectedRows,
+                          location: 'bulk',
+                          id: action.name + '-' + index
+                        })"
+                >
+                  <i v-if="action.icon" :class="action.icon" />
+                  <span v-html="action.label ? $t(action.label) : ''"></span>
+                </button>
+              </template>
+            </template>
+            <button
+                v-if="_actions.bulkDelete"
+                class="btn btn-primary btn-simple"
+                @click="$emit('bulkDelete', selectedRows)"
+            >
+              <i class="fa fa-trash" />
+              {{$t('AwesomeTable.bulk.delete')}}
+            </button>
+            <button
+              v-if="_actions.bulkEdit"
+              class="btn btn-primary btn-simple"
+              @click="$emit('bulkEdit', selectedRows)"
+            >
+              <i class="fa fa-pencil"></i>
+              {{$t('AwesomeTable.bulk.edit')}}
+            </button>
+          </div>
           <div slot="table-actions">
             <date-range-picker
               v-if="_actions.filter && _actions.dateFilter && filterable"
@@ -212,16 +263,17 @@
             </template>
           </div>
           <template slot="table-row" slot-scope="props">
-            <awesome-display
-              v-bind="props.column"
-              :apiResponseConfig="apiResponseConfig"
-              :apiRequestHeaders="apiRequestHeaders"
-              :value="props.formattedRow[props.column.field]"
-              @clickEvent="clickOnLine(props.row)"
-            >
-            </awesome-display>
+            <Skeleton v-if="useSkeleton" :count="1" :loading="true"></Skeleton>
+            <template v-else>
+              <awesome-display
+                v-bind="props.column"
+                :apiResponseConfig="apiResponseConfig"
+                :apiRequestHeaders="apiRequestHeaders"
+                :value="props.formattedRow[props.column.field]"
+              >
+              </awesome-display>
 
-            <span v-if="props.column.field === 'ACTIONS'" class="text-right">
+              <span v-if="props.column.field === 'ACTIONS'" class="text-right">
               <slot name="table-row-actions" :item="props.row">
                 <template v-if="opts && opts.customInlineActions">
                   <template v-for="(action, index) in opts.customInlineActions">
@@ -244,8 +296,8 @@
                         "
                       >
                         <i v-if="action.icon" :class="action.icon" /><span
-                          v-html="action.label ? $t(action.label) : ''"
-                        ></span>
+                        v-html="action.label ? $t(action.label) : ''"
+                      ></span>
                       </button>
                     </template>
                   </template>
@@ -273,15 +325,16 @@
                 <i class="fa fa-trash text-danger" />
               </button>
             </span>
-            <span
-              v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
-              class="pointer"
-              @click="clickOnLine(props.row)"
+              <span
+                v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
+                class="pointer"
+                @click="clickOnLine(props)"
               >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
-            >
-            <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props.row)">{{
+              >
+              <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
               getDataValue(props.formattedRow[props.column.field], props.column.listName)
             }}</span>
+            </template>
           </template>
           <div slot="emptystate">
             {{ $t("AwesomeTable.empty") }}
@@ -296,6 +349,7 @@ import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import moment from "moment";
 import Popper from "vue-popperjs";
+import { Skeleton } from 'vue-loading-skeleton';
 
 import apiErrors from "../../mixins/apiErrorsMixin";
 import apiListMixin from "../../mixins/apiListMixin";
@@ -323,7 +377,8 @@ export default {
     DateRangePicker,
     VueGoodTable,
     AwesomeFilter,
-    popper: Popper
+    popper: Popper,
+    Skeleton
   },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
@@ -389,6 +444,7 @@ export default {
         maxHeight: "",
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
+        customBulkActions: [],
         filterInitiallyOn: false,
         saveSearchDatas: false
       })
@@ -440,7 +496,8 @@ export default {
           firstDay: 1 // ISO first day of week - see moment documenations for details
         }
       },
-      advancedFilters: []
+      advancedFilters: [],
+      selectedRows: [],
     };
   },
   computed: {
@@ -721,7 +778,7 @@ export default {
         filters: _.cloneDeep(parsedFilters),
         page: 0
       });
-      this.getItems();
+      this.getItems({useSkeleton: true});
     },
 
     toggleFilter() {
@@ -730,7 +787,7 @@ export default {
       if (!this.filterable) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
-        this.getItems();
+        this.getItems({useSkeleton: true});
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
@@ -743,8 +800,8 @@ export default {
     toggleAdvancedFilters() {},
     // editItem(item) {},
 
-    clickOnLine(item) {
-      this._actions.view && this.$emit("view", item);
+    clickOnLine(props, props2) {
+      this.$emit("onRowClicked", props, props2);
     },
 
     getLovValue(item, listName) {
@@ -785,7 +842,7 @@ export default {
         columnFilters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
-      this.getItems();
+      this.getItems({useSkeleton: true});
     },
 
     onSortChange(params) {
@@ -808,7 +865,7 @@ export default {
         return;
       }
       this.updateParams({ sort });
-      this.getItems();
+      this.getItems({useSkeleton: true});
     },
 
     onDateFilter(value) {
@@ -817,7 +874,7 @@ export default {
       }
       this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
       this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
-      this.getItems();
+      this.getItems({useSkeleton: true});
     },
 
     hasValue(item, column) {
@@ -908,5 +965,12 @@ export default {
 
 .font-awesome {
   color: #6c757d;
+}
+
+.awesome-table-selection {
+  background-color: transparent !important;
+  border: none !important;
+  color: black !important;
+  font-size: 0.8rem !important;
 }
 </style>

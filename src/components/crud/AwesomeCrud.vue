@@ -1,12 +1,13 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div class="row awesomecrud-detail-secton">
-        <div class="col-12">
+      <div class="row ">
+        <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
             v-if="displayMode === 'view'"
             :mode="displayMode"
+            :identity="identity"
             :displayMode="mergedOptions.detailPageMode"
             :layout="viewPageLayoutComputed"
             :item="selectedItem"
@@ -17,9 +18,11 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
+            @closeRequested="onViewDisplayCancelled"
             @customAction="onCustomAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
@@ -28,12 +31,14 @@
 
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'edit' || displayMode === 'create'"
+            v-if="displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit'"
             :mode="displayMode"
+            :identity="identity"
             :displayMode="mergedOptions.detailPageMode"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             createPageLayoutComputed
             :item="selectedItem"
+            :bulk-items="selectedItems"
             :needs-refresh="awesomeEditNeedsRefresh"
             :standalone="false"
             @create="goToCreatePage"
@@ -41,16 +46,22 @@
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
+            @closeRequested="onEditDisplayCancelled"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
           />
         </div>
-        <div class="col-12" v-show="!(displayMode !== 'table' && mergedOptions.detailPageMode === 'page')">
+        <div
+          class="col-12"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
+        >
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -85,12 +96,39 @@
               </template>
               <button v-if="_actions.create" class="btn btn-secondary btn-simple" @click="goToCreatePage()">
                 <i class="fa fa-plus" />
-                {{ $t("EnyoCrudComponent.labels.createNew") }} {{ _name }}
+                {{ $t("AwesomeCrud.labels.createNew") }} {{ _name }}
               </button>
             </slot>
           </div>
+          <AwesomeList
+            v-if="!_isNestedDetail && displayMode === 'list'"
+            :url="_url"
+            :perPage="10"
+            :identity="identity"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :columns="listFieldsComputed"
+            :fields="listOptions.fields"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :actions="_actions"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :export-url="mergedOptions.exportUrl"
+            :styles="{
+              listWrapperClasses: 'row',
+              itemWrapperClasses: 'col-3'
+            }"
+            @itemClicked="onListItemClicked"
+          >
+          </AwesomeList>
           <AwesomeTable
-            v-if="!_isNestedDetail"
+            v-if="!_isNestedDetail && displayMode === 'table'"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -108,15 +146,19 @@
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
-            :title="_title || $t('EnyoCrudComponent.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             name="ajax-table"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
             @delete="goToDeletePage"
+            @bulkDelete="goToBulkDeletePage"
+            @bulkEdit="goToBulkEditPage"
             @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
+            @onRowClicked="onTableRowClicked"
           >
             <template slot="table-top-more-actions">
               <upload-button
@@ -128,7 +170,7 @@
                   method: 'POST',
                   headers: {},
                   base64: false,
-                  label: $t('EnyoCrudComponent.buttons.import'),
+                  label: $t('AwesomeCrud.buttons.import'),
                   class: 'btn btn-main-style btn btn-simple text-success  btn-block'
                 }"
                 @uploaded="importResponse"
@@ -139,7 +181,7 @@
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("EnyoCrudComponent.buttons.excel-template") }}
+                {{ $t("AwesomeCrud.buttons.excel-template") }}
               </button>
             </template>
 
@@ -152,6 +194,7 @@
 </template>
 <script>
 import _ from "lodash";
+import parseMixin from "../../mixins/parseMixin";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
@@ -162,6 +205,7 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
+import AwesomeList from "../table/AwesomeList";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -177,28 +221,34 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table",
+  initialDisplayMode: "table", // table | list
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
+  customBulkActions: [],
   customTopActions: [],
-  customTabletopActions: []
+  customTabletopActions: [],
+  tableRowClickAction: "view"
+};
+
+const listOptions = {
+  fields: []
 };
 
 export default {
-  name: "CrudComponent",
+  name: "AwesomeCrud",
   introduction: "A component to quickly create a table UI with edit capabilities",
   description: `This component magically create lists and edit data based on a json schema.
 
   ### Usage.
 
-  There are 3 ways of using the Crud Component.
-  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based crud component.
+  There are 3 ways of using the Awesome Crud.
+  The component works best when connected directly to the router. The config can the be passed as props. See the token section for an example of how to set-up a route based awesome crud.
 
-  If you want to further personalize your page, it's possible to create your own component, use the crud component in the body, and then use slots to create the desired features.
+  If you want to further personalize your page, it's possible to create your own component, use the awesome crud in the body, and then use slots to create the desired features.
 
-  The 3rd way of reusing the Crud component if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
+  The 3rd way of reusing the Awesome Crud if simply by extending the component and redesigning the template part completely. One use case would be to remove the json schema form and create your own form.
   Whatever the reason for you to modify the component, we suggest that you copy the html code as source for your edits.
 
   ### Actions
@@ -220,14 +270,14 @@ export default {
 
   ### custom actions
 
-  In addition to the default actions on a crud component it's also possible to create custom actions.
+  In addition to the default actions on a awesome crud it's also possible to create custom actions.
   `,
   token: `
-  // example of route for crud component
+  // example of route for awesome crud
   {
    name: 'contact',
    path: 'contact',
-   component: CrudComponent,
+   component: AwesomeCrud,
    beforeEnter: authGuard,
    props: {
      identity: 'contact',
@@ -243,7 +293,7 @@ export default {
    children: [{
      name: 'contact-view',
      path: ':id',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        identity: 'contact',
        options: {
@@ -256,7 +306,7 @@ export default {
    }, {
      name: 'contact-edit',
      path: ':id/edit',
-     component: CrudComponent,
+     component: AwesomeCrud,
      props: {
        identity: 'contact',
        options: {
@@ -274,13 +324,19 @@ export default {
   components: {
     AwesomeTable,
     EnyoCrudStatsSection,
-    AwesomeForm
+    AwesomeForm,
+    AwesomeList
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
     modelName: {
+      type: String,
+      required: false,
+      note: "Deprecated use identity"
+    },
+    identity: {
       type: String,
       required: false,
       note: "Deprecated use identity"
@@ -344,16 +400,25 @@ export default {
       type: Object,
       required: false,
       default: () => ({
-        "EnyoCrudComponent.labels.manageTitle": "EnyoCrudComponent.labels.manageTitle",
-        "EnyoCrudComponent.buttons.view": "EnyoCrudComponent.buttons.view",
-        "EnyoCrudComponent.buttons.cancel": "EnyoCrudComponent.buttons.cancel",
-        "EnyoCrudComponent.buttons.close": "EnyoCrudComponent.buttons.close"
+        AwesomeCrud: {
+          labels: {
+            manageTitle: "Manage"
+          },
+          buttons: {
+            view: "View",
+            cancel: "Cancel"
+          }
+        }
       }),
       note: "Translation labels to use when vue-i18n is not present"
     },
     options: {
       type: Object,
       default: () => defaultOptions
+    },
+    listOptions: {
+      type: Object,
+      default: () => listOptions
     },
     actions: {
       type: Object,
@@ -365,6 +430,7 @@ export default {
     return {
       parentPath: "",
       selectedItem: {},
+      selectedItems: [],
       previousDisplayMode: "",
       displayMode: "table",
       isRefreshing: false,
@@ -383,6 +449,7 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
+      supportedDataDisplayModes: ["table", "list"]
     };
   },
   computed: {
@@ -467,6 +534,19 @@ export default {
       return parsedFormSchema;
     },
 
+    listFieldsComputed() {
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
+        return [];
+      }
+      this.listOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
+    },
+
     tableColumnsComputed() {
       return this.parseColumns(this.schemaComputed.properties);
     },
@@ -524,7 +604,7 @@ export default {
       return;
     }
 
-    // this.displayMode = this.mergedOptions.initialDisplayMode;
+    this.displayMode = this.mergedOptions.initialDisplayMode;
     const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
       if (this.$route.params.id === "create" || this.$route.params.id === "new") {
@@ -659,7 +739,7 @@ export default {
         .then((res) => {
           if (res.data.url) {
             const link = document.createElement("a");
-            link.download = `${this.entity}_export`;
+            link.download = `${this.identity}_export`;
             link.href = res.data.url;
             link.click();
             link.remove();
@@ -681,7 +761,7 @@ export default {
       }
 
       if (!this._model && !this.schema) {
-        console.warn("CRUD COMPONENT ERROR", `model ${this.identity} not found`);
+        console.warn("AWESOME CRUD ERROR", `model ${this.identity} not found`);
         return;
       }
 
@@ -735,155 +815,6 @@ export default {
       }
     },
 
-    parseSchema(schema, prefix = "") {
-      if (!schema.properties) {
-        return [];
-      }
-      if (prefix && schema.$schema) {
-        // console.warn("possible recursive parseSchema call", schema);
-        return;
-      }
-      const fields = [];
-      const size = Object.keys(schema.properties).length;
-      Object.keys(schema.properties).forEach((key) => {
-        if ([this.primaryKey].indexOf(key) === -1) {
-          const prop = schema.properties[key];
-          if (prop.field && prop.field.hidden) {
-            return;
-          }
-          if (prop.type === "object" && !(prop.field && prop.field.type)) {
-            const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
-            subSchema.legend = prop.title || _.startCase(key);
-            subSchema.type = "group";
-            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || "card"}`;
-            fields.push(subSchema);
-          } else {
-            const relationUrl = this.getRelationUrl(prop);
-            const relationKey = this.getRelationKey(prop);
-            const relationLabel = this.getRelationLabel(prop);
-            if (prop.field && prop.relation && prop.field.fieldOptions) {
-              prop.field.fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
-              prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
-              prop.field.fieldOptions.searchable = true;
-            }
-            const field = {
-              type: (prop.field && prop.field.type) || this.getFormtype(prop),
-              label: prop.title || prop.description || _.startCase(key),
-              placeholder: prop.description || prop.title || _.startCase(key),
-              fieldOptions: (prop.field && prop.field.fieldOptions) || {
-                placeholder: prop.description || prop.title || _.startCase(key),
-                url: relationUrl || prop.relationUrl || prop.relation,
-                trackBy: relationKey || prop.foreignKey || "id",
-                label: relationLabel || "label", // key label for enyo select
-                name: relationLabel || "label", // key label for native select
-                step: prop.field && prop.field.step,
-                readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
-                disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
-                relation: prop.relation,
-                foreignKey: relationKey,
-                relationKey,
-                relationLabel,
-                relationUrl
-              },
-              values:
-                (prop.field &&
-                  prop.field.fieldOptions &&
-                  (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum))) ||
-                prop.enum ||
-                (prop.items && prop.items.enum) ||
-                [],
-              required: prop.field && prop.field.required,
-              hint: prop.description,
-              model: prefix + key,
-              validator: prop.field && prop.field.validator,
-              min: prop.min,
-              max: prop.max,
-              multi: prop.type === "array",
-              readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              styleClasses: (prop.field && prop.field.styleClasses) || (size < 8 ? "col-12" : "col-6"),
-              relation: prop.relation,
-              foreignKey: relationKey || prop.foreignKey,
-              relationKey,
-              relationLabel,
-              group: prop.field ? prop.field.group : undefined
-            };
-            if (!field.fieldOptions.inputType) {
-              field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || "text";
-            }
-            if (
-              prop.type === "boolean" &&
-              (field.type === "select" || field.type === "enyoSelect") &&
-              (!field.values || !field.values.length)
-            ) {
-              field.values = [
-                { id: true, label: "Yes" },
-                { id: false, label: "No" },
-                { id: "", label: "-" }
-              ];
-            }
-            if (field.type === "dateTime") {
-              field.fieldOptions.icons = {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
-              };
-            }
-            if (field.type === "enyoSelect" && !field.fieldOptions.options) {
-              field.options = field.values;
-            }
-            fields.push(field);
-          }
-        }
-      });
-      // let groups = this.parseSchemaGroups(schema);
-      // groups = this.distributeFieldsInGroups(groups, fields);
-
-      return { fields };
-    },
-
-    parseSchemaGroups(schema) {
-      let groups = [];
-      if (!schema.formGroups) {
-        return {};
-      }
-      schema.formGroups.forEach((group) => {
-        if (!groups[group.id]) {
-          groups.push({
-            fields: [],
-            ...group,
-            legend: this.$t(group.title),
-            type: "group"
-          });
-        }
-      });
-      if (groups.length < 1) {
-        groups = [{ legend: "", fields: schema.fields }];
-      }
-      return groups;
-    },
-
-    distributeFieldsInGroups(groups, fields) {
-      fields.forEach((f) => {
-        if (f.group) {
-          const keys = f.group.split(".");
-          let targetGroup = { groups };
-          keys.forEach((key) => {
-            targetGroup = _.find(targetGroup.groups, { id: key });
-          });
-          if (targetGroup) {
-            if (!targetGroup.fields) {
-              targetGroup.fields = [];
-            }
-            targetGroup.fields.push(f);
-          }
-        }
-      });
-      return groups;
-    },
-
     getFormtype(property) {
       let { type } = property;
       if (Array.isArray(type)) {
@@ -899,7 +830,7 @@ export default {
         return "select";
       }
       if (property.relation || property.relationUrl) {
-        return 'VSelect';
+        return "VSelect";
       }
       switch (type) {
         case "string":
@@ -969,7 +900,7 @@ export default {
         }
       }
       if (property.relation) {
-        return 'relation';
+        return "relation";
       }
       switch (type) {
         case "string":
@@ -993,9 +924,13 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
-      this.previousDisplayMode = this.displayMode || "table";
-      if (item) {
+      this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
+      if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
+        this.selectedItems = [];
+      } else {
+        this.selectedItem = {};
+        this.selectedItems = item;
       }
       this.displayMode = mode;
       if (mode === "table") {
@@ -1020,6 +955,13 @@ export default {
       return;
     },
 
+    goToBulkEditPage(items, options = { reset: true }) {
+      if (this.mergedOptions.bulkEditPath) {
+        return this.$router.push(this.mergedOptions.bulkEditPath);
+      }
+      this.setDisplayMode("bulkEdit", items);
+    },
+
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.deletePath.replace(":id", item[this.primaryKey]));
@@ -1027,6 +969,10 @@ export default {
 
       this.deleteFunction(item);
       return;
+    },
+
+    goToBulkDeletePage(items) {
+      this.bulkDeleteFunction(items);
     },
 
     goToEditPage(item) {
@@ -1066,6 +1012,68 @@ export default {
         });
     },
 
+    bulkEditFunction(item) {
+      this.$http
+        .put(`${this._url}/${item[this.primaryKey]}`, item)
+        .then((res) => {
+          this.$emit(this.identity + "-item-updated", res.data);
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            title: this.$t("AwesomeDefault.messages.successfullyModified", {
+              title: this.type
+            }),
+            type: "success"
+          });
+          this.tableNeedsRefresh = true;
+          this.nestedCrudNeedsRefresh = true;
+          this.$forceUpdate();
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
+    },
+
+    bulkDeleteFunction(items) {
+      Swal.fire({
+        title: this.$t("AwesomeDefault.messages.are_you_sure"),
+        text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "var(--primary)",
+        cancelButtonColor: "#eee",
+        confirmButtonText: this.$t("AwesomeCrud.buttons.yes_delete_it"),
+        cancelButtonText: this.$t("AwesomeCrud.buttons.cancel"),
+        reverseButtons: true
+      })
+        .then((result) => {
+          if (result.value) {
+            items.forEach((item) => {
+              this.selectedItem = item;
+              this.$http
+                .delete(`${this._selectedItemUrl}`)
+                .then(() => {
+                  this.tableNeedsRefresh = true;
+                  this.statsNeedsRefresh = true;
+                  this.nestedCrudNeedsRefresh = true;
+                  this.$forceUpdate();
+                })
+                .catch((err) => {
+                  // eslint-disable-next-line
+                  console.error(err);
+                })
+                .finally(() => {
+                  this.isRefreshing = false;
+                });
+            });
+          }
+        })
+        .finally(() => (this.selectedItem = null));
+    },
+
     deleteFunction(item) {
       this.selectedItem = item;
       Swal.fire({
@@ -1075,14 +1083,14 @@ export default {
         showCancelButton: true,
         confirmButtonColor: "var(--primary)",
         cancelButtonColor: "#eee",
-        confirmButtonText: this.$t("EnyoCrudComponent.buttons.yes_delete_it"),
-        cancelButtonText: this.$t("EnyoCrudComponent.buttons.cancel"),
+        confirmButtonText: this.$t("AwesomeCrud.buttons.yes_delete_it"),
+        cancelButtonText: this.$t("AwesomeCrud.buttons.cancel"),
         reverseButtons: true
       })
         .then((result) => {
           if (result.value) {
             this.$http
-              .delete(`${this._selectedItemUrl}/${item[this.primaryKey]}`)
+              .delete(`${this._selectedItemUrl}`)
               .then(() => {
                 this.tableNeedsRefresh = true;
                 this.statsNeedsRefresh = true;
@@ -1107,13 +1115,23 @@ export default {
       return action && action.action && action.action(body, this);
     },
 
+    onCustomBulkAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-bulk-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
     /**
      * @param item object
      * @param options = {context = create | edit }
      */
     onEditDisplayCancelled(item, { context }) {
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== context ? this.previousDisplayMode : "table",
+        this.previousDisplayMode &&
+          this.previousDisplayMode !== context &&
+          this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
@@ -1123,17 +1141,24 @@ export default {
       // eslint-disable-next-line
       console.log("@cancel event treated", this.previousDisplayMode);
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== "view" ? this.previousDisplayMode : "table",
+        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode,
         item,
         { refresh: false }
       );
     },
 
     onItemCreated(item) {
-      this.setDisplayMode("table", item);
+      this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
       // eslint-disable-next-line
       console.log("EVENT", "onItemCreated", item);
     },
+
+    onItemsBulkEdited(item) {
+      this.bulkEditFunction(item);
+    },
+
     onItemEdited(...args) {
       // eslint-disable-next-line
       console.log("EVENT", "onItemEdited", args);
@@ -1159,39 +1184,84 @@ export default {
       this.$emit("list-updated", datas);
       this.$emit(this.identity + "-list-updated", datas);
     },
-    // transform the schema into a format accepted by the ajaxtable
-    parseColumns(properties) {
-      const newcolumns = [];
-      Object.keys(properties).forEach((key) => {
-        let newCol = {};
-        const prop = properties[key];
-        if (!prop.hidden && !(prop.column && prop.column.hidden)) {
-          newCol.field = key;
-          newCol.type = this.getColumnType(prop);
-          newCol.label = _.startCase((prop.column && prop.column.title) || prop.title || key);
-          newCol.filterOptions = { enabled: false };
-          newCol.enum = (prop.column && prop.column.enum) || prop.enum;
-          newCol.sortable = prop.column && prop.column.sortable !== undefined ? prop.column.sortable : true;
-          newCol = { ...newCol, ...prop.column };
-          if (prop.relation) {
-            newCol.relation = prop.relation;
-            newCol.relationKey = this.getRelationKey(prop);
-            newCol.relationUrl = this.getRelationUrl(prop);
-            newCol.relationLabel = this.getRelationLabel(prop);
-          }
-          newcolumns.push(newCol);
-        }
-      });
 
-      if (!newcolumns.find((col) => col.field === "ACTIONS")) {
-        newcolumns.push({
-          field: "ACTIONS",
-          label: "Actions",
-          filterable: false,
-          enabled: false
-        });
+    onTableRowClicked(props) {
+      const { column, row } = props; // rowIndex and event are also available
+      if (column && ["url", "relation"].indexOf(column.type) > -1) {
+        return;
       }
-      return newcolumns;
+
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit("on-table-row-clicked", row);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(row);
+          break;
+        case "view":
+          this.goToViewPage(row);
+          break;
+        case "default":
+          this.goToViewPage(row);
+          break;
+      }
+    },
+
+    onListItemClicked(item) {
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit("on-list-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
+          break;
+      }
+    },
+
+    confirm(message) {
+      return new Promise((resolve, reject) => {
+        Swal.fire({
+          title: this.$t("common.messages.are_you_sure"),
+          text: message,
+          type: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: this.$t("common.buttons.yes"),
+          cancelButtonText: this.$t("common.buttons.cancel"),
+          reverseButtons: true
+        })
+          .then((result) => {
+            resolve(result.value);
+          })
+          .catch(reject);
+      });
+    },
+
+    $notify(message) {
+      const payload = _.isObject(message)
+        ? {
+            timer: 3000,
+            title: message,
+            type: "success",
+            ...message, // Placement is important to guarantee theat the display is always a notification
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          }
+        : {
+            timer: 3000,
+            type: "info",
+            title: message,
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false
+          };
+      Swal.fire(payload);
     }
   }
 };

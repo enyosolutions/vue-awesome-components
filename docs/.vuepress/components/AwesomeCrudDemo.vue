@@ -4,7 +4,7 @@
     ``
     <h3>Simple Crud</h3>
     <pre style="color:white">
-      < CrudComponent@
+      < AwesomeCrud@
       :columns="['col1', 'col2', 'col3', 'col4']"
       :rows="[
       {col1: 'qq', col2:'some data', col3: 'oopsie',
@@ -18,7 +18,7 @@
       />
     </pre>
 
-    <CrudComponent
+    <AwesomeCrud
       model-name="ticket"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
@@ -51,7 +51,7 @@
     <br />
     <h3>Table with details opening in slide mode</h3>
 
-    <CrudComponent
+    <AwesomeCrud
       model-name="ticket2"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
@@ -81,12 +81,12 @@
 </template>
 
 <script>
-import CrudComponent from '../../../src/components/crud/CrudComponent.vue';
+import AwesomeCrud from '../../../src/components/crud/AwesomeCrud.vue';
 import ticketModel from '../../../examples/fixtures/ticket.js';
 
 export default {
-  name: 'CrudComponentDemo',
-  components: { CrudComponent },
+  name: 'AwesomeCrudDemo',
+  components: {AwesomeCrud },
   props: {},
   mounted() {},
   data() {

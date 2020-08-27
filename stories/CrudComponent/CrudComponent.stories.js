@@ -1,13 +1,13 @@
 import Vue from 'vue';
-import CrudComponent from '@/components/crud/CrudComponent';
+import AwesomeCrud from '@/components/crud/AwesomeCrud';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, boolean, number, object } from "@storybook/addon-knobs";
 
 import ticketSchema from "@/fixtures/ticket";
 import userSchema from "@/fixtures/user";
 export default {
-  id: 'CrudComponent',
-  title: 'CrudComponent/Doc',
+  id: 'AwesomeCrud',
+  title: 'AwesomeCrud/Doc',
   component: AwesomeList,
   decorators: [withKnobs],
   parameters: {
@@ -87,7 +87,7 @@ const localList = [
   }
 ]
 export const Basic = () => ({
-  components: { CrudComponent },
+  components: { AwesomeCrud },
   data() {
     return {
       localList,
@@ -135,7 +135,7 @@ export const Basic = () => ({
 const displayGroupId = 'Display';
 const dataGroupId = 'data';
 export const PropertiesControl = () => ({
-  components: { CrudComponent },
+  components: { AwesomeCrud },
   props: {
     perPage: {
       default: number('Items per page', 5, {}, displayGroupId)
@@ -177,7 +177,7 @@ export const PropertiesControl = () => ({
   template: `
   <div class="container">
   <div class="m-4">
-  <CrudComponent
+  <AwesomeCrud
           v-bind="$props"
           class="row"
           :perRow="perRow"

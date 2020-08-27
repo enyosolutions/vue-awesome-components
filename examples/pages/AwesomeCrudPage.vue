@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <h1>CrudComponent component examples</h1>
+    <h1>AwesomeCrud component examples</h1>
     <AutoProps
-      :component="CrudComponent"
+      :component="AwesomeCrud"
       :componentProps="{
         identity: 'ticket',
         apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
-        options: { detailPageMode: 'fullscreen' },
+        options: this.options,
         model: ticketModel
       }"
       :skip-props="['translations']"
       :docked="true"
       v-slot="{ userProps }"
     >
-      <CrudComponent
+      <AwesomeCrud
         url="http://localhost:3000/tickets"
         :apiResponseConfig="{
           dataPath: false,
@@ -29,18 +29,18 @@ import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
-import CrudComponent from "vue-enyo-components/components/crud/CrudComponent.vue";
+import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
 import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
 
 export default {
-  name: "CrudComponentAdvancedPage",
+  name: "AwesomeCrudPage",
   components: {
-    CrudComponent,
+    AwesomeCrud,
     AutoProps
   },
   data() {
     return {
-      CrudComponent,
+      AwesomeCrud,
       LiveEdit,
       ticketSchema,
       ticketModel,
@@ -91,16 +91,32 @@ export default {
         stats: false,
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
-        customActions: [
+        customInlineActions: [
           {
             name: "validate-ride-comment",
             label: "",
-            class: "btn-success",
+            class: "btn-success btn-icon",
             title: "Valider le commentaire",
             icon: "fa fa-check",
-            action: function(item, context) {
+            action: function({ item }, context) {
               item.isProviderCommentValid = true;
               context.editItem(item);
+            }
+          }
+        ],
+        customBulkActions: [
+          {
+            name: "validate-multiple-rides-comment",
+            label: "Validate",
+            class: "btn-success",
+            title: "Valider le commentaire",
+            icon: "fa fa-play mr-1",
+            action: function({ items }, context) {
+              console.log(context);
+              context.$notify({
+                title: `${items.length} to treat as a custom action`,
+                type: items.length > 10 ? "success" : "error"
+              });
             }
           }
         ]
