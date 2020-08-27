@@ -127,6 +127,23 @@
             @itemClicked="onListItemClicked"
           >
           </AwesomeList>
+          <AwesomeKanban
+            v-if="displayMode === 'kanban'"
+            :columns="tableColumnsComputed"
+            :entity="identity"
+            :url="_url"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :kanban-options="kanbanOptions"
+            filter-field="id"
+            :filter-values="['117']"
+          >
+          </AwesomeKanban>
           <AwesomeTable
             v-if="!_isNestedDetail && displayMode === 'table'"
             :columns="tableColumnsComputed"
@@ -206,6 +223,7 @@ import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
 import AwesomeList from "../table/AwesomeList";
+import AwesomeKanban from "../table/AwesomeKanban";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -234,6 +252,13 @@ const defaultOptions = {
 
 const listOptions = {
   fields: []
+};
+
+const kanbanOptions = {
+  scrollSensitivity: 200,
+  animation: 200,
+  moveList: false,
+  moveCard: false,
 };
 
 export default {
@@ -325,7 +350,8 @@ export default {
     AwesomeTable,
     EnyoCrudStatsSection,
     AwesomeForm,
-    AwesomeList
+    AwesomeList,
+    AwesomeKanban
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
@@ -420,6 +446,10 @@ export default {
       type: Object,
       default: () => listOptions
     },
+    kanbanOptions: {
+      type: Object,
+      default: () => kanbanOptions
+    },
     actions: {
       type: Object,
       default: () => defaultActions,
@@ -449,7 +479,7 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
-      supportedDataDisplayModes: ["table", "list"]
+      supportedDataDisplayModes: ["table", "list", "kanban"]
     };
   },
   computed: {

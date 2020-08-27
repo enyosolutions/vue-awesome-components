@@ -8,7 +8,7 @@
       ghost-class="moving-list"
       :scroll-sensitivity="kanbanOptions.scrollSensitivity"
       @change="listChanged"
-      :options="{disabled: kanbanOptions.moveList}"
+      :options="{disabled: !kanbanOptions.moveList}"
     >
       <KanbanList
         v-for="(list, index) in localLists" :key="index"
@@ -17,7 +17,7 @@
         group="card"
         :animation="kanbanOptions.animation"
         :scroll-sensitivity="kanbanOptions.scrollSensitivity"
-        :options="{disabled: kanbanOptions.moveCard}"
+        :options="{disabled: !kanbanOptions.moveCard}"
         @remove-list="removeList"
         @change="cardChanged"
       ></KanbanList>
@@ -35,7 +35,8 @@
           {{$t("AwesomeKanban.labels.addList")}}
         </div>
         <div v-if="isAddingList">
-          <input v-model="newListName" class="form-control" type="text" :placeholder="$t('AwesomeKanban.labels.listName')"/>
+          <input v-model="newListName" class="form-control" type="text"
+                 :placeholder="$t('AwesomeKanban.labels.listName')"/>
           <button
             :disabled="!newListName"
             @click.stop="addList"
@@ -79,7 +80,7 @@
       /**
        * The lists of list with data
        */
-      lists : {
+      lists: {
         type: Array,
         default: () => ([])
       },
@@ -116,7 +117,7 @@
       addList() {
         if (this.newListName) {
           if (!_.some(this.localLists, {'title': this.newListName})) {
-            this.localLists.push({ title: this.newListName, content: []})
+            this.localLists.push({title: this.newListName, content: []})
             this.newListName = '';
             this.isAddingList = false;
           }
@@ -146,6 +147,19 @@
         console.log(item, listTitle);
       },
 
+      handleLists() {
+        if (this.lists && this.lists.length) {
+          this.localLists = _.cloneDeep(this.lists);
+          this.filterLists();
+        } else {
+          if (this.data && this.data.length) {
+            const list = [{title: this.entity, content: _.cloneDeep(this.data)}]
+            this.localLists = _.cloneDeep(list);
+            this.filterLists();
+          }
+        }
+      },
+
       filterLists() {
         if (this.filterField && this.filterValues) {
           this.filterValues.forEach(filterValue => {
@@ -156,30 +170,28 @@
                 return obj[this.filterField] === filterValue
               });
             })
-            content = _.flatten(content);
-            if (!_.some(this.localLists, {'title': filterValue})) {
-              this.localLists.push({ title: filterValue, content })
+            content = _.flatten([...content]);
+            if (!_.some(this.localLists, {'title': filterValue.toString()})) {
+              this.localLists.push({ title: filterValue.toString(), content })
             }
           })
         }
-      }
+      },
     },
     mounted() {
-      if (this.lists && this.lists.length) {
-        this.localLists = this.lists;
-      }
       this.refreshLocalData();
-      if (this.data && this.data.length) {
-        this.localLists.push({ title: 'defaultData', content: this.data});
-      }
-      this.filterLists();
+      this.handleLists();
     },
 
     watch: {
-      data(newValue) {
-        if (newValue && newValue.length && !_.some(this.localLists, {'title': this.entity})) {
-          this.localLists.push({ title: 'defaultData', content: newValue});
-        }
+      data() {
+        this.handleLists();
+      },
+      filterField() {
+        this.handleLists();
+      },
+      filterValues() {
+        this.handleLists();
       }
     }
   }
@@ -206,12 +218,14 @@
       flex-direction: row;
       flex-flow: nowrap;
       height: 100%;
+
       .moving-list {
         opacity: 0.4;
         background: #F7FAFC;
         border: 1px solid #4299e1;
       }
     }
+
     .card {
       margin: 6px 0;
     }

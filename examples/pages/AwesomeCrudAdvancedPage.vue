@@ -50,6 +50,18 @@
           >AwesomeList</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="kanban-tab"
+          data-toggle="tab"
+          href="#kanban"
+          role="tab"
+          aria-controls="kanban"
+          aria-selected="false"
+          >AwesomeKanban</a
+        >
+      </li>
 
       <li class="nav-item">
         <a
@@ -169,6 +181,20 @@
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
           :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'list' }"
           :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
+        />
+      </div>
+      <div class="tab-pane fade" id="kanban" role="tabpanel" aria-labelledby="kanban-tab">
+        <AwesomeCrud
+          identity="photo"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'kanban' }"
+          :kanbanOptions="{ moveList: false }"
         />
       </div>
     </div>
