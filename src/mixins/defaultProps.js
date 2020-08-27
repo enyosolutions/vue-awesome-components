@@ -14,5 +14,6 @@ export const defaultActions = {
   columnsFilters: true,
   bulkDelete: true,
   bulkEdit: true,
+  itemsPerRow: true,
 };
 
