@@ -274,6 +274,9 @@ export default {
         this.itemsPerRow === 1
           ? this.listModeItemHeight
           : this.gridModeItemHeight;
+          if (!height) {
+            return 'auto';
+          }
       return _.isString(height) ? height : height + "px";
     },
 

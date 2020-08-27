@@ -1,8 +1,8 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div class="row awesomecrud-detail-secton">
-        <div class="col-12">
+      <div class="row ">
+        <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
             v-if="displayMode === 'view'"
@@ -58,7 +58,10 @@
             @itemValidationFailed="onItemValidationFailed"
           />
         </div>
-        <div class="col-12" v-show="!(displayMode !== 'table' && mergedOptions.detailPageMode === 'page')">
+        <div
+          class="col-12"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
+        >
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -98,7 +101,7 @@
             </slot>
           </div>
           <AwesomeList
-            v-if="mergedOptions.initialDisplayMode === 'list'"
+            v-if="!_isNestedDetail && displayMode === 'list'"
             :url="_url"
             :perPage="10"
             :identity="identity"
@@ -125,7 +128,7 @@
           >
           </AwesomeList>
           <AwesomeTable
-            v-if="!_isNestedDetail && mergedOptions.initialDisplayMode === 'table'"
+            v-if="!_isNestedDetail && displayMode === 'table'"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -226,7 +229,7 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view",
+  tableRowClickAction: "view"
 };
 
 const listOptions = {
@@ -445,7 +448,8 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
       },
-      identity: ""
+      identity: "",
+      supportedDataDisplayModes: ["table", "list"]
     };
   },
   computed: {
@@ -531,16 +535,16 @@ export default {
     },
 
     listFieldsComputed() {
-        const allColumns = this.parseColumns(this.schemaComputed.properties);
-        let columns = [];
-        if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
-            return [];
-        }
-        this.listOptions.fields.forEach((field) => {
-            columns.push(_.filter(allColumns, ["field", field]));
-        });
-        columns = _.flatten(columns);
-        return columns;
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
+        return [];
+      }
+      this.listOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
     },
 
     tableColumnsComputed() {
@@ -600,7 +604,7 @@ export default {
       return;
     }
 
-    // this.displayMode = this.mergedOptions.initialDisplayMode;
+    this.displayMode = this.mergedOptions.initialDisplayMode;
     const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
       if (this.$route.params.id === "create" || this.$route.params.id === "new") {
@@ -1123,7 +1127,9 @@ export default {
      */
     onEditDisplayCancelled(item, { context }) {
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== context
+        this.previousDisplayMode &&
+          this.previousDisplayMode !== context &&
+          this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode,
         item,
@@ -1135,7 +1141,7 @@ export default {
       // eslint-disable-next-line
       console.log("@cancel event treated", this.previousDisplayMode);
       this.setDisplayMode(
-        this.previousDisplayMode && this.previousDisplayMode !== "view"
+        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode,
         item,
