@@ -194,7 +194,7 @@
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
           :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'kanban' }"
-          :kanbanOptions="{ moveList: false }"
+          :kanbanOptions="{ moveList: false, fields: ['id', 'name'] }"
         />
       </div>
     </div>

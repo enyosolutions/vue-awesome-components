@@ -8,16 +8,18 @@
       ghost-class="moving-list"
       :scroll-sensitivity="kanbanOptions.scrollSensitivity"
       @change="listChanged"
-      :options="{disabled: !kanbanOptions.moveList}"
+      :disabled="!kanbanOptions.moveList"
     >
       <KanbanList
         v-for="(list, index) in localLists" :key="index"
         :title="list.title"
         :list="list.content"
+        :fields="fields"
+        :columns="columns"
         group="card"
         :animation="kanbanOptions.animation"
         :scroll-sensitivity="kanbanOptions.scrollSensitivity"
-        :options="{disabled: !kanbanOptions.moveCard}"
+        :disabled="!kanbanOptions.moveCard"
         @remove-list="removeList"
         @change="cardChanged"
       ></KanbanList>
@@ -66,7 +68,7 @@
     scrollSensitivity: 200,
     animation: 200,
     moveList: false,
-    moveCard: false,
+    moveCard: true,
   };
 
   export default {
@@ -98,6 +100,27 @@
       filterValues: {
         type: Array,
         default: () => ([])
+      },
+
+      /**
+      * The fields allowed to show
+      * */
+      fields: {
+        type: Object,
+        default: () => ({
+          image: "",
+          title: "",
+          subtitle: "",
+          description: ""
+        })
+      },
+
+      /*
+      * The columns to use AwesomeDisplay
+      * */
+      columns: {
+        type: Array,
+        default: () => []
       },
 
       /**

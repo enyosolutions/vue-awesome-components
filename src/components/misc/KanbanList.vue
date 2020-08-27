@@ -40,7 +40,38 @@
           @change="cardChanged"
         >
           <div class="card" v-for="(data, index) in list" :key="index">
-            <KanbanCard :data="data"></KanbanCard>
+            <img
+              class="card-img-top"
+              v-if="fields && fields.image"
+              :src="data[fields.image]"
+              :alt="data[fields.title]"
+            />
+            <div class="card-body">
+              <h5 class="card-title"
+                  v-if="fields && fields.title && data[fields.title]"
+              >
+                {{ data[fields.title] }}
+              </h5>
+              <p class="card-text"
+                 v-if="fields && fields.description && data[fields.description]"
+              >
+                {{ data[fields.description] }}
+              </p>
+              <template v-if="columns && columns.length">
+                <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
+                  {{ key }} :
+                  <AwesomeDisplay
+                    :type="getField(key).type"
+                    :value="itemData"
+                    :relation="getField(key).relation"
+                    :relation-label="getField(key).relationLabel"
+                    :relation-url="getField(key).relationUrl"
+                    :relation-key="getField(key).relationKey"
+                  >
+                  </AwesomeDisplay>
+                </div>
+              </template>
+            </div>
           </div>
         </Draggable>
       </div>
@@ -50,14 +81,15 @@
 
 <script>
   import Draggable from 'vuedraggable';
-  import KanbanCard from "./KanbanCard";
   import i18nMixin from "../../mixins/i18nMixin";
+  import _ from 'lodash';
+  import AwesomeDisplay from "../crud/display/AwesomeDisplay";
 
   export default {
     name: "KanbanList",
     components: {
       Draggable,
-      KanbanCard
+      AwesomeDisplay
     },
     mixins: [i18nMixin],
     props: {
@@ -80,7 +112,27 @@
       scrollSensitivity: {
         type: Number,
         default: 200
-      }
+      },
+      /**
+       * The fields allowed to show
+       * */
+      fields: {
+        type: Object,
+        default: () => ({
+          image: "",
+          title: "",
+          subtitle: "",
+          description: ""
+        })
+      },
+
+      /*
+      * The columns to use AwesomeDisplay
+      * */
+      columns: {
+        type: Array,
+        default: () => []
+      },
     },
     data: () => ({
       //
@@ -92,8 +144,25 @@
 
       cardChanged(item) {
         this.$emit('change', item, this.title);
-      }
-    }
+      },
+
+      getAllowedData(data) {
+        let allowData = {};
+        Object.keys(data).forEach(key => {
+          this.columns.forEach(column => {
+            if (column.field === key) {
+              allowData = Object.assign(allowData, _.pick(data, [key]))
+            }
+          })
+        })
+        return allowData;
+      },
+
+      getField(key) {
+        const field = _.filter(this.columns, ['field', key]);
+        return field[0] ? field[0]: field;
+      },
+    },
   }
 </script>
 
@@ -131,6 +200,7 @@
         min-height: 70px;
         display: flex;
         flex-direction: column;
+
         .card {
           cursor: pointer;
         }

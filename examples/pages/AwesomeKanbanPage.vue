@@ -5,6 +5,7 @@
         :lists="lists"
         filter-field="status"
         :filter-values="['failed', 'completed', 'scheduled']"
+        :kanban-options="{ moveList: true }"
       ></AwesomeKanban>
     </div>
 </template>

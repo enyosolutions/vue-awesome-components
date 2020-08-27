@@ -129,7 +129,8 @@
           </AwesomeList>
           <AwesomeKanban
             v-if="displayMode === 'kanban'"
-            :columns="tableColumnsComputed"
+            :columns="kanbanFieldsComputed"
+            :fields="kanbanOptions.fields"
             :entity="identity"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
@@ -259,6 +260,7 @@ const kanbanOptions = {
   animation: 200,
   moveList: false,
   moveCard: false,
+  fields: [],
 };
 
 export default {
@@ -571,6 +573,19 @@ export default {
         return [];
       }
       this.listOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
+    },
+
+    kanbanFieldsComputed() {
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.kanbanOptions && !Array.isArray(this.kanbanOptions.fields)) {
+        return [];
+      }
+      this.kanbanOptions.fields.forEach((field) => {
         columns.push(_.filter(allColumns, ["field", field]));
       });
       columns = _.flatten(columns);
