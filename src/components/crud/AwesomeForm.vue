@@ -40,7 +40,7 @@
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title }}
+                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
                       </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
@@ -82,10 +82,10 @@
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.edit") }}
+                        {{ $t("AwesomeCrud.labels.edit") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.view") }}
+                        {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
