@@ -3,6 +3,8 @@
       <h1>Awesome Kanban</h1>
       <AwesomeKanban
         :lists="lists"
+        filter-field="status"
+        :filter-values="['failed', 'completed', 'scheduled']"
       ></AwesomeKanban>
     </div>
 </template>
@@ -21,39 +23,41 @@
           content: [
             {
               id: 1,
+              status: 'failed',
               name: 'Task 1'
             },
             {
               id: 2,
+              status: 'failed',
               name: 'Task 2'
             },
             {
               id: 3,
+              status: 'completed',
               name: 'Task 3'
             },
             {
               id: 4,
+              status: 'completed',
               name: 'Task 4'
             },
             {
-              id: 5,
-              name: 'Task 5'
-            },
-            {
-              id: 6,
-              name: 'Task 6'
+              id: 4,
+              status: 'scheduled',
+              name: 'Task 4'
             },
             {
               id: 7,
-              name: 'Task 7'
+              status: 'completed-with-warnings',
+              name: 'Task 1'
             },
             {
               id: 8,
-              name: 'Task 8'
-            }
+              status: 'completed-with-warnings',
+              name: 'Task 2'
+            },
           ]
         },
-        {title: 'test-1', content: []}
       ]
     })
   }

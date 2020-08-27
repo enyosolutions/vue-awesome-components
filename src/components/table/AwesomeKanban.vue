@@ -4,18 +4,20 @@
       class="draggable-list"
       :list="localLists"
       group="lists"
-      :animation="200"
+      :animation="kanbanOptions.animation"
       ghost-class="moving-list"
-      :scroll-sensitivity="200"
+      :scroll-sensitivity="kanbanOptions.scrollSensitivity"
       @change="listChanged"
+      :options="{disabled: kanbanOptions.moveList}"
     >
       <KanbanList
         v-for="(list, index) in localLists" :key="index"
         :title="list.title"
         :list="list.content"
         group="card"
-        :animation="200"
-        :scroll-sensitivity="200"
+        :animation="kanbanOptions.animation"
+        :scroll-sensitivity="kanbanOptions.scrollSensitivity"
+        :options="{disabled: kanbanOptions.moveCard}"
         @remove-list="removeList"
         @change="cardChanged"
       ></KanbanList>
@@ -50,10 +52,21 @@
 </template>
 
 <script>
-  import KanbanList from "../misc/KanbanList";
-  import _ from "lodash";
   import i18nMixin from "../../mixins/i18nMixin";
+  import apiListMixin from "../../mixins/apiListMixin";
+  import apiErrorsMixin from "../../mixins/apiErrorsMixin";
+
+  import _ from "lodash";
+
+  import KanbanList from "../misc/KanbanList";
   import Draggable from "vuedraggable";
+
+  const defaultOptions = {
+    scrollSensitivity: 200,
+    animation: 200,
+    moveList: false,
+    moveCard: false,
+  };
 
   export default {
     name: "AwesomeKanban",
@@ -61,20 +74,43 @@
       KanbanList,
       Draggable
     },
-    mixins: [i18nMixin],
+    mixins: [i18nMixin, apiErrorsMixin, apiListMixin],
     props: {
+      /**
+       * The lists of list with data
+       */
       lists : {
         type: Array,
         default: () => ([])
+      },
+      /**
+       * The field use to create the default list base on all field value (eg: filterField: 'status' => list of values ['completed', 'failed', 'scheduled'])
+       */
+      filterField: {
+        type: String,
+        default: ''
+      },
+
+      /**
+       * The values associated with the filterField (eg: ['completed', 'failed', 'scheduled'])
+       */
+      filterValues: {
+        type: Array,
+        default: () => ([])
+      },
+
+      /**
+       * The options of the kanban component
+       */
+      kanbanOptions: {
+        type: Object,
+        default: () => defaultOptions
       }
     },
     data: () => ({
       localLists: [], // Static list to test
-      newTasks: [],
       isAddingList: false,
       newListName: '',
-      scrollSensitivity: 200,
-      animation: 200
     }),
     methods: {
       addList() {
@@ -108,10 +144,43 @@
 
       cardChanged(item, listTitle) {
         console.log(item, listTitle);
+      },
+
+      filterLists() {
+        if (this.filterField && this.filterValues) {
+          this.filterValues.forEach(filterValue => {
+            let content = [];
+            this.localLists.forEach(localList => {
+              content.push(_.filter(localList.content, [this.filterField, filterValue]));
+              _.remove(localList.content, (obj) => {
+                return obj[this.filterField] === filterValue
+              });
+            })
+            content = _.flatten(content);
+            if (!_.some(this.localLists, {'title': filterValue})) {
+              this.localLists.push({ title: filterValue, content })
+            }
+          })
+        }
       }
     },
     mounted() {
-      this.localLists = this.lists
+      if (this.lists && this.lists.length) {
+        this.localLists = this.lists;
+      }
+      this.refreshLocalData();
+      if (this.data && this.data.length) {
+        this.localLists.push({ title: 'defaultData', content: this.data});
+      }
+      this.filterLists();
+    },
+
+    watch: {
+      data(newValue) {
+        if (newValue && newValue.length && !_.some(this.localLists, {'title': this.entity})) {
+          this.localLists.push({ title: 'defaultData', content: newValue});
+        }
+      }
     }
   }
 </script>
@@ -136,6 +205,7 @@
       display: flex;
       flex-direction: row;
       flex-flow: nowrap;
+      height: 100%;
       .moving-list {
         opacity: 0.4;
         background: #F7FAFC;
