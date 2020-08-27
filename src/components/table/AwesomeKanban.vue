@@ -1,20 +1,25 @@
 <template>
   <div class="awesome-kanban">
-    <KanbanList
-      title="Default List"
-      :list="tasks"
+    <Draggable
+      class="draggable-list"
+      :list="localLists"
       group="lists"
       :animation="200"
+      ghost-class="moving-list"
       :scroll-sensitivity="200"
-    ></KanbanList>
-    <KanbanList
-      v-for="(list, index) in lists" :key="index"
-      :title="index"
-      :list="list"
-      group="lists"
-      :animation="200"
-      :scroll-sensitivity="200"
-    ></KanbanList>
+      @change="listChanged"
+    >
+      <KanbanList
+        v-for="(list, index) in localLists" :key="index"
+        :title="list.title"
+        :list="list.content"
+        group="card"
+        :animation="200"
+        :scroll-sensitivity="200"
+        @remove-list="removeList"
+        @change="cardChanged"
+      ></KanbanList>
+    </Draggable>
     <div
       class="card add-list"
       @click.stop="editForm"
@@ -25,15 +30,15 @@
           class="card-text"
         >
           <i class="fa fa-plus"></i>
-          Ajouter une liste
+          {{$t("AwesomeKanban.labels.addList")}}
         </div>
         <div v-if="isAddingList">
-          <input v-model="newListName" class="form-control" type="text" placeholder="List name"/>
+          <input v-model="newListName" class="form-control" type="text" :placeholder="$t('AwesomeKanban.labels.listName')"/>
           <button
             :disabled="!newListName"
             @click.stop="addList"
             class="btn btn-simple btn-primary"
-          >Ajouter
+          >{{$t("AwesomeKanban.labels.add")}}
           </button>
           <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
             <i class="fa fa-times"></i>
@@ -47,82 +52,24 @@
 <script>
   import KanbanList from "../misc/KanbanList";
   import _ from "lodash";
+  import i18nMixin from "../../mixins/i18nMixin";
+  import Draggable from "vuedraggable";
 
   export default {
     name: "AwesomeKanban",
     components: {
-      KanbanList
+      KanbanList,
+      Draggable
+    },
+    mixins: [i18nMixin],
+    props: {
+      lists : {
+        type: Array,
+        default: () => ([])
+      }
     },
     data: () => ({
-      lists: {
-        "test-1": [],
-      },
-      tasks: [
-        {
-          id: 1,
-          name: 'Task 1'
-        },
-        {
-          id: 2,
-          name: 'Task 2'
-        },
-        {
-          id: 3,
-          name: 'Task 3'
-        },
-        {
-          id: 4,
-          name: 'Task 4'
-        },
-        {
-          id: 5,
-          name: 'Task 5'
-        },
-        {
-          id: 6,
-          name: 'Task 6'
-        },
-        {
-          id: 7,
-          name: 'Task 7'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-        {
-          id: 8,
-          name: 'Task 8'
-        },
-      ],
+      localLists: [], // Static list to test
       newTasks: [],
       isAddingList: false,
       newListName: '',
@@ -132,21 +79,40 @@
     methods: {
       addList() {
         if (this.newListName) {
-          if (!_.has(this.lists, this.newListName)) {
-            this.$set(this.lists, this.newListName, []);
+          if (!_.some(this.localLists, {'title': this.newListName})) {
+            this.localLists.push({ title: this.newListName, content: []})
             this.newListName = '';
             this.isAddingList = false;
           }
         }
       },
+
       clearForm() {
         this.isAddingList = false
         this.newListName = '';
       },
+
       editForm() {
         this.isAddingList = true
+      },
+
+      removeList(list) {
+        this.localLists = _.filter(this.localLists, (item) => {
+          return item.title !== list;
+        });
+      },
+
+      listChanged(item) {
+        console.log(item);
+      },
+
+      cardChanged(item, listTitle) {
+        console.log(item, listTitle);
       }
     },
+    mounted() {
+      this.localLists = this.lists
+    }
   }
 </script>
 
@@ -166,6 +132,16 @@
     align-items: flex-start;
     flex: 1;
 
+    .draggable-list {
+      display: flex;
+      flex-direction: row;
+      flex-flow: nowrap;
+      .moving-list {
+        opacity: 0.4;
+        background: #F7FAFC;
+        border: 1px solid #4299e1;
+      }
+    }
     .card {
       margin: 6px 0;
     }

@@ -22,19 +22,22 @@
                 v-for="i in [1,2,3]"
                 :key="i"
                 class="dropdown-item"
-              >Action{{i}}</a>
+              >Action {{i}}</a>
+              <div class="dropdown-divider"></div>
+              <a href="#" @click.prevent="removeList" class="dropdown-item text-danger">{{$t("AwesomeKanban.labels.removeList")}}</a>
             </div>
           </div>
         </div>
       </div>
       <div class="list-cards">
         <Draggable
-          class="draggable-list"
+          class="draggable-card"
           :list="list"
           :group="group"
           :animation="animation"
           ghost-class="moving-card"
           :scroll-sensitivity="scrollSensitivity"
+          @change="cardChanged"
         >
           <div class="card" v-for="(data, index) in list" :key="index">
             <KanbanCard :data="data"></KanbanCard>
@@ -48,6 +51,7 @@
 <script>
   import Draggable from 'vuedraggable';
   import KanbanCard from "./KanbanCard";
+  import i18nMixin from "../../mixins/i18nMixin";
 
   export default {
     name: "KanbanList",
@@ -55,6 +59,7 @@
       Draggable,
       KanbanCard
     },
+    mixins: [i18nMixin],
     props: {
       title: {
         type: String,
@@ -79,7 +84,16 @@
     },
     data: () => ({
       //
-    })
+    }),
+    methods: {
+      removeList() {
+        this.$emit("remove-list", this.title);
+      },
+
+      cardChanged(item) {
+        this.$emit('change', item, this.title);
+      }
+    }
   }
 </script>
 
@@ -117,6 +131,9 @@
         min-height: 70px;
         display: flex;
         flex-direction: column;
+        .card {
+          cursor: pointer;
+        }
 
         .moving-card {
           opacity: 0.4;
@@ -124,7 +141,7 @@
           border: 1px solid #4299e1;
         }
 
-        .draggable-list {
+        .draggable-card {
           flex: 1 1 auto;
           width: 100%;
         }
