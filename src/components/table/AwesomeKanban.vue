@@ -20,7 +20,9 @@
         :animation="kanbanOptions.animation"
         :scroll-sensitivity="kanbanOptions.scrollSensitivity"
         :disabled="!kanbanOptions.moveCard"
-        @remove-list="removeList"
+        :custom-list-actions="kanbanOptions.customListActions"
+        @remove-list="onRemoveList"
+        @customListAction="onCustomListAction"
         @change="cardChanged"
       ></KanbanList>
     </Draggable>
@@ -123,10 +125,12 @@
         this.isAddingList = true
       },
 
-      removeList(list) {
+      onRemoveList(list) {
+        /* LOCAL REMOVE */
         this.localLists = _.filter(this.localLists, (item) => {
           return item.title !== list;
         });
+        this.$emit('removeList', list);
       },
 
       listChanged(item) {
@@ -166,6 +170,10 @@
             }
           })
         }
+      },
+
+      onCustomListAction(body) {
+        this.$emit('customListAction', body);
       },
     },
     mounted() {

@@ -141,6 +141,8 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :kanban-options="kanbanOptions"
+            @customListAction="onCustomListAction"
+            @removeList="onRemoveList"
           >
           </AwesomeKanban>
           <AwesomeTable
@@ -1154,6 +1156,16 @@ export default {
       const { action } = body;
       this.$emit(this.identity + "-custom-bulk-action", action);
       return action && action.action && action.action(body, this);
+    },
+
+    onCustomListAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-list-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
+    onRemoveList(body) {
+      console.log('TODO: REMOVE LIST', body);
     },
 
     /**

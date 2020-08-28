@@ -17,12 +17,25 @@
               <i class="fa fa-ellipsis-h"></i>
             </button>
             <div class="dropdown-menu" aria-labelledby="filter">
-              <a
-                href="#"
-                v-for="i in [1,2,3]"
-                :key="i"
-                class="dropdown-item"
-              >Action {{i}}</a>
+              <template v-for="(action, index) in customListActions">
+                <a href="#" class="dropdown-item"
+                   v-for="(action, index) in customListActions"
+                   :key="index"
+                   :class="action.class"
+                   :id="action.name + '-' + index"
+                   :data-title="action.title || action.label"
+                   :data-tooltip="action.title || action.label"
+                   @click="$emit('customListAction', {
+                     action,
+                     items: list,
+                     location: '',
+                     id: action.name + '-' + index
+                   })"
+                >
+                  <i v-if="action.icon" :class="action.icon"/>
+                  <span v-html="action.label ? $t(action.label) : ''"></span>
+                </a>
+              </template>
               <div class="dropdown-divider"></div>
               <a href="#" @click.prevent="removeList" class="dropdown-item text-danger">{{$t("AwesomeKanban.labels.removeList")}}</a>
             </div>
@@ -124,7 +137,6 @@
        * The fields allowed to show
        * */
       fields: {
-        type: Object,
         default: () => ({
           image: "",
           title: "",
@@ -140,6 +152,11 @@
         type: Array,
         default: () => []
       },
+
+      customListActions: {
+        type: Array,
+        default: () => []
+      }
     },
     data: () => ({
       //

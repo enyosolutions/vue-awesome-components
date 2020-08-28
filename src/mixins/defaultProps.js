@@ -24,5 +24,6 @@ export const defaultKanbanOptions = {
   moveCard: true,
   fields: [],
   filterField: '',
-  filterValues: []
+  filterValues: [],
+  customListActions: [],
 };
