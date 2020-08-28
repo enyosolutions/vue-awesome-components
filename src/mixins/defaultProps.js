@@ -26,4 +26,6 @@ export const defaultKanbanOptions = {
   filterField: '',
   filterValues: [],
   customListActions: [],
+  sortField: '',
+  sortOrder: 'DESC'
 };

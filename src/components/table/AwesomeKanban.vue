@@ -144,14 +144,14 @@
       handleLists() {
         if (this.lists && this.lists.length) {
           this.localLists = _.cloneDeep(this.lists);
-          this.filterLists();
         } else {
           if (this.data && this.data.length) {
             const list = [{title: this.entity, content: _.cloneDeep(this.data)}]
             this.localLists = _.cloneDeep(list);
-            this.filterLists();
           }
         }
+        this.filterLists();
+        this.orderCardInLists();
       },
 
       filterLists() {
@@ -167,6 +167,22 @@
             content = _.flatten([...content]);
             if (!_.some(this.localLists, {'title': filterValue.toString()})) {
               this.localLists.push({ title: filterValue.toString(), content })
+            }
+          })
+        }
+      },
+
+      orderCardInLists() {
+        console.log(this.kanbanOptions.sortOrder);
+        const sortOrder = this.kanbanOptions.sortOrder ? this.kanbanOptions.sortOrder.toLowerCase() : 'desc';
+        console.log(sortOrder);
+        console.log(this.kanbanOptions.sortField);
+        if (this.kanbanOptions.sortField) {
+          this.localLists.forEach(localList => {
+            if (localList.content.length > 1) {
+              localList.content = _.orderBy(localList.content, (item) => {
+                return item[this.kanbanOptions.sortField]
+              }, [sortOrder]);
             }
           })
         }
@@ -190,6 +206,12 @@
       },
       'kanbanOptions.filterValues'() {
         this.handleLists();
+      },
+      'kanbanOptions.sortField' () {
+        this.orderCardInLists();
+      },
+      'kanbanOptions.sortOrder'() {
+        this.orderCardInLists();
       }
     }
   }

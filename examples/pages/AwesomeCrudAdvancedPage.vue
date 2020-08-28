@@ -194,7 +194,7 @@
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
           :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'kanban' }"
-          :kanbanOptions="{ moveList: false, fields: { image: 'download_url', title: 'author', description: 'url' }, filterField: 'author', filterValues: ['Rick Waalders'] }"
+          :kanbanOptions="{ moveList: false, fields: { image: 'download_url', title: 'author', description: 'url' }, filterField: 'author', filterValues: ['Rick Waalders'], sortField: 'author', sortOrder: 'asc' }"
         />
       </div>
     </div>

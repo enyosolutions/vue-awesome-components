@@ -20,7 +20,9 @@
       description: 'status'
     },
     filterField: 'status',
-    filterValues: ['failed', 'completed', 'scheduled']
+    filterValues: ['failed', 'completed', 'scheduled'],
+    sortField: 'id',
+    sortOrder : 'DESC'
   };
   import AwesomeKanban from "../../src/components/table/AwesomeKanban";
   export default {
