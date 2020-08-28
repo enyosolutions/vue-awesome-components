@@ -47,7 +47,7 @@
                         type="button"
                         class="close"
                         aria-label="Close"
-                        @click="cancel()"
+                        @click="close()"
                       >
                         <span aria-hidden="true" class="text-white">&times;</span>
                       </button>
@@ -92,7 +92,7 @@
                         type="button"
                         class="close"
                         aria-label="Close"
-                        @click="cancel()"
+                        @click="cancel"
                       >
                         <span aria-hidden="true" class="text-white">&times;</span>
                       </button>
@@ -224,7 +224,7 @@
                           v-if="!standalone"
                           type="button"
                           class="btn btn-default btn-simple mr-auto"
-                          @click="cancel()"
+                          @click="cancel"
                         >
                           {{ $t("AwesomeCrud.buttons.cancel") }}
                         </button>
@@ -1067,7 +1067,6 @@ export default {
     },
 
     closeModal() {
-      this.$emit("closeRequested", null, { context: this.mode });
       if (this.standalone) {
         return;
       }
@@ -1086,9 +1085,14 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      console.log("cancel modal called");
       this.closeModal();
       this.$emit("cancel", null, { context: this.mode });
+    },
+
+    close() {
+      //eslint-disable-next-line
+      this.closeModal();
+      this.$emit("closeRequested", null, { context: this.mode });
     },
 
     goToEditPage(item) {
