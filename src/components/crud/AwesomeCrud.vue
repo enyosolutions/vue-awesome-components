@@ -128,7 +128,7 @@
           >
           </AwesomeList>
           <AwesomeKanban
-            v-if="displayMode === 'kanban'"
+            v-if="!_isNestedDetail && displayMode === 'kanban'"
             :columns="kanbanFieldsComputed"
             :fields="kanbanOptions.fields"
             :entity="identity"
@@ -141,8 +141,6 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :kanban-options="kanbanOptions"
-            filter-field="id"
-            :filter-values="['117']"
           >
           </AwesomeKanban>
           <AwesomeTable
@@ -218,7 +216,7 @@ import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
 import i18nMixin from "../../mixins/i18nMixin";
-import { defaultActions } from "../../mixins/defaultProps";
+import { defaultActions, defaultKanbanOptions } from "../../mixins/defaultProps";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
@@ -240,7 +238,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table", // table | list
+  initialDisplayMode: "table", // table | list | kanban
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -248,19 +246,11 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view"
+  tableRowClickAction: "view",
 };
 
 const listOptions = {
   fields: []
-};
-
-const kanbanOptions = {
-  scrollSensitivity: 200,
-  animation: 200,
-  moveList: false,
-  moveCard: false,
-  fields: [],
 };
 
 export default {
@@ -450,7 +440,7 @@ export default {
     },
     kanbanOptions: {
       type: Object,
-      default: () => kanbanOptions
+      default: () => defaultKanbanOptions
     },
     actions: {
       type: Object,

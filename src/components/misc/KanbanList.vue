@@ -42,7 +42,7 @@
           <div class="card" v-for="(data, index) in list" :key="index">
             <img
               class="card-img-top"
-              v-if="fields && fields.image"
+              v-if="fields && fields.image && data[fields.image]"
               :src="data[fields.image]"
               :alt="data[fields.title]"
             />
@@ -52,6 +52,12 @@
               >
                 {{ data[fields.title] }}
               </h5>
+              <h6
+                v-if="fields && fields.subtitle && data[fields.subtitle]"
+                class="card-subtitle mb-2 text-muted"
+              >
+                {{ data[fields.subtitle] }}
+              </h6>
               <p class="card-text"
                  v-if="fields && fields.description && data[fields.description]"
               >
@@ -71,6 +77,7 @@
                   </AwesomeDisplay>
                 </div>
               </template>
+              <p v-if="!hasData" class="card-text">{{ $t('AwesomeKanban.labels.noData')}}</p>
             </div>
           </div>
         </Draggable>
@@ -163,6 +170,17 @@
         return field[0] ? field[0]: field;
       },
     },
+    computed: {
+      hasData() {
+        let count = 0;
+        Object.keys(this.fields).forEach(field => {
+          if (this.fields[field]) {
+            count++;
+          }
+        })
+        return count
+      }
+    }
   }
 </script>
 
@@ -179,6 +197,7 @@
       border-radius: 4px;
       margin: 0 10px;
       max-height: 100%;
+      width: 100%;
       display: flex;
       flex-direction: column;
 

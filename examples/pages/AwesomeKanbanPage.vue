@@ -3,14 +3,25 @@
       <h1>Awesome Kanban</h1>
       <AwesomeKanban
         :lists="lists"
-        filter-field="status"
-        :filter-values="['failed', 'completed', 'scheduled']"
-        :kanban-options="{ moveList: true }"
+        :kanban-options="options"
       ></AwesomeKanban>
     </div>
 </template>
 
 <script>
+  const kanbanOptions = {
+    scrollSensitivity: 200,
+    animation: 200,
+    moveList: false,
+    moveCard: true,
+    fields: {
+      title: 'name',
+      subtitle: 'id',
+      description: 'status'
+    },
+    filterField: 'status',
+    filterValues: ['failed', 'completed', 'scheduled']
+  };
   import AwesomeKanban from "../../src/components/table/AwesomeKanban";
   export default {
     name: "AwesomeKanbanPage",
@@ -24,7 +35,7 @@
           content: [
             {
               id: 1,
-              status: 'failed',
+              status: 'https://unsplash.com/photos/Q14J2k8VE3U ',
               name: 'Task 1'
             },
             {
@@ -59,7 +70,8 @@
             },
           ]
         },
-      ]
+      ],
+      options: kanbanOptions
     })
   }
 </script>

@@ -14,7 +14,7 @@
         v-for="(list, index) in localLists" :key="index"
         :title="list.title"
         :list="list.content"
-        :fields="fields"
+        :fields="kanbanOptions.fields"
         :columns="columns"
         group="card"
         :animation="kanbanOptions.animation"
@@ -64,12 +64,7 @@
   import KanbanList from "../misc/KanbanList";
   import Draggable from "vuedraggable";
 
-  const defaultOptions = {
-    scrollSensitivity: 200,
-    animation: 200,
-    moveList: false,
-    moveCard: true,
-  };
+  import { defaultKanbanOptions } from "../../mixins/defaultProps";
 
   export default {
     name: "AwesomeKanban",
@@ -86,34 +81,6 @@
         type: Array,
         default: () => ([])
       },
-      /**
-       * The field use to create the default list base on all field value (eg: filterField: 'status' => list of values ['completed', 'failed', 'scheduled'])
-       */
-      filterField: {
-        type: String,
-        default: ''
-      },
-
-      /**
-       * The values associated with the filterField (eg: ['completed', 'failed', 'scheduled'])
-       */
-      filterValues: {
-        type: Array,
-        default: () => ([])
-      },
-
-      /**
-      * The fields allowed to show
-      * */
-      fields: {
-        type: Object,
-        default: () => ({
-          image: "",
-          title: "",
-          subtitle: "",
-          description: ""
-        })
-      },
 
       /*
       * The columns to use AwesomeDisplay
@@ -128,7 +95,7 @@
        */
       kanbanOptions: {
         type: Object,
-        default: () => defaultOptions
+        default: () => defaultKanbanOptions
       }
     },
     data: () => ({
@@ -184,13 +151,13 @@
       },
 
       filterLists() {
-        if (this.filterField && this.filterValues) {
-          this.filterValues.forEach(filterValue => {
+        if (this.kanbanOptions.filterField && this.kanbanOptions.filterValues && this.kanbanOptions.filterValues.length) {
+          this.kanbanOptions.filterValues.forEach(filterValue => {
             let content = [];
             this.localLists.forEach(localList => {
-              content.push(_.filter(localList.content, [this.filterField, filterValue]));
+              content.push(_.filter(localList.content, [this.kanbanOptions.filterField, filterValue]));
               _.remove(localList.content, (obj) => {
-                return obj[this.filterField] === filterValue
+                return obj[this.kanbanOptions.filterField] === filterValue
               });
             })
             content = _.flatten([...content]);
@@ -210,10 +177,10 @@
       data() {
         this.handleLists();
       },
-      filterField() {
+      'kanbanOptions.filterField'() {
         this.handleLists();
       },
-      filterValues() {
+      'kanbanOptions.filterValues'() {
         this.handleLists();
       }
     }

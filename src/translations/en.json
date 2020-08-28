@@ -15,7 +15,8 @@
       "addList": "Add a list",
       "add": "Add",
       "listName": "List name",
-      "removeList": "Remove list"
+      "removeList": "Remove list",
+      "noData": "No fields selected"
     }
   },
   "AwesomeFilter": {
