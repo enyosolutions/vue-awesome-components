@@ -66,6 +66,7 @@
     "vue-clickaway": "^2.2.2",
     "vue-datetime": "^1.0.0-beta.10",
     "vue-good-table": "^2.14.4",
+    "vue-grid-layout": "^2.3.8",
     "vue-i18n": "^8.1.0",
     "vue-loader": "^15.7.0",
     "vue-multiselect": "^2.1.6",
@@ -105,7 +106,8 @@
     "vue-select": "^3.10.3",
     "vue2-daterange-picker": "^0.1.6",
     "vuejs-paginate": "^2.1.0",
-    "weekstart": "^1.0.1"
+    "weekstart": "^1.0.1",
+    "vue-grid-layout": "^2.3.8"
   },
   "eslintConfig": {
     "root": true,
