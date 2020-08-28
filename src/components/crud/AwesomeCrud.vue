@@ -143,6 +143,8 @@
             :kanban-options="kanbanOptions"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
+            @listChanged="onListChanged"
+            @cardChanged="onCardChanged"
           >
           </AwesomeKanban>
           <AwesomeTable
@@ -1166,6 +1168,14 @@ export default {
 
     onRemoveList(body) {
       console.log('TODO: REMOVE LIST', body);
+    },
+
+    onListChanged(item) {
+      console.log(item);
+    },
+
+    onCardChanged(item, listTitle) {
+      console.log(item, listTitle);
     },
 
     /**

@@ -134,11 +134,11 @@
       },
 
       listChanged(item) {
-        console.log(item);
+        this.$emit('listChanged', item);
       },
 
       cardChanged(item, listTitle) {
-        console.log(item, listTitle);
+        this.$emit('cardChanged', item, listTitle);
       },
 
       handleLists() {
