@@ -17,10 +17,7 @@
   },
   "main": "src/index.js",
   "module": "src/index.js",
-  "dependencies": {
-    "vue-loading-skeleton": "^1.1.9",
-    "vue-select": "^3.10.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@storybook/addon-actions": "^6.0.0-beta.2",
@@ -76,6 +73,8 @@
     "vuejs-paginate": "^2.1.0",
     "vuepress": "^1.2.0",
     "vuex": "^3.1.0",
+    "vue-loading-skeleton": "^1.1.9",
+    "vue-select": "^3.10.3",
     "webpack-bundle-analyzer": "^3.7.0",
     "weekstart": "^1.0.1"
   },
@@ -105,7 +104,9 @@
     "vue-select": "^3.10.3",
     "vue2-daterange-picker": "^0.1.6",
     "vuejs-paginate": "^2.1.0",
-    "weekstart": "^1.0.1"
+    "weekstart": "^1.0.1",
+    "fecha": "^4.2.0",
+    "vue-popperjs": "^2.3.0"
   },
   "eslintConfig": {
     "root": true,
