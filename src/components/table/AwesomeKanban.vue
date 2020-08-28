@@ -23,7 +23,8 @@
         :custom-list-actions="kanbanOptions.customListActions"
         @remove-list="onRemoveList"
         @customListAction="onCustomListAction"
-        @change="cardChanged"
+        @change="onCardChanged"
+        @cardClicked="onCardClicked"
       ></KanbanList>
     </Draggable>
     <div
@@ -137,8 +138,12 @@
         this.$emit('listChanged', item);
       },
 
-      cardChanged(item, listTitle) {
+      onCardChanged(item, listTitle) {
         this.$emit('cardChanged', item, listTitle);
+      },
+
+      onCardClicked(item) {
+        this.$emit('cardClicked', item);
       },
 
       handleLists() {
@@ -173,10 +178,7 @@
       },
 
       orderCardInLists() {
-        console.log(this.kanbanOptions.sortOrder);
         const sortOrder = this.kanbanOptions.sortOrder ? this.kanbanOptions.sortOrder.toLowerCase() : 'desc';
-        console.log(sortOrder);
-        console.log(this.kanbanOptions.sortField);
         if (this.kanbanOptions.sortField) {
           this.localLists.forEach(localList => {
             if (localList.content.length > 1) {

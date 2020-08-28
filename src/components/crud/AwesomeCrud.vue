@@ -145,6 +145,7 @@
             @removeList="onRemoveList"
             @listChanged="onListChanged"
             @cardChanged="onCardChanged"
+            @cardClicked="onCardClicked"
           >
           </AwesomeKanban>
           <AwesomeTable
@@ -1176,6 +1177,21 @@ export default {
 
     onCardChanged(item, listTitle) {
       console.log(item, listTitle);
+    },
+
+    onCardClicked(item) {
+      this.$emit("on-kanban-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
+          break;
+      }
     },
 
     /**

@@ -19,7 +19,6 @@
             <div class="dropdown-menu" aria-labelledby="filter">
               <template v-for="(action, index) in customListActions">
                 <a href="#" class="dropdown-item"
-                   v-for="(action, index) in customListActions"
                    :key="index"
                    :class="action.class"
                    :id="action.name + '-' + index"
@@ -36,7 +35,7 @@
                   <span v-html="action.label ? $t(action.label) : ''"></span>
                 </a>
               </template>
-              <div class="dropdown-divider"></div>
+              <div v-if="customListActions.length" class="dropdown-divider"></div>
               <a href="#" @click.prevent="removeList" class="dropdown-item text-danger">{{$t("AwesomeKanban.labels.removeList")}}</a>
             </div>
           </div>
@@ -52,7 +51,7 @@
           :scroll-sensitivity="scrollSensitivity"
           @change="cardChanged"
         >
-          <div class="card" v-for="(data, index) in list" :key="index">
+          <div class="card" v-for="(data, index) in list" :key="index" @click="cardClicked(data)">
             <img
               class="card-img-top"
               v-if="fields && fields.image && data[fields.image]"
@@ -113,22 +112,41 @@
     },
     mixins: [i18nMixin],
     props: {
+      /**
+       * The title of the list
+       * */
       title: {
         type: String,
         default: 'Title'
       },
+
+      /**
+       * The list with all the data
+       * */
       list: {
         type: Array,
         default: () => ([])
       },
+
+      /**
+       * The group is use to handle the card change (if two list is not in the same group, the card cannot be moved)
+       * */
       group: {
         type: String,
         default: 'default'
       },
+
+      /**
+       * The animation delay
+       * */
       animation: {
         type: Number,
         default: 200
       },
+
+      /**
+       * The scroll sensitivity
+       * */
       scrollSensitivity: {
         type: Number,
         default: 200
@@ -153,6 +171,9 @@
         default: () => []
       },
 
+      /**
+       * The custom action list (3 dot)
+       */
       customListActions: {
         type: Array,
         default: () => []
@@ -186,6 +207,10 @@
         const field = _.filter(this.columns, ['field', key]);
         return field[0] ? field[0]: field;
       },
+
+      cardClicked(data) {
+        this.$emit('cardClicked', data);
+      }
     },
     computed: {
       hasData() {
