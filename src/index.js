@@ -15,8 +15,10 @@ import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 
 import AwesomeTable from './components/table/AwesomeTable.vue';
+import AwesomeKanban from './components/table/AwesomeKanban.vue';
 
 import FormGenerator from './components/form/form-generator';
+import { abstractField } from './components/form/form-generator';
 
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 import rolesMixin from './mixins/rolesMixin';
@@ -46,6 +48,7 @@ const VueEnyoComponents = {
   TableAndChartsCard,
   UploadButton,
   FormGenerator,
+  abstractField,
 }
 
 export {
@@ -57,6 +60,7 @@ export {
   AwesomeCrud as EnyoCrudComponent,
   AwesomeCrud as CrudComponent,
   AwesomeCrud,
+  AwesomeKanban,
   EnyoCard,
   EnyoCrudStatsSection,
   EnyoSelect,
