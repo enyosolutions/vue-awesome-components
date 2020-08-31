@@ -10,6 +10,15 @@
       "not_imported": "not_imported"
     }
   },
+  "AwesomeKanban": {
+    "labels": {
+      "addList": "Add a list",
+      "add": "Add",
+      "listName": "List name",
+      "removeList": "Remove list",
+      "noData": "No fields selected"
+    }
+  },
   "AwesomeFilter": {
     "labels": {
       "filterData": "Filter data",

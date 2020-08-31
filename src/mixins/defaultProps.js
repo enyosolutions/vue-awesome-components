@@ -17,3 +17,15 @@ export const defaultActions = {
   itemsPerRow: true,
 };
 
+export const defaultKanbanOptions = {
+  scrollSensitivity: 200,
+  animation: 200,
+  moveList: false,
+  moveCard: true,
+  fields: [],
+  filterField: '',
+  filterValues: [],
+  customListActions: [],
+  sortField: '',
+  sortOrder: 'DESC'
+};

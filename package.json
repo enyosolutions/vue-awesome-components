@@ -17,10 +17,7 @@
   },
   "main": "src/index.js",
   "module": "src/index.js",
-  "dependencies": {
-    "vue-loading-skeleton": "^1.1.9",
-    "vue-select": "^3.10.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@storybook/addon-actions": "^6.0.0-beta.2",
@@ -50,6 +47,7 @@
     "crip-vue-loading": "^1.2.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
+    "fecha": "^4.2.0",
     "jquery": "^3.5.1",
     "json-schema-test-data-generator": "https://github.com/enyosolutions-team/json-schema-test-data-generator",
     "json-schema-to-openapi-schema": "^0.4.0",
@@ -71,14 +69,20 @@
     "vue-loader": "^15.7.0",
     "vue-multiselect": "^2.1.6",
     "vue-notifyjs": "^0.4.3",
+    "vue-popperjs": "^2.3.0",
     "vue-router": "^3.0.1",
+    "vue-select": "^3.10.3",
     "vue-template-compiler": "2.6.11",
     "vue2-daterange-picker": "^0.1.6",
+    "vuedraggable": "^2.24.1",
     "vuejs-paginate": "^2.1.0",
     "vuepress": "^1.2.0",
     "vuex": "^3.1.0",
+    "vue-loading-skeleton": "^1.1.9",
+    "vue-select": "^3.10.3",
     "webpack-bundle-analyzer": "^3.7.0",
-    "weekstart": "^1.0.1"
+    "weekstart": "^1.0.1",
+    "vue-loading-skeleton": "^1.1.9"
   },
   "peerDependencies": {
     "axios": "^0.18.1",
@@ -106,6 +110,11 @@
     "vue-select": "^3.10.3",
     "vue2-daterange-picker": "^0.1.6",
     "vuejs-paginate": "^2.1.0",
+    "weekstart": "^1.0.1",
+    "vuedraggable": "^2.24.1",
+    "vue-popperjs": "^2.3.0",
+    "fecha": "^4.2.0",
+    "vue-loading-skeleton": "^1.1.9",
     "weekstart": "^1.0.1",
     "vue-grid-layout": "^2.3.8"
   },

@@ -129,6 +129,27 @@
             @itemClicked="onListItemClicked"
           >
           </AwesomeList>
+          <AwesomeKanban
+            v-if="!_isNestedDetail && displayMode === 'kanban'"
+            :columns="kanbanFieldsComputed"
+            :fields="kanbanOptions.fields"
+            :entity="identity"
+            :url="_url"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :kanban-options="kanbanOptions"
+            @customListAction="onCustomListAction"
+            @removeList="onRemoveList"
+            @listChanged="onListChanged"
+            @cardChanged="onCardChanged"
+            @cardClicked="onCardClicked"
+          >
+          </AwesomeKanban>
           <AwesomeTable
             v-if="!_isNestedDetail && displayMode === 'table'"
             :columns="tableColumnsComputed"
@@ -202,12 +223,13 @@ import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
 import i18nMixin from "../../mixins/i18nMixin";
-import { defaultActions } from "../../mixins/defaultProps";
+import { defaultActions, defaultKanbanOptions } from "../../mixins/defaultProps";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
 import AwesomeList from "../table/AwesomeList";
+import AwesomeKanban from "../table/AwesomeKanban";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -223,7 +245,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table", // table | list
+  initialDisplayMode: "table", // table | list | kanban
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -231,7 +253,7 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view"
+  tableRowClickAction: "view",
 };
 
 const listOptions = {
@@ -327,7 +349,8 @@ export default {
     AwesomeTable,
     EnyoCrudStatsSection,
     AwesomeForm,
-    AwesomeList
+    AwesomeList,
+    AwesomeKanban
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
@@ -422,6 +445,10 @@ export default {
       type: Object,
       default: () => listOptions
     },
+    kanbanOptions: {
+      type: Object,
+      default: () => defaultKanbanOptions
+    },
     actions: {
       type: Object,
       default: () => defaultActions,
@@ -451,7 +478,7 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
-      supportedDataDisplayModes: ["table", "list"]
+      supportedDataDisplayModes: ["table", "list", "kanban"]
     };
   },
   computed: {
@@ -543,6 +570,19 @@ export default {
         return [];
       }
       this.listOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
+    },
+
+    kanbanFieldsComputed() {
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.kanbanOptions && !Array.isArray(this.kanbanOptions.fields)) {
+        return [];
+      }
+      this.kanbanOptions.fields.forEach((field) => {
         columns.push(_.filter(allColumns, ["field", field]));
       });
       columns = _.flatten(columns);
@@ -1121,6 +1161,39 @@ export default {
       const { action } = body;
       this.$emit(this.identity + "-custom-bulk-action", action);
       return action && action.action && action.action(body, this);
+    },
+
+    onCustomListAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-list-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
+    onRemoveList(body) {
+      console.log('TODO: REMOVE LIST', body);
+    },
+
+    onListChanged(item) {
+      console.log(item);
+    },
+
+    onCardChanged(item, listTitle) {
+      console.log(item, listTitle);
+    },
+
+    onCardClicked(item) {
+      this.$emit("on-kanban-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
+          break;
+      }
     },
 
     /**

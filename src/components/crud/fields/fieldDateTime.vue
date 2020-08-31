@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import VueFormGenerator from 'vue-form-generator';
+import VueFormGenerator from '../../form/form-generator';
 import moment from 'moment';
 import _ from 'lodash';
 import { Datetime } from 'vue-datetime';
 
-// import dateFieldHelper from "vue-form-generator/src/utils/dateFieldHelper"
+// import dateFieldHelper from "../../form/form-generator/utils/dateFieldHelper"
 
 // You need a specific loader for CSS files
 import 'vue-datetime/dist/vue-datetime.css';
