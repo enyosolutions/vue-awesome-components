@@ -99,6 +99,10 @@ const router = new VueRouter({
     {
       path: "/awesomecrud/:id/edit",
       component: () => import("../examples/pages/AwesomeCrudPage")
+    },
+    {
+      path: "/awesomelayout",
+      component: () => import("../examples/pages/AwesomeLayoutPage")
     }
   ]
 });

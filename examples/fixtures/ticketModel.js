@@ -3,7 +3,22 @@ const schema = require('./ticket');
 module.exports = {
   identity: 'ticket',
   schema,
-
+  formOptions: {
+    optionsLayout: {
+      layout: [
+        {
+          "x": 0, "y": 0, "w": 6, "h": 12, "i": 0,
+          fields: ['id', 'type', 'regionId', 'userId'],
+          legend: 'Identity',
+        },
+        {
+          "x": 6, "y": 0, "w": 6, "h": 12, "i": 1,
+          fields: ['subject', 'body'],
+          legend: 'Stakeholders'
+        },
+      ],
+    }
+  },
   layout: {
     columns: [
       {

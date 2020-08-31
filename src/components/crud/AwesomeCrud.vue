@@ -27,6 +27,7 @@
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
           />
 
           <AwesomeForm
@@ -56,6 +57,7 @@
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
           />
         </div>
         <div
@@ -552,7 +554,7 @@ export default {
     },
 
     _layout() {
-      return this.layout || (this.model && this.model.layout);
+      return this.layout || (this.model && this.model.formOptions && this.model.formOptions.optionsLayout && this.model.formOptions.optionsLayout.layout);
     },
     createPageLayoutComputed() {
       return this.createPageLayout || (this.model && this.model.createPageLayout) || this._layout;
@@ -1262,6 +1264,10 @@ export default {
             showConfirmButton: false
           };
       Swal.fire(payload);
+    },
+
+    onLayoutUpdated(items) {
+      console.log('CALL API TO CHANGED LAYOUT : ', items);
     }
   }
 };

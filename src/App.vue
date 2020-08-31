@@ -33,6 +33,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/awesomecrud-advanced">Awesome Crud advanced</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/awesomelayout">Awesome Layout</a>
+          </li>
         </ul>
       </div>
     </nav>

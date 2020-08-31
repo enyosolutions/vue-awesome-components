@@ -117,7 +117,21 @@
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
                           <div class="row" v-if="renderLayout && layout">
-                            <template v-for="(column, index) in layout.columns">
+                            <AwesomeLayout
+                              :edit-mode="editLayout"
+                              :layout="layout"
+                              @layout-updated="onLayoutUpdated"
+                            >
+                              <template v-slot:fields="slotProps">
+                                <VueFormGenerator
+                                  :schema="getShemaForFields(slotProps.fields)"
+                                  :model="selectedItem"
+                                  :options="formOptions"
+                                  tag="div"
+                                />
+                              </template>
+                            </AwesomeLayout>
+                            <!--<template v-for="(column, index) in layout.columns">
                               <div :key="index" is="Column" v-bind="column">
                                 <template>
                                   <Tabs
@@ -179,7 +193,7 @@
                                   </Tabs>
                                 </template>
                               </div>
-                            </template>
+                            </template>-->
                           </div>
 
                           <template v-if="formSchema && formSchema.fields && !this.layout">
@@ -253,13 +267,31 @@
                             </button>
                           </template>
                         </template>
-                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-auto">
+                        <button
+                                v-if="!editLayout && layout"
+                                class="btn btn-info btn-main-style ml-auto"
+                                type="button"
+                                @click="editLayout = true"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.editLayout") }}
+                        </button>
+                        <button
+                                v-if="editLayout && layout"
+                                class="btn btn-info btn-main-style ml-auto"
+                                type="button"
+                                @click="saveLayout"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.saveLayout") }}
+                        </button>
+                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
                           {{ $t("AwesomeCrud.buttons.save") }}
                         </button>
                         <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
-                          class="btn btn-info btn-main-style ml-auto"
+                          class="btn btn-info btn-main-style ml-2"
                           @click.prevent.stop="$emit('edit', selectedItem)"
                         >
                           <i class="fa fa-pencil" />
@@ -355,6 +387,7 @@ import GroupedForm from "./layout/GroupedForm.vue";
 
 import "vue-good-table/dist/vue-good-table.css";
 import AwesomeCrud from "./AwesomeCrud";
+import AwesomeLayout from "./layout/AwesomeLayout";
 
 const defaultOptions = {
   mode: "local",
@@ -384,7 +417,8 @@ export default {
     Column,
     Tabs,
     Row,
-    GroupedForm
+    GroupedForm,
+    AwesomeLayout
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
@@ -505,7 +539,7 @@ export default {
       note: "actions active in this instance"
     },
     layout: {
-      type: Object,
+      type: Array,
       note: "Layout of the form"
     }
   },
@@ -523,6 +557,7 @@ export default {
       _model: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
+      editLayout: false,
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
@@ -1293,7 +1328,15 @@ export default {
       return columns;
     },
     renderGroup() {},
-    renderForm(definition = { component: "VueFormGenerator", props: {} }) {}
+    renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
+
+    saveLayout() {
+      this.editLayout = false;
+    },
+
+    onLayoutUpdated(items) {
+      this.$emit('layout-updated', items);
+    }
   }
 };
 </script>

@@ -2,6 +2,24 @@ module.exports = {
   $id: "http://enyosolutions.com/schemas/ticket.json",
   type: "object",
   required: ["id", "type", "subject", "body", "status", "regionId", "type", "userId"],
+  formOptions: {
+    optionsLayout: {
+      layout: [
+        {
+          "x": 0, "y": 0, "w": 3, "h": 3, "i": 0,
+          fields: ['type']
+        },
+        {
+          "x": 3, "y": 0, "w": 3, "h": 3, "i": 1,
+          fields: ['regionId']
+        },
+        {
+          "x": 6, "y": 0, "w": 3, "h": 3, "i": 2,
+          fields: ['userId']
+        },
+      ],
+    }
+  },
   formGroups: [
     {
       id: "infos",
@@ -110,7 +128,7 @@ module.exports = {
       type: ["string", "object"],
       format: "date-time",
       readonly: true,
-      column: { type: "datetime", format: 'DD_MM_YYYY (HH,MM)', classes: 'badge badge-primary' },
+      column: {type: "datetime", format: 'DD_MM_YYYY (HH,MM)', classes: 'badge badge-primary'},
       field: {
         group: "metaData",
         type: "dateTime",
@@ -120,7 +138,7 @@ module.exports = {
       type: ["string", "object"],
       format: "date-time",
       readonly: true,
-      column: { type: "datetime" },
+      column: {type: "datetime"},
       field: {
         group: "metaData",
         type: "dateTime"

@@ -79,7 +79,9 @@
       "close": "Close",
       "edit": "Edit",
       "save": "Save",
-      "bulkEdit": "Multiple Edit"
+      "bulkEdit": "Multiple Edit",
+      "editLayout": "Edit Layout",
+      "saveLayout": "Save Layout"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
