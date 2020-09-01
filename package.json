@@ -117,7 +117,7 @@
     "fecha": "^4.2.0",
     "vue-loading-skeleton": "^1.1.9",
     "weekstart": "^1.0.1",
-    "vue-grid-layout": "^2.3.8"
+    "vue-grid-layout": "^2.3.8",
     "vuejs-paginate": "^2.1.0",
     "weekstart": "^1.0.1"
   },
