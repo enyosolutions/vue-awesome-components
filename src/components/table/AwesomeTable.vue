@@ -4,11 +4,37 @@
       class="card-header"
       :class="'ajax-table-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
     >
+      <div v-if="isRefreshing" style="text-align: center">
+        <div
+          class="progress"
+          style="
+    height: 5px;
+    border-radius: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%
+"
+        >
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            aria-valuenow="100"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style="width: 5%"
+          ></div>
+        </div>
+      </div>
       <h3 class="card-title ajax-table-header text-left">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
-        <button v-if="_actions && _actions.refresh" class="btn btn-simple btn-alt-style btn-sm p-2" @click="getItems({useSkeleton: true})">
+        <button
+          v-if="_actions && _actions.refresh"
+          class="btn btn-simple btn-alt-style btn-sm p-2"
+          @click="getItems({ useSkeleton: true })"
+        >
           <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
         </button>
         <div class="btn-group btn-group-sm float-right">
@@ -41,9 +67,6 @@
                 {{ col.label }}
               </button>
             </div>
-          </div>
-          <div v-if="isRefreshing" style="text-align: center">
-            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color:orange;margin-left:10px" />
           </div>
           <popper
             trigger="clickToOpen"
@@ -144,7 +167,7 @@
       />
       <div class="table-responsive">
         <vue-good-table
-          :ref="'table-'+entity"
+          :ref="'table-' + entity"
           :mode="mode"
           :total-rows="totalCount"
           style-class="vgt-table table striped"
@@ -180,7 +203,7 @@
             selectionText: this.$t('AwesomeTable.bulk.row-select'),
             clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
             disableSelectInfo: false,
-            selectAllByGroup: true,
+            selectAllByGroup: true
           }"
           @on-page-change="onPageChange"
           @on-sort-change="onSortChange"
@@ -189,24 +212,25 @@
           @on-search="onSearch"
           @on-cell-click="clickOnLine"
           @on-selected-rows-change="onSelectionChanged"
-
         >
           <div slot="selected-row-actions">
             <template v-if="opts && opts.customBulkActions">
               <template v-for="(action, index) in opts.customBulkActions">
                 <button
-                        :key="index"
-                        class="btn btn-primary btn-simple"
-                        :class="action.class"
-                        :id="action.name + '-' + index"
-                        :data-title="action.title || action.label"
-                        :data-tooltip="action.title || action.label"
-                        @click="$emit('customBulkAction', {
-                          action,
-                          items: selectedRows,
-                          location: 'bulk',
-                          id: action.name + '-' + index
-                        })"
+                  :key="index"
+                  class="btn btn-primary btn-simple"
+                  :class="action.class"
+                  :id="action.name + '-' + index"
+                  :data-title="action.title || action.label"
+                  :data-tooltip="action.title || action.label"
+                  @click="
+                    $emit('customBulkAction', {
+                      action,
+                      items: selectedRows,
+                      location: 'bulk',
+                      id: action.name + '-' + index
+                    })
+                  "
                 >
                   <i v-if="action.icon" :class="action.icon" />
                   <span v-html="action.label ? $t(action.label) : ''"></span>
@@ -214,12 +238,12 @@
               </template>
             </template>
             <button
-                v-if="_actions.bulkDelete"
-                class="btn btn-primary btn-simple"
-                @click="$emit('bulkDelete', selectedRows)"
+              v-if="_actions.bulkDelete"
+              class="btn btn-primary btn-simple"
+              @click="$emit('bulkDelete', selectedRows)"
             >
               <i class="fa fa-trash" />
-              {{$t('AwesomeTable.bulk.delete')}}
+              {{ $t("AwesomeTable.bulk.delete") }}
             </button>
             <button
               v-if="_actions.bulkEdit"
@@ -227,7 +251,7 @@
               @click="$emit('bulkEdit', selectedRows)"
             >
               <i class="fa fa-pencil"></i>
-              {{$t('AwesomeTable.bulk.edit')}}
+              {{ $t("AwesomeTable.bulk.edit") }}
             </button>
           </div>
           <div slot="table-actions">
@@ -274,66 +298,66 @@
               </awesome-display>
 
               <span v-if="props.column.field === 'ACTIONS'" class="text-right">
-              <slot name="table-row-actions" :item="props.row">
-                <template v-if="opts && opts.customInlineActions">
-                  <template v-for="(action, index) in opts.customInlineActions">
-                    <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
-                      <button
-                        :key="index"
-                        class="btn btn-xs btn-alt-style"
-                        :class="action.class"
-                        :id="action.name + '-' + props.index"
-                        :data-title="action.title || action.label"
-                        :data-tooltip="action.title || action.label"
-                        @click="
-                          $emit('customAction', {
-                            action,
-                            item: props.row,
-                            location: 'inline',
-                            props,
-                            id: action.name + '-' + props.index
-                          })
-                        "
-                      >
-                        <i v-if="action.icon" :class="action.icon" /><span
-                        v-html="action.label ? $t(action.label) : ''"
-                      ></span>
-                      </button>
+                <slot name="table-row-actions" :item="props.row">
+                  <template v-if="opts && opts.customInlineActions">
+                    <template v-for="(action, index) in opts.customInlineActions">
+                      <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
+                        <button
+                          :key="index"
+                          class="btn btn-xs btn-alt-style"
+                          :class="action.class"
+                          :id="action.name + '-' + props.index"
+                          :data-title="action.title || action.label"
+                          :data-tooltip="action.title || action.label"
+                          @click="
+                            $emit('customAction', {
+                              action,
+                              item: props.row,
+                              location: 'inline',
+                              props,
+                              id: action.name + '-' + props.index
+                            })
+                          "
+                        >
+                          <i v-if="action.icon" :class="action.icon" /><span
+                            v-html="action.label ? $t(action.label) : ''"
+                          ></span>
+                        </button>
+                      </template>
                     </template>
                   </template>
-                </template>
-              </slot>
-              <button
-                v-if="_actions.view"
-                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                @click="$emit('view', props.row)"
-              >
-                <i class="fa fa-eye text-info" />
-              </button>
-              <button
-                v-if="_actions.edit"
-                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                @click="$emit('edit', props.row)"
-              >
-                <i class="fa fa-pencil fa fa-pencil text-primary" />
-              </button>
-              <button
-                v-if="_actions.delete"
-                class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                @click="$emit('delete', props.row)"
-              >
-                <i class="fa fa-trash text-danger" />
-              </button>
-            </span>
+                </slot>
+                <button
+                  v-if="_actions.view"
+                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                  @click="$emit('view', props.row)"
+                >
+                  <i class="fa fa-eye text-info" />
+                </button>
+                <button
+                  v-if="_actions.edit"
+                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                  @click="$emit('edit', props.row)"
+                >
+                  <i class="fa fa-pencil fa fa-pencil text-primary" />
+                </button>
+                <button
+                  v-if="_actions.delete"
+                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                  @click="$emit('delete', props.row)"
+                >
+                  <i class="fa fa-trash text-danger" />
+                </button>
+              </span>
               <span
                 v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
                 class="pointer"
                 @click="clickOnLine(props)"
-              >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
+                >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
               >
               <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
-              getDataValue(props.formattedRow[props.column.field], props.column.listName)
-            }}</span>
+                getDataValue(props.formattedRow[props.column.field], props.column.listName)
+              }}</span>
             </template>
           </template>
           <div slot="emptystate">
@@ -349,7 +373,7 @@ import DateRangePicker from "vue2-daterange-picker";
 import { VueGoodTable } from "vue-good-table";
 import moment from "moment";
 import Popper from "vue-popperjs";
-import { Skeleton } from 'vue-loading-skeleton';
+import { Skeleton } from "vue-loading-skeleton";
 
 import apiErrors from "../../mixins/apiErrorsMixin";
 import apiListMixin from "../../mixins/apiListMixin";
@@ -497,7 +521,7 @@ export default {
         }
       },
       advancedFilters: [],
-      selectedRows: [],
+      selectedRows: []
     };
   },
   computed: {
@@ -693,7 +717,7 @@ export default {
     },
     entity: "entityChanged",
     // store: changed => {},
-    rows: "refreshLocalData",
+    rows: "refreshLocalData"
   },
   created() {
     if (!this.$t) {
@@ -739,7 +763,7 @@ export default {
           }
         }
         return filter;
-      })
+      });
     }
     this.refreshLocalData();
 
@@ -778,7 +802,7 @@ export default {
         filters: _.cloneDeep(parsedFilters),
         page: 0
       });
-      this.getItems({useSkeleton: true});
+      this.getItems({ useSkeleton: true });
     },
 
     toggleFilter() {
@@ -787,7 +811,7 @@ export default {
       if (!this.filterable) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
-        this.getItems({useSkeleton: true});
+        this.getItems({ useSkeleton: true });
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
@@ -842,7 +866,7 @@ export default {
         columnFilters: _.cloneDeep(params.columnsFilters),
         page: 0
       });
-      this.getItems({useSkeleton: true});
+      this.getItems({ useSkeleton: true });
     },
 
     onSortChange(params) {
@@ -865,7 +889,7 @@ export default {
         return;
       }
       this.updateParams({ sort });
-      this.getItems({useSkeleton: true});
+      this.getItems({ useSkeleton: true });
     },
 
     onDateFilter(value) {
@@ -874,7 +898,7 @@ export default {
       }
       this.serverParams.range.startDate = value.startDate.toISOString().slice(0, 10);
       this.serverParams.range.endDate = value.endDate.toISOString().slice(0, 10);
-      this.getItems({useSkeleton: true});
+      this.getItems({ useSkeleton: true });
     },
 
     hasValue(item, column) {

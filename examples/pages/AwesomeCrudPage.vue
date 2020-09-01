@@ -91,6 +91,7 @@ export default {
         stats: false,
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
+        initialDisplayMode: "table",
         customInlineActions: [
           {
             name: "validate-ride-comment",

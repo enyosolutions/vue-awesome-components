@@ -105,7 +105,11 @@
             </slot>
           </div>
           <AwesomeList
-            v-if="!_isNestedDetail && displayMode === 'list'"
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'list' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+            "
             :url="_url"
             :perPage="10"
             :identity="identity"
@@ -132,7 +136,11 @@
           >
           </AwesomeList>
           <AwesomeKanban
-            v-if="!_isNestedDetail && displayMode === 'kanban'"
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'kanban' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+            "
             :columns="kanbanFieldsComputed"
             :fields="kanbanOptions.fields"
             :entity="identity"
@@ -153,7 +161,11 @@
           >
           </AwesomeKanban>
           <AwesomeTable
-            v-if="!_isNestedDetail && displayMode === 'table'"
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'table' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
+            "
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -255,7 +267,7 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view",
+  tableRowClickAction: "view"
 };
 
 const listOptions = {
@@ -613,6 +625,19 @@ export default {
         {},
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+      );
+    },
+
+    _displayModeHasPartialDisplay() {
+      return (
+        [
+          "modal",
+          "sidebar",
+          "sidebar-left",
+          "sidebar-right",
+          "fade", // deprecated
+          "slide" // deprecated
+        ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
     }
   },
@@ -1172,7 +1197,7 @@ export default {
     },
 
     onRemoveList(body) {
-      console.log('TODO: REMOVE LIST', body);
+      console.log("TODO: REMOVE LIST", body);
     },
 
     onListChanged(item) {
@@ -1216,7 +1241,14 @@ export default {
 
     onViewDisplayCancelled(item) {
       // eslint-disable-next-line
-      console.log("@cancel event treated", this.previousDisplayMode);
+      console.log("@cancel event treated, previous mode", this.previousDisplayMode);
+      console.log("@cancel event treated current mode", this.displayMode);
+      console.log(
+        "@cancel event treated next mode",
+        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode
+      );
       this.setDisplayMode(
         this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode

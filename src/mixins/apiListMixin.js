@@ -114,6 +114,7 @@ export default {
         const newKey = this.apiRequestConfig[field + "Field"] || field;
         translatedParams[newKey] = this.serverParams[field];
       });
+      console.warn({ translatedParams });
       return translatedParams;
     }
   },
@@ -177,7 +178,7 @@ export default {
     entityChanged() {
       this.data = this.url ? [] : this.rows;
       this.serverParams = {};
-      this.getItems();
+      this.getItems({ useSkeleton: true });
     },
 
     localRefreshCompleted() {
@@ -186,7 +187,7 @@ export default {
     },
 
     /** GET ENTITY ITEMS */
-    getItems(options = {useSkeleton: false}) {
+    getItems(options = { useSkeleton: false }) {
       if (options.useSkeleton) {
         this.useSkeleton = options.useSkeleton;
       }
@@ -252,6 +253,7 @@ export default {
         newProps,
         columnFilters
       );
+      console.warn("updateParams", this.serverParams);
     },
 
     // sort functions for unkown types
@@ -269,7 +271,7 @@ export default {
         return;
       }
       this.updateParams({ page: params.currentPage });
-      this.getItems();
+      this.getItems({ useSkeleton: true });
     },
 
     onPerPageChange(params) {
@@ -280,7 +282,7 @@ export default {
         return;
       }
       this.updateParams({ perPage: params.currentPerPage });
-      this.getItems();
+      this.getItems({ useSkeleton: true });
     },
 
     onSearch(params) {
@@ -292,7 +294,7 @@ export default {
       }
       let search = params.searchTerm;
       this.updateParams({ search, page: 1 });
-      this.getItems();
+      this.getItems({ useSkeleton: true });
     },
 
     onSelectionChanged(selection) {
@@ -303,10 +305,11 @@ export default {
 
     connectRouteToPagination(to) {
       if (this.routerMode) {
+        console.warn("to.query", to.query);
         this.updateParams({
           page: to.query.page, search: to.query.search,
           perPage: to.query.perPage,
-          sort: to.query.sort,
+          //   sort: to.query.sort,
           filters: to.query.filters,
         });
       }
