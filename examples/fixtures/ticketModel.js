@@ -8,7 +8,7 @@ module.exports = {
       layout: [
         {
           "x": 0, "y": 0, "w": 6, "h": 12, "i": 0,
-          fields: ['id', 'type', 'regionId', 'userId'],
+          fields: ['type', 'regionId', 'userId'],
           legend: 'Identity',
         },
         {

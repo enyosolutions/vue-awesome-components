@@ -28,6 +28,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
           />
 
           <AwesomeForm
@@ -58,6 +59,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
           />
         </div>
         <div
@@ -1340,6 +1342,10 @@ export default {
     },
 
     onLayoutUpdated(items) {
+      console.log('CALL API TO CHANGED LAYOUT : ', items);
+    },
+
+    onLayoutFieldsUpdated(items) {
       console.log('CALL API TO CHANGED LAYOUT : ', items);
     }
   }

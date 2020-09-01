@@ -121,10 +121,11 @@
                               :edit-mode="editLayout"
                               :layout="layout"
                               @layout-updated="onLayoutUpdated"
+                              @layout-fields-updated="onLayoutFieldsUpdated"
                             >
-                              <template v-slot:fields="slotProps">
+                              <template v-slot:field="slotProps">
                                 <VueFormGenerator
-                                  :schema="getShemaForFields(slotProps.fields)"
+                                  :schema="getShemaForFields(slotProps.field)"
                                   :model="selectedItem"
                                   :options="formOptions"
                                   tag="div"
@@ -1336,6 +1337,10 @@ export default {
 
     onLayoutUpdated(items) {
       this.$emit('layout-updated', items);
+    },
+
+    onLayoutFieldsUpdated(items) {
+      this.$emit('layout-fields-updated', items)
     }
   }
 };
