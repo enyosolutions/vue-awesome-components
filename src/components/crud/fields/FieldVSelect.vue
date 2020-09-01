@@ -39,7 +39,8 @@
 </template>
 <script>
 /* eslint-disable */
-import VueFormGenerator from "vue-form-generator";
+
+import VueFormGenerator from '../../../components/form/form-generator';
 import selectMixin from "../../../mixins/selectMixin";
 import vSelect from "vue-select";
 import _ from "lodash";

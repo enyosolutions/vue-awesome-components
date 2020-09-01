@@ -9,14 +9,11 @@
 </template>
 
 <script>
-import VueFormGenerator from 'vue-form-generator';
-import moment from 'moment';
-import $ from 'jquery';
+import VueFormGenerator from "../../../components/form/form-generator";
+import moment from "moment";
+import $ from "jquery";
 
-
-
-
-const inputFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+const inputFormat = "YYYY-MM-DDTHH:mm:ssZ";
 
 export default {
   mixins: [VueFormGenerator.abstractField],
@@ -25,10 +22,8 @@ export default {
   },
   computed: {
     pickerType() {
-      return (this.schema.fieldOptions
-        && this.schema.fieldOptions.type)
-      || 'datetime';
-    },
+      return (this.schema.fieldOptions && this.schema.fieldOptions.type) || "datetime";
+    }
   },
   methods: {
     getDateFormat() {
@@ -38,11 +33,10 @@ export default {
       return inputFormat;
     },
 
-
     formatValueToField(value) {
       if (value != null) {
         let dt;
-        if (typeof this.fieldOptions.format !== 'undefined') {
+        if (typeof this.fieldOptions.format !== "undefined") {
           dt = moment(value, this.fieldOptions.format).toDate();
         } else {
           dt = new Date(value);
@@ -59,18 +53,15 @@ export default {
         value = m.format(this.getDateFormat());
       }
       return value;
-    },
+    }
   },
 
-  beforeDestroy() {
-
-  },
+  beforeDestroy() {}
 };
 </script>
 
-
 <style lang="scss">
 .vdatetime.form-group {
-  margin-bottom: 0
+  margin-bottom: 0;
 }
 </style>

@@ -23,7 +23,7 @@
 </template>
 <script>
 /* eslint-disable */
-import VueFormGenerator from 'vue-form-generator';
+import VueFormGenerator from "../../../components/form/form-generator";
 import selectMixin from '../../../mixins/selectMixin';
 
 export default {

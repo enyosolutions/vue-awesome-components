@@ -13,7 +13,7 @@ import qs from 'qs';
 import VueI18n from "vue-i18n";
 import axios from "axios";
 import Datetime from 'vue-datetime';
-import VueFormGenerator from 'vue-form-generator';
+import VueFormGenerator from './components/form/form-generator';
 import VueGoodTablePlugin from "vue-good-table";
 import VueRouter from "vue-router";
 import Multiselect from 'vue-multiselect'

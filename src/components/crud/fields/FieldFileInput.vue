@@ -13,12 +13,12 @@
   </div>
 </template>
 <script>
-import VueFormGenerator from 'vue-form-generator';
+import VueFormGenerator from "../../../components/form/form-generator";
 // import { defaults } from "lodash";
 // import moment from "moment";
 
 // You need a specific loader for CSS files
-import Base64Upload from '../..//form/Base64Upload';
+import Base64Upload from "../../form/Base64Upload";
 
 export default {
   components: { Base64Upload },
@@ -26,18 +26,9 @@ export default {
   data() {
     return {
       refresh: new Date(),
-      type:
-        this.schema &&
-        this.schema.fieldOptions &&
-        this.schema.fieldOptions.inputType,
-      placeholder:
-        this.schema &&
-        this.schema.fieldOptions &&
-        this.schema.fieldOptions.placeholder,
-      inputClass:
-        this.schema &&
-        this.schema.fieldOptions &&
-        this.schema.fieldOptions.inputClass,
+      type: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputType,
+      placeholder: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder,
+      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
     };
   },
   computed: {},
@@ -46,7 +37,7 @@ export default {
       if (change !== old) {
         this.refresh = Date.now();
       }
-    },
+    }
   },
   mounted() {
     this.oldValue = this.value;
@@ -57,8 +48,8 @@ export default {
     onChangeImage(file) {
       // console.log('Field File input', Object.keys(file));
       this.value = file.base64;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="scss">

@@ -1283,6 +1283,11 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
+"@interactjs/types@1.9.22":
+  version "1.9.22"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.9.22.tgz#1504d3170b062555b03ee8eb954ae653b7f614e2"
+  integrity sha512-GMMMCYE+FPrKCOOOqQ/ImpqLyinb6e8psw9MR9ymTJxnkmJMKrY/GDC/187PVxpWdtSqW+GibkeRfUCOv6vFjg==
+
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz#be7c7846128b88f6a9b1d1261a0ad06eb5c0fdf8"
@@ -6287,15 +6292,15 @@ core-js-pure@^3.0.1:
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.6.5.tgz#c79e75f5e38dbc85a662d91eea52b8256d53b813"
   integrity sha512-lacdXOimsiD0QyNf9BC/mxivNJ/ybBGJXQFKzRekp1WTHoVUWsUHEn+2T8GJAzzIhyOuXA+gOxCVN3l+5PLPUA==
 
+core-js@2, core-js@^2.4.0, core-js@^2.6.5:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
+  integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
+
 core-js@2.6.5:
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.5.tgz#44bc8d249e7fb2ff5d00e0341a7ffb94fbf67895"
   integrity sha512-klh/kDpwX8hryYL14M9w/xei6vrv6sE8gTHDG7/T/+SEovB/G4ejwcfE/CBzO6Edsu+OETZMZ3wcX/EjUkrl5A==
-
-core-js@^2.4.0, core-js@^2.6.5:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
-  integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
 core-js@^3.0.1, core-js@^3.0.4, core-js@^3.4.0, core-js@^3.6.4:
   version "3.6.5"
@@ -7385,7 +7390,7 @@ elegant-spinner@^1.0.1:
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
 
-element-resize-detector@^1.2.1:
+element-resize-detector@^1.1.15, element-resize-detector@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.2.1.tgz#b0305194447a4863155e58f13323a0aef30851d1"
   integrity sha512-BdFsPepnQr9fznNPF9nF4vQ457U/ZJXQDSNF1zBe7yaga8v9AdZf3/NElYxFdUh7SitSGt040QygiTo6dtatIw==
@@ -8182,6 +8187,11 @@ fd-slicer@~1.1.0:
   integrity sha1-JcfInLH5B3+IkbvmHY85Dq4lbx4=
   dependencies:
     pend "~1.2.0"
+
+fecha@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/fecha/-/fecha-4.2.0.tgz#3ffb6395453e3f3efff850404f0a59b6747f5f41"
+  integrity sha512-aN3pcx/DSmtyoovUudctc8+6Hl4T+hI9GBBHLjA76jdZl7+b1sgh5g4k+u/GL3dTy1/pnYzKp69FpJ0OicE3Wg==
 
 figgy-pudding@^3.5.1:
   version "3.5.2"
@@ -9980,6 +9990,13 @@ inquirer@^7.0.0, inquirer@^7.1.0:
     string-width "^4.1.0"
     strip-ansi "^6.0.0"
     through "^2.3.6"
+
+interactjs@^1.6.3:
+  version "1.9.22"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.9.22.tgz#5ae98d2dd46d720cccdb89222b4e1ddcbe5cfeb9"
+  integrity sha512-zUQefYtYJTazWKqDCSYV0vMJPFWp/PKXwpA3v75fD3+4+4J3/ItjlO7K3L1CpNWYU6s8uoEmwwOD6uDy6OoI/w==
+  dependencies:
+    "@interactjs/types" "1.9.22"
 
 internal-ip@^4.3.0:
   version "4.3.0"
@@ -13279,7 +13296,7 @@ polished@^3.3.1, polished@^3.4.4:
   dependencies:
     "@babel/runtime" "^7.9.2"
 
-popper.js@^1.14.4, popper.js@^1.14.7:
+popper.js@^1.14.4, popper.js@^1.14.7, popper.js@^1.15.0:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
   integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
@@ -17410,6 +17427,14 @@ vue-good-table@^2.14.4:
     lodash.isequal "^4.5.0"
     vue-select "^3.1.0"
 
+vue-grid-layout@^2.3.8:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/vue-grid-layout/-/vue-grid-layout-2.3.8.tgz#47e4a8c16df9e3c917f8c142f86fb70594e86b3c"
+  integrity sha512-bwvJo1BWe547w2Y9JhiwUGQr4YSSwSWKry4gClwnmkpWF4lKpJflHPvl0LGGknmmnpdEFOKdgreIcilh6Ry43w==
+  dependencies:
+    element-resize-detector "^1.1.15"
+    interactjs "^1.6.3"
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
@@ -17442,6 +17467,13 @@ vue-loader@^15.7.0, vue-loader@^15.7.1, vue-loader@^15.9.1:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
+vue-loading-skeleton@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/vue-loading-skeleton/-/vue-loading-skeleton-1.1.9.tgz#e38bd157bf3348860fc22c49f1621e61feda7183"
+  integrity sha512-5gMrI9equv0PMVLD5EMa4NTUvqDM3Bq/wiO4NftbEaVNeoGomG/XslB4Ev8Ued+WiE2Y/9HsIx5YXhDXimyqZw==
+  dependencies:
+    core-js "2"
+
 vue-multiselect@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-2.1.6.tgz#5be5d811a224804a15c43a4edbb7485028a89c7f"
@@ -17451,6 +17483,14 @@ vue-notifyjs@^0.4.3:
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/vue-notifyjs/-/vue-notifyjs-0.4.3.tgz#4fd099d49753ccbbfd807e80ed7e0e2739176621"
   integrity sha512-noZGki6q5B7YPmruA8+GYjSJC4WWXfmZxIpeWbfYYPYJ9ZBr+ggcswbIRFIuINlZYsOFaflb4Hpzd8bBZdHY7g==
+
+vue-popperjs@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/vue-popperjs/-/vue-popperjs-2.3.0.tgz#9cfa052878a3b47b670339ea81e05edcb863200f"
+  integrity sha512-925QEeNjlMtb3eDHl5ZlODJzqnQL0nQPEKpr9aQ3XBg21DyqAdfLgD/At4svsPwFeIkpdF1gvHarENon47L9Cg==
+  dependencies:
+    opencollective-postinstall "^2.0.2"
+    popper.js "^1.15.0"
 
 vue-router@^3.0.1, vue-router@^3.1.3:
   version "3.1.6"
