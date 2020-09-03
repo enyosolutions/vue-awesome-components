@@ -28,6 +28,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
           />
 
           <AwesomeForm
@@ -58,6 +59,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
           />
         </div>
         <div
@@ -103,7 +105,11 @@
             </slot>
           </div>
           <AwesomeList
-            v-if="!_isNestedDetail && displayMode === 'list'"
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'list' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+            "
             :url="_url"
             :perPage="10"
             :identity="identity"
@@ -129,8 +135,37 @@
             @itemClicked="onListItemClicked"
           >
           </AwesomeList>
+          <AwesomeKanban
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'kanban' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+            "
+            :columns="kanbanFieldsComputed"
+            :fields="kanbanOptions.fields"
+            :entity="identity"
+            :url="_url"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :kanban-options="kanbanOptions"
+            @customListAction="onCustomListAction"
+            @removeList="onRemoveList"
+            @listChanged="onListChanged"
+            @cardChanged="onCardChanged"
+            @cardClicked="onCardClicked"
+          >
+          </AwesomeKanban>
           <AwesomeTable
-            v-if="!_isNestedDetail && displayMode === 'table'"
+            v-if="
+              !_isNestedDetail &&
+                (displayMode === 'table' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
+            "
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -201,13 +236,15 @@ import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
+import notificationsMixin from "../../mixins/notificationsMixin";
 import i18nMixin from "../../mixins/i18nMixin";
-import { defaultActions } from "../../mixins/defaultProps";
+import { defaultActions, defaultKanbanOptions } from "../../mixins/defaultProps";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import AwesomeTable from "../table/AwesomeTable.vue";
 import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
 import AwesomeForm from "./AwesomeForm.vue";
 import AwesomeList from "../table/AwesomeList";
+import AwesomeKanban from "../table/AwesomeKanban";
 
 import "vue-good-table/dist/vue-good-table.css";
 
@@ -223,7 +260,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table", // table | list
+  initialDisplayMode: "table", // table | list | kanban
   detailPageMode: "sidebar", // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -327,9 +364,10 @@ export default {
     AwesomeTable,
     EnyoCrudStatsSection,
     AwesomeForm,
-    AwesomeList
+    AwesomeList,
+    AwesomeKanban
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin, notificationsMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -422,6 +460,10 @@ export default {
       type: Object,
       default: () => listOptions
     },
+    kanbanOptions: {
+      type: Object,
+      default: () => defaultKanbanOptions
+    },
     actions: {
       type: Object,
       default: () => defaultActions,
@@ -451,7 +493,7 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
-      supportedDataDisplayModes: ["table", "list"]
+      supportedDataDisplayModes: ["table", "list", "kanban"]
     };
   },
   computed: {
@@ -549,21 +591,54 @@ export default {
       return columns;
     },
 
+    kanbanFieldsComputed() {
+      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      let columns = [];
+      if (this.kanbanOptions && !Array.isArray(this.kanbanOptions.fields)) {
+        return [];
+      }
+      this.kanbanOptions.fields.forEach((field) => {
+        columns.push(_.filter(allColumns, ["field", field]));
+      });
+      columns = _.flatten(columns);
+      return columns;
+    },
+
     tableColumnsComputed() {
       return this.parseColumns(this.schemaComputed.properties);
     },
 
     _layout() {
-      return this.layout || (this.model && this.model.formOptions && this.model.formOptions.optionsLayout && this.model.formOptions.optionsLayout.layout);
+      return this.layout || (this.model && this.model.formOptions && this.model.formOptions.layout);
     },
+    _createFormLayout() {
+      return (this.model && this.model.formOptions && this.model.formOptions.createLayout) || this._layout;
+    },
+
+    _editFormLayout() {
+      return (this.model && this.model.formOptions && this.model.editLayout) || this._layout;
+    },
+
     createPageLayoutComputed() {
-      return this.createPageLayout || (this.model && this.model.createPageLayout) || this._layout;
+      return (
+        this.createPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.createLayout) ||
+        this._layout
+      );
     },
     viewPageLayoutComputed() {
-      return this.viewPageLayout || (this.model && this.model.viewPageLayout) || this._layout;
+      return (
+        this.viewPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.viewPageLayout) ||
+        this._layout
+      );
     },
     editPageLayoutComputed() {
-      return this.editPageLayout || (this.model && this.model.editPageLayout) || this._layout;
+      return (
+        this.editPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.editPageLayout) ||
+        this._layout
+      );
     },
 
     _actions() {
@@ -571,6 +646,19 @@ export default {
         {},
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+      );
+    },
+
+    _displayModeHasPartialDisplay() {
+      return (
+        [
+          "modal",
+          "sidebar",
+          "sidebar-left",
+          "sidebar-right",
+          "fade", // deprecated
+          "slide" // deprecated
+        ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
     }
   },
@@ -1123,6 +1211,39 @@ export default {
       return action && action.action && action.action(body, this);
     },
 
+    onCustomListAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-list-action", action);
+      return action && action.action && action.action(body, this);
+    },
+
+    onRemoveList(body) {
+      console.log("TODO: REMOVE LIST", body);
+    },
+
+    onListChanged(item) {
+      console.log(item);
+    },
+
+    onCardChanged(item, listTitle) {
+      console.log(item, listTitle);
+    },
+
+    onCardClicked(item) {
+      this.$emit("on-kanban-item-clicked", item);
+      switch (this.mergedOptions.tableRowClickAction) {
+        case "edit":
+          this.goToEditPage(item);
+          break;
+        case "view":
+          this.goToViewPage(item);
+          break;
+        case "default":
+          this.goToViewPage(item);
+          break;
+      }
+    },
+
     /**
      * @param item object
      * @param options = {context = create | edit }
@@ -1141,7 +1262,14 @@ export default {
 
     onViewDisplayCancelled(item) {
       // eslint-disable-next-line
-      console.log("@cancel event treated", this.previousDisplayMode);
+      console.log("@cancel event treated, previous mode", this.previousDisplayMode);
+      console.log("@cancel event treated current mode", this.displayMode);
+      console.log(
+        "@cancel event treated next mode",
+        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode
+      );
       this.setDisplayMode(
         this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
@@ -1244,30 +1372,14 @@ export default {
       });
     },
 
-    $notify(message) {
-      const payload = _.isObject(message)
-        ? {
-            timer: 3000,
-            title: message,
-            type: "success",
-            ...message, // Placement is important to guarantee theat the display is always a notification
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false
-          }
-        : {
-            timer: 3000,
-            type: "info",
-            title: message,
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false
-          };
-      Swal.fire(payload);
+    onLayoutUpdated(items) {
+      console.log("CALL API TO CHANGED LAYOUT : ", items);
+      this.$emit("layout-updated", items);
     },
 
-    onLayoutUpdated(items) {
-      console.log('CALL API TO CHANGED LAYOUT : ', items);
+    onLayoutFieldsUpdated(items) {
+      console.log("CALL API TO CHANGED LAYOUT : ", items);
+      this.$emit("layout-fields-updated", items);
     }
   }
 };

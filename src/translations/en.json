@@ -10,6 +10,15 @@
       "not_imported": "not_imported"
     }
   },
+  "AwesomeKanban": {
+    "labels": {
+      "addList": "Add a list",
+      "add": "Add",
+      "listName": "List name",
+      "removeList": "Remove list",
+      "noData": "No fields selected"
+    }
+  },
   "AwesomeFilter": {
     "labels": {
       "filterData": "Filter data",
@@ -80,8 +89,9 @@
       "edit": "Edit",
       "save": "Save",
       "bulkEdit": "Multiple Edit",
-      "editLayout": "Edit Layout",
-      "saveLayout": "Save Layout"
+      "openEditLayoutMode": "Edit Layout",
+      "closeEditLayoutMode": "Close editor",
+      "resetLayout": "Reset the layout"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
@@ -96,6 +106,11 @@
   "AwesomeList": {
     "labels": {
       "noData": "No fields selected"
+    }
+  },
+  "AwesomeLayout": {
+    "messages": {
+      "emptyBlockBeforeDelete": "you must empty the block before you can delete it."
     }
   }
 }

@@ -42,12 +42,43 @@
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
                       </h3>
+
+                      <div class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                        <button
+                          v-if="!editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="editLayoutMode = true"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-danger btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="resetLayout"
+                        >
+                          <i class="fa fa-eraser"></i>
+                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="closeEditLayoutMode"
+                        >
+                          <i class="fa fa-save"></i>
+                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                        </button>
+                      </div>
+
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
                         class="close"
                         aria-label="Close"
-                        @click="cancel()"
+                        @click="close()"
                       >
                         <span aria-hidden="true" class="text-white">&times;</span>
                       </button>
@@ -87,12 +118,43 @@
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
                         {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
+
+                      <div class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                        <button
+                          v-if="!editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="editLayoutMode = true"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-danger btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="resetLayout"
+                        >
+                          <i class="fa fa-eraser"></i>
+                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="closeEditLayoutMode"
+                        >
+                          <i class="fa fa-save"></i>
+                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                        </button>
+                      </div>
+
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
                         class="close"
                         aria-label="Close"
-                        @click="cancel()"
+                        @click="cancel"
                       >
                         <span aria-hidden="true" class="text-white">&times;</span>
                       </button>
@@ -118,13 +180,14 @@
                         <div class="tab-content">
                           <div class="row" v-if="renderLayout && layout">
                             <AwesomeLayout
-                              :edit-mode="editLayout"
+                              :edit-mode="editLayoutMode"
                               :layout="layout"
                               @layout-updated="onLayoutUpdated"
+                              @layout-fields-updated="onLayoutFieldsUpdated"
                             >
-                              <template v-slot:fields="slotProps">
+                              <template v-slot:field="slotProps">
                                 <VueFormGenerator
-                                  :schema="getShemaForFields(slotProps.fields)"
+                                  :schema="getShemaForFields(slotProps.field)"
                                   :model="selectedItem"
                                   :options="formOptions"
                                   tag="div"
@@ -238,7 +301,7 @@
                           v-if="!standalone"
                           type="button"
                           class="btn btn-default btn-simple mr-auto"
-                          @click="cancel()"
+                          @click="cancel"
                         >
                           {{ $t("AwesomeCrud.buttons.cancel") }}
                         </button>
@@ -267,24 +330,7 @@
                             </button>
                           </template>
                         </template>
-                        <button
-                                v-if="!editLayout && layout"
-                                class="btn btn-info btn-main-style ml-auto"
-                                type="button"
-                                @click="editLayout = true"
-                        >
-                          <i class="fa fa-th-large"></i>
-                          {{ $t("AwesomeCrud.buttons.editLayout") }}
-                        </button>
-                        <button
-                                v-if="editLayout && layout"
-                                class="btn btn-info btn-main-style ml-auto"
-                                type="button"
-                                @click="saveLayout"
-                        >
-                          <i class="fa fa-th-large"></i>
-                          {{ $t("AwesomeCrud.buttons.saveLayout") }}
-                        </button>
+
                         <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
                           {{ $t("AwesomeCrud.buttons.save") }}
                         </button>
@@ -557,7 +603,7 @@ export default {
       _model: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
-      editLayout: false,
+      editLayoutMode: false,
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
@@ -943,8 +989,6 @@ export default {
                 ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
-            // eslint-disable-next-line
-            console.log(this.selectedItem, res.data, this.apiResponseConfig.dataPath);
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -955,11 +999,12 @@ export default {
     },
 
     getShemaForFields(fields) {
+      if (!fields) {
+        return;
+      }
       const fieldsDefinition = this.formSchema.fields.filter((f) => {
         return fields.indexOf(f.model) > -1;
       });
-      // eslint-disable-next-line
-      console.log(fields, this.formSchema.fields);
       return { ...this.formSchema, fields: fieldsDefinition };
     },
 
@@ -1069,9 +1114,6 @@ export default {
     },
 
     openModal() {
-      // eslint-disable-next-line
-      console.log("openModal was called", this.mode);
-
       switch (this.displayMode) {
         case "modal":
         case "fade":
@@ -1088,8 +1130,6 @@ export default {
       this.show = true;
       this.showBackdrop = true;
 
-      // eslint-disable-next-line
-      console.log("openModal was called", this.show);
       /*
       if (this.displayMode !== 'page' && this.$modal.modal) {
         this.$modal.modal('show');
@@ -1102,7 +1142,6 @@ export default {
     },
 
     closeModal() {
-      this.$emit("closeRequested", null, { context: this.mode });
       if (this.standalone) {
         return;
       }
@@ -1121,9 +1160,14 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      console.log("cancel modal called");
       this.closeModal();
       this.$emit("cancel", null, { context: this.mode });
+    },
+
+    close() {
+      //eslint-disable-next-line
+      this.closeModal();
+      this.$emit("closeRequested", null, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1330,12 +1374,20 @@ export default {
     renderGroup() {},
     renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
 
-    saveLayout() {
-      this.editLayout = false;
+    closeEditLayoutMode() {
+      this.editLayoutMode = false;
+    },
+
+    resetLayout() {
+      this.$emit("layout-resetted", []);
     },
 
     onLayoutUpdated(items) {
-      this.$emit('layout-updated', items);
+      this.$emit("layout-updated", items);
+    },
+
+    onLayoutFieldsUpdated(items) {
+      this.$emit("layout-fields-updated", items);
     }
   }
 };
@@ -1474,5 +1526,10 @@ body.modal-open .bootstrap-datetimepicker-widget {
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.aw-form-header-actions {
+  flex: auto;
+  justify-content: flex-end;
 }
 </style>

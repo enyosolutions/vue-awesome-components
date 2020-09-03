@@ -1,21 +1,24 @@
 <template>
-  <AwesomeLayout :edit-mode="true" :layout="layout" label="1st"></AwesomeLayout>
+  <AwesomeLayout :edit-mode="true" :layout="layout" label="1st" @layout-updated="updateLayout"></AwesomeLayout>
 </template>
 
 <script>
-  import AwesomeLayout from "../../src/components/crud/layout/AwesomeLayout";
-  import ticket from '../fixtures/ticket';
-  export default {
-    name: "AwesomeLayoutPage",
-    components: {
-      AwesomeLayout
-    },
-    data: () => ({
-      layout: ticket.formOptions.optionsLayout.layout,
-    })
+import AwesomeLayout from "../../src/components/crud/layout/AwesomeLayout";
+import ticket from "../fixtures/ticket";
+export default {
+  name: "AwesomeLayoutPage",
+  components: {
+    AwesomeLayout
+  },
+  data: () => ({
+    layout: ticket.formOptions.optionsLayout.layout
+  }),
+  methods: {
+    updateLayout(items) {
+      this.layout = items;
+    }
   }
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

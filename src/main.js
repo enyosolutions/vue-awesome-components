@@ -101,6 +101,10 @@ const router = new VueRouter({
       component: () => import("../examples/pages/AwesomeCrudPage")
     },
     {
+      path: "/awesomekanban",
+      component: () => import("../examples/pages/AwesomeKanbanPage")
+    },
+    {
       path: "/awesomelayout",
       component: () => import("../examples/pages/AwesomeLayoutPage")
     }

@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import VueFormGenerator from "../../../components/form/form-generator";
-import moment from "moment";
-import $ from "jquery";
+import VueFormGenerator from '../../form/form-generator';
+import moment from 'moment';
+import $ from 'jquery';
 
 const inputFormat = "YYYY-MM-DDTHH:mm:ssZ";
 

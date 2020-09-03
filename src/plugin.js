@@ -9,6 +9,7 @@ import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 // import FieldDateRange from './components/crud/fields/fieldDateRange.vue';
 import AwesomeCrud from './components/crud/AwesomeCrud.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
+import AwesomeKanban from './components/table/AwesomeKanban.vue';
 
 import FormGenerator from './components/form/form-generator';
 
@@ -22,6 +23,7 @@ import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 import AwesomeTable from './components/table/AwesomeTable.vue';
+
 
 
 
@@ -74,12 +76,14 @@ const install = (Vue, options) => {
   Vue.component('ajax-table', AwesomeTable);
   Vue.component('enyo-ajax-table', AwesomeTable);
   Vue.component('AwesomeTable', AwesomeTable);
-  Vue.component('AwesomeTable', AwesomeTable);
+
   Vue.component('AwesomeForm', AwesomeForm);
 
 
   Vue.component('crud-component', AwesomeCrud);
   Vue.component('awesome-crud', AwesomeCrud);
+
+  Vue.component('awesome-kanban', AwesomeKanban);
 
   if (!Vue.prototype.$http) {
     Vue.prototype.$http = axios.create({});
