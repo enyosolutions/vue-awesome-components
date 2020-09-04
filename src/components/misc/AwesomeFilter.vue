@@ -59,7 +59,7 @@
             <!-- TYPE NUMBER -->
             <input
               v-if="
-                currentField.type === 'number' &&
+                (currentField.type === 'number' || currentField.type === 'integer') &&
                   currentFilter.value !== '$between' &&
                   currentFilter.value !== '$notBetween'
               "
@@ -115,7 +115,7 @@
             <div
               class="form-element between"
               v-if="
-                currentField.type === 'number' &&
+                (currentField.type === 'number' || currentField.type === 'integer') &&
                   (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
               "
             >
