@@ -252,24 +252,8 @@ export default {
     editFilters: { type: Boolean, default: true }
     // value: Array
   },
-  data: (vm) => ({
-    filters: [
-      { text: vm.$t("AwesomeFilter.filters.equals"), value: "$eq" },
-      { text: vm.$t("AwesomeFilter.filters.not-equals"), value: "$ne" },
-      { text: vm.$t("AwesomeFilter.filters.is"), value: "$is" },
-      { text: vm.$t("AwesomeFilter.filters.is-not"), value: "$not" },
-      { text: vm.$t("AwesomeFilter.filters.greater-than"), value: "$gt" },
-      { text: vm.$t("AwesomeFilter.filters.greater-or-equals"), value: "$gte" },
-      { text: vm.$t("AwesomeFilter.filters.lesser-than"), value: "$lt" },
-      { text: vm.$t("AwesomeFilter.filters.lesser-or-equals"), value: "$lte" },
-      { text: vm.$t("AwesomeFilter.filters.between"), value: "$between" },
-      { text: vm.$t("AwesomeFilter.filters.not-between"), value: "$notBetween" },
-      { text: vm.$t("AwesomeFilter.filters.contains"), value: "$like" },
-      { text: vm.$t("AwesomeFilter.filters.not-contains"), value: "$notLike" },
-      { text: vm.$t("AwesomeFilter.filters.starts-with"), value: "$startsWith" },
-      { text: vm.$t("AwesomeFilter.filters.ends-with"), value: "$endsWith" },
-      { text: vm.$t("AwesomeFilter.filters.contains-also"), value: "$substring" }
-    ],
+  data: () => ({
+    filters: [],
     rules: {
       text: ["$eq", "$ne", "$like", "$notLike", "$startsWith", "$endsWith", "$substring"],
       datetime: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
@@ -278,7 +262,7 @@ export default {
     },
     currentField: {},
     currentValue: "",
-    currentFilter: { text: vm.$t("AwesomeFilter.filters.equals"), value: "$eq" },
+    currentFilter: {},
     selectedFilters: [],
     dateRangePicker: {
       startDate: moment(),
@@ -287,10 +271,10 @@ export default {
         direction: "ltr", // direction of text
         format: "DD-MM-YYYY", // fomart of the dates displayed
         separator: " - ", // separator between the two ranges
-        applyLabel: vm.$t("dateRangePicker.applyLabel"),
-        cancelLabel: vm.$t("dateRangePicker.cancelLabel"),
-        weekLabel: vm.$t("dateRangePicker.weekLabel"),
-        customRangeLabel: vm.$t("dateRangePicker.customRangeLabel"),
+        applyLabel: '',
+        cancelLabel: '',
+        weekLabel: '',
+        customRangeLabel: '',
         daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
         monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
         firstDay: 1 // ISO first day of week - see moment documenations for details
@@ -368,12 +352,12 @@ export default {
     },
 
     currentField(newField) {
+      this.currentFilter = this.getFilters[0];
       if (Object.keys(newField).length) {
         if (newField.type === "datetime" || newField.type === "date") {
           this.currentValue = new Date().toISOString();
         } else if (newField.type === "boolean") {
           this.currentValue = true;
-          this.currentFilter = { text: this.$t("AwesomeFilter.filters.is"), value: "$is" };
         } else {
           this.currentValue = "";
         }
@@ -390,6 +374,32 @@ export default {
         };
       }
     }
+  },
+  mounted() {
+    this.filters = [
+      { text: this.$t("AwesomeFilter.filters.equals"), value: "$eq" },
+      { text: this.$t("AwesomeFilter.filters.not-equals"), value: "$ne" },
+      { text: this.$t("AwesomeFilter.filters.is"), value: "$is" },
+      { text: this.$t("AwesomeFilter.filters.is-not"), value: "$not" },
+      { text: this.$t("AwesomeFilter.filters.greater-than"), value: "$gt" },
+      { text: this.$t("AwesomeFilter.filters.greater-or-equals"), value: "$gte" },
+      { text: this.$t("AwesomeFilter.filters.lesser-than"), value: "$lt" },
+      { text: this.$t("AwesomeFilter.filters.lesser-or-equals"), value: "$lte" },
+      { text: this.$t("AwesomeFilter.filters.between"), value: "$between" },
+      { text: this.$t("AwesomeFilter.filters.not-between"), value: "$notBetween" },
+      { text: this.$t("AwesomeFilter.filters.contains"), value: "$like" },
+      { text: this.$t("AwesomeFilter.filters.not-contains"), value: "$notLike" },
+      { text: this.$t("AwesomeFilter.filters.starts-with"), value: "$startsWith" },
+      { text: this.$t("AwesomeFilter.filters.ends-with"), value: "$endsWith" },
+      { text: this.$t("AwesomeFilter.filters.contains-also"), value: "$substring" }
+    ];
+    this.currentFilter = {
+      text: this.$t("AwesomeFilter.filters.equals"), value: "$eq"
+    };
+    this.dateRangePicker.locale.applyLabel = this.$t("dateRangePicker.applyLabel");
+    this.dateRangePicker.locale.cancelLabel = this.$t("dateRangePicker.cancelLabel");
+    this.dateRangePicker.locale.weekLabel = this.$t("dateRangePicker.weekLabel");
+    this.dateRangePicker.locale.customRangeLabel = this.$t("dateRangePicker.customRangeLabel");
   }
 };
 </script>
