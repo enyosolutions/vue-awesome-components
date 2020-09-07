@@ -26,10 +26,13 @@
       >
         <div :class="editMode ? 'card card-primary p-0' : 'p-0'">
           <div v-if="item.legend || editMode" class="draggable-header bg-primary">
-            <i class="fa fa-arrows" v-if="editMode"></i>
-            {{ item.legend }}
-            <a class="pull-right" @click="removeItemFromGrid(index)">
-              <i class="fa fa-trash" v-if="editMode"></i>
+            <div class="legend">
+              <i class="fa fa-pencil" v-if="editMode"></i>
+              <input v-if="editMode" class="form-control ml-2" type="text" v-model="item.legend">
+              <p v-else>{{ item.legend }}</p>
+            </div>
+            <a v-if="editMode" @click="removeItemFromGrid(index)">
+              <i class="fa fa-trash"></i>
             </a>
           </div>
           <div class="item-draggable">
@@ -178,6 +181,28 @@ export default {
     background-color: #0a6ebd;
     color: white;
     padding: 2px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .legend {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      height: inherit;
+      overflow: hidden;
+      width: 100%;
+      margin-right: 10px;
+      input {
+        color: white !important;
+      }
+      p {
+        margin-bottom: 0;
+        width: 100%;
+        height: inherit;
+      }
+    }
   }
 
   .moving-card {
