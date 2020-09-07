@@ -1,5 +1,5 @@
 <template>
-  <AwesomeLayout :edit-mode="true" :layout="layout" label="1st" @layout-updated="updateLayout"></AwesomeLayout>
+  <AwesomeLayout :edit-mode="true" :layout="layout" @layout-updated="updateLayout"></AwesomeLayout>
 </template>
 
 <script>

@@ -101,11 +101,7 @@ export default {
     },
     editMode: {
       type: Boolean,
-      required: true
-    },
-    legend: {
-      type: String,
-      required: false
+      default: () => false
     }
   },
   data: () => ({
