@@ -48,7 +48,7 @@
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
                           type="button"
-                          @click="editLayoutMode = true"
+                          @click="openEditLayoutMode"
                         >
                           <i class="fa fa-th-large"></i>
                           {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
@@ -85,7 +85,22 @@
                     </div>
                     <div class="modal-body">
                       <slot name="create-form" :selectedItem="selectedItem">
-                        <template v-if="formSchema && formSchema.fields">
+                        <AwesomeLayout
+                            :edit-mode="editLayoutMode"
+                            :layout="layout"
+                            @layout-updated="onLayoutUpdated"
+                            @layout-fields-updated="onLayoutFieldsUpdated"
+                        >
+                          <template v-slot:field="slotProps">
+                            <VueFormGenerator
+                                :schema="getShemaForFields(slotProps.field)"
+                                :model="selectedItem"
+                                :options="formOptions"
+                                tag="div"
+                            />
+                          </template>
+                        </AwesomeLayout>
+                        <!--<template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
                             ref="form"
                             :schema.sync="createFormSchema"
@@ -93,7 +108,7 @@
                             :options="formOptions"
                             tag="div"
                           />
-                        </template>
+                        </template>-->
                       </slot>
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
@@ -124,7 +139,7 @@
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
                           type="button"
-                          @click="editLayoutMode = true"
+                          @click="openEditLayoutMode"
                         >
                           <i class="fa fa-th-large"></i>
                           {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
@@ -587,6 +602,9 @@ export default {
     layout: {
       type: Array,
       note: "Layout of the form"
+    },
+    editLayoutMode: {
+      type: Boolean
     }
   },
   data() {
@@ -603,7 +621,6 @@ export default {
       _model: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
-      editLayoutMode: false,
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
@@ -1374,8 +1391,13 @@ export default {
     renderGroup() {},
     renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
 
+    openEditLayoutMode() {
+      this.$emit('open-edit-layout-mode');
+    },
+
     closeEditLayoutMode() {
-      this.editLayoutMode = false;
+      this.$emit('close-edit-layout-mode')
+      //this.editLayoutMode = false;
     },
 
     resetLayout() {

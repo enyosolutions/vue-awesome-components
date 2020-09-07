@@ -15,7 +15,7 @@ export const defaultActions = {
   bulkDelete: true,
   bulkEdit: true,
   itemsPerRow: true,
-  editLayout: false,
+  editLayout: true,
 };
 
 export const defaultKanbanOptions = {

@@ -12,6 +12,7 @@
             :layout="viewPageLayoutComputed"
             :item="selectedItem"
             :needs-refresh="awesomeEditNeedsRefresh"
+            :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -29,6 +30,8 @@
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
             @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
           />
 
           <AwesomeForm
@@ -42,6 +45,7 @@
             :item="selectedItem"
             :bulk-items="selectedItems"
             :needs-refresh="awesomeEditNeedsRefresh"
+            :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -60,6 +64,8 @@
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
             @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
           />
         </div>
         <div
@@ -493,7 +499,8 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
-      supportedDataDisplayModes: ["table", "list", "kanban"]
+      supportedDataDisplayModes: ["table", "list", "kanban"],
+      editLayoutMode: false,
     };
   },
   computed: {
@@ -1037,6 +1044,9 @@ export default {
       if (options.reset) {
         this.selectedItem = {};
       }
+      if (options.editLayoutMode) {
+        this.editLayoutMode = options.editLayoutMode;
+      }
       this.setDisplayMode("create", null);
       if (this.updateRouter) {
         window.history.replaceState({}, null, `${this.parentPath}/new`);
@@ -1380,7 +1390,15 @@ export default {
     onLayoutFieldsUpdated(items) {
       console.log("CALL API TO CHANGED LAYOUT : ", items);
       this.$emit("layout-fields-updated", items);
-    }
+    },
+
+    onOpenEditLayoutMode() {
+      this.editLayoutMode = true;
+    },
+
+    onCloseEditLayoutMode() {
+      this.editLayoutMode = false;
+    },
   }
 };
 </script>
