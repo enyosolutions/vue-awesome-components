@@ -1,28 +1,28 @@
 <template>
   <div class="awesome-layout">
     <grid-layout
-      :layout.sync="layout"
-      :col-num="12"
-      :row-height="30"
-      :is-draggable="isDraggable"
-      :is-resizable="isResizable"
-      :vertical-compact="verticalCompact"
-      :margin="[10, 10]"
-      :use-css-transforms="true"
-      @layout-updated="onLayoutUpdated"
+        :layout.sync="layout"
+        :col-num="12"
+        :row-height="30"
+        :is-draggable="isDraggable"
+        :is-resizable="isResizable"
+        :vertical-compact="verticalCompact"
+        :margin="[10, 10]"
+        :use-css-transforms="true"
+        @layout-updated="onLayoutUpdated"
     >
       <grid-item
-        class="item"
-        v-for="(item, index) in layout"
-        :x="item.x"
-        :y="item.y"
-        :w="item.w"
-        :h="item.h"
-        :i="item.i || index"
-        :key="item.i"
-        :maxW="12"
-        :minH="2"
-        dragIgnoreFrom="a, button, .form-element, .draggable-item"
+          class="item"
+          v-for="(item, index) in layout"
+          :x="item.x"
+          :y="item.y"
+          :w="item.w"
+          :h="item.h"
+          :i="item.i || index"
+          :key="item.i"
+          :maxW="12"
+          :minH="2"
+          dragIgnoreFrom="a, button, .form-element, .draggable-item"
       >
         <div :class="editMode ? 'card card-primary p-0' : 'p-0'">
           <div v-if="item.legend || editMode" class="draggable-header bg-primary">
@@ -33,30 +33,30 @@
             </a>
           </div>
           <div class="item-draggable">
-            <Draggable
-              class="draggable-list"
-              :list="item.fields"
-              group="fields"
-              :disabled="!editMode"
-              @change="fieldChanged"
-              ghost-class="moving-card"
-            >
-              <div v-for="(field, index) in item.fields" :key="index">
-                <div :class="editMode ? 'draggable-item card' : ''">
-                  <div :class="editMode ? 'card-body p-2' : ''">
-                    <slot name="field" :field="field">
-                      {{ field }}
-                    </slot>
+              <Draggable
+                  class="draggable-list"
+                  :list="item.fields"
+                  group="fields"
+                  :disabled="!editMode"
+                  @change="fieldChanged"
+                  ghost-class="moving-card"
+              >
+                <div v-for="(field, index) in item.fields" :key="index" class="col-6">
+                  <div :class="editMode ? 'draggable-item card' : ''">
+                    <div :class="editMode ? 'card-body p-2' : ''">
+                      <slot name="field" :field="field">
+                        {{ field }}
+                      </slot>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Draggable>
+              </Draggable>
             <div v-if="item.layout">
               <AwesomeLayout
-                :edit-mode="editMode"
-                :layout.sync="item.layout"
-                @layout-updated="onLayoutUpdated"
-                @change="fieldChanged"
+                  :edit-mode="editMode"
+                  :layout.sync="item.layout"
+                  @layout-updated="onLayoutUpdated"
+                  @change="fieldChanged"
               >
                 <div slot="field" slot-scope="{ field }">
                   <slot name="field" :fields="field" v-if="field">
@@ -80,7 +80,8 @@ import VueGridLayout from "vue-grid-layout";
 import Draggable from "vuedraggable";
 import i18nMixin from "../../../mixins/i18nMixin";
 import notificationsMixin from "../../../mixins/notificationsMixin";
-import { v4 as uuidv4 } from "uuid";
+import _ from "lodash";
+import {v4 as uuidv4} from "uuid";
 
 export default {
   name: "AwesomeLayout",
@@ -129,8 +130,8 @@ export default {
     // Add a new item to the grid
     addItemToGrid() {
       const items = Object.assign([], this.layout);
-      items.push({ ...this.newBlock, i: `aw-layout-item-${uuidv4()}` });
-
+      const newBlock = _.cloneDeep(this.newBlock);
+      items.push({...newBlock, i: `aw-layout-item-${uuidv4()}`});
       this.$emit("layout-updated", items);
     },
 
@@ -140,7 +141,7 @@ export default {
 
       // check for existing fields
       if (items[index] && items[index].fields && items[index].fields.length) {
-        this.$notify({ title: this.$t("AwesomeLayout.messages.emptyBlockBeforeDelete"), type: "warning" });
+        this.$notify({title: this.$t("AwesomeLayout.messages.emptyBlockBeforeDelete"), type: "warning"});
         return;
       }
       items.splice(index, 1);
@@ -187,6 +188,10 @@ export default {
 
   .draggable-list {
     min-height: 140px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   .draggable-item {
@@ -203,6 +208,7 @@ export default {
       padding: 0 10px;
     }
   }
+
   .btn-add-item {
     position: absolute;
     right: 10px;
