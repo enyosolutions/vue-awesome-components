@@ -62,6 +62,18 @@
           >AwesomeKanban</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="awesomelayout-tab"
+          data-toggle="tab"
+          href="#awesomelayout"
+          role="tab"
+          aria-controls="awesomelayout"
+          aria-selected="false"
+          >AwesomeLayout</a
+        >
+      </li>
 
       <li class="nav-item">
         <a
@@ -211,6 +223,42 @@
             sortOrder: 'asc'
           }"
         />
+      </div>
+      <div class="tab-pane fade" id="awesomelayout" role="tabpanel" aria-labelledby="awesomelayout-tab">
+        <h2>Ticket model with awesome layout</h2>
+        <p>User can change the layout of awesome form</p>
+        Props
+        <ul>
+          <li><code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change the layout.</li>
+          <li><code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register layout.</li>
+          <li><code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg: <code>Informations</code>) </li>
+        </ul>
+        Events
+        <ul>
+          <li><code>@layout-updated</code> : Trigger when a layout is changed/moved/deleted/...</li>
+          <li><code>@layout-fields-updated</code> : Trigger when a field is move</li>
+        </ul>
+        <AutoProps
+            :component="AwesomeCrud"
+            :componentProps="{}"
+            :skip-props="['translations']"
+            :docked="false"
+            v-slot="{ userProps }"
+        >
+          <AwesomeCrud
+              identity="ticket"
+              :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+              :options="{ detailPageMode: 'fullscreen' }"
+              :model="_ticketModel"
+              url="http://localhost:3000/tickets"
+              :apiResponseConfig="{
+              dataPath: false,
+              totalCountPath: 'headers.x-total-count'
+            }"
+              v-bind="userProps"
+              @layout-updated="onLayoutUpdated"
+          />
+        </AutoProps>
       </div>
     </div>
 

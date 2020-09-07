@@ -43,7 +43,7 @@
                         {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
                       </h3>
 
-                      <div class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
                         <button
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
@@ -119,7 +119,7 @@
                         {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
 
-                      <div class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
                         <button
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
