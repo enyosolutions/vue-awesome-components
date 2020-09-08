@@ -68,69 +68,17 @@ type: `Object (default: defaultKanbanOptions)`
 
 This is the configuration of the `Kanban` component.
 
-* **scrollSensitivity**
-    
-    * type: `Number`
-    * defaultValue: `200`
-    
-    This is the value to determine the scroll sensitivity, that allows user to drag an item to the farest list.
-    
-* **animation**
-
-    * type: `Number`
-    * defaultValue: `200`
-    
-    This is the duration in milliseconds of the moved animation.
-    
-* **moveList**
-
-    * type: `Boolean`
-    * defaultValue: `false`
-    
-    By default, user cannot move the lists. 
-
-* **moveCard**
-
-    * type: `Boolean`
-    * defaultValue: `true`
-    
-    Allow you to disable the card moving.
-    
-* **fields**
-
-    * type: `Object`
-    * defaultValue : `{ title: 'name', 'subtitle': 'id', 'description': 'status' }`
-    
-    In the card there are only 3 fields that are displayed. This allows you to define which field you want display.
-    
-* **filterField**
-
-    * type: `String`
-    * defaultValue: `status`
-    
-    Allow you to create by default list from a determined `Field`. Need `filterValues`.
-    
-* **filterValues**
-
-    * type: `Array`
-    * defaultValue: `['failed', 'completed', 'scheduled']`
-    
-    Allow you to determine which value is used to create a list. Need `filterField`.
-    
-* **sortField**
-
-    * type: `String`
-    * defaultValue: `id`
-    
-    Allow you to change to default sort the list by a `Fields`.
-    
-* **sortOrder**
-
-    * type: `String`
-    * defaultValue: `DESC`
-    * availableValue: `['ASC', 'DESC']`
-    
-    Allow you to change the sort order. Link with `sortField`.
+| Property   |     Type      |     defaultValue      |     Usage      |
+|------------|---------------|-----------------------|----------------|
+| scrollSensitivity | `Number` | `200` | Value to determine the scroll sensitivity |
+| animation | `Number` | `200` | Duration in milliseconds of the moved animation |
+| moveList | `Number` | `false` | Allow you enabling/disabling list moving |
+| moveCard | `Number` | `true` | Allow you enabling/disabling card moving |
+| fields | `Object` | `{ title: 'name', 'subtitle': 'id', 'description': 'status' }` | Allows you to define which field you want display |
+| filterField | `String` | `status` | Allow you to create default list |
+| filterValues | `Array` | `['failed', 'completed', 'scheduled']` | Allow you to determine which value is used to create a list |
+| sortField | `String` | `id` | Allow you to change to default sort the list by a `Fields`. |
+| sortOrder | `String` | `DESC` | Allow you to change the sort order. Link with `sortField`. |
     
 ## Events
 ### @removeList
@@ -140,33 +88,91 @@ Return list name.
 <awesome-kanban
    :lists="lists"
    :columns="columns"
-   @removeList="onRemoveList"
+   @removeList="onListRemoved"
 />
 ```
 ```js
 methods: {
-  onRemoveList(listName) {
+  onListRemoved(listName) {
     //
   }
 }
 ```
 ### @listChanged
-Event emitted when a list is changed
-Return 
+Event emitted when a list is changed. 
 ```vue
 <awesome-kanban
    :lists="lists"
    :columns="columns"
-   @listChanged="onListChange"
+   @listChanged="onListChanged"
 /> 
 ```
 ```js
 methods: {
-  onListChange(event) {
+  onListChanged(event) {
     // event = { moved: { element: { content: [], title:"Shopping list" }, newIndex: 3, oldIndex: 2} }
   }
 }
 ```
 ### @cardChanged
+Event emitted when a card is moved/changed/sorted.
+```vue
+<awesome-kanban
+  :lists="lists"
+  :columns="columns"
+  @cardChanged="onCardChanged"
+/>
+```
+```js
+methods: {
+  onCardChanged(event) {
+    // event = [{ removed: { element: { value, ... }, oldIndex: 1 }, "list_name"]
+  }
+}
+```
 ### @cardClicked
+Event emitted when a card is clicked.
+```vue
+<awesome-kanban
+  :lists="lists"
+  :columns="columns"
+  @cardClicked="onCardClicked"
+/>
+```
+```js
+methods: {
+  onCardClicked(item) {
+    // item = [{ id: 1, name: 'test', ... }]
+  }
+}
+```
 ### @customListAction
+Event emitted when a custom list action is clecked.
+For the button to appear :
+* The special `ACTIONS` must be added to the `kanbanOptions`.
+
+The `@customListAction` event return an object with various properties to help you treat the action.
+
+| Property   |     Type      |     Usage      |
+|----------|---------------|---------------|
+| action | Object | the action definition that was passed at the creation of the action |
+| location | string | The location of the action |
+| item | Object | the object being clicked on if the action is an inline action |
+| id | string | the unique id of the button being clicked on (its basically the name of the action plus the index of the row) |
+
+```vue
+<awesome-kanban
+  :lists="lists"
+  :columns="columns"
+  @customListAction="onCustomListAction"
+/>
+```
+```js
+methods: {
+  onCustomListAction(body) {
+    const { action } = body;
+    this.$emit(this.identity + "-custom-list-action", action);
+    return action && action.action && action.action(body, this);
+  }
+}
+```

@@ -40,57 +40,15 @@ formOptions: {
 
 The layout system use `vue-grid-layout`.
 
-* **x**
-    
-    * type: `Number`
-    * required: `true`
-
-    Says what is a initial horizontal position of the item (in which column it should be placed).
-
-    The value must be a _whole number_. 
-    
-* **y**
-    
-    * type: `Number`
-    * required: `true`
-
-    Says what is a initial vertical position of the item (in which row it should be placed).
-
-    The value must be a _whole number_. 
-
-* **w**
-    
-    * type: `Number`
-    * required: `true`
-
-    Says what is a initial width of the item.
-
-* **h**
-    
-    * type: `Number`
-    * required: `true`
-
-    Says what is a initial height of the item.
-    
-* **i**
-    
-    * type: `String`
-    * required: `true`
-
-    This is the unique identifier of the item.    
-* **fields**
-    
-    * type: `Array`
-    * required: `false`
-    
-    This is an array of fields. The fields is identified by the key. (eg: `['id', 'name']`)
-    
-* **legend**
-    
-    * type: `String`
-    * required: `false`
-    
-    This is the name of the layout. It is displayed on top of the layout.   
+| Property   |     Type      |     Required    |     Usage      |
+|------------|---------------|-----------------|----------------|
+| x | `Number` | `true` | Initial horizontal position of the item |
+| y | `Number` | `true` | Initial vertical position of the item |
+| w | `Number` | `true` | Initial width of the item. |
+| h | `Number` | `true` | Initial height of the item. |
+| i | `Number` | `true` | Unique identifier of the item. |
+| fields | `Array` | `false` | The fields is identified by the key. (eg: `['id', 'name']`) |
+| legend | `String` | `false` | It is displayed on top of the layout. |
 
 ## Props
 
@@ -159,5 +117,22 @@ methods: {
     // Moved : { moved: { element: "name", newIndex: 3, oldIndex: 2} }
   }
 }
+```
+
+## Fields Slot
+
+If you want to add specific component to display fields, you can use the `fields` slot.
+
+```vue
+<awesome-layout
+  :edit-mode="true"
+  :layout="layout"
+>
+  <template v-slot:field="slotProps">
+    <div class="special-class">
+      {{slotProps.field}}
+    </div>
+  </template>
+</awesome-layout>
 ```
 
