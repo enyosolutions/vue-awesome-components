@@ -229,7 +229,7 @@
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    height: 50vh;
+    height: calc(100vh - 14rem);;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
