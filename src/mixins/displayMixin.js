@@ -25,6 +25,7 @@ export default {
     relationKey: String,
     storePath: String,
     store: Array,
+    displayLabelCache: { type: Object, default: () => ({}) },
     onClickUrl: [String, Function]
   },
   data() {

@@ -52,16 +52,20 @@ export default {
         ? this.getStoreLabel(this.value)
         : this.getApiLabel(this.value);
     },
+
+    _displayLabelCache() {
+      return this.displayLabelCache || this.internalCache || {};
+    }
   },
   data() {
     return {
-      displayLabelCache: {},
+      internalCache: {},
     };
   },
   methods: {
     getStoreLabel(value) {
-      if (this.relationUrl && value && this.displayLabelCache[value]) {
-        return this.displayLabelCache[value];
+      if (this.relationUrl && value && this._displayLabelCache[value]) {
+        return this._displayLabelCache[value];
       }
       if (!value) {
         return;
@@ -94,7 +98,7 @@ export default {
 
       const result = item[this.relationLabel];
       if (result) {
-        this.$set(this.displayLabelCache, value, result);
+        this.$set(this._displayLabelCache, value, result);
       }
       return result;
     },
@@ -104,8 +108,8 @@ export default {
       if (!this.relationUrl || !value || !this.relationLabel) {
         return value;
       }
-      if (this.relationUrl && value && this.displayLabelCache[url]) {
-        return this.displayLabelCache[url];
+      if (this.relationUrl && value && this._displayLabelCache[url]) {
+        return this._displayLabelCache[url];
       }
       const promise = this.$http
         .get(url)
@@ -125,15 +129,15 @@ export default {
             ''
           )}`;
           if (result) {
-            this.$set(this.displayLabelCache, url, result);
+            this.$set(this._displayLabelCache, url, result);
           }
           return result;
         })
         .catch(() => {
-          this.$set(this.displayLabelCache, url, value);
+          this.$set(this._displayLabelCache, url, value);
         });
-      this.$set(this.displayLabelCache, url, value);
-      return this.displayLabelCache[url];
+      this.$set(this._displayLabelCache, url, value);
+      return this._displayLabelCache[url];
     },
     copyToClipboard(str) {
       const el = document.createElement('textarea');

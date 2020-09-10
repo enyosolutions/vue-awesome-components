@@ -294,6 +294,7 @@
                 :apiResponseConfig="apiResponseConfig"
                 :apiRequestHeaders="apiRequestHeaders"
                 :value="props.formattedRow[props.column.field]"
+                :display-label-cache="displayLabelCache"
               >
               </awesome-display>
 
@@ -521,7 +522,8 @@ export default {
         }
       },
       advancedFilters: [],
-      selectedRows: []
+      selectedRows: [],
+      displayLabelCache: {}
     };
   },
   computed: {
