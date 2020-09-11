@@ -1085,8 +1085,7 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.closeModal();
-      this.$emit("cancel", null, { context: this.mode });
+      this.$emit("cancel", this.item, { context: this.mode });
     },
 
     close() {
