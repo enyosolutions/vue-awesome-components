@@ -54,7 +54,7 @@ module.exports = {
       relationUrl: 'provider',
       foreignKey: 'code',
       field: {
-        type: 'EnyoSelect',
+        type: 'VSelect',
         fieldOptions: {
           enum: 'providers',
           trackBy: 'code',
