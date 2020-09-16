@@ -132,6 +132,15 @@
                 {{ $t("AwesomeTable.buttons.columnsFilters") }}
               </button>
               <button
+                v-if="_actions.editLayout"
+                type="button"
+                class="btn btn-simple btn-default"
+                @click="$emit('create', { editLayoutMode: true })"
+              >
+                <i class="fa fa-th-large"></i>
+                {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+              </button>
+              <button
                 v-if="_actions && _actions.export"
                 class="btn btn-simple text-success btn-main-style btn-block"
                 @click="exportCallBack"

@@ -36,6 +36,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/awesomekanban">Awesome Kanban</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/awesomelayout">Awesome Layout</a>
+          </li>
         </ul>
       </div>
     </nav>

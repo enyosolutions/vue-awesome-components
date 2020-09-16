@@ -12,6 +12,7 @@
             :layout="viewPageLayoutComputed"
             :item="selectedItem"
             :needs-refresh="awesomeEditNeedsRefresh"
+            :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -27,6 +28,10 @@
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
           />
 
           <AwesomeForm
@@ -40,6 +45,7 @@
             :item="selectedItem"
             :bulk-items="selectedItems"
             :needs-refresh="awesomeEditNeedsRefresh"
+            :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -56,6 +62,10 @@
             @itemViewed="onItemViewed"
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
           />
         </div>
         <div
@@ -232,6 +242,7 @@ import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
+import notificationsMixin from "../../mixins/notificationsMixin";
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions, defaultKanbanOptions } from "../../mixins/defaultProps";
 import Swal from "sweetalert2/dist/sweetalert2.js";
@@ -362,7 +373,7 @@ export default {
     AwesomeList,
     AwesomeKanban
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin, notificationsMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -488,7 +499,8 @@ export default {
         fieldIdPrefix: "AwesomeCrud"
       },
       identity: "",
-      supportedDataDisplayModes: ["table", "list", "kanban"]
+      supportedDataDisplayModes: ["table", "list", "kanban"],
+      editLayoutMode: false,
     };
   },
   computed: {
@@ -604,16 +616,36 @@ export default {
     },
 
     _layout() {
-      return this.layout || (this.model && this.model.layout);
+      return this.layout || (this.model && this.model.formOptions && this.model.formOptions.layout);
     },
+    _createFormLayout() {
+      return (this.model && this.model.formOptions && this.model.formOptions.createLayout) || this._layout;
+    },
+
+    _editFormLayout() {
+      return (this.model && this.model.formOptions && this.model.editLayout) || this._layout;
+    },
+
     createPageLayoutComputed() {
-      return this.createPageLayout || (this.model && this.model.createPageLayout) || this._layout;
+      return (
+        this.createPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.createLayout) ||
+        this._layout
+      );
     },
     viewPageLayoutComputed() {
-      return this.viewPageLayout || (this.model && this.model.viewPageLayout) || this._layout;
+      return (
+        this.viewPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.viewPageLayout) ||
+        this._layout
+      );
     },
     editPageLayoutComputed() {
-      return this.editPageLayout || (this.model && this.model.editPageLayout) || this._layout;
+      return (
+        this.editPageLayout ||
+        (this.model && this.model.formOptions && this.model.formOptions.editPageLayout) ||
+        this._layout
+      );
     },
 
     _actions() {
@@ -1012,6 +1044,9 @@ export default {
       if (options.reset) {
         this.selectedItem = {};
       }
+      if (options.editLayoutMode) {
+        this.editLayoutMode = options.editLayoutMode;
+      }
       this.setDisplayMode("create", null);
       if (this.updateRouter) {
         window.history.replaceState({}, null, `${this.parentPath}/new`);
@@ -1347,27 +1382,23 @@ export default {
       });
     },
 
-    $notify(message) {
-      const payload = _.isObject(message)
-        ? {
-            timer: 3000,
-            title: message,
-            type: "success",
-            ...message, // Placement is important to guarantee theat the display is always a notification
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false
-          }
-        : {
-            timer: 3000,
-            type: "info",
-            title: message,
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false
-          };
-      Swal.fire(payload);
-    }
+    onLayoutUpdated(items) {
+      console.log("CALL API TO CHANGED LAYOUT : ", items);
+      this.$emit("layout-updated", items);
+    },
+
+    onLayoutFieldsUpdated(items) {
+      console.log("CALL API TO CHANGED LAYOUT : ", items);
+      this.$emit("layout-fields-updated", items);
+    },
+
+    onOpenEditLayoutMode() {
+      this.editLayoutMode = true;
+    },
+
+    onCloseEditLayoutMode() {
+      this.editLayoutMode = false;
+    },
   }
 };
 </script>

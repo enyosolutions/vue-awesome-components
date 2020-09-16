@@ -136,18 +136,18 @@ export default {
     fields() {
       if (this.schema && this.schema.fields) {
         if (this.schema.mode) {
-          this.schema.fields.forEach(field => {
+          this.schema.fields.forEach((field) => {
             field.mode = this.schema.mode;
-          })
+          });
         }
         return this.schema.fields;
       }
       return {};
     },
 
-    groups() {
-      if (this.schema && this.schema.groups) {
-        return this.schema.groups;
+    group() {
+      if (this.schema && this.schema.group) {
+        return this.schema.group;
       }
       return {};
     },

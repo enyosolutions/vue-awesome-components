@@ -62,6 +62,18 @@
           >AwesomeKanban</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="awesomelayout-tab"
+          data-toggle="tab"
+          href="#awesomelayout"
+          role="tab"
+          aria-controls="awesomelayout"
+          aria-selected="false"
+          >AwesomeLayout</a
+        >
+      </li>
 
       <li class="nav-item">
         <a
@@ -112,26 +124,26 @@
 
       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
-        <h2>Ticket model with auto props</h2>
+        <h2>Ticket model with custom layout</h2>
         <AutoProps
           :component="AwesomeCrud"
-          :componentProps="{
-            identity: 'ticket',
-            apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
-            options: { detailPageMode: 'fullscreen' },
-            model: ticketModel
-          }"
+          :componentProps="{}"
           :skip-props="['translations']"
           :docked="false"
           v-slot="{ userProps }"
         >
           <AwesomeCrud
+            identity="ticket"
+            :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+            :options="{ detailPageMode: 'fullscreen' }"
+            :model="_ticketModel"
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count'
             }"
             v-bind="userProps"
+            @layout-updated="onLayoutUpdated"
           />
         </AutoProps>
       </div>
@@ -179,7 +191,11 @@
             totalCountPath: 'headers.x-total-count'
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'list' }"
+          :options="{
+            detailPageMode: modalDisplayModeSelect,
+            dataPaginationMode: 'remote',
+            initialDisplayMode: 'list'
+          }"
           :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
         />
       </div>
@@ -193,9 +209,56 @@
             totalCountPath: 'headers.x-total-count'
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote', initialDisplayMode: 'kanban' }"
-          :kanbanOptions="{ moveList: false, fields: { image: 'download_url', title: 'author', description: 'url' }, filterField: 'author', filterValues: ['Rick Waalders'], sortField: 'author', sortOrder: 'asc' }"
+          :options="{
+            detailPageMode: modalDisplayModeSelect,
+            dataPaginationMode: 'remote',
+            initialDisplayMode: 'kanban'
+          }"
+          :kanbanOptions="{
+            moveList: false,
+            fields: { image: 'download_url', title: 'author', description: 'url' },
+            filterField: 'author',
+            filterValues: ['Rick Waalders'],
+            sortField: 'author',
+            sortOrder: 'asc'
+          }"
         />
+      </div>
+      <div class="tab-pane fade" id="awesomelayout" role="tabpanel" aria-labelledby="awesomelayout-tab">
+        <h2>Ticket model with awesome layout</h2>
+        <p>User can change the layout of awesome form</p>
+        Props
+        <ul>
+          <li><code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change the layout.</li>
+          <li><code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register layout.</li>
+          <li><code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg: <code>Informations</code>) </li>
+        </ul>
+        Events
+        <ul>
+          <li><code>@layout-updated</code> : Trigger when a layout is changed/moved/deleted/...</li>
+          <li><code>@layout-fields-updated</code> : Trigger when a field is move</li>
+        </ul>
+        <AutoProps
+            :component="AwesomeCrud"
+            :componentProps="{}"
+            :skip-props="['translations']"
+            :docked="false"
+            v-slot="{ userProps }"
+        >
+          <AwesomeCrud
+              identity="ticket"
+              :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+              :options="{ detailPageMode: 'fullscreen' }"
+              :model="_ticketModel"
+              url="http://localhost:3000/tickets"
+              :apiResponseConfig="{
+              dataPath: false,
+              totalCountPath: 'headers.x-total-count'
+            }"
+              v-bind="userProps"
+              @layout-updated="onLayoutUpdated"
+          />
+        </AutoProps>
       </div>
     </div>
 
@@ -312,8 +375,24 @@ export default {
       Mark Hunt.
       `,
       editField3: null,
-      editField4: null
+      editField4: null,
+      editedLayout: null
     };
+  },
+  computed: {
+    _layout() {
+      return this.editedLayout
+        ? this.editedLayout
+        : this.ticketModel.formOptions && this.ticketModel.formOptions.layout;
+    },
+    _ticketModel() {
+      return { ...this.ticketModel, formOptions: { layout: this._layout } };
+    }
+  },
+  mounted() {
+    if (localStorage.getItem("onLayoutUpdated")) {
+      this.editedLayout = JSON.parse(localStorage.getItem("onLayoutUpdated"));
+    }
   },
   methods: {
     handleItemClick(item) {
@@ -321,6 +400,11 @@ export default {
     },
     toggleEdit() {
       this.showAwesomeForm = !this.showAwesomeForm;
+    },
+    onLayoutUpdated(items, event) {
+      console.log("onLayoutUpdated", items);
+      localStorage.setItem("onLayoutUpdated", JSON.stringify(items));
+      this.editedLayout = items;
     }
   }
 };

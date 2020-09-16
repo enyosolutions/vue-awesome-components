@@ -88,7 +88,10 @@
       "close": "Close",
       "edit": "Edit",
       "save": "Save",
-      "bulkEdit": "Multiple Edit"
+      "bulkEdit": "Multiple Edit",
+      "openEditLayoutMode": "Edit Layout",
+      "closeEditLayoutMode": "Close editor",
+      "resetLayout": "Reset the layout"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
@@ -103,6 +106,11 @@
   "AwesomeList": {
     "labels": {
       "noData": "No fields selected"
+    }
+  },
+  "AwesomeLayout": {
+    "messages": {
+      "emptyBlockBeforeDelete": "you must empty the block before you can delete it."
     }
   }
 }

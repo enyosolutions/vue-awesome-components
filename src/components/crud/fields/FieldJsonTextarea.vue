@@ -1,14 +1,7 @@
 <template>
   <div class>
-    <textarea
-      v-model="innerValue"
-      class="form-control"
-      @input="saveJson"
-    />
-    <div
-      v-if="warning"
-      class="text-danger"
-    >
+    <textarea v-model="innerValue" class="form-control" @input="saveJson" />
+    <div v-if="warning" class="text-danger">
       <i class="fa fa-exclamation-circle" />
       {{ $t(warning) }}
     </div>

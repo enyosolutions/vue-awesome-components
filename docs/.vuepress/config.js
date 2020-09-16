@@ -88,7 +88,9 @@ module.exports = {
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
-          { title: "EnyoSelect", path: "/guide/enyoselect.md" }
+          { title: "EnyoSelect", path: "/guide/enyoselect.md" },
+          { title: "AwesomeKanban", path: "/guide/awesomekanban/" },
+          { title: "AwesomeLayout", path: "/guide/awesomelayout/"}
         ]
       },
       {

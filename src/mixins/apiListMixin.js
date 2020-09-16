@@ -114,7 +114,6 @@ export default {
         const newKey = this.apiRequestConfig[field + "Field"] || field;
         translatedParams[newKey] = this.serverParams[field];
       });
-      console.warn({ translatedParams });
       return translatedParams;
     }
   },
@@ -253,7 +252,7 @@ export default {
         newProps,
         columnFilters
       );
-      console.warn("updateParams", this.serverParams);
+      //      console.warn("updateParams", this.serverParams);
     },
 
     // sort functions for unkown types
@@ -305,7 +304,7 @@ export default {
 
     connectRouteToPagination(to) {
       if (this.routerMode) {
-        console.warn("to.query", to.query);
+        //        console.warn("to.query", to.query);
         this.updateParams({
           page: to.query.page, search: to.query.search,
           perPage: to.query.perPage,

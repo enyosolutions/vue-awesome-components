@@ -42,6 +42,37 @@
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
                       </h3>
+
+                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                        <button
+                          v-if="!editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="openEditLayoutMode"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-danger btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="resetLayout"
+                        >
+                          <i class="fa fa-eraser"></i>
+                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="closeEditLayoutMode"
+                        >
+                          <i class="fa fa-save"></i>
+                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                        </button>
+                      </div>
+
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
@@ -54,7 +85,22 @@
                     </div>
                     <div class="modal-body">
                       <slot name="create-form" :selectedItem="selectedItem">
-                        <template v-if="formSchema && formSchema.fields">
+                        <AwesomeLayout
+                            :edit-mode="editLayoutMode"
+                            :layout="layout"
+                            @layout-updated="onLayoutUpdated"
+                            @layout-fields-updated="onLayoutFieldsUpdated"
+                        >
+                          <template v-slot:field="slotProps">
+                            <VueFormGenerator
+                                :schema="getShemaForFields(slotProps.field)"
+                                :model="selectedItem"
+                                :options="formOptions"
+                                tag="div"
+                            />
+                          </template>
+                        </AwesomeLayout>
+                        <!--<template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
                             ref="form"
                             :schema.sync="createFormSchema"
@@ -62,7 +108,7 @@
                             :options="formOptions"
                             tag="div"
                           />
-                        </template>
+                        </template>-->
                       </slot>
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
@@ -87,6 +133,37 @@
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
                         {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
+
+                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                        <button
+                          v-if="!editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="openEditLayoutMode"
+                        >
+                          <i class="fa fa-th-large"></i>
+                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-danger btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="resetLayout"
+                        >
+                          <i class="fa fa-eraser"></i>
+                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-info btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="closeEditLayoutMode"
+                        >
+                          <i class="fa fa-save"></i>
+                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                        </button>
+                      </div>
+
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
@@ -117,7 +194,22 @@
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
                           <div class="row" v-if="renderLayout && layout">
-                            <template v-for="(column, index) in layout.columns">
+                            <AwesomeLayout
+                              :edit-mode="editLayoutMode"
+                              :layout="layout"
+                              @layout-updated="onLayoutUpdated"
+                              @layout-fields-updated="onLayoutFieldsUpdated"
+                            >
+                              <template v-slot:field="slotProps">
+                                <VueFormGenerator
+                                  :schema="getShemaForFields(slotProps.field)"
+                                  :model="selectedItem"
+                                  :options="formOptions"
+                                  tag="div"
+                                />
+                              </template>
+                            </AwesomeLayout>
+                            <!--<template v-for="(column, index) in layout.columns">
                               <div :key="index" is="Column" v-bind="column">
                                 <template>
                                   <Tabs
@@ -179,7 +271,7 @@
                                   </Tabs>
                                 </template>
                               </div>
-                            </template>
+                            </template>-->
                           </div>
 
                           <template v-if="formSchema && formSchema.fields && !this.layout">
@@ -253,13 +345,14 @@
                             </button>
                           </template>
                         </template>
-                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-auto">
+
+                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
                           {{ $t("AwesomeCrud.buttons.save") }}
                         </button>
                         <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
-                          class="btn btn-info btn-main-style ml-auto"
+                          class="btn btn-info btn-main-style ml-2"
                           @click.prevent.stop="$emit('edit', selectedItem)"
                         >
                           <i class="fa fa-pencil" />
@@ -355,6 +448,7 @@ import GroupedForm from "./layout/GroupedForm.vue";
 
 import "vue-good-table/dist/vue-good-table.css";
 import AwesomeCrud from "./AwesomeCrud";
+import AwesomeLayout from "./layout/AwesomeLayout";
 
 const defaultOptions = {
   mode: "local",
@@ -384,7 +478,8 @@ export default {
     Column,
     Tabs,
     Row,
-    GroupedForm
+    GroupedForm,
+    AwesomeLayout
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
   props: {
@@ -505,8 +600,11 @@ export default {
       note: "actions active in this instance"
     },
     layout: {
-      type: Object,
+      type: Array,
       note: "Layout of the form"
+    },
+    editLayoutMode: {
+      type: Boolean
     }
   },
   data() {
@@ -908,8 +1006,6 @@ export default {
                 ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
-            // eslint-disable-next-line
-            console.log(this.selectedItem, res.data, this.apiResponseConfig.dataPath);
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -920,11 +1016,12 @@ export default {
     },
 
     getShemaForFields(fields) {
+      if (!fields) {
+        return;
+      }
       const fieldsDefinition = this.formSchema.fields.filter((f) => {
         return fields.indexOf(f.model) > -1;
       });
-      // eslint-disable-next-line
-      console.log(fields, this.formSchema.fields);
       return { ...this.formSchema, fields: fieldsDefinition };
     },
 
@@ -1034,9 +1131,6 @@ export default {
     },
 
     openModal() {
-      // eslint-disable-next-line
-      console.log("openModal was called", this.mode);
-
       switch (this.displayMode) {
         case "modal":
         case "fade":
@@ -1053,8 +1147,6 @@ export default {
       this.show = true;
       this.showBackdrop = true;
 
-      // eslint-disable-next-line
-      console.log("openModal was called", this.show);
       /*
       if (this.displayMode !== 'page' && this.$modal.modal) {
         this.$modal.modal('show');
@@ -1296,7 +1388,28 @@ export default {
       return columns;
     },
     renderGroup() {},
-    renderForm(definition = { component: "VueFormGenerator", props: {} }) {}
+    renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
+
+    openEditLayoutMode() {
+      this.$emit('open-edit-layout-mode');
+    },
+
+    closeEditLayoutMode() {
+      this.$emit('close-edit-layout-mode')
+      //this.editLayoutMode = false;
+    },
+
+    resetLayout() {
+      this.$emit("layout-resetted", []);
+    },
+
+    onLayoutUpdated(items) {
+      this.$emit("layout-updated", items);
+    },
+
+    onLayoutFieldsUpdated(items) {
+      this.$emit("layout-fields-updated", items);
+    }
   }
 };
 </script>
@@ -1434,5 +1547,10 @@ body.modal-open .bootstrap-datetimepicker-widget {
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.aw-form-header-actions {
+  flex: auto;
+  justify-content: flex-end;
 }
 </style>
