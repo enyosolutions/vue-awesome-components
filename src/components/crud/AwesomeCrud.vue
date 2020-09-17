@@ -29,6 +29,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-resetted="onLayoutUpdated"
             @layout-fields-updated="onLayoutFieldsUpdated"
             @open-edit-layout-mode="onOpenEditLayoutMode"
             @close-edit-layout-mode="onCloseEditLayoutMode"
@@ -63,6 +64,7 @@
             @itemValidated="onItemValidated"
             @itemValidationFailed="onItemValidationFailed"
             @layout-updated="onLayoutUpdated"
+            @layout-resetted="onLayoutUpdated"
             @layout-fields-updated="onLayoutFieldsUpdated"
             @open-edit-layout-mode="onOpenEditLayoutMode"
             @close-edit-layout-mode="onCloseEditLayoutMode"
@@ -237,7 +239,7 @@
 </template>
 <script>
 import _ from "lodash";
-import parseMixin from "../../mixins/parseMixin";
+import parseJsonSchema from "../../mixins/parseJsonSchemaMixin";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
@@ -373,7 +375,7 @@ export default {
     AwesomeList,
     AwesomeKanban
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin, notificationsMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema, notificationsMixin],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -1388,7 +1390,7 @@ export default {
     },
 
     onLayoutFieldsUpdated(items) {
-      console.log("CALL API TO CHANGED LAYOUT : ", items);
+      console.log("CALL API TO CHANGED FIELDS LAYOUT : ", items);
       this.$emit("layout-fields-updated", items);
     },
 

@@ -1,81 +1,93 @@
 <template>
   <div class="awesome-layout">
     <grid-layout
-        :layout.sync="layout"
-        :col-num="12"
-        :row-height="30"
-        :is-draggable="isDraggable"
-        :is-resizable="isResizable"
-        :vertical-compact="verticalCompact"
-        :margin="[10, 10]"
-        :use-css-transforms="true"
-        @layout-updated="onLayoutUpdated"
+    :layout.sync="layout"
+    :col-num="12"
+    :row-height="30"
+    :is-draggable="isDraggable"
+    :is-resizable="isResizable"
+    :vertical-compact="verticalCompact"
+    :margin="[10, 10]"
+    :use-css-transforms="true"
+    @layout-updated="onLayoutUpdated"
     >
-      <grid-item
-          class="item"
-          v-for="(item, index) in layout"
-          :x="item.x"
-          :y="item.y"
-          :w="item.w"
-          :h="item.h"
-          :i="item.i || index"
-          :key="item.i"
-          :maxW="12"
-          :minH="2"
-          dragIgnoreFrom="a, button, .form-element, .draggable-item"
-      >
-        <div :class="editMode ? 'card card-primary p-0' : 'p-0'">
-          <div v-if="item.legend || editMode" class="draggable-header bg-primary">
-            <div class="legend">
-              <i class="fa fa-pencil" v-if="editMode"></i>
-              <input v-if="editMode" class="form-control ml-2" type="text" v-model="item.legend">
-              <p v-else>{{ item.legend }}</p>
-            </div>
-            <a v-if="editMode" @click="removeItemFromGrid(index)">
-              <i class="fa fa-trash"></i>
-            </a>
-          </div>
-          <div class="item-draggable">
-              <Draggable
-                  class="draggable-list"
-                  :list="item.fields"
-                  group="fields"
-                  :disabled="!editMode"
-                  @change="fieldChanged"
-                  ghost-class="moving-card"
-              >
-                <div v-for="(field, index) in item.fields" :key="index" class="col-6">
-                  <div :class="editMode ? 'draggable-item card' : ''">
-                    <div :class="editMode ? 'card-body p-2' : ''">
-                      <slot name="field" :field="field">
-                        {{ field }}
-                      </slot>
-                    </div>
-                  </div>
-                </div>
-              </Draggable>
-            <div v-if="item.layout">
-              <AwesomeLayout
-                  :edit-mode="editMode"
-                  :layout.sync="item.layout"
-                  @layout-updated="onLayoutUpdated"
-                  @change="fieldChanged"
-              >
-                <div slot="field" slot-scope="{ field }">
-                  <slot name="field" :fields="field" v-if="field">
-                    {{ field }}
-                  </slot>
-                </div>
-              </AwesomeLayout>
-            </div>
-          </div>
+    <grid-item
+    class="item"
+    v-for="(item, index) in layout"
+    :x="item.x"
+    :y="item.y"
+    :w="item.w"
+    :h="item.h"
+    :i="item.i || index"
+    :key="item.i"
+    :maxW="12"
+    :minH="2"
+    dragIgnoreFrom="a, button, .form-element, .draggable-item"
+    >
+    <div :class="editMode ? 'card card-primary p-0' : 'p-0'">
+      <div v-if="item.legend || editMode" class="draggable-header bg-primary">
+        <div class="legend">
+          <i class="fa fa-pencil" v-if="editMode"></i>
+          <input v-if="editMode" class="form-control ml-2 aw-layout-legend-input" type="text" v-model="item.legend">
+          <p v-else>{{ item.legend }}</p>
         </div>
-      </grid-item>
-    </grid-layout>
-    <button v-if="editMode" type="button" class="btn btn-primary btn-add-item " @click="addItemToGrid()">
-      <i class="fa fa-plus"></i>
-    </button>
+        <a v-if="editMode" @click="removeItemFromGrid(index)">
+          <i class="fa fa-trash"></i>
+        </a>
+      </div>
+      <div class="item-draggable">
+        <Draggable
+        class="draggable-list"
+        :list="item.fields"
+        group="fields"
+        :disabled="!editMode"
+        @change="fieldChanged"
+        ghost-class="moving-card"
+        >
+        <template v-if="editMode">
+          <div v-for="(field, index) in item.fields" :key="index" class="col-12 pl-0 pr-0 mb-1 mt-1">
+            <div :class="editMode ? 'draggable-item card' : ''">
+              <div :class="editMode ? 'card-body p-2' : ''">
+                <slot name="field" :field="field"></slot>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template v-if="!editMode">
+          <slot name="fields" :fields="item.fields">
+            {{ item.fields }}
+          </slot>
+        </template>
+      </Draggable>
+      <div v-if="item.layout">
+        <AwesomeLayout
+        :edit-mode="editMode"
+        :layout.sync="item.layout"
+        @layout-updated="onLayoutUpdated"
+        @change="fieldChanged"
+        >
+        <div slot="field" slot-scope="{ field }">
+          <slot name="field" :fields="field" v-if="!editMode && field">
+            {{ field }}
+          </slot>
+        </div>
+        <div slot="fields" slot-scope="{ fields }">
+          <template v-if="!editMode && fields">
+            <slot name="fields" :fields="fields">
+              {{ fields}}
+            </slot>
+          </template>
+        </div>
+      </AwesomeLayout>
+    </div>
   </div>
+</div>
+</grid-item>
+</grid-layout>
+<button v-if="editMode" type="button" class="btn btn-primary btn-add-item " @click="addItemToGrid()">
+  <i class="fa fa-plus"></i>
+</button>
+</div>
 </template>
 
 <script>
@@ -192,6 +204,7 @@ export default {
       margin-right: 10px;
       input {
         color: white !important;
+        margin-bottom: 8px;
       }
       p {
         margin-bottom: 0;
@@ -235,5 +248,10 @@ export default {
     right: 10px;
     top: 10px;
   }
+
+  .vue-form-generator {
+    width: 100%;
+  }
+
 }
 </style>

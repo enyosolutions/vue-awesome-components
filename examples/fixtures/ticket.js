@@ -99,6 +99,7 @@ module.exports = {
         required: false,
         type: "VSelect",
         group: "infos.metaData",
+        styleClasses: "col-6",
         fieldOptions: {
           trackBy: "_id",
           label: "email"
@@ -111,7 +112,8 @@ module.exports = {
       description: "Sujet du ticket",
       field: {
         group: "message",
-        required: true
+        required: true,
+        styleClasses: "col-6",
       }
     },
     body: {
@@ -121,17 +123,23 @@ module.exports = {
       field: {
         group: "message",
         required: true,
-        type: "textArea"
+        type: "textArea",
+        classes: "col-6",
       },
     },
     createdOn: {
       type: ["string", "object"],
       format: "date-time",
       readonly: true,
-      column: {type: "datetime", format: 'DD_MM_YYYY (HH,MM)', classes: 'badge badge-primary'},
+      column: {
+        type: "datetime", format: 'DD_MM_YYYY (HH,MM)',
+        classes: 'badge badge-primary'
+      },
       field: {
         group: "metaData",
         type: "dateTime",
+        classes: "col-6",
+        styles:"display:block"
       }
     },
     lastModifiedOn: {
@@ -141,7 +149,8 @@ module.exports = {
       column: {type: "datetime"},
       field: {
         group: "metaData",
-        type: "dateTime"
+        type: "dateTime",
+         classes: "col-6",
       }
     }
   }

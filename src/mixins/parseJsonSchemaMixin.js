@@ -68,7 +68,7 @@ export default {
               multi: prop.type === "array",
               readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
               disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              styleClasses: (prop.field && prop.field.styleClasses) || (size < 8 ? "col-12" : "col-6"),
+              styleClasses: (prop.field && ( prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? "col-12" : "col-6"),
               relation: prop.relation,
               foreignKey: relationKey || prop.foreignKey,
               relationKey,

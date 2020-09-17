@@ -99,6 +99,14 @@
                                 tag="div"
                             />
                           </template>
+                          <template v-slot:fields="fieldsSlotProps">
+                            <VueFormGenerator
+                                :schema="getShemaForFields(fieldsSlotProps.fields)"
+                                :model="selectedItem"
+                                :options="formOptions"
+                                tag="div"
+                            />
+                          </template>
                         </AwesomeLayout>
                         <!--<template v-if="formSchema && formSchema.fields">
                           <VueFormGenerator
@@ -206,6 +214,14 @@
                                   :model="selectedItem"
                                   :options="formOptions"
                                   tag="div"
+                                />
+                              </template>
+                              <template v-slot:fields="fieldsSlotProps">
+                                <VueFormGenerator
+                                    :schema="getShemaForFields(fieldsSlotProps.fields)"
+                                    :model="selectedItem"
+                                    :options="formOptions"
+                                    tag="div"
                                 />
                               </template>
                             </AwesomeLayout>
@@ -433,7 +449,7 @@
 import _ from "lodash";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
-import parseMixin from "../../mixins/parseMixin";
+import parseJsonSchema from "../../mixins/parseJsonSchemaMixin";
 import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
@@ -481,7 +497,7 @@ export default {
     GroupedForm,
     AwesomeLayout
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema],
   props: {
     item: { type: Object, required: true },
     bulkItems: { type: Array, required: false },
@@ -1400,7 +1416,18 @@ export default {
     },
 
     resetLayout() {
-      this.$emit("layout-resetted", []);
+      const newLayout = {
+      i: `awesomeForm-${this.identity}-${Date.now()}`,
+      x: 0,
+      y: 0,
+      w: 12,
+      h: 6,
+      maxW: 12,
+      minH: 2,
+      legend: this.identity,
+      fields: this.formSchema.fields.map(f => f.model)
+    };
+      this.$emit("layout-resetted", [newLayout]);
     },
 
     onLayoutUpdated(items) {

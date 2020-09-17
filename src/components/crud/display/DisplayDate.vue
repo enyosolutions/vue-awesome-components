@@ -1,7 +1,7 @@
 <template>
-  <span v-bind="$props" :class="$props.classes" class="pointer">
+  <div v-bind="$props" :class="$props.classes" class="aw-display-date pointer">
     {{ computedDate }}
-  </span>
+  </div>
 </template>
 
 <script>
@@ -44,4 +44,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+
+.aw-display-date.badge {
+  display: block;
+}
+</style>
