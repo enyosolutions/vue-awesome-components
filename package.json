@@ -1,6 +1,6 @@
 {
   "name": "vue-enyo-components",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-alpha.2",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -56,6 +56,7 @@
     "json-schema-to-openapi-schema": "^0.4.0",
     "lodash-webpack-plugin": "^0.11.5",
     "luxon": "^1.24.1",
+    "marked": "^1.1.1",
     "minimist": "^1.2.5",
     "node-sass": "^4.12.0",
     "prettier-package-json": "^2.1.3",
