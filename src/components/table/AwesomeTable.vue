@@ -1,20 +1,13 @@
 <template>
-  <div class="card ajax-table-card">
+  <div class="card aw-table-card aw-table">
     <div
       class="card-header"
-      :class="'ajax-table-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
+      :class="'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')"
     >
-      <div v-if="isRefreshing" style="text-align: center">
+      <div v-if="isRefreshing" style="text-align: center;">
         <div
           class="progress"
-          style="
-    height: 5px;
-    border-radius: 0px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%
-"
+          style="height: 5px; border-radius: 0px; position: absolute; top: 0; left: 0; width: 100%;"
         >
           <div
             class="progress-bar progress-bar-striped progress-bar-animated"
@@ -22,11 +15,11 @@
             aria-valuenow="100"
             aria-valuemin="0"
             aria-valuemax="100"
-            style="width: 5%"
+            style="width: 5%;"
           ></div>
         </div>
       </div>
-      <h3 class="card-title ajax-table-header text-left">
+      <h3 class="card-title aw-table-header text-left">
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
@@ -50,7 +43,7 @@
             >
               Columns
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height:100vh; overflow: auto;">
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 100vh; overflow: auto;">
               <button
                 v-for="(col, index) in formattedColumns"
                 :key="index"
@@ -165,7 +158,7 @@
         <slot name="table-subtitle" />
       </p>
     </div>
-    <div class="card-body ajax-table-card-body">
+    <div class="card-body aw-table-card-body">
       <awesome-filter
         :editFilters="false"
         id="advancedFilterComponent"
@@ -181,8 +174,8 @@
           :total-rows="totalCount"
           style-class="vgt-table table striped"
           :columns="displayedColumns"
-          :fixed-header="opts && opts.fixedHeader"
-          :max-height="opts.maxHeight"
+          :fixed-header="optionsComputed && optionsComputed.fixedHeader"
+          :max-height="optionsComputed.maxHeight"
           :rows="data || []"
           :filter-options="{
             enabled: _actions.filter
@@ -195,7 +188,7 @@
             placeholder: this.$t('AwesomeTable.searchInput')
           }"
           :pagination-options="{
-            enabled: opts && opts.pagination,
+            enabled: optionsComputed && optionsComputed.pagination,
             nextLabel: this.$t('AwesomeTable.next'),
             prevLabel: this.$t('AwesomeTable.prev'),
             rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
@@ -223,8 +216,8 @@
           @on-selected-rows-change="onSelectionChanged"
         >
           <div slot="selected-row-actions">
-            <template v-if="opts && opts.customBulkActions">
-              <template v-for="(action, index) in opts.customBulkActions">
+            <template v-if="optionsComputed && optionsComputed.customBulkActions">
+              <template v-for="(action, index) in optionsComputed.customBulkActions">
                 <button
                   :key="index"
                   class="btn btn-primary btn-simple"
@@ -275,8 +268,8 @@
               @update="onDateFilter"
             />
 
-            <template v-if="opts && opts.customTableTopActions">
-              <template v-for="(action, index) in opts.customTableTopActions">
+            <template v-if="optionsComputed && optionsComputed.customTableTopActions">
+              <template v-for="(action, index) in optionsComputed.customTableTopActions">
                 <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
                   <button
                     :key="index"
@@ -299,6 +292,7 @@
             <Skeleton v-if="useSkeleton" :count="1" :loading="true"></Skeleton>
             <template v-else>
               <awesome-display
+                v-if="props.column.field !== 'ACTIONS'"
                 v-bind="props.column"
                 :apiResponseConfig="apiResponseConfig"
                 :apiRequestHeaders="apiRequestHeaders"
@@ -309,8 +303,8 @@
 
               <span v-if="props.column.field === 'ACTIONS'" class="text-right">
                 <slot name="table-row-actions" :item="props.row">
-                  <template v-if="opts && opts.customInlineActions">
-                    <template v-for="(action, index) in opts.customInlineActions">
+                  <template v-if="optionsComputed && optionsComputed.customInlineActions">
+                    <template v-for="(action, index) in optionsComputed.customInlineActions">
                       <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
                         <button
                           :key="index"
@@ -500,9 +494,7 @@ export default {
       filterable: this.options.filterInitiallyOn,
       isRefreshing: false,
       columnsState: {},
-      defaultStartDate: moment()
-        .subtract(7, "days")
-        .format("YYYY-MM-DD"),
+      defaultStartDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
       defaultEndDate: moment().format("YYYY-MM-DD"),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -536,7 +528,7 @@ export default {
     };
   },
   computed: {
-    opts() {
+    optionsComputed() {
       return _.merge(this.defaultOptions, this.options);
     },
 
@@ -553,7 +545,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        this.actions || (this.innerOptions && this._actions) // old location kept for BC
+        (this.optionsComputed && this.optionsComputed.actions) || this.actions // old location kept for BC
       );
     },
 
@@ -561,7 +553,6 @@ export default {
       if (!this.columns) {
         // eslint-disable-next-line
         console.error("AwesomeTable MISSING COLUMNS");
-        return [];
       }
       const newcolumns = this.columns.map((col) => {
         const newCol = {};
@@ -578,7 +569,7 @@ export default {
         }
 
         if (col.type && col.type === "datetime") {
-          col.formatFn = function(value) {
+          col.formatFn = function (value) {
             if (!value) {
               return value;
             }
@@ -587,7 +578,7 @@ export default {
         }
 
         if (col.type && col.type === "date") {
-          col.formatFn = function(value) {
+          col.formatFn = function (value) {
             if (!value) {
               return value;
             }
@@ -942,11 +933,11 @@ export default {
 };
 </script>
 <style lang="scss">
-.ajax-table-img {
+.aw-table-img {
   max-height: 50px;
 }
 
-.ajax-table-checkbox {
+.aw-table-checkbox {
   height: 18px;
   width: 18px;
 }
@@ -970,7 +961,7 @@ export default {
   opacity: 1;
 }
 
-.ajax-table-header.card-header.colored-header {
+.aw-table-header.card-header.colored-header {
   color: white;
   * {
     color: white;
@@ -1007,5 +998,9 @@ export default {
   border: none !important;
   color: black !important;
   font-size: 0.8rem !important;
+}
+
+.aw-table .vgt-global-search__input .input__icon .magnifying-glass {
+  display: none;
 }
 </style>
