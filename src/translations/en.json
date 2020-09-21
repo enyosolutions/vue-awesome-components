@@ -91,7 +91,8 @@
       "bulkEdit": "Multiple Edit",
       "openEditLayoutMode": "Edit Layout",
       "closeEditLayoutMode": "Close editor",
-      "resetLayout": "Reset the layout"
+      "resetLayout": "Reset the layout",
+      "exportLayout": "Export the layout"
     },
     "messages": {
       "successfullyModified": "Successfully modified."
@@ -111,6 +112,16 @@
   "AwesomeLayout": {
     "messages": {
       "emptyBlockBeforeDelete": "you must empty the block before you can delete it."
+    }
+  },
+  "Notifications": {
+    "messages": {
+      "are_you_sure": "Are you sure ?"
+    },
+    "buttons": {
+      "yes": "Yes",
+      "cancel": "Cancel",
+      "close": "Close"
     }
   }
 }

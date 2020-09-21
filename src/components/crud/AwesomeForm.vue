@@ -55,6 +55,15 @@
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
+                          class="btn btn-warning btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="exportLayout"
+                        >
+                          <i class="fa fa-download"></i>
+                          {{ $t("AwesomeCrud.buttons.exportLayout") }}
+                        </button>
+                        <button
+                          v-if="editLayoutMode && layout"
                           class="btn btn-danger btn-main-style mr-1 btn-sm"
                           type="button"
                           @click="resetLayout"
@@ -151,6 +160,15 @@
                         >
                           <i class="fa fa-th-large"></i>
                           {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                        </button>
+                        <button
+                            v-if="editLayoutMode && layout"
+                            class="btn btn-warning btn-main-style mr-1 btn-sm"
+                            type="button"
+                            @click="exportLayout"
+                        >
+                          <i class="fa fa-download"></i>
+                          {{ $t("AwesomeCrud.buttons.exportLayout") }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -454,6 +472,7 @@ import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
+import notificationsMixin from "@/mixins/notificationsMixin";
 
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
@@ -497,7 +516,7 @@ export default {
     GroupedForm,
     AwesomeLayout
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema],
+  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema, notificationsMixin],
   props: {
     item: { type: Object, required: true },
     bulkItems: { type: Array, required: false },
@@ -1428,6 +1447,10 @@ export default {
       fields: this.formSchema.fields.map(f => f.model)
     };
       this.$emit("layout-resetted", [newLayout]);
+    },
+
+    exportLayout() {
+      this.$export(this.layout);
     },
 
     onLayoutUpdated(items) {
