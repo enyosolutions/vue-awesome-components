@@ -1,5 +1,5 @@
 <template>
-	<img :src="mapLink" >
+  <img :src="mapLink" />
 </template>
 
 <script>
@@ -28,17 +28,17 @@ export default {
         let url = `http://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${options.zoom}&size=${options.sizeX}x${options.sizeY}`;
 
         let props = [
-          'scale',
-          'format',
-          'maptype',
-          'language',
-          'region',
-          'markers',
-          'path',
-          'visible',
-          'style',
-          'key',
-          'signature'
+          "scale",
+          "format",
+          "maptype",
+          "language",
+          "region",
+          "markers",
+          "path",
+          "visible",
+          "style",
+          "key",
+          "signature"
         ];
         for (let prop of props) {
           if (typeof options[prop] !== "undefined") {
@@ -49,6 +49,7 @@ export default {
           return url;
         }
       }
+      return "";
     }
   }
 };

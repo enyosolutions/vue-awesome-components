@@ -86,25 +86,25 @@
                     <div class="modal-body">
                       <slot name="create-form" :selectedItem="selectedItem">
                         <AwesomeLayout
-                            :edit-mode="editLayoutMode"
-                            :layout="layout"
-                            @layout-updated="onLayoutUpdated"
-                            @layout-fields-updated="onLayoutFieldsUpdated"
+                          :edit-mode="editLayoutMode"
+                          :layout="layout"
+                          @layout-updated="onLayoutUpdated"
+                          @layout-fields-updated="onLayoutFieldsUpdated"
                         >
                           <template v-slot:field="slotProps">
                             <VueFormGenerator
-                                :schema="getShemaForFields(slotProps.field)"
-                                :model="selectedItem"
-                                :options="formOptions"
-                                tag="div"
+                              :schema="getShemaForFields(slotProps.field)"
+                              :model="selectedItem"
+                              :options="formOptions"
+                              tag="div"
                             />
                           </template>
                           <template v-slot:fields="fieldsSlotProps">
                             <VueFormGenerator
-                                :schema="getShemaForFields(fieldsSlotProps.fields)"
-                                :model="selectedItem"
-                                :options="formOptions"
-                                tag="div"
+                              :schema="getShemaForFields(fieldsSlotProps.fields)"
+                              :model="selectedItem"
+                              :options="formOptions"
+                              tag="div"
                             />
                           </template>
                         </AwesomeLayout>
@@ -126,7 +126,7 @@
                             :options="formOptions"
                             tag="div"
                           />
-                          </template>
+                        </template>
                       </slot>
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
@@ -228,10 +228,10 @@
                               </template>
                               <template v-slot:fields="fieldsSlotProps">
                                 <VueFormGenerator
-                                    :schema="getShemaForFields(fieldsSlotProps.fields)"
-                                    :model="selectedItem"
-                                    :options="formOptions"
-                                    tag="div"
+                                  :schema="getShemaForFields(fieldsSlotProps.fields)"
+                                  :model="selectedItem"
+                                  :options="formOptions"
+                                  tag="div"
                                 />
                               </template>
                             </AwesomeLayout>
@@ -467,10 +467,12 @@ import relationMixin from "../../mixins/relationMixin";
 
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
+/*
 import Column from "./layout/Column.vue";
 import Tabs from "./layout/Tabs.vue";
 import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
+*/
 
 import "vue-good-table/dist/vue-good-table.css";
 import AwesomeCrud from "./AwesomeCrud";
@@ -494,7 +496,7 @@ const defaultOptions = {
   customTopActions: [],
   customTabletopActions: [],
   responseField: "body",
-  useCustomLayout: false,
+  useCustomLayout: false
 };
 
 export default {
@@ -502,10 +504,11 @@ export default {
   introduction: "A component to quickly create a table UI with edit capabilities",
   components: {
     AwesomeCrud,
-    Column,
+    /* Column,
     Tabs,
     Row,
     GroupedForm,
+    */
     AwesomeLayout
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema],
@@ -614,7 +617,7 @@ export default {
     useSimpleCreateForm: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
       node: "If true then the create form will display only required attributes"
     },
     options: {
@@ -629,7 +632,7 @@ export default {
     layout: {
       type: [Array, Object],
       note: "Layout of the form",
-      default: () => null,
+      default: () => null
     },
     editLayoutMode: {
       type: Boolean
@@ -793,7 +796,7 @@ export default {
     },
 
     _useCustomLayout() {
-      return !!(this.options.useCustomLayout && this.layout)
+      return !!(this.options.useCustomLayout && this.layout);
     }
   },
   watch: {
@@ -1411,7 +1414,6 @@ export default {
       this.$emit(this.identity + "-list-updated", datas);
     },
 
-
     renderSidebar() {},
     renderTabs() {},
     renderColumns(columns) {
@@ -1421,26 +1423,26 @@ export default {
     renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
 
     openEditLayoutMode() {
-      this.$emit('open-edit-layout-mode');
+      this.$emit("open-edit-layout-mode");
     },
 
     closeEditLayoutMode() {
-      this.$emit('close-edit-layout-mode')
+      this.$emit("close-edit-layout-mode");
       //this.editLayoutMode = false;
     },
 
     resetLayout() {
       const newLayout = {
-      i: `awesomeForm-${this.identity}-${Date.now()}`,
-      x: 0,
-      y: 0,
-      w: 12,
-      h: 6,
-      maxW: 12,
-      minH: 2,
-      legend: this.identity,
-      fields: this.formSchema.fields.map(f => f.model)
-    };
+        i: `awesomeForm-${this.identity}-${Date.now()}`,
+        x: 0,
+        y: 0,
+        w: 12,
+        h: 6,
+        maxW: 12,
+        minH: 2,
+        legend: this.identity,
+        fields: this.formSchema.fields.map((f) => f.model)
+      };
       this.$emit("layout-resetted", [newLayout]);
     },
 

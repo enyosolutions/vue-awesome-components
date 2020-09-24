@@ -5,8 +5,8 @@ const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
 
 const banner = `
 /**
- * vue-enyo-components ${version}
- * https://github.com/enyosolutions-team/vue-enyo-components/
+ * vue-aw-components ${version}
+ * https://github.com/enyosolutions-team/vue-aw-components/
  * Released under the MIT License.
  */
 `;
@@ -33,7 +33,7 @@ module.exports = {
 
     resolve: {
       alias: {
-        "vue-enyo-components": path.resolve(__dirname, "src")
+        "vue-aw-components": path.resolve(__dirname, "src")
       }
     }
   },
@@ -86,7 +86,7 @@ module.exports = {
       // ]);
     }
     else {
-      config.resolve.alias.set("vue-enyo-components", path.resolve(__dirname, "src"));
+      config.resolve.alias.set("vue-aw-components", path.resolve(__dirname, "src"));
     }
   }
 };

@@ -71,6 +71,7 @@ import Vue from "vue";
 import { get as objGet, isArray } from "lodash";
 import formGroup from "./formGroup.vue";
 import formElement from "./formElement.vue";
+import { isFunction, isNil } from "lodash";
 
 export default {
   name: "form-generator",

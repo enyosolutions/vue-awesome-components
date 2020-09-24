@@ -111,6 +111,7 @@ export default {
       if (this.group && this.group.legend) {
         return this.group.legend;
       }
+      return "";
     },
     groupRowClasses() {
       // TODO find a way to detect errors in child to add some classes (error/valid/etc)

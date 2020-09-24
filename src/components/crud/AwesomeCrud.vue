@@ -375,7 +375,15 @@ export default {
     AwesomeList,
     AwesomeKanban
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema, notificationsMixin],
+  mixins: [
+    i18nMixin,
+    apiErrorsMixin,
+    apiConfigMixin,
+    awesomeFormMixin,
+    relationMixin,
+    parseJsonSchema,
+    notificationsMixin
+  ],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -476,6 +484,12 @@ export default {
       type: Object,
       default: () => defaultActions,
       note: "actions active in this instance"
+    },
+    modelsStorePath: {
+      type: String,
+      default: "data.models",
+      note:
+        "Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models"
     }
   },
   data() {
@@ -500,9 +514,8 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: "AwesomeCrud"
       },
-      identity: "",
       supportedDataDisplayModes: ["table", "list", "kanban"],
-      editLayoutMode: false,
+      editLayoutMode: false
     };
   },
   computed: {
@@ -852,7 +865,7 @@ export default {
         this.options = {};
       }
       this.mergeOptions();
-      if (this.$store && this.$store.state && !this.model) {
+      if (this.$store && this.$store.state && this.$store.state.data && this.$store.state.data.models && !this.model) {
         // @deprecated. We should avoid wiring data from the stores
         this._model = this.$store.state.data.models.find((model) => model.identity === this.identity);
       } else {
@@ -1230,15 +1243,15 @@ export default {
     },
 
     onRemoveList(body) {
-      console.log("TODO: REMOVE LIST", body);
+      // console.log("TODO: REMOVE LIST", body);
     },
 
     onListChanged(item) {
-      console.log(item);
+      // console.log(item);
     },
 
     onCardChanged(item, listTitle) {
-      console.log(item, listTitle);
+      // console.log(item, listTitle);
     },
 
     onCardClicked(item) {
@@ -1273,15 +1286,6 @@ export default {
     },
 
     onViewDisplayCancelled(item) {
-      // eslint-disable-next-line
-      console.log("@cancel event treated, previous mode", this.previousDisplayMode);
-      console.log("@cancel event treated current mode", this.displayMode);
-      console.log(
-        "@cancel event treated next mode",
-        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
-          ? this.previousDisplayMode
-          : this.mergedOptions.initialDisplayMode
-      );
       this.setDisplayMode(
         this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
@@ -1385,12 +1389,10 @@ export default {
     },
 
     onLayoutUpdated(items) {
-      console.log("CALL API TO CHANGED LAYOUT : ", items);
       this.$emit("layout-updated", items);
     },
 
     onLayoutFieldsUpdated(items) {
-      console.log("CALL API TO CHANGED FIELDS LAYOUT : ", items);
       this.$emit("layout-fields-updated", items);
     },
 
@@ -1400,7 +1402,7 @@ export default {
 
     onCloseEditLayoutMode() {
       this.editLayoutMode = false;
-    },
+    }
   }
 };
 </script>

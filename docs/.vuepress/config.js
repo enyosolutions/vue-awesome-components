@@ -1,7 +1,7 @@
 module.exports = {
   title: "Enyo vue components",
   description: "Components to speed up the development of a backoffice.",
-  // base: "/vue-enyo-components",
+  // base: "/vue-aw-components",
   base: "/",
   head: [
     [
@@ -30,7 +30,7 @@ module.exports = {
       { text: "AjaxTable", link: "/guide/ajaxtable/" },
       {
         text: "Github",
-        link: "https://github.com/enyosolutions-team/vue-enyo-components"
+        link: "https://github.com/enyosolutions-team/vue-aw-components"
       }
     ],
     sidebar: [
@@ -90,7 +90,7 @@ module.exports = {
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
           { title: "EnyoSelect", path: "/guide/enyoselect.md" },
           { title: "AwesomeKanban", path: "/guide/awesomekanban/" },
-          { title: "AwesomeLayout", path: "/guide/awesomelayout/"}
+          { title: "AwesomeLayout", path: "/guide/awesomelayout/" }
         ]
       },
       {
@@ -99,7 +99,7 @@ module.exports = {
       },
       {
         title: "Github",
-        path: "https://github.com/enyosolutions-team/vue-enyo-components"
+        path: "https://github.com/enyosolutions-team/vue-aw-components"
       }
     ]
   }
