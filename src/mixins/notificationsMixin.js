@@ -1,5 +1,5 @@
 import Swal from "sweetalert2/dist/sweetalert2.js";
-
+import _ from 'lodash';
 export default {
   methods: {
     $notify(message) {

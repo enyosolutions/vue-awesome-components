@@ -17404,9 +17404,9 @@ vue-docgen-loader@^1.4.0:
     loader-utils "^1.2.3"
     querystring "^0.2.0"
 
-"vue-enyo-components@https://github.com/enyosolutions-team/vue-enyo-components/archive/1.0.0-alpha.1.tar.gz":
+"vue-aw-components@https://github.com/enyosolutions-team/vue-aw-components/archive/1.0.0-alpha.1.tar.gz":
   version "1.0.0-alpha"
-  resolved "https://github.com/enyosolutions-team/vue-enyo-components/archive/1.0.0-alpha.1.tar.gz#4404a857cd24f57ea3723c30faff9596feb0bd3e"
+  resolved "https://github.com/enyosolutions-team/vue-aw-components/archive/1.0.0-alpha.1.tar.gz#4404a857cd24f57ea3723c30faff9596feb0bd3e"
 
 vue-eslint-parser@^2.0.3:
   version "2.0.3"

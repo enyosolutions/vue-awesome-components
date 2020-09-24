@@ -95,25 +95,25 @@
                     <div class="modal-body">
                       <slot name="create-form" :selectedItem="selectedItem">
                         <AwesomeLayout
-                            :edit-mode="editLayoutMode"
-                            :layout="layout"
-                            @layout-updated="onLayoutUpdated"
-                            @layout-fields-updated="onLayoutFieldsUpdated"
+                          :edit-mode="editLayoutMode"
+                          :layout="layout"
+                          @layout-updated="onLayoutUpdated"
+                          @layout-fields-updated="onLayoutFieldsUpdated"
                         >
                           <template v-slot:field="slotProps">
                             <VueFormGenerator
-                                :schema="getShemaForFields(slotProps.field)"
-                                :model="selectedItem"
-                                :options="formOptions"
-                                tag="div"
+                              :schema="getShemaForFields(slotProps.field)"
+                              :model="selectedItem"
+                              :options="formOptions"
+                              tag="div"
                             />
                           </template>
                           <template v-slot:fields="fieldsSlotProps">
                             <VueFormGenerator
-                                :schema="getShemaForFields(fieldsSlotProps.fields)"
-                                :model="selectedItem"
-                                :options="formOptions"
-                                tag="div"
+                              :schema="getShemaForFields(fieldsSlotProps.fields)"
+                              :model="selectedItem"
+                              :options="formOptions"
+                              tag="div"
                             />
                           </template>
                         </AwesomeLayout>
@@ -126,6 +126,16 @@
                             tag="div"
                           />
                         </template>-->
+
+                        <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
+                          <VueFormGenerator
+                            ref="form"
+                            :schema.sync="createFormSchema"
+                            :model="selectedItem"
+                            :options="formOptions"
+                            tag="div"
+                          />
+                        </template>
                       </slot>
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
@@ -202,7 +212,7 @@
                     </div>
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
-                        v-if="nestedSchemas && nestedSchemas.length && mode === 'view'"
+                        v-if="nestedSchemas && nestedSchemas.length && mode !== 'create'"
                         class="nav nav-tabs mt-5 mb-4"
                       >
                         <li class="nav-item">
@@ -219,7 +229,7 @@
                       </ul>
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
-                          <div class="row" v-if="renderLayout && layout">
+                          <div class="row" v-if="_useCustomLayout">
                             <AwesomeLayout
                               :edit-mode="editLayoutMode"
                               :layout="layout"
@@ -236,10 +246,10 @@
                               </template>
                               <template v-slot:fields="fieldsSlotProps">
                                 <VueFormGenerator
-                                    :schema="getShemaForFields(fieldsSlotProps.fields)"
-                                    :model="selectedItem"
-                                    :options="formOptions"
-                                    tag="div"
+                                  :schema="getShemaForFields(fieldsSlotProps.fields)"
+                                  :model="selectedItem"
+                                  :options="formOptions"
+                                  tag="div"
                                 />
                               </template>
                             </AwesomeLayout>
@@ -308,7 +318,7 @@
                             </template>-->
                           </div>
 
-                          <template v-if="formSchema && formSchema.fields && !this.layout">
+                          <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
@@ -476,10 +486,12 @@ import notificationsMixin from "@/mixins/notificationsMixin";
 
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
+/*
 import Column from "./layout/Column.vue";
 import Tabs from "./layout/Tabs.vue";
 import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
+*/
 
 import "vue-good-table/dist/vue-good-table.css";
 import AwesomeCrud from "./AwesomeCrud";
@@ -502,7 +514,8 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  responseField: "body"
+  responseField: "body",
+  useCustomLayout: false
 };
 
 export default {
@@ -510,10 +523,11 @@ export default {
   introduction: "A component to quickly create a table UI with edit capabilities",
   components: {
     AwesomeCrud,
-    Column,
+    /* Column,
     Tabs,
     Row,
     GroupedForm,
+    */
     AwesomeLayout
   },
   mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema, notificationsMixin],
@@ -635,8 +649,9 @@ export default {
       note: "actions active in this instance"
     },
     layout: {
-      type: Array,
-      note: "Layout of the form"
+      type: [Array, Object],
+      note: "Layout of the form",
+      default: () => null
     },
     editLayoutMode: {
       type: Boolean
@@ -773,7 +788,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+        (this.mergedOptions && this.mergedOptions.actions) || this.actions // old location kept for BC
       );
     },
 
@@ -797,6 +812,10 @@ export default {
 
     _isEmbedded() {
       return this._isNested && (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "edit");
+    },
+
+    _useCustomLayout() {
+      return !!(this.options.useCustomLayout && this.layout);
     }
   },
   watch: {
@@ -895,6 +914,7 @@ export default {
     },
 
     mergeOptions() {
+      /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
       if (this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
@@ -1413,10 +1433,6 @@ export default {
       this.$emit(this.identity + "-list-updated", datas);
     },
 
-    renderLayout(layout) {
-      return true;
-    },
-
     renderSidebar() {},
     renderTabs() {},
     renderColumns(columns) {
@@ -1426,26 +1442,26 @@ export default {
     renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
 
     openEditLayoutMode() {
-      this.$emit('open-edit-layout-mode');
+      this.$emit("open-edit-layout-mode");
     },
 
     closeEditLayoutMode() {
-      this.$emit('close-edit-layout-mode')
+      this.$emit("close-edit-layout-mode");
       //this.editLayoutMode = false;
     },
 
     resetLayout() {
       const newLayout = {
-      i: `awesomeForm-${this.identity}-${Date.now()}`,
-      x: 0,
-      y: 0,
-      w: 12,
-      h: 6,
-      maxW: 12,
-      minH: 2,
-      legend: this.identity,
-      fields: this.formSchema.fields.map(f => f.model)
-    };
+        i: `awesomeForm-${this.identity}-${Date.now()}`,
+        x: 0,
+        y: 0,
+        w: 12,
+        h: 6,
+        maxW: 12,
+        minH: 2,
+        legend: this.identity,
+        fields: this.formSchema.fields.map((f) => f.model)
+      };
       this.$emit("layout-resetted", [newLayout]);
     },
 

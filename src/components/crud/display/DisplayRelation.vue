@@ -1,8 +1,6 @@
 <template>
   <div class="text-avoid-overflow awesome-display-relation" v-bind="$props">
-    <router-link v-if="$props.value && !$props.onClickUrl"
-                 :to="'/app/' + $props.relation + '/' + $props.value"
-    >
+    <router-link v-if="$props.value && !$props.onClickUrl" :to="'/app/' + $props.relation + '/' + $props.value">
       <span class="badge badge-info">
         {{ _label }}
       </span>
@@ -30,27 +28,25 @@
 </template>
 
 <script>
-import _ from 'lodash';
-import awesomeDisplayMixin from '../../../mixins/displayMixin';
-import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
-import apiConfigMixin from '../../../mixins/apiConfigMixin';
-import i18nMixin from '../../../mixins/i18nMixin';
+import _ from "lodash";
+import awesomeDisplayMixin from "../../../mixins/displayMixin";
+import apiErrorsMixin from "../../../mixins/apiErrorsMixin";
+import apiConfigMixin from "../../../mixins/apiConfigMixin";
+import i18nMixin from "../../../mixins/i18nMixin";
 
 export default {
-  name: 'DisplayRelation',
+  name: "DisplayRelation",
   mixins: [awesomeDisplayMixin, apiConfigMixin, apiErrorsMixin, i18nMixin],
   computed: {
     _relationUrl() {
       return this.relationUrl || this.relation;
     },
     _relationLabel() {
-      return this.relationLabel || 'label';
+      return this.relationLabel || "label";
     },
 
     _label() {
-      return this.storePath || this.store
-        ? this.getStoreLabel(this.value)
-        : this.getApiLabel(this.value);
+      return this.storePath || this.store ? this.getStoreLabel(this.value) : this.getApiLabel(this.value);
     },
 
     _displayLabelCache() {
@@ -59,7 +55,7 @@ export default {
   },
   data() {
     return {
-      internalCache: {},
+      internalCache: {}
     };
   },
   methods: {
@@ -71,27 +67,17 @@ export default {
         return;
       }
 
-      if (
-        !this.store &&
-        !(
-          this.storePath &&
-          this.$store &&
-          _.get(this.$store.state, this.storePath)
-        )
-      ) {
+      if (!this.store && !(this.storePath && this.$store && _.get(this.$store.state, this.storePath))) {
         return value;
       }
 
-      const $store = this.store
-        ? this.store
-        : this.$store && _.get(this.$store.state, this.storePath);
+      const $store = this.store ? this.store : this.$store && _.get(this.$store.state, this.storePath);
       if (!$store) {
         return value;
       }
 
-      const item =
-        $store && $store.find((elm) => elm[this.relationKey] === value);
-      console.warn('$store', item, $store, this.relationKey);
+      const item = $store && $store.find((elm) => elm[this.relationKey] === value);
+      console.warn("$store", item, $store, this.relationKey);
       if (!item) {
         return value;
       }
@@ -111,23 +97,17 @@ export default {
       if (this.relationUrl && value && this._displayLabelCache[url]) {
         return this._displayLabelCache[url];
       }
-      const promise = this.$http
+      this.$http
         .get(url)
         .then((res) => {
           const data =
-            this.apiResponseConfig &&
-            this.apiResponseConfig.dataPath &&
-            this.apiResponseConfig.dataPath != false
+            this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data;
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          const result = `${_.get(data, this.relationKey)} - ${_.get(
-            data,
-            this.relationLabel,
-            ''
-          )}`;
+          const result = `${_.get(data, this.relationKey)} - ${_.get(data, this.relationLabel, "")}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }
@@ -140,14 +120,14 @@ export default {
       return this._displayLabelCache[url];
     },
     copyToClipboard(str) {
-      const el = document.createElement('textarea');
+      const el = document.createElement("textarea");
       el.value = str;
-      el.setAttribute('readonly', '');
-      el.style.position = 'absolute';
-      el.style.left = '-9999px';
+      el.setAttribute("readonly", "");
+      el.style.position = "absolute";
+      el.style.left = "-9999px";
       document.body.appendChild(el);
       el.select();
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(el);
     },
 
@@ -155,13 +135,11 @@ export default {
       this.copyToClipboard(`${this._label}`);
       if (this.$notify) {
         this.$notify(
-          this.$te('awesome-display.value-copied')
-            ? this.$t('awesome-display.value-copied')
-            : 'Value copied'
+          this.$te("awesome-display.value-copied") ? this.$t("awesome-display.value-copied") : "Value copied"
         );
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

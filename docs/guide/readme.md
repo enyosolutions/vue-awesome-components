@@ -1,4 +1,4 @@
-# vue-enyo-components
+# vue-aw-components
 
 ## Dependencies
 
@@ -27,23 +27,23 @@ npm install crip-vue-loading
 
 ## install
 ```
-yarn add vue-enyo-components
+yarn add vue-aw-components
 ```
 
 Add in your main.js
 ```
-import VueEnyoComponents from 'vue-enyo-components/plugin';
+import VueEnyoComponents from 'vue-aw-components/plugin';
 
 // or to import separately the components you need
 
-import {EnyoCard, EnyoAjaxTable} from 'vue-enyo-components';
+import {EnyoCard, EnyoAjaxTable} from 'vue-aw-components';
 
 ```
 
 And for the styling you'll also need :
 
 ```
-import VueEnyoComponents from 'vue-enyo-components/build/style.css';
+import VueEnyoComponents from 'vue-aw-components/build/style.css';
 
 ```
 

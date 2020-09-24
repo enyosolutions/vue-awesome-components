@@ -1,8 +1,19 @@
+import _ from 'lodash';
+
 export default {
   methods: {
-    getModelFromStore(modelId) {
+    getModelFromStore(modelId, modelsStorePath = null) {
+      // if vuex is installed
       if (this.$store && this.$store.state && !this.model) {
-        return this.$store.state.data.models.find((model) => model.identity === modelId || model.modelName === modelId);
+        // if we have path
+        if (modelsStorePath) {
+
+          const models = _.get(this.$store, modelsStorePath);
+          // if we have a list
+          if (models && Array.isArray(models)) {
+            return models.find((model) => model.identity === modelId || model.modelName === modelId);
+          }
+        }
       }
       return;
     },
@@ -13,7 +24,7 @@ export default {
       if (prop.relationUrl) {
         return prop.relationUrl;
       } else {
-        const model = this.getModelFromStore(prop.relation);
+        const model = this.getModelFromStore(prop.relation, this.modelsStorePath);
         return model ? model.url || model.apiUrl : '';
       }
     },

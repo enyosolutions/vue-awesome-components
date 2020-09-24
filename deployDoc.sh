@@ -16,10 +16,10 @@ git init
 git add -A
 git commit -m 'deploy: github pages'
 
-# if you are deploying to https://vue-enyo-components.github.io
-# git push -f git@github.com:<USERNAME>/vue-enyo-components.github.io.git master
+# if you are deploying to https://vue-aw-components.github.io
+# git push -f git@github.com:<USERNAME>/vue-aw-components.github.io.git master
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:enyosolutions-team/vue-enyo-components.git master:gh-pages
+git push -f git@github.com:enyosolutions-team/vue-aw-components.git master:gh-pages
 
 cd -

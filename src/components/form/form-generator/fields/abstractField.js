@@ -301,8 +301,8 @@ export default {
     this.eventBus.$emit("field-registering");
   },
   mounted() {
-    const diff = function(a, b) {
-      return b.filter(function(i) {
+    const diff = function (a, b) {
+      return b.filter(function (i) {
         return a.indexOf(i) < 0;
       });
     };
@@ -344,7 +344,7 @@ export default {
       let currentKeys = Object.keys(this.schema);
       let result = diff(allowedKeys, currentKeys);
       if (result.length > 0) {
-        console.log("diff", result, this.schema.type, this.schema.model);
+        //        console.log("diff", result, this.schema.type, this.schema.model);
       }
     }
   },

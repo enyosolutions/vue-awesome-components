@@ -229,9 +229,18 @@
         <p>User can change the layout of awesome form</p>
         Props
         <ul>
-          <li><code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change the layout.</li>
-          <li><code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register layout.</li>
-          <li><code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg: <code>Informations</code>) </li>
+          <li>
+            <code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change
+            the layout.
+          </li>
+          <li>
+            <code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register
+            layout.
+          </li>
+          <li>
+            <code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg:
+            <code>Informations</code>)
+          </li>
         </ul>
         Events
         <ul>
@@ -239,24 +248,24 @@
           <li><code>@layout-fields-updated</code> : Trigger when a field is move</li>
         </ul>
         <AutoProps
-            :component="AwesomeCrud"
-            :componentProps="{}"
-            :skip-props="['translations']"
-            :docked="false"
-            v-slot="{ userProps }"
+          :component="AwesomeCrud"
+          :componentProps="{}"
+          :skip-props="['translations']"
+          :docked="false"
+          v-slot="{ userProps }"
         >
           <AwesomeCrud
-              identity="ticket"
-              :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-              :options="{ detailPageMode: 'fullscreen' }"
-              :model="_ticketModel"
-              url="http://localhost:3000/tickets"
-              :apiResponseConfig="{
+            identity="ticket"
+            :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+            :options="{ detailPageMode: 'fullscreen' }"
+            :model="_ticketModel"
+            url="http://localhost:3000/tickets"
+            :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count'
             }"
-              v-bind="userProps"
-              @layout-updated="onLayoutUpdated"
+            v-bind="userProps"
+            @layout-updated="onLayoutUpdated"
           />
         </AutoProps>
       </div>
@@ -266,14 +275,14 @@
   </div>
 </template>
 <script>
-import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
+import AutoProps from "vue-aw-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
 import photoSchema from "../fixtures/photo";
-import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
-import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
-import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
+import AwesomeCrud from "vue-aw-components/components/crud/AwesomeCrud.vue";
+import AwesomeForm from "vue-aw-components/components/crud/AwesomeForm.vue";
+import LiveEdit from "vue-aw-components/components/form/LiveEdit.vue";
 
 export default {
   name: "AwesomeCrudAdvancedPage",
