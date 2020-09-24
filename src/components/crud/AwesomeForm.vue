@@ -117,6 +117,16 @@
                             tag="div"
                           />
                         </template>-->
+
+                        <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
+                          <VueFormGenerator
+                            ref="form"
+                            :schema.sync="createFormSchema"
+                            :model="selectedItem"
+                            :options="formOptions"
+                            tag="div"
+                          />
+                          </template>
                       </slot>
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
@@ -184,7 +194,7 @@
                     </div>
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
-                        v-if="nestedSchemas && nestedSchemas.length && mode === 'view'"
+                        v-if="nestedSchemas && nestedSchemas.length && mode !== 'create'"
                         class="nav nav-tabs mt-5 mb-4"
                       >
                         <li class="nav-item">
@@ -201,7 +211,7 @@
                       </ul>
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
-                          <div class="row" v-if="renderLayout && layout">
+                          <div class="row" v-if="_useCustomLayout">
                             <AwesomeLayout
                               :edit-mode="editLayoutMode"
                               :layout="layout"
@@ -290,7 +300,7 @@
                             </template>-->
                           </div>
 
-                          <template v-if="formSchema && formSchema.fields && !this.layout">
+                          <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
@@ -483,7 +493,8 @@ const defaultOptions = {
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  responseField: "body"
+  responseField: "body",
+  useCustomLayout: false,
 };
 
 export default {
@@ -603,7 +614,7 @@ export default {
     useSimpleCreateForm: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
       node: "If true then the create form will display only required attributes"
     },
     options: {
@@ -616,8 +627,9 @@ export default {
       note: "actions active in this instance"
     },
     layout: {
-      type: Array,
-      note: "Layout of the form"
+      type: [Array, Object],
+      note: "Layout of the form",
+      default: () => null,
     },
     editLayoutMode: {
       type: Boolean
@@ -754,7 +766,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+        (this.mergedOptions && this.mergedOptions.actions) || this.actions // old location kept for BC
       );
     },
 
@@ -778,6 +790,10 @@ export default {
 
     _isEmbedded() {
       return this._isNested && (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "edit");
+    },
+
+    _useCustomLayout() {
+      return !!(this.options.useCustomLayout && this.layout)
     }
   },
   watch: {
@@ -876,6 +892,7 @@ export default {
     },
 
     mergeOptions() {
+      /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
       if (this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
@@ -1394,9 +1411,6 @@ export default {
       this.$emit(this.identity + "-list-updated", datas);
     },
 
-    renderLayout(layout) {
-      return true;
-    },
 
     renderSidebar() {},
     renderTabs() {},

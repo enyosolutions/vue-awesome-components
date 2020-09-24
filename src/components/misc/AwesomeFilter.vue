@@ -2,7 +2,7 @@
   <div class="awesome-filter">
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">{{ $t("AwesomeFilter.labels.filterData") }}</h6>
-      <form class="container">
+      <form class="container" submit.sync="addFilter()">
         <div class="dropdown column">
           <button
             class="btn btn-primary btn-block dropdown-toggle"
