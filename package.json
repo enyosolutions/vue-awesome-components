@@ -1,6 +1,6 @@
 {
-  "name": "vue-enyo-components",
-  "version": " 1.0.0-alpha.3",
+  "name": "vue-aw-components",
+  "version": "1.0.0-alpha.4",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -10,7 +10,7 @@
     "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es --name vec src/index.js --report",
     "dev": "vue-cli-service serve",
     "docs:build": "vuepress build docs",
-    "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-enyo-components.dev/dist/",
+    "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
     "docs:dev": "vuepress dev docs",
     "start": "vue-cli-service serve",
     "storybook": "start-storybook"
@@ -18,8 +18,7 @@
   "main": "src/index.js",
   "module": "src/index.js",
   "dependencies": {
-    "uuid": "^8.3.0",
-    "vue-enyo-components": "https://github.com/enyosolutions-team/vue-enyo-components/archive/1.0.0-alpha.1.tar.gz"
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
