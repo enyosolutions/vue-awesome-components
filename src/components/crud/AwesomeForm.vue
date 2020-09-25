@@ -43,7 +43,11 @@
                         {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
                       </h3>
 
-                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                      <div
+                        v-if="_useCustomLayout && _actions.editLayout"
+                        class="btn-group m-0 aw-form-header-actions"
+                        style="flex:auto"
+                      >
                         <button
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
@@ -95,6 +99,7 @@
                     <div class="modal-body">
                       <slot name="create-form" :selectedItem="selectedItem">
                         <AwesomeLayout
+                          v-if="_useCustomLayout"
                           :edit-mode="editLayoutMode"
                           :layout="layout"
                           @layout-updated="onLayoutUpdated"
@@ -117,16 +122,6 @@
                             />
                           </template>
                         </AwesomeLayout>
-                        <!--<template v-if="formSchema && formSchema.fields">
-                          <VueFormGenerator
-                            ref="form"
-                            :schema.sync="createFormSchema"
-                            :model="selectedItem"
-                            :options="formOptions"
-                            tag="div"
-                          />
-                        </template>-->
-
                         <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                           <VueFormGenerator
                             ref="form"
@@ -161,7 +156,11 @@
                         {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
                       </h3>
 
-                      <div v-if="_actions.editLayout" class="btn-group m-0 aw-form-header-actions" style="flex:auto">
+                      <div
+                        v-if="_useCustomLayout && _actions.editLayout"
+                        class="btn-group m-0 aw-form-header-actions"
+                        style="flex:auto"
+                      >
                         <button
                           v-if="!editLayoutMode && layout"
                           class="btn btn-info btn-main-style mr-1 btn-sm"
@@ -172,10 +171,10 @@
                           {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
                         </button>
                         <button
-                            v-if="editLayoutMode && layout"
-                            class="btn btn-warning btn-main-style mr-1 btn-sm"
-                            type="button"
-                            @click="exportLayout"
+                          v-if="editLayoutMode && layout"
+                          class="btn btn-warning btn-main-style mr-1 btn-sm"
+                          type="button"
+                          @click="exportLayout"
                         >
                           <i class="fa fa-download"></i>
                           {{ $t("AwesomeCrud.buttons.exportLayout") }}
@@ -231,6 +230,7 @@
                         <div class="tab-content">
                           <div class="row" v-if="_useCustomLayout">
                             <AwesomeLayout
+                              v-if="_useCustomLayout"
                               :edit-mode="editLayoutMode"
                               :layout="layout"
                               @layout-updated="onLayoutUpdated"
@@ -530,7 +530,15 @@ export default {
     */
     AwesomeLayout
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiConfigMixin, awesomeFormMixin, relationMixin, parseJsonSchema, notificationsMixin],
+  mixins: [
+    i18nMixin,
+    apiErrorsMixin,
+    apiConfigMixin,
+    awesomeFormMixin,
+    relationMixin,
+    parseJsonSchema,
+    notificationsMixin
+  ],
   props: {
     item: { type: Object, required: true },
     bulkItems: { type: Array, required: false },

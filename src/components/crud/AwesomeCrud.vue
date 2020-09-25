@@ -228,6 +228,15 @@
                 <i class="fa fa-file-excel" />
                 {{ $t("AwesomeCrud.buttons.excel-template") }}
               </button>
+              <button
+                v-if="mergedOptions.useCustomLayout && _actions.editLayout"
+                type="button"
+                class="btn btn-simple btn-default btn-block"
+                @click="goToCreatePage({ editLayoutMode: true })"
+              >
+                <i class="fa fa-th-large"></i>
+                {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+              </button>
             </template>
 
             <!-- END OF ARRAY -->
@@ -1052,7 +1061,7 @@ export default {
       }
     },
 
-    goToCreatePage(options = { reset: true }) {
+    goToCreatePage(options = { reset: true, editLayoutMode: false }) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.createPath);
       }

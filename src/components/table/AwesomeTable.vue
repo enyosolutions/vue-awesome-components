@@ -2,7 +2,9 @@
   <div class="card aw-table-card aw-table">
     <div
       class="card-header"
-      :class="'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')"
+      :class="
+        'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')
+      "
     >
       <div v-if="isRefreshing" style="text-align: center;">
         <div
@@ -35,7 +37,7 @@
           <div v-if="canHideColumns" class="dropdown">
             <button
               id="dropdownMenuButton"
-              class="btn btn-simple dropdown-toggle"
+              class="btn btn-default btn-simple dropdown-toggle"
               type="button"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -123,15 +125,6 @@
               >
                 <i class="fa fa-filter" />
                 {{ $t("AwesomeTable.buttons.columnsFilters") }}
-              </button>
-              <button
-                v-if="_actions.editLayout"
-                type="button"
-                class="btn btn-simple btn-default"
-                @click="$emit('create', { editLayoutMode: true })"
-              >
-                <i class="fa fa-th-large"></i>
-                {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
               </button>
               <button
                 v-if="_actions && _actions.export"
@@ -494,7 +487,9 @@ export default {
       filterable: this.options.filterInitiallyOn,
       isRefreshing: false,
       columnsState: {},
-      defaultStartDate: moment().subtract(7, "days").format("YYYY-MM-DD"),
+      defaultStartDate: moment()
+        .subtract(7, "days")
+        .format("YYYY-MM-DD"),
       defaultEndDate: moment().format("YYYY-MM-DD"),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -569,7 +564,7 @@ export default {
         }
 
         if (col.type && col.type === "datetime") {
-          col.formatFn = function (value) {
+          col.formatFn = function(value) {
             if (!value) {
               return value;
             }
@@ -578,7 +573,7 @@ export default {
         }
 
         if (col.type && col.type === "date") {
-          col.formatFn = function (value) {
+          col.formatFn = function(value) {
             if (!value) {
               return value;
             }

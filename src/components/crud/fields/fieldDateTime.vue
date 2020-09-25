@@ -2,7 +2,7 @@
   <div class="input-group">
     <datetime
       v-bind="schema"
-      class="form-group"
+      class="field-date-fw"
       v-model="value"
       :input-id="inputId"
       :input-class="' form-control'"
@@ -11,17 +11,14 @@
       auto
     >
     </datetime>
-    <div class="input-group-addon">
-      <i class="fa fa-calendar"></i>
-    </div>
   </div>
 </template>
 
 <script>
-import VueFormGenerator from '../../form/form-generator';
-import moment from 'moment';
-import _ from 'lodash';
-import { Datetime } from 'vue-datetime';
+import VueFormGenerator from "../../form/form-generator";
+import moment from "moment";
+import _ from "lodash";
+import { Datetime } from "vue-datetime";
 
 // import dateFieldHelper from "../../form/form-generator/utils/dateFieldHelper"
 
@@ -93,5 +90,19 @@ export default {
 }
 .vdatetime.form-group {
   margin-bottom: 0;
+}
+.vdatetime {
+  position: relative;
+}
+.vdatetime.field-date-fw {
+  width: 100%;
+}
+
+.vdatetime:after {
+  font-family: fontAwesome;
+  content: "\f073";
+  position: absolute;
+  right: 3px;
+  top: 0;
 }
 </style>

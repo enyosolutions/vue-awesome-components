@@ -17,11 +17,11 @@
       <li class="nav-item">
         <a
           class="nav-link"
-          id="profile-tab"
+          id="ticket-custom-tab"
           data-toggle="tab"
-          href="#profile"
+          href="#ticket-custom"
           role="tab"
-          aria-controls="profile"
+          aria-controls="ticket-custom"
           aria-selected="false"
           >Tickets (Uses custom layout system)</a
         >
@@ -122,7 +122,7 @@
         />
       </div>
 
-      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <div class="tab-pane fade" id="ticket-custom" role="tabpanel" aria-labelledby="profile-tab">
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
         <h2>Ticket model with custom layout</h2>
         <AutoProps
@@ -135,7 +135,7 @@
           <AwesomeCrud
             identity="ticket"
             :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-            :options="{ detailPageMode: 'fullscreen' }"
+            :options="{ detailPageMode: 'fullscreen', useCustomLayout: true }"
             :model="_ticketModel"
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
