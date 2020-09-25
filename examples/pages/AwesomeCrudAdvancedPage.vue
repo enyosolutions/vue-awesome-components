@@ -411,7 +411,6 @@ export default {
       this.showAwesomeForm = !this.showAwesomeForm;
     },
     onLayoutUpdated(items, event) {
-      console.log("onLayoutUpdated", items);
       localStorage.setItem("onLayoutUpdated", JSON.stringify(items));
       this.editedLayout = items;
     }
@@ -419,7 +418,6 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
 @import "../../src/main.scss";
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

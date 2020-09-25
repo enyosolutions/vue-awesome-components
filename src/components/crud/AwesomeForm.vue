@@ -482,7 +482,7 @@ import apiErrorsMixin from "../../mixins/apiErrorsMixin";
 import apiConfigMixin from "../../mixins/apiConfigMixin";
 import awesomeFormMixin from "../../mixins/awesomeFormMixin";
 import relationMixin from "../../mixins/relationMixin";
-import notificationsMixin from "@/mixins/notificationsMixin";
+import notificationsMixin from "../../mixins/notificationsMixin";
 
 import i18nMixin from "../../mixins/i18nMixin";
 import { defaultActions } from "../../mixins/defaultProps";
