@@ -258,6 +258,7 @@ export default {
       text: ["$eq", "$ne", "$like", "$notLike", "$startsWith", "$endsWith", "$substring"],
       datetime: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
       number: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
+      integer: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
       boolean: ["$is", "$not"]
     },
     currentField: {},
@@ -271,10 +272,10 @@ export default {
         direction: "ltr", // direction of text
         format: "DD-MM-YYYY", // fomart of the dates displayed
         separator: " - ", // separator between the two ranges
-        applyLabel: '',
-        cancelLabel: '',
-        weekLabel: '',
-        customRangeLabel: '',
+        applyLabel: "",
+        cancelLabel: "",
+        weekLabel: "",
+        customRangeLabel: "",
         daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
         monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
         firstDay: 1 // ISO first day of week - see moment documenations for details
@@ -394,7 +395,8 @@ export default {
       { text: this.$t("AwesomeFilter.filters.contains-also"), value: "$substring" }
     ];
     this.currentFilter = {
-      text: this.$t("AwesomeFilter.filters.equals"), value: "$eq"
+      text: this.$t("AwesomeFilter.filters.equals"),
+      value: "$eq"
     };
     this.dateRangePicker.locale.applyLabel = this.$t("dateRangePicker.applyLabel");
     this.dateRangePicker.locale.cancelLabel = this.$t("dateRangePicker.cancelLabel");

@@ -97,10 +97,6 @@ export default {
   computed: {
     // @todo delete in future version
     params() {
-      // eslint-disable-next-line
-      console.info(
-        "BC this.params is deprecated, use this.apiQueryParams instead", this.params
-      );
       return this.apiQueryParams;
     },
 
@@ -264,7 +260,7 @@ export default {
     onPageChange(params) {
       window.App = { vue: this };
       if (this.routerMode) {
-        this.$router.push({ query: { ...this.$route.query, page: params.currentPage } });
+        this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       }
       if (this.mode !== "remote") {
         return;
@@ -275,7 +271,7 @@ export default {
 
     onPerPageChange(params) {
       if (this.routerMode) {
-        this.$router.push({ query: { ...this.$route.query, perPage: params.currentPerPage } });
+        this.pushChangesToRouter({ query: { ...this.$route.query, perPage: params.currentPerPage } });
       }
       if (this.mode !== "remote") {
         return;
@@ -286,7 +282,7 @@ export default {
 
     onSearch(params) {
       if (this.routerMode) {
-        this.$router.push({ query: { ...this.$route.query, search: params.searchTerm } });
+        this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
       }
       if (this.mode !== "remote") {
         return;
@@ -300,6 +296,19 @@ export default {
       if (selection) {
         this.selectedRows = selection.selectedRows;
       }
+    },
+
+    pushChangesToRouter(options) {
+      this.$router.push.catch(err => {
+        // Ignore the vueRouter err regarding  navigating to the page they are already on.
+        if (
+          err.name !== 'NavigationDuplicated' &&
+          !err.message.includes('Avoided redundant navigation to current location')
+        ) {
+          // But print any other errors to the console
+          console.warn(err);
+        }
+      })
     },
 
     connectRouteToPagination(to) {

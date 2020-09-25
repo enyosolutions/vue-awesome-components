@@ -598,7 +598,7 @@ export default {
     // _selectedItemUrl() szee apiConfigMixin
 
     schemaComputed() {
-      return this.schema || this._model.schema;
+      return this.schema || (this._model && this._model.schema);
     },
 
     formSchema() {
