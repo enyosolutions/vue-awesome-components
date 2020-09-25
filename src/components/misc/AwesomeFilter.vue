@@ -212,6 +212,9 @@
                 {{ value }}
               </span>
             </div>
+            <div
+              v-if="['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(filter.filter.value) > -1"
+            ></div>
             <div v-else>
               <span>{{ filter.value || '""' }}</span>
             </div>
@@ -255,11 +258,61 @@ export default {
   data: () => ({
     filters: [],
     rules: {
-      text: ["$eq", "$ne", "$like", "$notLike", "$startsWith", "$endsWith", "$substring"],
-      datetime: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
-      number: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
-      integer: ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$between", "$notBetween"],
-      boolean: ["$is", "$not"]
+      text: [
+        "$eq",
+        "$ne",
+        "$like",
+        "$notLike",
+        "$startsWith",
+        "$endsWith",
+        "$substring",
+        "$isNull",
+        "$isNotNull",
+        "$isNotDefined"
+      ],
+      datetime: [
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$between",
+        "$notBetween",
+        "$isNull",
+        "$isNotNull",
+        "$isNotDefined"
+      ],
+      number: [
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$between",
+        "$notBetween",
+        "$isNull",
+        "$isNotNull",
+        "$isDefined",
+        "$isNotDefined"
+      ],
+      integer: [
+        "$eq",
+        "$ne",
+        "$gt",
+        "$gte",
+        "$lt",
+        "$lte",
+        "$between",
+        "$notBetween",
+        "$isNull",
+        "$isNotNull",
+        "$isDefined",
+        "$isNotDefined"
+      ],
+      relation: ["$eq", "$ne", "$isNull", "$isNotNull", "$isDefined", "$isNotDefined"], // temporary solution, soon we'll need to provide a relation picker.
+      boolean: ["$is", "$not", "$isNull", "$isNotNull", "$isDefined", "$isNotDefined"]
     },
     currentField: {},
     currentValue: "",
@@ -344,6 +397,7 @@ export default {
           return filters;
         }
       }
+      console.log("this.currentField.type", this.currentField, this.currentField.type);
       return this.filters;
     }
   },
@@ -392,7 +446,11 @@ export default {
       { text: this.$t("AwesomeFilter.filters.not-contains"), value: "$notLike" },
       { text: this.$t("AwesomeFilter.filters.starts-with"), value: "$startsWith" },
       { text: this.$t("AwesomeFilter.filters.ends-with"), value: "$endsWith" },
-      { text: this.$t("AwesomeFilter.filters.contains-also"), value: "$substring" }
+      { text: this.$t("AwesomeFilter.filters.contains-also"), value: "$substring" },
+      { text: this.$t("AwesomeFilter.filters.is-null"), value: "$isNull" },
+      { text: this.$t("AwesomeFilter.filters.is-not-null"), value: "$isNotNull" },
+      { text: this.$t("AwesomeFilter.filters.is-defined"), value: "$isDefined" },
+      { text: this.$t("AwesomeFilter.filters.is-not-defined"), value: "$isNotDefined" }
     ];
     this.currentFilter = {
       text: this.$t("AwesomeFilter.filters.equals"),

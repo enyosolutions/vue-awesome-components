@@ -3,12 +3,12 @@ import _ from 'lodash';
 export default {
   methods: {
     getModelFromStore(modelId, modelsStorePath = null) {
+      modelsStorePath = modelsStorePath || this.modelsStorePath;
       // if vuex is installed
       if (this.$store && this.$store.state && !this.model) {
         // if we have path
         if (modelsStorePath) {
-
-          const models = _.get(this.$store, modelsStorePath);
+          const models = _.get(this.$store.state, modelsStorePath);
           // if we have a list
           if (models && Array.isArray(models)) {
             return models.find((model) => model.identity === modelId || model.modelName === modelId);

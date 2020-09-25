@@ -299,7 +299,7 @@ export default {
     },
 
     pushChangesToRouter(options) {
-      this.$router.push.catch(err => {
+      this.$router.push(options).catch(err => {
         // Ignore the vueRouter err regarding  navigating to the page they are already on.
         if (
           err.name !== 'NavigationDuplicated' &&

@@ -403,7 +403,7 @@ export default {
     },
     identity: {
       type: String,
-      required: false,
+      required: true,
       note: "Deprecated use identity"
     },
     nestedDisplayMode: {
@@ -514,7 +514,6 @@ export default {
       statsNeedsRefresh: false,
       nestedCrudNeedsRefresh: false,
       mergedOptions: {},
-      _model: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
       formOptions: {
@@ -581,6 +580,11 @@ export default {
       }
       return "";
     },
+
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
+
     _namePlural() {
       if (this._model && this._model.namePlural) {
         return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
@@ -695,7 +699,6 @@ export default {
   },
   watch: {
     // call again the method if the route changes
-    name: "loadModel",
     identity: "loadModel",
     model: "loadModel",
     "parent.id": "loadModel",
@@ -703,6 +706,7 @@ export default {
     crudNeedsRefresh: "refreshComponent"
   },
   created() {
+    window._vue = this;
     if (!this.$http) {
       try {
         const axios = require("axios");
@@ -715,8 +719,8 @@ export default {
   },
   mounted() {
     // allow old property names to still work
-    if (this.modelName) {
-      this.identity = this.modelName;
+    if (!this.identity) {
+      throw new Error("missing_required_props_identity");
     }
     this.loadModel();
 
@@ -874,12 +878,6 @@ export default {
         this.options = {};
       }
       this.mergeOptions();
-      if (this.$store && this.$store.state && this.$store.state.data && this.$store.state.data.models && !this.model) {
-        // @deprecated. We should avoid wiring data from the stores
-        this._model = this.$store.state.data.models.find((model) => model.identity === this.identity);
-      } else {
-        this._model = this.model;
-      }
 
       if (!this._model && !this.schema) {
         console.warn("AWESOME CRUD ERROR", `model ${this.identity} not found`);

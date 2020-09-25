@@ -1011,9 +1011,9 @@ export default {
         this.options = {};
       }
       this.mergeOptions();
-      if (this.$store && this.$store.state && !this.model) {
+      if (!this.model) {
         // @delete ?
-        this._model = this.$store.state.data.models.find((model) => model.identity === this.identity);
+        this._model = this.getModelFromStore(this.identity);
       } else {
         this._model = this.model;
       }
