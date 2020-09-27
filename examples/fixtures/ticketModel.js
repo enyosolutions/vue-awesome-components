@@ -2,6 +2,7 @@ const schema = require('./ticket');
 
 module.exports = {
   identity: 'ticket',
+  displayField: 'subject',
   schema,
   formOptions: {
     layout: [{ "i": "awesomeForm-ticket-1600968855378", "x": 0, "y": 0, "w": 12, "h": 6, "maxW": 12, "minH": 2, "legend": "ticket", "fields": ["type", "createdOn", "lastModifiedOn"], "moved": false }, { "x": 6, "y": 6, "w": 6, "h": 6, "maxW": 12, "minH": 2, "fields": ["body", "userId", "regionId"], "i": "aw-layout-item-1e719dca-1c69-483c-8baf-372cd1d37703", "moved": false, "legend": "third" }, { "x": 0, "y": 6, "w": 6, "h": 6, "maxW": 12, "minH": 2, "fields": ["subject", "status"], "i": "aw-layout-item-fe5341d8-2ede-4df8-98a6-8829c515e268", "moved": false, "legend": "second" }]

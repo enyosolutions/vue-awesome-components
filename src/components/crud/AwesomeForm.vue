@@ -40,7 +40,7 @@
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title || _name }}
+                        {{ $t("AwesomeCrud.labels.add_a") }} {{ _title || _name }}
                       </h3>
 
                       <div
@@ -150,10 +150,11 @@
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.edit") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
+                        {{ $t("AwesomeCrud.labels.edit") }} {{ _name }}
+                        <b>{{ _editItemTile }}</b>
                       </h3>
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.view") }} {{ _name }} {{ selectedItem && selectedItem[primaryKey] }}
+                        {{ $t("AwesomeCrud.labels.view") }} {{ _name }} <b>{{ _editItemTile }}</b>
                       </h3>
 
                       <div
@@ -676,7 +677,6 @@ export default {
       showBackDrop: false,
       mergedOptions: {},
       innerSchema: {},
-      _model: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
       formOptions: {
@@ -688,11 +688,6 @@ export default {
   },
   computed: {
     _title() {
-      // @deprecated
-      if (this._model && this._model.pageTitle) {
-        return this.$te(this._model.pageTitle) ? this.$t(this._model.pageTitle) : this._model.pageTitle;
-      }
-
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -764,6 +759,10 @@ export default {
       return url;
     },
 
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
+
     formSchema() {
       if (!this.innerSchema) {
         return [];
@@ -824,6 +823,21 @@ export default {
 
     _useCustomLayout() {
       return !!(this.options.useCustomLayout && this.layout);
+    },
+
+    _editItemTile() {
+      if (!this.selectedItem) {
+        return "";
+      }
+
+      if (this._model && this._model.displayField && this.selectedItem[this._model.displayField]) {
+        return this.selectedItem[this._model.displayField];
+      }
+
+      if (this.selectedItem[this.primaryKey]) {
+        return this.selectedItem[this.primaryKey];
+      }
+      return "";
     }
   },
   watch: {
@@ -1011,18 +1025,6 @@ export default {
         this.options = {};
       }
       this.mergeOptions();
-      if (!this.model) {
-        // @delete ?
-        this._model = this.getModelFromStore(this.identity);
-      } else {
-        this._model = this.model;
-      }
-
-      if (!this._model && !this.schema) {
-        // console.warn("AWESOME CRUD ERROR", `model ${this.name} not found`);
-        return;
-      }
-
       this.innerSchema = this.schema || this._model.schema;
       setTimeout(() => {
         this.openModal();
