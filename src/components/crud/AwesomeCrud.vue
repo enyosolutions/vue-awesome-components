@@ -811,7 +811,6 @@ export default {
 
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
-      this.$notifications.clear();
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
           title: this.$t("common.messages.no_data_imported", {

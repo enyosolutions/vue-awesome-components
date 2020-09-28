@@ -397,7 +397,6 @@ export default {
           return filters;
         }
       }
-      console.log("this.currentField.type", this.currentField, this.currentField.type);
       return this.filters;
     }
   },
