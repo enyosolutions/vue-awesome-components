@@ -4,7 +4,7 @@
       :disabled="schema.disabled"
       :readonly="schema.readonly"
       :type="type"
-      :placeholder="placeholder"
+      :placeholder="_placeholder"
       :inputClass="inputClass"
       :key="refresh"
       :image-src="value"
@@ -13,7 +13,7 @@
   </div>
 </template>
 <script>
-import VueFormGenerator from '../../form/form-generator';
+import VueFormGenerator from "../../form/form-generator";
 // import { defaults } from "lodash";
 // import moment from "moment";
 
@@ -25,9 +25,10 @@ export default {
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {
-      refresh: new Date(),
+      refresh: Date.now(),
       type: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputType,
-      placeholder: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder,
+      _placeholder:
+        this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder),
       inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
     };
   },

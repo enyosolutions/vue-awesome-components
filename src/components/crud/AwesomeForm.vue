@@ -676,7 +676,6 @@ export default {
       show: false,
       showBackDrop: false,
       mergedOptions: {},
-      innerSchema: {},
       innerNestedSchemas: [],
       activeNestedTab: "general",
       formOptions: {
@@ -764,18 +763,20 @@ export default {
     },
 
     formSchema() {
-      if (!this.innerSchema) {
+      if (!this._schema) {
         return [];
       }
-      const parsedFormSchema = this.parseSchema(this.innerSchema);
+      const parsedFormSchema = this.parseSchema(this._schema);
       parsedFormSchema.styleClasses = "row";
       parsedFormSchema.mode = this.mode;
-      parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
-        if (!field.styleClasses || field.styleClasses.indexOf("col-") === -1) {
-          field.styleClasses = `${field.styleClasses || ""} col-12`;
-        }
-        return field;
-      });
+      if (parsedFormSchema.fields) {
+        parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
+          if (!field.styleClasses || field.styleClasses.indexOf("col-") === -1) {
+            field.styleClasses = `${field.styleClasses || ""} col-12`;
+          }
+          return field;
+        });
+      }
       return parsedFormSchema;
     },
 
@@ -838,6 +839,10 @@ export default {
         return this.selectedItem[this.primaryKey];
       }
       return "";
+    },
+
+    _schema() {
+      return this.schema || (this._model && this._model.schema);
     }
   },
   watch: {
@@ -1024,7 +1029,6 @@ export default {
         this.options = {};
       }
       this.mergeOptions();
-      this.innerSchema = this.schema || this._model.schema;
       setTimeout(() => {
         this.openModal();
       }, 100);
