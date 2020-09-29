@@ -1,29 +1,21 @@
 <template>
   <div class="text-avoid-overflow awesome-display-relation" v-bind="$props">
-    <router-link v-if="$props.value && !$props.onClickUrl" :to="'/app/' + $props.relation + '/' + $props.value">
-      <span class="badge badge-info">
-        {{ _label }}
-      </span>
-    </router-link>
-    <span v-if="$props.value && $props.onClickUrl" class="badge badge-info">
-      {{ _label }}
-    </span>
-    <router-link
-      v-if="$props.value && $props.onClickUrl"
-      :to="$props.onClickUrl + '/' + $props.value"
-      class="external-link"
-    >
-      &nbsp; <i class="fa fa-external-link text-info"></i>
-    </router-link>
+    <template v-for="value in _values">
+      <div :key="value">
+        <span v-if="value" class="badge badge-info">
+          {{ getLabel(value) }}
+        </span>
+        <router-link v-if="value && !onClickUrl" :to="'/app/' + relation + '/' + value" class="external-link">
+          &nbsp; <i class="fa fa-external-link text-info"></i>
+        </router-link>
 
-    <span
-      v-if="$props.value && $props.onClickUrl"
-      :to="$props.onClickUrl + '/' + $props.value"
-      class="copy-link"
-      @click="copy($props.value)"
-    >
-      &nbsp; <i class="fa fa-clone text-info"></i>
-    </span>
+        <router-link v-if="value && onClickUrl" :to="onClickUrl + '/' + value" class="external-link">
+          &nbsp; <i class="fa fa-external-link text-info"></i>
+        </router-link>
+
+        <span v-if="value" class="copy-link" @click="copy(value)"> &nbsp; <i class="fa fa-clone text-info"></i> </span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -51,6 +43,10 @@ export default {
 
     _displayLabelCache() {
       return this.displayLabelCache || this.internalCache || {};
+    },
+
+    _values() {
+      return Array.isArray(this.$props.value) ? this.$props.value : [this.$props.value];
     }
   },
   data() {
@@ -59,27 +55,33 @@ export default {
     };
   },
   methods: {
+    getLabel(value) {
+      return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
+    },
+
     getStoreLabel(value) {
-      if (this.relationUrl && value && this._displayLabelCache[value]) {
-        return this._displayLabelCache[value];
-      }
       if (!value) {
         return;
       }
 
+      if (this._displayLabelCache[value]) {
+        return this._displayLabelCache[value];
+      }
+
+      // no store found and no storepath found
       if (!this.store && !(this.storePath && this.$store && _.get(this.$store.state, this.storePath))) {
-        return value;
+        return;
       }
 
       const $store = this.store ? this.store : this.$store && _.get(this.$store.state, this.storePath);
       if (!$store) {
-        return value;
+        return;
       }
 
       const item = $store && $store.find((elm) => elm[this.relationKey] === value);
       console.warn("$store", item, $store, this.relationKey);
       if (!item) {
-        return value;
+        return;
       }
 
       const result = item[this.relationLabel];
@@ -90,13 +92,14 @@ export default {
     },
 
     getApiLabel(value) {
-      const url = `${this.relationUrl}/${value}`;
       if (!this.relationUrl || !value || !this.relationLabel) {
-        return value;
+        return _.isObject(value) && this.relationLabel && value[this.relationLabel] ? value[this.relationLabel] : value;
       }
-      if (this.relationUrl && value && this._displayLabelCache[url]) {
+      const url = `${this.relationUrl}/${value}`;
+      if (value && this._displayLabelCache[url]) {
         return this._displayLabelCache[url];
       }
+
       this.$http
         .get(url)
         .then((res) => {
@@ -132,7 +135,7 @@ export default {
     },
 
     copy(value) {
-      this.copyToClipboard(`${this._label}`);
+      this.copyToClipboard(`${this.getLabel(value)}`);
       if (this.$notify) {
         this.$notify(
           this.$te("awesome-display.value-copied") ? this.$t("awesome-display.value-copied") : "Value copied"

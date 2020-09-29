@@ -68,3 +68,12 @@ modelName and name  becomes `identity`
 ##### props
 modelName and name  becomes `identity`
 `displayMode`  becomes `mode`
+
+
+
+#### awesome table (formerly enyo-ajax-table)
+
+##### props
+modelName and name  becomes `identity`
+`mode`  becomes `dataPaginationMode`
+`params`  becomes `apiQueryParams`

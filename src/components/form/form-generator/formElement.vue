@@ -9,10 +9,10 @@
       v-bind="field.viewOptions"
       :type="fieldType"
       :value="model[field.model]"
-      :relation="field.fieldOptions.relation"
-      :relation-url="field.fieldOptions.relationUrl"
-      :relation-key="field.fieldOptions.relationKey"
-      :relation-label="field.fieldOptions.relationLabel"
+      :relation="field.viewOptions.relation"
+      :relation-url="field.viewOptions.relationUrl"
+      :relation-key="field.viewOptions.relationKey"
+      :relation-label="field.viewOptions.relationLabel"
     >
     </awesome-display>
     <div class="field-content" v-else>

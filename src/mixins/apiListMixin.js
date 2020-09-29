@@ -40,9 +40,9 @@ export default {
         "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
-    routerMode: {
+    useRouterMode: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     entity: {
       type: String,
@@ -91,7 +91,7 @@ export default {
         perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
       data: [],
-      useSkeleton: false,
+      showSkeleton: false,
     };
   },
   computed: {
@@ -117,8 +117,9 @@ export default {
   watch: {
     needsRefresh: "refreshLocalData",
     apiQueryParams() {
-      this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
-      this.getItems();
+      // not sure this is needed...
+      // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+      // this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
     },
     entity: "entityChanged",
     // store: changed => {},
@@ -146,11 +147,8 @@ export default {
   },
 
   mounted() {
+    this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
-    if (this.routerMode) {
-      this.connectRouteToPagination(this.$route);
-    }
-
   },
   beforeDestroy() { },
   methods: {
@@ -159,9 +157,10 @@ export default {
     // eslint-disable-next-line
     async refreshLocalData(changed) {
       if (this.url) {
-        this.data = [];
-        this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
-        await this.getItems();
+        //   this.data = [];
+        // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+        console.trace('[apiListMixin] refreshLocalData');
+        await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
       } else {
         this.data = this.rows;
         this.totalCount = this.rows ? this.rows.length : 0;
@@ -173,7 +172,7 @@ export default {
     entityChanged() {
       this.data = this.url ? [] : this.rows;
       this.serverParams = {};
-      this.getItems({ useSkeleton: true });
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] entityChanged' });
     },
 
     localRefreshCompleted() {
@@ -183,9 +182,7 @@ export default {
 
     /** GET ENTITY ITEMS */
     getItems(options = { useSkeleton: false }) {
-      if (options.useSkeleton) {
-        this.useSkeleton = options.useSkeleton;
-      }
+
       this.$emit("refresh");
       // if i got a refresh function
       if (this.refresh) {
@@ -196,6 +193,11 @@ export default {
       if (!this.url) {
         return;
       }
+      if (options.useSkeleton) {
+        this.showSkeleton = options.useSkeleton;
+      }
+      console.warn("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+
       this.isRefreshing = true;
       return this.$http
         .get(
@@ -224,7 +226,7 @@ export default {
           console.warn(err);
         })
         .finally(() => {
-          this.useSkeleton = false;
+          this.showSkeleton = false;
           this.isRefreshing = false;
         });
     },
@@ -243,10 +245,10 @@ export default {
       delete newProps.columnFilters;
       this.serverParams = Object.assign(
         {},
-        this.apiQueryParams,
         this.serverParams,
         newProps,
-        columnFilters
+        columnFilters,
+        this.apiQueryParams,
       );
       //      console.warn("updateParams", this.serverParams);
     },
@@ -259,37 +261,31 @@ export default {
 
     onPageChange(params) {
       window.App = { vue: this };
-      if (this.routerMode) {
-        this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
-      }
+      this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== "remote") {
         return;
       }
       this.updateParams({ page: params.currentPage });
-      this.getItems({ useSkeleton: true });
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] onPageChange' });
     },
 
     onPerPageChange(params) {
-      if (this.routerMode) {
-        this.pushChangesToRouter({ query: { ...this.$route.query, perPage: params.currentPerPage } });
-      }
+      this.pushChangesToRouter({ query: { ...this.$route.query, perPage: params.currentPerPage } });
       if (this.mode !== "remote") {
         return;
       }
       this.updateParams({ perPage: params.currentPerPage });
-      this.getItems({ useSkeleton: true });
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] onPerPageChange' });
     },
 
     onSearch(params) {
-      if (this.routerMode) {
-        this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
-      }
+      this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
       if (this.mode !== "remote") {
         return;
       }
       let search = params.searchTerm;
       this.updateParams({ search, page: 1 });
-      this.getItems({ useSkeleton: true });
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] onSearch' });
     },
 
     onSelectionChanged(selection) {
@@ -299,6 +295,9 @@ export default {
     },
 
     pushChangesToRouter(options) {
+      if (!this.useRouterMode) {
+        return;
+      }
       this.$router.push(options).catch(err => {
         // Ignore the vueRouter err regarding  navigating to the page they are already on.
         if (
@@ -312,7 +311,7 @@ export default {
     },
 
     connectRouteToPagination(to) {
-      if (this.routerMode) {
+      if (this.useRouterMode) {
         //        console.warn("to.query", to.query);
         this.updateParams({
           page: to.query.page, search: to.query.search,

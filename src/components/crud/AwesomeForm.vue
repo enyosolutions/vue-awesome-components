@@ -213,11 +213,11 @@
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
                         v-if="nestedSchemas && nestedSchemas.length && mode !== 'create'"
-                        class="nav nav-tabs mt-5 mb-4"
+                        class="nav nav-tabs mt-0 mb-4"
                       >
                         <li class="nav-item">
                           <a class="nav-link active" data-toggle="tab" @click="activeNestedTab = 'general'">
-                            {{ $te("app.labels." + identity) ? $te("app.labels." + identity) : _.startCase(identity) }}
+                            {{ $te("app.labels." + identity) ? $te("app.labels." + identity) : startCase(identity) }}
                           </a>
                         </li>
                         <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
@@ -344,6 +344,7 @@
                               }"
                             >
                               <AwesomeCrud
+                                :name="ns.identity"
                                 v-bind="ns"
                                 :parent="selectedItem"
                                 :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -920,6 +921,7 @@ export default {
 
   methods: {
     $alert: Swal,
+    startCase: _.startCase,
     refreshComponent() {
       // eslint-disable-next-line
       console.log("refresh component watcher");

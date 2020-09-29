@@ -68,7 +68,7 @@ export default {
               multi: prop.type === "array",
               readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
               disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              styleClasses: (prop.field && ( prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? "col-12" : "col-6"),
+              styleClasses: (prop.field && (prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? "col-12" : "col-6"),
               relation: prop.relation,
               foreignKey: relationKey || prop.foreignKey,
               relationKey,
@@ -107,6 +107,10 @@ export default {
               classes: (prop.column && prop.column.classes),
               styles: (prop.column && prop.column.styles)
             }
+            field.viewOptions.relation = field.viewOptions.relation || prop.relation;
+            field.viewOptions.relationUrl = field.viewOptions.relationUrl || relationUrl;
+            field.viewOptions.relationKey = field.viewOptions.relationKey || relationKey;
+            field.viewOptions.relationLabel = field.viewOptions.relationLabel || relationLabel;
             fields.push(field);
           }
         }

@@ -136,7 +136,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :actions="_actions"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode || mode"
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
@@ -182,7 +182,7 @@
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
-            :routerMode="mergedOptions.routerMode"
+            :useRouterMode="mergedOptions.userRouterMode"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
@@ -273,6 +273,7 @@ const defaultOptions = {
   mode: "local", // Deprecated use dataPaginationMode
   dataPaginationMode: "local",
   defaultOptions: true,
+  useRouterMode: true,
   url: null,
   columns: null,
   createPath: null,
@@ -497,12 +498,6 @@ export default {
       type: Object,
       default: () => defaultActions,
       note: "actions active in this instance"
-    },
-    modelsStorePath: {
-      type: String,
-      default: "data.models",
-      note:
-        "Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models"
     }
   },
   data() {

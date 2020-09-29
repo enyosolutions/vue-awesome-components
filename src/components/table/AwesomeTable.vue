@@ -282,7 +282,7 @@
             </template>
           </div>
           <template slot="table-row" slot-scope="props">
-            <Skeleton v-if="useSkeleton" :count="1" :loading="true"></Skeleton>
+            <Skeleton v-if="showSkeleton" :count="1" :loading="true"></Skeleton>
             <template v-else>
               <awesome-display
                 v-if="props.column.field !== 'ACTIONS'"
@@ -564,20 +564,24 @@ export default {
         }
 
         if (col.type && col.type === "datetime") {
+          col.format = "lll";
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("lll");
+            return value;
+            //   return moment(value).format("lll");
           };
         }
 
         if (col.type && col.type === "date") {
+          col.format = "DD-MM-YYYY";
           col.formatFn = function(value) {
             if (!value) {
               return value;
             }
-            return moment(value).format("DD-MM-YYYY");
+            return value;
+            // return moment(value).format("DD-MM-YYYY");
           };
         }
 
@@ -709,8 +713,8 @@ export default {
      * @deprecated
      */
     params() {
-      this.serverParams = _.merge({}, this.serverParams, this.params);
-      this.getItems();
+      // this.serverParams = _.merge({}, this.serverParams, this.params);
+      // this.getItems({ source: "awTable_params()" });
     },
     entity: "entityChanged",
     // store: changed => {},
@@ -762,7 +766,7 @@ export default {
         return filter;
       });
     }
-    this.refreshLocalData();
+    // this.refreshLocalData();
 
     if (this.autoRefresh) {
       this.numberOfRefreshCalls = 0;
@@ -781,7 +785,7 @@ export default {
         }
 
         this.numberOfRefreshCalls += 1;
-        this.getItems();
+        this.getItems({ source: "awTable_refreshHandle" });
       }, this.autoRefreshInterval * 60000);
     }
   },
@@ -878,7 +882,7 @@ export default {
 
       // second param is a deprecated one
       sort[field.field] = params[0].type || params[0].sortType;
-      if (this.routerMode) {
+      if (this.useRouterMode) {
         this.$router.push({ query: { ...this.$route.query, sort } });
       }
       // eslint-disable-next-line

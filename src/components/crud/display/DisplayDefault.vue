@@ -8,7 +8,7 @@
     :style="$props.styles"
     @click="$emit('clicked', $props)"
   >
-    {{ $props.value || "..." }}
+    {{ valueDisplay }}
   </div>
 </template>
 
@@ -20,6 +20,9 @@ export default {
   name: "DisplayDefault",
   mixins: [awesomeDisplayMixin],
   computed: {
+    valueDisplay() {
+      return this.value !== undefined ? this.value : "...";
+    },
     valueClass() {
       return this.$props.value && this.$props.value && isString(this.$props.value)
         ? this.$props.value.replace(/(<([^>]+)>)/gi, "").replace(/ /g, "")
