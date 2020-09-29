@@ -70,10 +70,10 @@
               modifiers: { offset: { offset: '0,10px' } }
             }"
             ref="filterPopover"
+            v-if="_actions.filter && _actions.advancedFiltering"
           >
             <button
               slot="reference"
-              v-if="_actions.filter && _actions.advancedFiltering"
               type="button"
               class="btn btn-simple dropdown-toggle"
               :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
@@ -188,7 +188,7 @@
             ofLabel: this.$t('AwesomeTable.of'),
             pageLabel: this.$t('AwesomeTable.page'),
             allLabel: this.$t('AwesomeTable.all'),
-            perPage: parseInt(serverParams.perPage) || perPage,
+            perPage: perPageComputed,
             setCurrentPage: parseInt(serverParams.page) || undefined
           }"
           :select-options="{
@@ -705,6 +705,10 @@ export default {
 
     advancedFiltersFormated() {
       return AwesomeFilter.methods.parseFilter(this.advancedFilters, { dispatch: false });
+    },
+
+    perPageComputed() {
+      return this.mode === "remote" ? parseInt(this.serverParams.perPage) : this.perPage;
     }
   },
   watch: {

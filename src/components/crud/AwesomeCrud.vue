@@ -737,17 +737,16 @@ export default {
           this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
         }
         this.goToCreatePage({ reset: false });
-        return;
+
+        this.parentPath = matched.path;
+        this.parentPath = this.parentPath.replace("/edit", "").replace("/:id", "");
+      } else {
+        this.parentPath = matched.path;
       }
 
-      this.parentPath = matched.path;
-      this.parentPath = this.parentPath.replace("/edit", "").replace("/:id", "");
-    } else {
-      this.parentPath = matched.path;
-    }
-
-    if (this._isNestedDetail && this.viewMode === "detail") {
-      this.viewMode = this.nestedDisplayMode;
+      if (this._isNestedDetail && this.viewMode === "detail") {
+        this.viewMode = this.nestedDisplayMode;
+      }
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -1291,6 +1290,10 @@ export default {
     },
 
     onViewDisplayCancelled(item) {
+      if (!this.parent) {
+        this.$router.push(this.parentPath);
+      }
+
       this.setDisplayMode(
         this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode

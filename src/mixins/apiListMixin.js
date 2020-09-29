@@ -159,7 +159,6 @@ export default {
       if (this.url) {
         //   this.data = [];
         // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
-        console.trace('[apiListMixin] refreshLocalData');
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
       } else {
         this.data = this.rows;
@@ -196,8 +195,9 @@ export default {
       if (options.useSkeleton) {
         this.showSkeleton = options.useSkeleton;
       }
-      console.warn("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
-
+      if (process.env.NODE_ENV === 'development') {
+        console.warn("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+      }
       this.isRefreshing = true;
       return this.$http
         .get(
