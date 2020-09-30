@@ -148,6 +148,7 @@ export default {
         newcolumns.push({
           field: "ACTIONS",
           label: "Actions",
+          type: "ACTIONS",
           filterable: false,
           enabled: false
         });

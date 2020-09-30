@@ -98,6 +98,7 @@
                   :data-title="action.title || action.label"
                   :tooltip="action.title || action.label"
                   :data-tooltip="action.title || action.label"
+                  type="button"
                   @click="
                     customAction({
                       action,
@@ -110,7 +111,12 @@
                   <span v-html="action.label ? $t(action.label) : ''"></span>
                 </button>
               </template>
-              <button v-if="_actions.create" class="btn btn-secondary btn-simple" @click="goToCreatePage()">
+              <button
+                v-if="_actions.create"
+                class="btn btn-secondary btn-simple"
+                @click="goToCreatePage()"
+                type="button"
+              >
                 <i class="fa fa-plus" />
                 {{ $t("AwesomeCrud.labels.createNew") }} {{ _name }}
               </button>
@@ -137,6 +143,7 @@
             :options="mergedOptions"
             :actions="_actions"
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode || mode"
+            :useRouterMode="useRouterMode"
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
@@ -163,6 +170,7 @@
             :apiResponseConfig="apiResponseConfig"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :useRouterMode="useRouterMode"
             :options="mergedOptions"
             :kanban-options="kanbanOptions"
             @customListAction="onCustomListAction"
@@ -182,7 +190,7 @@
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
-            :useRouterMode="mergedOptions.userRouterMode"
+            :useRouterMode="useRouterMode"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
@@ -227,6 +235,7 @@
               <button
                 v-if="_actions.import"
                 class="btn text-info btn-link btn-alt-style btn-block"
+                type="button"
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
@@ -273,7 +282,6 @@ const defaultOptions = {
   mode: "local", // Deprecated use dataPaginationMode
   dataPaginationMode: "local",
   defaultOptions: true,
-  useRouterMode: true,
   url: null,
   columns: null,
   createPath: null,
@@ -414,7 +422,7 @@ export default {
     nestedDisplayMode: {
       type: String,
       required: false,
-      default: "list",
+      default: "table",
       note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
     },
     primaryKey: {
@@ -460,7 +468,7 @@ export default {
         "The object containing the parent in case of a nested schema." +
         "You don't actually to pass this, it's done automatically by the parent component itself"
     },
-    updateRouter: {
+    useRouterMode: {
       type: Boolean,
       required: false,
       default: true,
@@ -723,14 +731,28 @@ export default {
     }
     this.loadModel();
 
-    if (!this.$route) {
+    if (this._isNested) {
+      this.displayMode = this.nestedDisplayMode;
+    }
+    /*
+    if (this._isNestedDetail && this.viewMode === "detail") {
+      this.viewMode = this.nestedDisplayMode;
+    }
+*/
+    if (!this.$route || !this.useRouterMode) {
       // stop if we don't have a router to bind ourselves to
       return;
     }
 
+    this.parentPath = this.$route.path;
+    this.parentPath = this.parentPath
+      .replace("/view", "")
+      .replace("/edit", "")
+      .replace("/:id", "");
     this.displayMode = this.mergedOptions.initialDisplayMode;
-    const matched = this.$route.matched[this.$route.matched.length - 1];
+    // const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
+      this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, "").replace("/:id", "");
       if (this.$route.params.id === "create" || this.$route.params.id === "new") {
         delete this.$route.params.id;
         if (this.$route.query.item) {
@@ -738,14 +760,11 @@ export default {
         }
         this.goToCreatePage({ reset: false });
 
-        this.parentPath = matched.path;
-        this.parentPath = this.parentPath.replace("/edit", "").replace("/:id", "");
-      } else {
-        this.parentPath = matched.path;
-      }
-
-      if (this._isNestedDetail && this.viewMode === "detail") {
-        this.viewMode = this.nestedDisplayMode;
+        // this.parentPath = matched.path;
+        this.parentPath = this.parentPath
+          .replace("/edit", "")
+          .replace(`/${this.$route.params.id}`, "")
+          .replace("/:id", "");
       }
     }
   },
@@ -905,6 +924,31 @@ export default {
         this.nestedViewFunction();
       }
 
+      // if the crud is nested and should display as a form then remote load the data
+      if (this.parent) {
+        this.nestedCrudNeedsRefresh = true;
+      }
+      // if the crud is nested and should display as a form then remote load the data
+      if (
+        this.parent &&
+        (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "edit" || this.nestedDisplayMode === "object")
+      ) {
+        this.getNestedItem().then(() => {
+          if (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "object") {
+            this.openModal();
+          }
+          if (this.nestedDisplayMode === "edit") {
+            // this.editFunction(this.selectedItem);
+            this.$alert.fire({
+              title: this.$t("Nested editing of object is not allowed yet...", {
+                title: this.modelName
+              }),
+              type: "success"
+            });
+          }
+        });
+      }
+
       if (!this._url) {
         return;
       }
@@ -1040,6 +1084,7 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
+      console.log("setDisplayMode", mode);
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (item && mode !== "bulkEdit") {
         this.selectedItem = item;
@@ -1067,7 +1112,7 @@ export default {
         this.editLayoutMode = options.editLayoutMode;
       }
       this.setDisplayMode("create", null);
-      if (this.updateRouter) {
+      if (this.useRouterMode) {
         window.history.replaceState({}, null, `${this.parentPath}/new`);
       }
 
@@ -1098,8 +1143,8 @@ export default {
       if (this.mergedOptions.editPath) {
         return this.$router.push(this.mergedOptions.editPath.replace(":id", item[this.primaryKey]));
       }
-      if (this.updateRouter) {
-        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+      if (this.useRouterMode) {
+        window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
       }
       this.setDisplayMode("edit", item);
     },
@@ -1108,8 +1153,8 @@ export default {
       if (this.mergedOptions.viewPath) {
         return this.$router.push(this.mergedOptions.viewPath.replace(":id", item[this.primaryKey]));
       }
-      if (this.updateRouter) {
-        window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+      if (this.useRouterMode) {
+        window.history.replaceState({}, null, `${this.parentPath.replace(":id", "")}/${item[this.primaryKey]}`);
       }
       this.setDisplayMode("view", item);
     },
@@ -1278,29 +1323,37 @@ export default {
      * @param options = {context = create | edit }
      */
     onEditDisplayCancelled(item, { context }) {
-      this.setDisplayMode(
+      const previousDisplayMode =
         this.previousDisplayMode &&
-          this.previousDisplayMode !== context &&
-          this.previousDisplayMode !== this.displayMode
+        this.previousDisplayMode !== context &&
+        this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
-          : this.mergedOptions.initialDisplayMode,
-        item,
-        { refresh: false }
-      );
+          : this.mergedOptions.initialDisplayMode;
+      if (this.useRouterMode) {
+        let url = this.parentPath.replace("/edit", "");
+        if (previousDisplayMode !== "view") {
+          url = url.replace(`/${item ? item[this.primaryKey] : ""}`, "");
+        } else {
+          url = `${this.parentPath}/${item ? item[this.primaryKey] : ""}`;
+        }
+        window.history.pushState({}, null, url);
+      }
+      this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 
     onViewDisplayCancelled(item) {
-      if (!this.parent) {
-        this.$router.push(this.parentPath);
+      if (this.useRouterMode) {
+        const url = this.parentPath
+          .replace("/edit", "")
+          .replace("/:id", "")
+          .replace(`${item ? item[this.primaryKey] : ""}`, "");
+        window.history.pushState({}, null, url);
       }
-
-      this.setDisplayMode(
+      const previousDisplayMode =
         this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
-          : this.mergedOptions.initialDisplayMode,
-        item,
-        { refresh: false }
-      );
+          : this.mergedOptions.initialDisplayMode;
+      this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 
     onItemCreated(item) {
@@ -1341,10 +1394,9 @@ export default {
 
     onTableRowClicked(props) {
       const { column, row } = props; // rowIndex and event are also available
-      if (column && ["url", "relation"].indexOf(column.type) > -1) {
+      if (column && (["url", "relation", "ACTIONS"].indexOf(column.type) > -1 || column.field === "ACTIONS")) {
         return;
       }
-
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit("on-table-row-clicked", row);
       switch (this.mergedOptions.tableRowClickAction) {
@@ -1410,6 +1462,19 @@ export default {
 
     onCloseEditLayoutMode() {
       this.editLayoutMode = false;
+    },
+
+    getNestedItem() {
+      return this.$http
+        .get(`${this._url}`)
+        .then((res) => {
+          this.selectedItem =
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
+        })
+        .catch(this.apiErrorCallback)
+        .finally(() => {
+          this.isRefreshing = false;
+        });
     }
   }
 };

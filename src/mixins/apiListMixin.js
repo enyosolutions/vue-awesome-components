@@ -106,9 +106,10 @@ export default {
 
     _translatedServerParams() {
       const translatedParams = {};
-      Object.keys(this.serverParams).forEach(field => {
+      const serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+      Object.keys(serverParams).forEach(field => {
         const newKey = this.apiRequestConfig[field + "Field"] || field;
-        translatedParams[newKey] = this.serverParams[field];
+        translatedParams[newKey] = serverParams[field];
       });
       return translatedParams;
     }
@@ -196,7 +197,7 @@ export default {
         this.showSkeleton = options.useSkeleton;
       }
       if (process.env.NODE_ENV === 'development') {
-        console.warn("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+        console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
       return this.$http

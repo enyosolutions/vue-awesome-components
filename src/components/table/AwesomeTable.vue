@@ -27,6 +27,7 @@
         </slot>
         <button
           v-if="_actions && _actions.refresh"
+          type="button"
           class="btn btn-simple btn-alt-style btn-sm p-2"
           @click="getItems({ useSkeleton: true })"
         >
@@ -128,6 +129,7 @@
               </button>
               <button
                 v-if="_actions && _actions.export"
+                type="button"
                 class="btn btn-simple text-success btn-main-style btn-block"
                 @click="exportCallBack"
               >
@@ -137,6 +139,7 @@
 
               <button
                 v-if="_actions && _actions.export"
+                type="button"
                 class="btn btn-simple text-success btn-main-style btn-block"
                 @click="exportCurrentArrayToExcel"
               >
@@ -218,6 +221,7 @@
                   :id="action.name + '-' + index"
                   :data-title="action.title || action.label"
                   :data-tooltip="action.title || action.label"
+                  type="button"
                   @click="
                     $emit('customBulkAction', {
                       action,
@@ -236,6 +240,7 @@
               v-if="_actions.bulkDelete"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkDelete', selectedRows)"
+              type="button"
             >
               <i class="fa fa-trash" />
               {{ $t("AwesomeTable.bulk.delete") }}
@@ -244,6 +249,7 @@
               v-if="_actions.bulkEdit"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkEdit', selectedRows)"
+              type="button"
             >
               <i class="fa fa-pencil"></i>
               {{ $t("AwesomeTable.bulk.edit") }}
@@ -268,6 +274,7 @@
                     :key="index"
                     class="btn btn-xs btn-main-style"
                     :class="action.class"
+                    type="button"
                     :data-title="action.title || action.label"
                     :tooltip="action.title || action.label"
                     :data-tooltip="action.title || action.label"
@@ -303,6 +310,7 @@
                           :key="index"
                           class="btn btn-xs btn-alt-style"
                           :class="action.class"
+                          type="button"
                           :id="action.name + '-' + props.index"
                           :data-title="action.title || action.label"
                           :data-tooltip="action.title || action.label"
@@ -328,6 +336,7 @@
                   v-if="_actions.view"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('view', props.row)"
+                  type="button"
                 >
                   <i class="fa fa-eye text-info" />
                 </button>
@@ -335,6 +344,7 @@
                   v-if="_actions.edit"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('edit', props.row)"
+                  type="button"
                 >
                   <i class="fa fa-pencil fa fa-pencil text-primary" />
                 </button>
@@ -342,6 +352,7 @@
                   v-if="_actions.delete"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('delete', props.row)"
+                  type="button"
                 >
                   <i class="fa fa-trash text-danger" />
                 </button>

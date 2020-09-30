@@ -334,7 +334,14 @@
                               />
                             </div>
                           </template>
-                          <template v-if="nestedSchemas && nestedSchemas.length && mode === 'view' && selectedItem">
+                          <template
+                            v-if="
+                              nestedSchemas &&
+                                nestedSchemas.length &&
+                                (mode === 'view' || mode === 'edit') &&
+                                selectedItem
+                            "
+                          >
                             <div
                               v-for="ns in nestedSchemas"
                               :key="ns.$id"
@@ -343,14 +350,16 @@
                                 'active show': activeNestedTab === ns.identity
                               }"
                             >
-                              <AwesomeCrud
-                                :name="ns.identity"
+                              <div
+                                :is="AwesomeCrud"
+                                v-if="activeNestedTab === ns.identity"
                                 v-bind="ns"
                                 :parent="selectedItem"
+                                :useRouterMode="false"
                                 :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                               >
                                 <div slot="crud-title" />
-                              </AwesomeCrud>
+                              </div>
                             </div>
                           </template>
                         </div>
@@ -524,7 +533,7 @@ export default {
   name: "AwesomeForm",
   introduction: "A component to quickly create a table UI with edit capabilities",
   components: {
-    AwesomeCrud,
+    "awesome-crud": AwesomeCrud,
     /* Column,
     Tabs,
     Row,
@@ -669,6 +678,7 @@ export default {
   },
   data() {
     return {
+      AwesomeCrud,
       $modal: null,
       parentPath: "",
       selectedItem: {},
