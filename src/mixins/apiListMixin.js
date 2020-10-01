@@ -262,7 +262,7 @@ export default {
         delete newProps.columnFilters;
       }
       // store new advanced filter values
-      if (newProps.advancedFilters && Object.keys(newProps.advancedFilters).length > 0) {
+      if (newProps.advancedFilters) {
         this.advancedFilters = newProps.advancedFilters;
         this.parsedAdvancedFilters = newProps.parsedAdvancedFilters;
         delete newProps.advancedFilters;
