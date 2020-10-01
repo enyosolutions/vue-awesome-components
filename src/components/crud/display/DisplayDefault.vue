@@ -1,17 +1,17 @@
 <template>
   <div
-    class="pointer text-avoid-overflow"
+    class=""
     v-bind="$props"
     :class="
       $props.class + ' ajax-table-col-' + $props.field + ' ajax-table-col-value-' + valueClass + ' ' + $props.classes
     "
     :style="$props.styles"
+    :is="tag"
     @click="$emit('clicked', $props)"
   >
     {{ valueDisplay }}
   </div>
 </template>
-
 <script>
 import awesomeDisplayMixin from "../../../mixins/displayMixin";
 import { isString } from "lodash";

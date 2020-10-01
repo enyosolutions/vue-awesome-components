@@ -85,6 +85,7 @@
               :stats-needs-refresh.sync="statsNeedsRefresh"
             />
           </div>
+          </div>
 
           <div class="text-right">
             <slot name="top-right-buttons">
@@ -100,7 +101,7 @@
                   :data-tooltip="action.title || action.label"
                   type="button"
                   @click="
-                    customAction({
+                    onCustomAction({
                       action,
                       location: 'topright',
                       id: action.name
@@ -1464,6 +1465,11 @@ export default {
       this.editLayoutMode = false;
     },
 
+    onCustomAction(body) {
+      const { action } = body;
+      this.$emit(this.identity + "-custom-action", action);
+      return action && action.action && action.action(body, this);
+    },
     getNestedItem() {
       return this.$http
         .get(`${this._url}`)

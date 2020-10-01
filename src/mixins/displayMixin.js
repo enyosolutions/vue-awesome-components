@@ -28,7 +28,8 @@ export default {
     storePath: String,
     store: Array,
     displayLabelCache: { type: Object, default: () => ({}) },
-    onClickUrl: [String, Function]
+    onClickUrl: [String, Function],
+    tag: { type: [String, Object], default: 'div' },
   },
   data() {
     return {

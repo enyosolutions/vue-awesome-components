@@ -90,6 +90,9 @@ export default {
         page: 1, // what page I want to show
         perPage: this.mode === "remote" ? this.perPage : this.limit // how many items I'm showing per page
       },
+      columnFilters: {},
+      advancedFilters: [],
+      parsedAdvancedFilters: {},
       data: [],
       showSkeleton: false,
     };
@@ -197,6 +200,7 @@ export default {
         this.showSkeleton = options.useSkeleton;
       }
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line
         console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
@@ -241,14 +245,43 @@ export default {
       this.$emit("itemClicked", item);
     },
 
-    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, filters: undefined }) {
-      const columnFilters = newProps.columnFilters || {};
-      delete newProps.columnFilters;
-      this.serverParams = Object.assign(
+    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined }) {
+      const columnFilters = newProps.columnFilters && Object.keys(newProps.columnFilters).length ? Object.assign({}, newProps.columnFilters) : {};
+
+
+      // Format column values and present empty string from being sent to the server
+      if (Object.keys(columnFilters).length > 0) {
+        this.columnFilters = {};
+        Object.keys(columnFilters).forEach(key => {
+          if (columnFilters[key] != undefined && columnFilters[key] != '') {
+            this.columnFilters[`${key}`] = {
+              "$default": columnFilters[key]
+            };
+          }
+        });
+        delete newProps.columnFilters;
+      }
+      // store new advanced filter values
+      if (newProps.advancedFilters && Object.keys(newProps.advancedFilters).length > 0) {
+        this.advancedFilters = newProps.advancedFilters;
+        this.parsedAdvancedFilters = newProps.parsedAdvancedFilters;
+        delete newProps.advancedFilters;
+        delete newProps.parsedAdvancedFilters;
+
+      }
+      // delete old values
+      delete this.serverParams.filters;
+      this.serverParams = _.merge(
         {},
         this.serverParams,
         newProps,
-        columnFilters,
+        {
+          advancedFilters: undefined,
+          filters: {
+            ...this.parsedAdvancedFilters,
+            ...this.columnFilters,
+          }
+        },
         this.apiQueryParams,
       );
       //      console.warn("updateParams", this.serverParams);
@@ -280,7 +313,7 @@ export default {
     },
 
     onSearch(params) {
-      this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
+      // this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
       if (this.mode !== "remote") {
         return;
       }

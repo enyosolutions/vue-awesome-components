@@ -298,6 +298,7 @@
                 :apiRequestHeaders="apiRequestHeaders"
                 :value="props.formattedRow[props.column.field]"
                 :display-label-cache="displayLabelCache"
+                class="pointer text-avoid-overflow"
               >
               </awesome-display>
 
@@ -528,7 +529,6 @@ export default {
           firstDay: 1 // ISO first day of week - see moment documenations for details
         }
       },
-      advancedFilters: [],
       selectedRows: [],
       displayLabelCache: {}
     };
@@ -812,10 +812,11 @@ export default {
     startCase: _.startCase,
 
     advancedFiltering(parsedFilters, filters) {
-      this.advancedFilters = filters;
       this.$refs["filterPopover"].doClose();
+      console.log("parsedFilters", parsedFilters, filters);
       this.updateParams({
-        filters: _.cloneDeep(parsedFilters),
+        advancedFilters: _.cloneDeep(filters),
+        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0
       });
       this.getItems({ useSkeleton: true });
@@ -879,7 +880,7 @@ export default {
         return;
       }
       this.updateParams({
-        columnFilters: _.cloneDeep(params.columnsFilters),
+        ...params,
         page: 0
       });
       this.getItems({ useSkeleton: true });

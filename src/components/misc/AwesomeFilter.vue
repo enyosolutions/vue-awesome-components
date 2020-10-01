@@ -2,7 +2,7 @@
   <div class="awesome-filter">
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">{{ $t("AwesomeFilter.labels.filterData") }}</h6>
-      <form class="container" submit.sync="addFilter()">
+      <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column">
           <button
             class="btn btn-primary btn-block dropdown-toggle"
@@ -337,10 +337,14 @@ export default {
   }),
   methods: {
     addFilter() {
+      const value =
+        ["$isNull", "$isNotNull", "$isDefined", "$isNotDefined"].indexOf(this.currentFilter.value) > -1
+          ? true
+          : this.currentValue;
       if (Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
-          value: this.currentValue,
+          value,
           filter: this.currentFilter
         };
         this.selectedFilters.push(filter);
