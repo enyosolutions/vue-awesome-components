@@ -29,7 +29,7 @@
     "vue-form-generator": "^3.0.0-beta.7",
     "vue-good-table": "^2.19.2",
     "vue-multiselect": "^2.1.6",
-    "vue2-daterange-picker": "^0.1.6",
+    "vue2-daterange-picker": "^0.6.1",
     "weekstart": "^1.0.0"
   },
   "devDependencies": {
