@@ -12,9 +12,9 @@
   </div>
 </template>
 <script>
-import VueFormGenerator from "../../form/form-generator";
+import VueFormGenerator from '../../form/form-generator';
 // import moment from 'moment';
-import _ from "lodash";
+import _ from 'lodash';
 
 // You need a specific loader for CSS files
 
@@ -22,8 +22,8 @@ export default {
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {
-      innerValue: "",
-      warning: ""
+      innerValue: '',
+      warning: ''
     };
   },
   computed: {},
@@ -43,7 +43,7 @@ export default {
         }
         that.value = that.innerValue;
       } catch (e) {
-        that.warning = "common.messages.invalid_json";
+        that.warning = 'common.messages.invalid_json';
       }
     }, 300);
   },

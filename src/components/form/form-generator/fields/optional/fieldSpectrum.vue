@@ -11,10 +11,10 @@
 
 <script>
 /* global $ */
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
 export default {
-  name: "field-spectrum",
+  name: 'field-spectrum',
   mixins: [abstractField],
 
   data() {
@@ -26,13 +26,13 @@ export default {
   watch: {
     model() {
       if (window.$ && window.$.fn.spectrum) {
-        this.picker.spectrum("set", this.value);
+        this.picker.spectrum('set', this.value);
       }
     },
 
     disabled(val) {
-      if (val) this.picker.spectrum("disable");
-      else this.picker.spectrum("enable");
+      if (val) this.picker.spectrum('disable');
+      else this.picker.spectrum('enable');
     }
   },
 
@@ -40,20 +40,20 @@ export default {
     this.$nextTick(function() {
       if (window.$ && window.$.fn.spectrum) {
         this.picker = $(this.$el)
-          .spectrum("destroy")
+          .spectrum('destroy')
           .spectrum(
             defaults(this.fieldOptions, {
               showInput: true,
               showAlpha: true,
               disabled: this.schema.disabled,
               allowEmpty: !this.schema.required,
-              preferredFormat: "hex",
+              preferredFormat: 'hex',
               change: (color) => {
                 this.value = color ? color.toString() : null;
               }
             })
           );
-        this.picker.spectrum("set", this.value);
+        this.picker.spectrum('set', this.value);
       } else {
         console.warn(
           'Spectrum color library is missing. Please download from http://bgrins.github.io/spectrum/ and load the script and CSS in the HTML head section!'
@@ -63,7 +63,7 @@ export default {
   },
 
   beforeDestroy() {
-    if (this.picker) this.picker.spectrum("destroy");
+    if (this.picker) this.picker.spectrum('destroy');
   }
 };
 </script>

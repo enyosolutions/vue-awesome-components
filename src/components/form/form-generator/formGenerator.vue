@@ -67,14 +67,14 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { get as objGet, isArray } from "lodash";
-import formGroup from "./formGroup.vue";
-import formElement from "./formElement.vue";
-import { isFunction, isNil } from "lodash";
+import Vue from 'vue';
+import { get as objGet, isArray } from 'lodash';
+import formGroup from './formGroup.vue';
+import formElement from './formElement.vue';
+import { isFunction, isNil } from 'lodash';
 
 export default {
-  name: "form-generator",
+  name: 'form-generator',
   components: { formGroup, formElement },
   props: {
     schema: {
@@ -104,8 +104,8 @@ export default {
           validateAfterLoad: false,
           validateAsync: false,
           validateAfterChanged: false,
-          validationErrorClass: "error",
-          validationSuccessClass: ""
+          validationErrorClass: 'error',
+          validationSuccessClass: ''
         };
       }
     },
@@ -117,7 +117,7 @@ export default {
 
     tag: {
       type: String,
-      default: "fieldset",
+      default: 'fieldset',
       validator(value) {
         return value.length > 0;
       }
@@ -211,11 +211,11 @@ export default {
       this.fillErrors(fieldErrors, this.errors, uid);
 
       let isValid = this.errors.length === 0;
-      this.$emit("validated", isValid, this.errors, this);
+      this.$emit('validated', isValid, this.errors, this);
     },
 
     onModelUpdated(newVal, schema) {
-      this.$emit("model-updated", newVal, schema);
+      this.$emit('model-updated', newVal, schema);
     },
 
     // Validating the model properties
@@ -227,9 +227,9 @@ export default {
 
         let formErrors = [];
 
-        this.eventBus.$on("field-deregistering", () => {
+        this.eventBus.$on('field-deregistering', () => {
           // console.warn("Fields were deleted during validation process");
-          this.eventBus.$emit("fields-validation-terminated", formErrors);
+          this.eventBus.$emit('fields-validation-terminated', formErrors);
           reject(formErrors);
         });
 
@@ -239,14 +239,14 @@ export default {
           this.fillErrors(fieldErrors, formErrors, uid);
 
           if (fieldsValidated === this.totalNumberOfFields) {
-            this.eventBus.$off("field-validated", counter);
-            if (objGet(this.options, "validateAfterChanged", false)) {
-              this.eventBus.$on("field-validated", this.onFieldValidated);
+            this.eventBus.$off('field-validated', counter);
+            if (objGet(this.options, 'validateAfterChanged', false)) {
+              this.eventBus.$on('field-validated', this.onFieldValidated);
             }
             this.errors = formErrors;
             let isValid = formErrors.length === 0;
-            this.$emit("validated", isValid, formErrors, this);
-            this.eventBus.$emit("fields-validation-terminated", formErrors);
+            this.$emit('validated', isValid, formErrors, this);
+            this.eventBus.$emit('fields-validation-terminated', formErrors);
 
             if (isValid) {
               resolve();
@@ -255,46 +255,46 @@ export default {
             }
           }
         };
-        if (objGet(this.options, "validateAfterChanged", false)) {
-          this.eventBus.$off("field-validated", this.onFieldValidated);
+        if (objGet(this.options, 'validateAfterChanged', false)) {
+          this.eventBus.$off('field-validated', this.onFieldValidated);
         }
-        this.eventBus.$on("field-validated", counter);
-        this.eventBus.$emit("validate-fields", this);
+        this.eventBus.$on('field-validated', counter);
+        this.eventBus.$emit('validate-fields', this);
       });
     },
 
     // Clear validation errors
     clearValidationErrors() {
       this.errors.splice(0);
-      this.eventBus.$emit("clear-validation-errors", this.clearValidationErrors);
+      this.eventBus.$emit('clear-validation-errors', this.clearValidationErrors);
     }
   },
 
   created() {
-    if (objGet(this.options, "validateAfterChanged", false)) {
-      this.eventBus.$on("field-validated", this.onFieldValidated);
+    if (objGet(this.options, 'validateAfterChanged', false)) {
+      this.eventBus.$on('field-validated', this.onFieldValidated);
     }
-    this.eventBus.$on("model-updated", this.onModelUpdated);
+    this.eventBus.$on('model-updated', this.onModelUpdated);
     //this.eventBus.$on("fields-validation-trigger", this.validate);
-    this.eventBus.$on("fields-validation-trigger", () => {
+    this.eventBus.$on('fields-validation-trigger', () => {
       return this.validate().then(
         () => {},
         () => {}
       );
     });
-    this.eventBus.$on("field-registering", () => {
+    this.eventBus.$on('field-registering', () => {
       this.totalNumberOfFields = this.totalNumberOfFields + 1;
     });
-    this.eventBus.$on("field-deregistering", () => {
+    this.eventBus.$on('field-deregistering', () => {
       this.totalNumberOfFields = this.totalNumberOfFields - 1;
     });
   },
   beforeDestroy() {
-    this.eventBus.$off("field-validated");
-    this.eventBus.$off("model-updated");
-    this.eventBus.$off("fields-validation-trigger");
-    this.eventBus.$off("field-registering");
-    this.eventBus.$off("field-deregistering");
+    this.eventBus.$off('field-validated');
+    this.eventBus.$off('model-updated');
+    this.eventBus.$off('fields-validation-trigger');
+    this.eventBus.$off('field-registering');
+    this.eventBus.$off('field-deregistering');
   }
 };
 </script>

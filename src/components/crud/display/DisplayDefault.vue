@@ -13,20 +13,20 @@
   </div>
 </template>
 <script>
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
-import { isString } from "lodash";
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import { isString } from 'lodash';
 
 export default {
-  name: "DisplayDefault",
+  name: 'DisplayDefault',
   mixins: [awesomeDisplayMixin],
   computed: {
     valueDisplay() {
-      return this.value !== undefined ? this.value : "...";
+      return this.value !== undefined ? this.value : '...';
     },
     valueClass() {
       return this.$props.value && this.$props.value && isString(this.$props.value)
-        ? this.$props.value.replace(/(<([^>]+)>)/gi, "").replace(/ /g, "")
-        : "";
+        ? this.$props.value.replace(/(<([^>]+)>)/gi, '').replace(/ /g, '')
+        : '';
     }
   }
 };

@@ -44,26 +44,26 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { debounce, get as objGet, isFunction, isNumber } from "lodash";
-import fecha from "fecha";
+import abstractField from '../abstractField';
+import { debounce, get as objGet, isFunction, isNumber } from 'lodash';
+import fecha from 'fecha';
 
 const DATETIME_FORMATS = {
-  date: "YYYY-MM-DD",
-  datetime: "YYYY-MM-DD HH:mm:ss",
-  "datetime-local": "YYYY-MM-DDTHH:mm:ss"
+  date: 'YYYY-MM-DD',
+  datetime: 'YYYY-MM-DD HH:mm:ss',
+  'datetime-local': 'YYYY-MM-DDTHH:mm:ss'
 };
 
 export default {
-  name: "field-input",
+  name: 'field-input',
   mixins: [abstractField],
   computed: {
     inputType() {
-      if (typeof this.fieldOptions.inputType !== "undefined") {
+      if (typeof this.fieldOptions.inputType !== 'undefined') {
         return this.fieldOptions.inputType.toLowerCase();
       } else {
-        console.warn("Missing inputType", this.fieldOptions, this.fieldOptions.inputType);
-        return "";
+        console.warn('Missing inputType', this.fieldOptions, this.fieldOptions.inputType);
+        return '';
       }
     }
   },
@@ -71,11 +71,11 @@ export default {
     formatValueToModel(value) {
       if (value != null) {
         switch (this.inputType) {
-          case "date":
-          case "datetime":
-          case "datetime-local":
-          case "number":
-          case "range":
+          case 'date':
+          case 'datetime':
+          case 'datetime-local':
+          case 'number':
+          case 'range':
             // debounce
             return (newValue, oldValue) => {
               this.debouncedFormatFunc(value, oldValue);
@@ -106,8 +106,8 @@ export default {
     onInput($event) {
       let value = $event.target.value;
       switch (this.inputType) {
-        case "number":
-        case "range":
+        case 'number':
+        case 'range':
           if (isNumber(parseFloat($event.target.value))) {
             value = parseFloat($event.target.value);
           }
@@ -124,28 +124,28 @@ export default {
 
   mounted() {
     switch (this.inputType) {
-      case "number":
-      case "range":
+      case 'number':
+      case 'range':
         this.debouncedFormatFunc = debounce(
           (newValue, oldValue) => {
             this.formatNumberToModel(newValue, oldValue);
           },
-          parseInt(objGet(this.schema, "debounceFormatTimeout", 1000)),
+          parseInt(objGet(this.schema, 'debounceFormatTimeout', 1000)),
           {
             trailing: true,
             leading: false
           }
         );
         break;
-      case "date":
-      case "datetime":
-      case "datetime-local":
+      case 'date':
+      case 'datetime':
+      case 'datetime-local':
         // wait 1s before calling 'formatDatetimeToModel' to allow user to input data
         this.debouncedFormatFunc = debounce(
           (newValue, oldValue) => {
             this.formatDatetimeToModel(newValue, oldValue);
           },
-          parseInt(objGet(this.schema, "debounceFormatTimeout", 1000)),
+          parseInt(objGet(this.schema, 'debounceFormatTimeout', 1000)),
           {
             trailing: true,
             leading: false
@@ -156,8 +156,8 @@ export default {
   },
 
   created() {
-    if (this.inputType === "file") {
-      console.warn("The 'file' type in input field is deprecated. Use 'file' field instead.");
+    if (this.inputType === 'file') {
+      console.warn('The \'file\' type in input field is deprecated. Use \'file\' field instead.');
     }
   }
 };

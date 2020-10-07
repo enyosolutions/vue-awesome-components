@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
 export default {
-  name: "DisplayObject",
+  name: 'DisplayObject',
   mixins: [awesomeDisplayMixin],
   computed: {
     _valueIsArray() {

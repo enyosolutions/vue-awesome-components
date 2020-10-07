@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
 
 export default {
-  name: "field-staticmap",
+  name: 'field-staticmap',
   mixins: [abstractField],
 
   computed: {
@@ -15,8 +15,8 @@ export default {
       if (this.value) {
         let lat, lng;
         let options = defaults(this.fieldOptions, {
-          lat: "lat",
-          lng: "lng",
+          lat: 'lat',
+          lng: 'lng',
           zoom: 8,
           sizeX: 640,
           sizeY: 640
@@ -28,20 +28,20 @@ export default {
         let url = `http://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${options.zoom}&size=${options.sizeX}x${options.sizeY}`;
 
         let props = [
-          "scale",
-          "format",
-          "maptype",
-          "language",
-          "region",
-          "markers",
-          "path",
-          "visible",
-          "style",
-          "key",
-          "signature"
+          'scale',
+          'format',
+          'maptype',
+          'language',
+          'region',
+          'markers',
+          'path',
+          'visible',
+          'style',
+          'key',
+          'signature'
         ];
         for (let prop of props) {
-          if (typeof options[prop] !== "undefined") {
+          if (typeof options[prop] !== 'undefined') {
             url += `&${prop}=${options[prop]}`;
           }
         }
@@ -49,7 +49,7 @@ export default {
           return url;
         }
       }
-      return "";
+      return '';
     }
   }
 };

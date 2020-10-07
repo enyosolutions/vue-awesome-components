@@ -13,11 +13,11 @@
 
 <script>
 /* global $ */
-import abstractField from "../abstractField";
-import { defaults, isArray } from "lodash";
+import abstractField from '../abstractField';
+import { defaults, isArray } from 'lodash';
 
 export default {
-  name: "field-rangeSlider",
+  name: 'field-rangeSlider',
   mixins: [abstractField],
 
   data() {
@@ -55,13 +55,13 @@ export default {
         let self = this;
         $(this.$el).ionRangeSlider(
           defaults(this.fieldOptions, {
-            type: "single",
+            type: 'single',
             grid: true,
             hide_min_max: true,
             from: valueFrom,
             to: valueTo,
             onChange(slider) {
-              if (self.slider.options.type === "double") {
+              if (self.slider.options.type === 'double') {
                 self.value = [slider.from, slider.to];
               } else {
                 self.value = slider.from;
@@ -69,7 +69,7 @@ export default {
             }
           })
         );
-        this.slider = $(this.$el).data("ionRangeSlider");
+        this.slider = $(this.$el).data('ionRangeSlider');
       } else {
         console.warn(
           'ion.rangeSlider library is missing. Please download from https://github.com/IonDen/ion.rangeSlider and load the script and CSS in the HTML head section!'

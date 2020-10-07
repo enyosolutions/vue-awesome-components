@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-label",
+  name: 'field-label',
   mixins: [abstractField]
 };
 </script>

@@ -1,8 +1,8 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 export default {
   methods: {
-    parseSchema(schema, prefix = "") {
+    parseSchema(schema, prefix = '') {
       if (!schema.properties) {
         return [];
       }
@@ -18,11 +18,11 @@ export default {
           if (prop.field && prop.field.hidden) {
             return;
           }
-          if (prop.type === "object" && !(prop.field && prop.field.type)) {
+          if (prop.type === 'object' && !(prop.field && prop.field.type)) {
             const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
             subSchema.legend = prop.title || _.startCase(key);
-            subSchema.type = "group";
-            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || "card"}`;
+            subSchema.type = 'group';
+            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || 'card'}`;
             fields.push(subSchema);
           } else {
             const relationUrl = this.getRelationUrl(prop);
@@ -40,12 +40,12 @@ export default {
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
                 placeholder: prop.description || prop.title || _.startCase(key),
                 url: relationUrl || prop.relationUrl || prop.relation,
-                trackBy: relationKey || prop.foreignKey || "id",
-                label: relationLabel || "label", // key label for enyo select
-                name: relationLabel || "label", // key label for native select
+                trackBy: relationKey || prop.foreignKey || 'id',
+                label: relationLabel || 'label', // key label for enyo select
+                name: relationLabel || 'label', // key label for native select
                 step: prop.field && prop.field.step,
-                readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
-                disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
+                readonly: this.displayMode === 'view' || (prop.field && prop.field.readonly),
+                disabled: this.displayMode === 'view' || (prop.field && prop.field.readonly),
                 relation: prop.relation,
                 foreignKey: relationKey,
                 relationKey,
@@ -65,10 +65,10 @@ export default {
               validator: prop.field && prop.field.validator,
               min: prop.min,
               max: prop.max,
-              multi: prop.type === "array",
-              readonly: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              disabled: this.displayMode === "view" || (prop.field && prop.field.readonly),
-              styleClasses: (prop.field && (prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? "col-12" : "col-6"),
+              multi: prop.type === 'array',
+              readonly: this.displayMode === 'view' || (prop.field && prop.field.readonly),
+              disabled: this.displayMode === 'view' || (prop.field && prop.field.readonly),
+              styleClasses: (prop.field && (prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
               relation: prop.relation,
               foreignKey: relationKey || prop.foreignKey,
               relationKey,
@@ -77,28 +77,28 @@ export default {
             };
             if (!field.fieldOptions.inputType) {
               field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || "text";
+                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || 'text';
             }
             if (
-              prop.type === "boolean" &&
-              (field.type === "select" || field.type === "enyoSelect") &&
+              prop.type === 'boolean' &&
+              (field.type === 'select' || field.type === 'enyoSelect') &&
               (!field.values || !field.values.length)
             ) {
               field.values = [
-                { id: true, label: "Yes" },
-                { id: false, label: "No" },
-                { id: "", label: "-" }
+                { id: true, label: 'Yes' },
+                { id: false, label: 'No' },
+                { id: '', label: '-' }
               ];
             }
-            if (field.type === "dateTime") {
+            if (field.type === 'dateTime') {
               field.fieldOptions.icons = {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-arrow-up",
-                down: "fa fa-arrow-down"
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-arrow-up',
+                down: 'fa fa-arrow-down'
               };
             }
-            if (field.type === "enyoSelect" && !field.fieldOptions.options) {
+            if (field.type === 'enyoSelect' && !field.fieldOptions.options) {
               field.options = field.values;
             }
             field.viewOptions = prop.field && prop.field.viewOptions || {
@@ -144,11 +144,11 @@ export default {
         }
       });
 
-      if (!newcolumns.find((col) => col.field === "ACTIONS")) {
+      if (!newcolumns.find((col) => col.field === 'ACTIONS')) {
         newcolumns.push({
-          field: "ACTIONS",
-          label: "Actions",
-          type: "ACTIONS",
+          field: 'ACTIONS',
+          label: 'Actions',
+          type: 'ACTIONS',
           filterable: false,
           enabled: false
         });
@@ -167,12 +167,12 @@ export default {
             fields: [],
             ...group,
             legend: this.$t(group.title),
-            type: "group"
+            type: 'group'
           });
         }
       });
       if (groups.length < 1) {
-        groups = [{ legend: "", fields: schema.fields }];
+        groups = [{ legend: '', fields: schema.fields }];
       }
       return groups;
     },
@@ -180,7 +180,7 @@ export default {
     distributeFieldsInGroups(groups, fields) {
       fields.forEach((f) => {
         if (f.group) {
-          const keys = f.group.split(".");
+          const keys = f.group.split('.');
           let targetGroup = { groups };
           keys.forEach((key) => {
             targetGroup = _.find(targetGroup.groups, { id: key });

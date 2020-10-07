@@ -20,21 +20,21 @@
 </template>
 
 <script>
-import _ from "lodash";
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
-import apiErrorsMixin from "../../../mixins/apiErrorsMixin";
-import apiConfigMixin from "../../../mixins/apiConfigMixin";
-import i18nMixin from "../../../mixins/i18nMixin";
+import _ from 'lodash';
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
+import apiConfigMixin from '../../../mixins/apiConfigMixin';
+import i18nMixin from '../../../mixins/i18nMixin';
 
 export default {
-  name: "DisplayRelation",
+  name: 'DisplayRelation',
   mixins: [awesomeDisplayMixin, apiConfigMixin, apiErrorsMixin, i18nMixin],
   computed: {
     _relationUrl() {
       return this.relationUrl || this.relation;
     },
     _relationLabel() {
-      return this.relationLabel || "label";
+      return this.relationLabel || 'label';
     },
 
     _label() {
@@ -79,7 +79,7 @@ export default {
       }
 
       const item = $store && $store.find((elm) => elm[this.relationKey] === value);
-      console.warn("$store", item, $store, this.relationKey);
+      console.warn('$store', item, $store, this.relationKey);
       if (!item) {
         return;
       }
@@ -110,7 +110,7 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          const result = `${_.get(data, this.relationKey)} - ${_.get(data, this.relationLabel, "")}`;
+          const result = `${_.get(data, this.relationKey)} - ${_.get(data, this.relationLabel, '')}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }
@@ -123,14 +123,14 @@ export default {
       return this._displayLabelCache[url];
     },
     copyToClipboard(str) {
-      const el = document.createElement("textarea");
+      const el = document.createElement('textarea');
       el.value = str;
-      el.setAttribute("readonly", "");
-      el.style.position = "absolute";
-      el.style.left = "-9999px";
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
       document.body.appendChild(el);
       el.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(el);
     },
 
@@ -138,7 +138,7 @@ export default {
       this.copyToClipboard(`${this.getLabel(value)}`);
       if (this.$notify) {
         this.$notify(
-          this.$te("awesome-display.value-copied") ? this.$t("awesome-display.value-copied") : "Value copied"
+          this.$te('awesome-display.value-copied') ? this.$t('awesome-display.value-copied') : 'Value copied'
         );
       }
     }

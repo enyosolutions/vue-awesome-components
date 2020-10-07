@@ -100,12 +100,12 @@
 
 <script>
   import Draggable from 'vuedraggable';
-  import i18nMixin from "../../mixins/i18nMixin";
+  import i18nMixin from '../../mixins/i18nMixin';
   import _ from 'lodash';
-  import AwesomeDisplay from "../crud/display/AwesomeDisplay";
+  import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
   export default {
-    name: "KanbanList",
+    name: 'KanbanList',
     components: {
       Draggable,
       AwesomeDisplay
@@ -156,10 +156,10 @@
        * */
       fields: {
         default: () => ({
-          image: "",
-          title: "",
-          subtitle: "",
-          description: ""
+          image: '',
+          title: '',
+          subtitle: '',
+          description: ''
         })
       },
 
@@ -184,7 +184,7 @@
     }),
     methods: {
       removeList() {
-        this.$emit("remove-list", this.title);
+        this.$emit('remove-list', this.title);
       },
 
       cardChanged(item) {

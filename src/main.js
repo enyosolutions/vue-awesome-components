@@ -1,32 +1,32 @@
 // Import the styles directly. (Or you could add them via script tags.)
-import "bootstrap/scss/bootstrap.scss";
+import 'bootstrap/scss/bootstrap.scss';
 import './assets/css/font-awesome.min.css';
 import './assets/css/material-dashboard.min.css';
 // import './assets/css/material-dashboard-dark.min.css';
 // import './assets/css/paper-dashboard.min.css';
 // import './assets/css/light-bootstrap-dashboard.css';
-import "./main.scss";
+import './main.scss';
 
-import Vue from "vue";
+import Vue from 'vue';
 import qs from 'qs';
 // eslint-disable-next-line
 import VueI18n from "vue-i18n";
-import axios from "axios";
+import axios from 'axios';
 import Datetime from 'vue-datetime';
 import VueFormGenerator from './components/form/form-generator';
-import VueGoodTablePlugin from "vue-good-table";
-import VueRouter from "vue-router";
+import VueGoodTablePlugin from 'vue-good-table';
+import VueRouter from 'vue-router';
 import Multiselect from 'vue-multiselect'
 
-import App from "./App.vue";
-import VueEnyoComponents from "./plugin";
+import App from './App.vue';
+import VueEnyoComponents from './plugin';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Importing Lodash
-import _ from "lodash";
+import _ from 'lodash';
 // Importing jQuery
-import "jquery";
-import $ from "jquery";
+import 'jquery';
+import $ from 'jquery';
 
 
 // Vue Use and Components
@@ -35,7 +35,7 @@ Vue.use(VueRouter);
 
 Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
-Vue.component("vue-form-generator", VueFormGenerator, []);
+Vue.component('vue-form-generator', VueFormGenerator, []);
 
 
 Vue.use(VueFormGenerator, {
@@ -62,7 +62,7 @@ Vue.config.productionTip = false;
 
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   parseQuery(query) {
     return qs.parse(query);
   },
@@ -73,54 +73,54 @@ const router = new VueRouter({
   },
   routes: [
     {
-      path: "/",
-      component: () => import("../examples/pages/Demos.vue")
+      path: '/',
+      component: () => import('../examples/pages/Demos.vue')
     },
     {
-      path: "/awesomelist",
-      component: () => import("../examples/pages/AwesomelistPage")
+      path: '/awesomelist',
+      component: () => import('../examples/pages/AwesomelistPage')
     },
     {
-      path: "/awesometable",
-      component: () => import("../examples/pages/AwesomeTablePage.vue")
+      path: '/awesometable',
+      component: () => import('../examples/pages/AwesomeTablePage.vue')
     },
     {
-      path: "/awesomecrud-advanced",
-      component: () => import("../examples/pages/AwesomeCrudAdvancedPage")
+      path: '/awesomecrud-advanced',
+      component: () => import('../examples/pages/AwesomeCrudAdvancedPage')
     },
     {
-      path: "/awesomecrud",
-      component: () => import("../examples/pages/AwesomeCrudPage")
+      path: '/awesomecrud',
+      component: () => import('../examples/pages/AwesomeCrudPage')
     },
     {
-      path: "/awesomecrud/:id",
-      component: () => import("../examples/pages/AwesomeCrudPage")
+      path: '/awesomecrud/:id',
+      component: () => import('../examples/pages/AwesomeCrudPage')
     },
     {
-      path: "/awesomecrud/:id/edit",
-      component: () => import("../examples/pages/AwesomeCrudPage")
+      path: '/awesomecrud/:id/edit',
+      component: () => import('../examples/pages/AwesomeCrudPage')
     },
     {
-      path: "/awesomekanban",
-      component: () => import("../examples/pages/AwesomeKanbanPage")
+      path: '/awesomekanban',
+      component: () => import('../examples/pages/AwesomeKanbanPage')
     },
     {
-      path: "/awesomelayout",
-      component: () => import("../examples/pages/AwesomeLayoutPage")
+      path: '/awesomelayout',
+      component: () => import('../examples/pages/AwesomeLayoutPage')
     }
   ]
 });
 
 Vue.prototype.$http = axios.create({
   headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json"
+    Accept: 'application/json',
+    'Content-Type': 'application/json'
   }
 });
 if (process.env.NODE_ENV === 'development') {
 
   window.$ = $;
-  window.$ = window.jQuery = require("jquery");
+  window.$ = window.jQuery = require('jquery');
   window._ = _;
 
 }
@@ -128,6 +128,6 @@ window.vm = new Vue({
   // i18n,
   router,
   render: h => h(App)
-}).$mount("#app");
+}).$mount('#app');
 
 export default window.vm;

@@ -4,9 +4,9 @@ export default {
   props: {
     modelsStorePath: {
       type: String,
-      default: "data.models",
+      default: 'data.models',
       note:
-        "Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models"
+        'Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models'
     }
   },
   methods: {
@@ -23,7 +23,7 @@ export default {
           }
         }
         else {
-          console.warn("[relationMixin][modelsStorePath] path not defined", modelsStorePath);
+          console.warn('[relationMixin][modelsStorePath] path not defined', modelsStorePath);
         }
       }
       return;

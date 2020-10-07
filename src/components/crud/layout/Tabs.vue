@@ -40,9 +40,9 @@
 </template>
 
 <script>
-import layoutMixin from "../../../mixins/layoutMixin";
-import i18nMixin from "../../../mixins/i18nMixin";
-import { uniqueId } from "lodash";
+import layoutMixin from '../../../mixins/layoutMixin';
+import i18nMixin from '../../../mixins/i18nMixin';
+import { uniqueId } from 'lodash';
 
 export default {
   mixins: [i18nMixin, layoutMixin],
@@ -50,19 +50,19 @@ export default {
     // activeTabIndex: {type: Number, default: 0}
     tabs: { type: Array, default: () => [] },
     autoHideTab: { type: Boolean, default: true },
-    navType: { type: String, default: "tabs" },
-    direction: { type: String, default: "horizontal" },
-    id: { type: String, default: "" }
+    navType: { type: String, default: 'tabs' },
+    direction: { type: String, default: 'horizontal' },
+    id: { type: String, default: '' }
   },
   computed: {
     tabsDirection() {
-      return this.direction === "vertical" ? " flex-column " : "";
+      return this.direction === 'vertical' ? ' flex-column ' : '';
     }
   },
   data() {
     return {
       activeTabIndex: 0,
-      fieldId: uniqueId(this.id + "_")
+      fieldId: uniqueId(this.id + '_')
     };
   },
   methods: {

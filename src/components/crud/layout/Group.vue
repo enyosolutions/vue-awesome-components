@@ -17,22 +17,22 @@
 </template>
 
 <script>
-import layoutMixin from "../../../mixins/layoutMixin";
-import i18nMixin from "../../../mixins/i18nMixin";
-import { uniqueId } from "lodash";
+import layoutMixin from '../../../mixins/layoutMixin';
+import i18nMixin from '../../../mixins/i18nMixin';
+import { uniqueId } from 'lodash';
 
 export default {
   mixins: [i18nMixin, layoutMixin],
   props: {
-    id: { type: String, default: "" },
-    theme: { type: String, default: "card" },
+    id: { type: String, default: '' },
+    theme: { type: String, default: 'card' },
     fields: { type: Array, default: () => [] },
-    formOptions: { type: [String, Object], default: "" }
+    formOptions: { type: [String, Object], default: '' }
   },
   computed: {},
   data() {
     return {
-      fieldId: uniqueId(this.id + "_")
+      fieldId: uniqueId(this.id + '_')
     };
   },
   methods: {}

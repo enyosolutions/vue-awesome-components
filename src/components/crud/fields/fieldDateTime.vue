@@ -15,17 +15,17 @@
 </template>
 
 <script>
-import VueFormGenerator from "../../form/form-generator";
-import moment from "moment";
-import _ from "lodash";
-import { Datetime } from "vue-datetime";
+import VueFormGenerator from '../../form/form-generator';
+import moment from 'moment';
+import _ from 'lodash';
+import { Datetime } from 'vue-datetime';
 
 // import dateFieldHelper from "../../form/form-generator/utils/dateFieldHelper"
 
 // You need a specific loader for CSS files
-import "vue-datetime/dist/vue-datetime.css";
+import 'vue-datetime/dist/vue-datetime.css';
 
-const inputFormat = "YYYY-MM-DDTHH:mm:ssZ";
+const inputFormat = 'YYYY-MM-DDTHH:mm:ssZ';
 
 export default {
   mixins: [VueFormGenerator.abstractField],
@@ -33,16 +33,16 @@ export default {
     datetime: Datetime
   },
   mounted() {
-    this.inputId = _.uniqueId("datetime_");
+    this.inputId = _.uniqueId('datetime_');
   },
   computed: {
     pickerType() {
-      return (this.schema.fieldOptions && this.schema.fieldOptions.type) || "datetime";
+      return (this.schema.fieldOptions && this.schema.fieldOptions.type) || 'datetime';
     }
   },
   data() {
     return {
-      inputId: ""
+      inputId: ''
     };
   },
   methods: {
@@ -60,7 +60,7 @@ export default {
     formatValueToField(value) {
       if (value != null) {
         let dt;
-        if (typeof this.fieldOptions.format !== "undefined") {
+        if (typeof this.fieldOptions.format !== 'undefined') {
           dt = moment(value, this.fieldOptions.format).toDate();
         } else {
           dt = new Date(value);

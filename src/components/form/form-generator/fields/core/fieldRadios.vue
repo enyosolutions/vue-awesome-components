@@ -23,17 +23,17 @@ class="radio-list"
 </template>
 
 <script>
-import { isObject } from "lodash";
-import abstractField from "../abstractField";
+import { isObject } from 'lodash';
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-radios",
+  name: 'field-radios',
   mixins: [abstractField],
 
   computed: {
     items() {
       let values = this.schema.values;
-      if (typeof values == "function") {
+      if (typeof values == 'function') {
         return values.apply(this, [this.model, this.schema]);
       } else {
         return values;
@@ -47,13 +47,13 @@ export default {
   methods: {
     getItemValue(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["value"] !== "undefined") {
+        if (typeof this.fieldOptions['value'] !== 'undefined') {
           return item[this.fieldOptions.value];
         } else {
-          if (typeof item["value"] !== "undefined") {
+          if (typeof item['value'] !== 'undefined') {
             return item.value;
           } else {
-            throw "`value` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/radios.html#radios-field-with-object-values";
+            throw '`value` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/radios.html#radios-field-with-object-values';
           }
         }
       } else {
@@ -62,13 +62,13 @@ export default {
     },
     getItemName(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["name"] !== "undefined") {
+        if (typeof this.fieldOptions['name'] !== 'undefined') {
           return item[this.fieldOptions.name];
         } else {
-          if (typeof item["name"] !== "undefined") {
+          if (typeof item['name'] !== 'undefined') {
             return item.name;
           } else {
-            throw "`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/radios.html#radios-field-with-object-values";
+            throw '`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/radios.html#radios-field-with-object-values';
           }
         }
       } else {

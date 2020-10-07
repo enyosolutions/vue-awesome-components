@@ -85,8 +85,8 @@
               :stats-needs-refresh.sync="statsNeedsRefresh"
             />
           </div>
-          </div>
-
+        </div>
+        <div class="col-12">
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="options && options.customTopRightActions">
@@ -134,7 +134,11 @@
             :identity="identity"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :columns="listFieldsComputed"
-            :fields="listOptions.fields"
+            :displayFields="listOptions.displayFields"
+            :imageField="listOptions.imageField"
+            :titleField="listOptions.titleField"
+            :subtitleField="listOptions.subtitleField"
+            :descriptionField="listOptions.descriptionField"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
             :apiRequestConfig="apiRequestConfig"
@@ -261,27 +265,27 @@
   </div>
 </template>
 <script>
-import _ from "lodash";
-import parseJsonSchema from "../../mixins/parseJsonSchemaMixin";
-import apiErrorsMixin from "../../mixins/apiErrorsMixin";
-import apiConfigMixin from "../../mixins/apiConfigMixin";
-import awesomeFormMixin from "../../mixins/awesomeFormMixin";
-import relationMixin from "../../mixins/relationMixin";
-import notificationsMixin from "../../mixins/notificationsMixin";
-import i18nMixin from "../../mixins/i18nMixin";
-import { defaultActions, defaultKanbanOptions } from "../../mixins/defaultProps";
-import Swal from "sweetalert2/dist/sweetalert2.js";
-import AwesomeTable from "../table/AwesomeTable.vue";
-import EnyoCrudStatsSection from "../misc/EnyoCrudStatsSection.vue";
-import AwesomeForm from "./AwesomeForm.vue";
-import AwesomeList from "../table/AwesomeList";
-import AwesomeKanban from "../table/AwesomeKanban";
+import _ from 'lodash';
+import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
+import apiErrorsMixin from '../../mixins/apiErrorsMixin';
+import apiConfigMixin from '../../mixins/apiConfigMixin';
+import awesomeFormMixin from '../../mixins/awesomeFormMixin';
+import relationMixin from '../../mixins/relationMixin';
+import notificationsMixin from '../../mixins/notificationsMixin';
+import i18nMixin from '../../mixins/i18nMixin';
+import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import AwesomeTable from '../table/AwesomeTable.vue';
+import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
+import AwesomeForm from './AwesomeForm.vue';
+import AwesomeList from '../table/AwesomeList';
+import AwesomeKanban from '../table/AwesomeKanban';
 
-import "vue-good-table/dist/vue-good-table.css";
+import 'vue-good-table/dist/vue-good-table.css';
 
 const defaultOptions = {
-  mode: "local", // Deprecated use dataPaginationMode
-  dataPaginationMode: "local",
+  mode: 'local', // Deprecated use dataPaginationMode
+  dataPaginationMode: 'local',
   defaultOptions: true,
   url: null,
   columns: null,
@@ -291,24 +295,28 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: "table", // table | list | kanban
-  detailPageMode: "sidebar", // fade | slide | full
+  initialDisplayMode: 'table', // table | list | kanban
+  detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  tableRowClickAction: "view"
+  tableRowClickAction: 'view'
 };
 
 const listOptions = {
-  fields: []
+  displayFields: [], // list of fields to use for the display
+  imageField: '',
+  titleField: '',
+  subtitleField: '',
+  descriptionField: ''
 };
 
 export default {
-  name: "AwesomeCrud",
-  introduction: "A component to quickly create a table UI with edit capabilities",
+  name: 'AwesomeCrud',
+  introduction: 'A component to quickly create a table UI with edit capabilities',
   description: `This component magically create lists and edit data based on a json schema.
 
   ### Usage.
@@ -413,67 +421,67 @@ export default {
     modelName: {
       type: String,
       required: false,
-      note: "Deprecated use identity"
+      note: 'Deprecated use identity'
     },
     identity: {
       type: String,
       required: true,
-      note: "Deprecated use identity"
+      note: 'Deprecated use identity'
     },
     nestedDisplayMode: {
       type: String,
       required: false,
-      default: "table",
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
+      default: 'table',
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     primaryKey: {
       type: String,
-      default: "id",
-      note: "The field to use as a primary key (id / _id)"
+      default: 'id',
+      note: 'The field to use as a primary key (id / _id)'
     },
     model: {
       type: Object,
       required: false,
       default: undefined,
       note:
-        "The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop."
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
       note:
-        "The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available"
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
       type: Object,
       required: false,
       default: undefined,
-      note: "The layout of the create/edit/view pages"
+      note: 'The layout of the create/edit/view pages'
     },
     crudNeedsRefresh: {
       type: Boolean,
       default: false,
-      note: "Define whether the content of the table list should be refreshed"
+      note: 'Define whether the content of the table list should be refreshed'
     },
     nestedSchemas: {
       type: Array,
       required: false,
       default: () => [],
-      note: "An array describing the data that is linked to the nested model. Serves for displaying a detailed object"
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
     },
     parent: {
       type: Object,
       required: false,
       note:
-        "The object containing the parent in case of a nested schema." +
-        "You don't actually to pass this, it's done automatically by the parent component itself"
+        'The object containing the parent in case of a nested schema.' +
+        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
     },
     useRouterMode: {
       type: Boolean,
       required: false,
       default: true,
-      node: "Controls if the actions (create / edit / view)  should update the current route url"
+      node: 'Controls if the actions (create / edit / view)  should update the current route url'
     },
     translations: {
       type: Object,
@@ -481,15 +489,15 @@ export default {
       default: () => ({
         AwesomeCrud: {
           labels: {
-            manageTitle: "Manage"
+            manageTitle: 'Manage'
           },
           buttons: {
-            view: "View",
-            cancel: "Cancel"
+            view: 'View',
+            cancel: 'Cancel'
           }
         }
       }),
-      note: "Translation labels to use when vue-i18n is not present"
+      note: 'Translation labels to use when vue-i18n is not present'
     },
     options: {
       type: Object,
@@ -506,16 +514,16 @@ export default {
     actions: {
       type: Object,
       default: () => defaultActions,
-      note: "actions active in this instance"
+      note: 'actions active in this instance'
     }
   },
   data() {
     return {
-      parentPath: "",
+      parentPath: '',
       selectedItem: {},
       selectedItems: [],
-      previousDisplayMode: "",
-      displayMode: "table",
+      previousDisplayMode: '',
+      displayMode: 'table',
       isRefreshing: false,
       tableNeedsRefresh: false,
       awesomeEditNeedsRefresh: false,
@@ -523,14 +531,14 @@ export default {
       nestedCrudNeedsRefresh: false,
       mergedOptions: {},
       innerNestedSchemas: [],
-      activeNestedTab: "general",
+      activeNestedTab: 'general',
       formOptions: {
         validateAsync: true,
         validateAfterLoad: false,
         validateAfterChanged: true,
-        fieldIdPrefix: "AwesomeCrud"
+        fieldIdPrefix: 'AwesomeCrud'
       },
-      supportedDataDisplayModes: ["table", "list", "kanban"],
+      supportedDataDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false
     };
   },
@@ -556,7 +564,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     _titlePlural() {
@@ -565,15 +573,15 @@ export default {
       }
 
       if (this.title) {
-        return this.$te(this.title + "s") ? this.$t(this.title + "s") : this.title + "s";
+        return this.$te(this.title + 's') ? this.$t(this.title + 's') : this.title + 's';
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}s`)
           ? this.$t(`app.labels.${this.identity}s`)
-          : _.startCase(this.identity + "s");
+          : _.startCase(this.identity + 's');
       }
-      return "";
+      return '';
     },
 
     _name() {
@@ -586,7 +594,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     _model() {
@@ -603,7 +611,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     // _url() szee apiConfigMixin
@@ -628,7 +636,7 @@ export default {
         return [];
       }
       this.listOptions.fields.forEach((field) => {
-        columns.push(_.filter(allColumns, ["field", field]));
+        columns.push(_.filter(allColumns, ['field', field]));
       });
       columns = _.flatten(columns);
       return columns;
@@ -641,7 +649,7 @@ export default {
         return [];
       }
       this.kanbanOptions.fields.forEach((field) => {
-        columns.push(_.filter(allColumns, ["field", field]));
+        columns.push(_.filter(allColumns, ['field', field]));
       });
       columns = _.flatten(columns);
       return columns;
@@ -695,29 +703,29 @@ export default {
     _displayModeHasPartialDisplay() {
       return (
         [
-          "modal",
-          "sidebar",
-          "sidebar-left",
-          "sidebar-right",
-          "fade", // deprecated
-          "slide" // deprecated
+          'modal',
+          'sidebar',
+          'sidebar-left',
+          'sidebar-right',
+          'fade', // deprecated
+          'slide' // deprecated
         ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
     }
   },
   watch: {
     // call again the method if the route changes
-    identity: "loadModel",
-    model: "loadModel",
-    "parent.id": "loadModel",
-    options: "mergeOptions",
-    crudNeedsRefresh: "refreshComponent"
+    identity: 'loadModel',
+    model: 'loadModel',
+    'parent.id': 'loadModel',
+    options: 'mergeOptions',
+    crudNeedsRefresh: 'refreshComponent'
   },
   created() {
     window._vue = this;
     if (!this.$http) {
       try {
-        const axios = require("axios");
+        const axios = require('axios');
         this.$http = axios;
       } catch (err) {
         // console.warn(err.message);
@@ -728,7 +736,7 @@ export default {
   mounted() {
     // allow old property names to still work
     if (!this.identity) {
-      throw new Error("missing_required_props_identity");
+      throw new Error('missing_required_props_identity');
     }
     this.loadModel();
 
@@ -747,14 +755,14 @@ export default {
 
     this.parentPath = this.$route.path;
     this.parentPath = this.parentPath
-      .replace("/view", "")
-      .replace("/edit", "")
-      .replace("/:id", "");
+      .replace('/view', '')
+      .replace('/edit', '')
+      .replace('/:id', '');
     this.displayMode = this.mergedOptions.initialDisplayMode;
     // const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
-      this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, "").replace("/:id", "");
-      if (this.$route.params.id === "create" || this.$route.params.id === "new") {
+      this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
+      if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
         delete this.$route.params.id;
         if (this.$route.query.item) {
           this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
@@ -763,9 +771,9 @@ export default {
 
         // this.parentPath = matched.path;
         this.parentPath = this.parentPath
-          .replace("/edit", "")
-          .replace(`/${this.$route.params.id}`, "")
-          .replace("/:id", "");
+          .replace('/edit', '')
+          .replace(`/${this.$route.params.id}`, '')
+          .replace('/:id', '');
       }
     }
   },
@@ -795,7 +803,7 @@ export default {
       this.nestedCrudNeedsRefresh = true;
 
       setTimeout(() => {
-        this.$emit("update:crudNeedsRefresh", false);
+        this.$emit('update:crudNeedsRefresh', false);
       }, 100);
     },
 
@@ -831,36 +839,36 @@ export default {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
-          title: this.$t("common.messages.no_data_imported", {
+          title: this.$t('common.messages.no_data_imported', {
             title: this._title
           }),
-          type: "warning"
+          type: 'warning'
         });
         return;
       }
 
       if (e.properData.length > 0) {
         this.$notify({
-          title: this.$t("common.messages.successfullyImported", {
+          title: this.$t('common.messages.successfullyImported', {
             title: this._title
           }),
-          type: "success"
+          type: 'success'
         });
       }
 
       if (e.improperData.length > 0) {
-        let message = "";
+        let message = '';
         e.improperData.forEach((element) => {
-          message += ` - ${Object.values(element).join(" | ")}, `;
+          message += ` - ${Object.values(element).join(' | ')}, `;
         });
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
           this.$notify({
-            title: `${e.improperData.length} ${this.$t("common.messages.not_imported", {
+            title: `${e.improperData.length} ${this.$t('common.messages.not_imported', {
               title: this._title
             })}`,
             message,
-            type: "warning",
+            type: 'warning',
             timeout: 30000
           });
         }, 0);
@@ -873,14 +881,14 @@ export default {
 
     exportTemplateCallBack() {
       if (!this.mergedOptions.importUrl) {
-        this.$notify({ title: "[WARN] missing export url", type: "warning" });
+        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http
-        .get(this.mergedOptions.importUrl + "-template", {})
+        .get(this.mergedOptions.importUrl + '-template', {})
         .then((res) => {
           if (res.data.url) {
-            const link = document.createElement("a");
+            const link = document.createElement('a');
             link.download = `${this.identity}_export`;
             link.href = res.data.url;
             link.click();
@@ -897,7 +905,7 @@ export default {
       this.mergeOptions();
 
       if (!this._model && !this.schema) {
-        console.warn("AWESOME CRUD ERROR", `model ${this.identity} not found`);
+        console.warn('AWESOME CRUD ERROR', `model ${this.identity} not found`);
         return;
       }
 
@@ -921,7 +929,7 @@ export default {
       }
 
       // if the crud is nested and should display as a form then load the data from remote
-      if (this.parent && this.nestedDisplayMode === "object") {
+      if (this.parent && this.nestedDisplayMode === 'object') {
         this.nestedViewFunction();
       }
 
@@ -932,19 +940,19 @@ export default {
       // if the crud is nested and should display as a form then remote load the data
       if (
         this.parent &&
-        (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "edit" || this.nestedDisplayMode === "object")
+        (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit' || this.nestedDisplayMode === 'object')
       ) {
         this.getNestedItem().then(() => {
-          if (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "object") {
+          if (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'object') {
             this.openModal();
           }
-          if (this.nestedDisplayMode === "edit") {
+          if (this.nestedDisplayMode === 'edit') {
             // this.editFunction(this.selectedItem);
             this.$alert.fire({
-              title: this.$t("Nested editing of object is not allowed yet...", {
+              title: this.$t('Nested editing of object is not allowed yet...', {
                 title: this.modelName
               }),
-              type: "success"
+              type: 'success'
             });
           }
         });
@@ -962,10 +970,10 @@ export default {
               this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
                 ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
-            if (matched.path.indexOf("/edit") !== -1) {
-              this.setDisplayMode("edit", data);
+            if (matched.path.indexOf('/edit') !== -1) {
+              this.setDisplayMode('edit', data);
             } else {
-              this.setDisplayMode("view", data);
+              this.setDisplayMode('view', data);
             }
             this.$forceUpdate();
           })
@@ -979,7 +987,7 @@ export default {
     getFormtype(property) {
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -988,33 +996,33 @@ export default {
       }
 
       if (property.enum) {
-        return "select";
+        return 'select';
       }
       if (property.relation || property.relationUrl) {
-        return "VSelect";
+        return 'VSelect';
       }
       switch (type) {
-        case "string":
-          return "input";
-        case "integer":
-        case "number":
-          return "input";
-        case "boolean":
-          return "select"; // put enyoSelect after debugging all the issues...enyoSelect
+        case 'string':
+          return 'input';
+        case 'integer':
+        case 'number':
+          return 'input';
+        case 'boolean':
+          return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
         default:
-          return "input";
+          return 'input';
       }
     },
     getSelectEnumFromStore(val) {
       const options =
-        _.isString(val) && val.indexOf("$store") === 0 ? _.get(this.$store.state, val.replace("$store.", "")) : val;
+        _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
 
     getFormInputType(property) {
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -1023,21 +1031,21 @@ export default {
       }
 
       switch (type) {
-        case "string":
+        case 'string':
           switch (property.format) {
-            case "email":
-              return "email";
-            case "date-time":
-              return "datetime";
+            case 'email':
+              return 'email';
+            case 'date-time':
+              return 'datetime';
             default:
-              return "text";
+              return 'text';
           }
-        case "number":
-          return "number";
-        case "boolean":
-        case "array":
-        case "object":
-          return "string";
+        case 'number':
+          return 'number';
+        case 'boolean':
+        case 'array':
+        case 'object':
+          return 'string';
         default:
           // console.error("type not known ", type, property);
           return type;
@@ -1053,7 +1061,7 @@ export default {
       }
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -1061,33 +1069,32 @@ export default {
         }
       }
       if (property.relation) {
-        return "relation";
+        return 'relation';
       }
       switch (type) {
-        case "string":
+        case 'string':
           switch (property.format) {
-            case "date-time":
-              return "text";
+            case 'date-time':
+              return 'text';
             default:
-              return "text";
+              return 'text';
           }
-        case "number":
-          return "number";
-        case "boolean":
-          return "boolean";
-        case "array":
-        case "object":
-          return "object";
+        case 'number':
+          return 'number';
+        case 'boolean':
+          return 'boolean';
+        case 'array':
+        case 'object':
+          return 'object';
         default:
-          return "text";
+          return 'text';
       }
     },
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
-      console.log("setDisplayMode", mode);
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
-      if (item && mode !== "bulkEdit") {
+      if (item && mode !== 'bulkEdit') {
         this.selectedItem = item;
         this.selectedItems = [];
       } else {
@@ -1095,7 +1102,7 @@ export default {
         this.selectedItems = item;
       }
       this.displayMode = mode;
-      if (mode === "table") {
+      if (mode === 'table') {
         this.tableNeedsRefresh = options.refresh;
       } else {
         this.awesomeEditNeedsRefresh = options.refresh;
@@ -1112,7 +1119,7 @@ export default {
       if (options.editLayoutMode) {
         this.editLayoutMode = options.editLayoutMode;
       }
-      this.setDisplayMode("create", null);
+      this.setDisplayMode('create', null);
       if (this.useRouterMode) {
         window.history.replaceState({}, null, `${this.parentPath}/new`);
       }
@@ -1124,12 +1131,12 @@ export default {
       if (this.mergedOptions.bulkEditPath) {
         return this.$router.push(this.mergedOptions.bulkEditPath);
       }
-      this.setDisplayMode("bulkEdit", items);
+      this.setDisplayMode('bulkEdit', items);
     },
 
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
-        return this.$router.push(this.mergedOptions.deletePath.replace(":id", item[this.primaryKey]));
+        return this.$router.push(this.mergedOptions.deletePath.replace(':id', item[this.primaryKey]));
       }
 
       this.deleteFunction(item);
@@ -1142,26 +1149,26 @@ export default {
 
     goToEditPage(item) {
       if (this.mergedOptions.editPath) {
-        return this.$router.push(this.mergedOptions.editPath.replace(":id", item[this.primaryKey]));
+        return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
       }
       if (this.useRouterMode) {
         window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
       }
-      this.setDisplayMode("edit", item);
+      this.setDisplayMode('edit', item);
     },
 
     goToViewPage(item) {
       if (this.mergedOptions.viewPath) {
-        return this.$router.push(this.mergedOptions.viewPath.replace(":id", item[this.primaryKey]));
+        return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
       }
       if (this.useRouterMode) {
-        window.history.replaceState({}, null, `${this.parentPath.replace(":id", "")}/${item[this.primaryKey]}`);
+        window.history.replaceState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
       }
-      this.setDisplayMode("view", item);
+      this.setDisplayMode('view', item);
     },
 
     nestedViewFunction() {
-      this.displayMode = "view";
+      this.displayMode = 'view';
       this.$http
         .get(`${this._url}`)
         .then((res) => {
@@ -1181,16 +1188,16 @@ export default {
       this.$http
         .put(`${this._url}/${item[this.primaryKey]}`, item)
         .then((res) => {
-          this.$emit(this.identity + "-item-updated", res.data);
+          this.$emit(this.identity + '-item-updated', res.data);
           Swal.fire({
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             showConfirmButton: false,
             timer: 3000,
-            title: this.$t("AwesomeDefault.messages.successfullyModified", {
+            title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),
-            type: "success"
+            type: 'success'
           });
           this.tableNeedsRefresh = true;
           this.nestedCrudNeedsRefresh = true;
@@ -1204,14 +1211,14 @@ export default {
 
     bulkDeleteFunction(items) {
       Swal.fire({
-        title: this.$t("AwesomeDefault.messages.are_you_sure"),
-        text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
-        type: "warning",
+        title: this.$t('AwesomeDefault.messages.are_you_sure'),
+        text: this.$t('AwesomeDefault.messages.wont_be_able_recover'),
+        type: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "var(--primary)",
-        cancelButtonColor: "#eee",
-        confirmButtonText: this.$t("AwesomeCrud.buttons.yes_delete_it"),
-        cancelButtonText: this.$t("AwesomeCrud.buttons.cancel"),
+        confirmButtonColor: 'var(--primary)',
+        cancelButtonColor: '#eee',
+        confirmButtonText: this.$t('AwesomeCrud.buttons.yes_delete_it'),
+        cancelButtonText: this.$t('AwesomeCrud.buttons.cancel'),
         reverseButtons: true
       })
         .then((result) => {
@@ -1242,14 +1249,14 @@ export default {
     deleteFunction(item) {
       this.selectedItem = item;
       Swal.fire({
-        title: this.$t("AwesomeDefault.messages.are_you_sure"),
-        text: this.$t("AwesomeDefault.messages.wont_be_able_recover"),
-        type: "warning",
+        title: this.$t('AwesomeDefault.messages.are_you_sure'),
+        text: this.$t('AwesomeDefault.messages.wont_be_able_recover'),
+        type: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "var(--primary)",
-        cancelButtonColor: "#eee",
-        confirmButtonText: this.$t("AwesomeCrud.buttons.yes_delete_it"),
-        cancelButtonText: this.$t("AwesomeCrud.buttons.cancel"),
+        confirmButtonColor: 'var(--primary)',
+        cancelButtonColor: '#eee',
+        confirmButtonText: this.$t('AwesomeCrud.buttons.yes_delete_it'),
+        cancelButtonText: this.$t('AwesomeCrud.buttons.cancel'),
         reverseButtons: true
       })
         .then((result) => {
@@ -1274,21 +1281,15 @@ export default {
         .finally(() => (this.selectedItem = null));
     },
 
-    onCustomAction(body) {
-      const { action } = body;
-      this.$emit(this.identity + "-custom-action", action);
-      return action && action.action && action.action(body, this);
-    },
-
     onCustomBulkAction(body) {
       const { action } = body;
-      this.$emit(this.identity + "-custom-bulk-action", action);
+      this.$emit(this.identity + '-custom-bulk-action', action);
       return action && action.action && action.action(body, this);
     },
 
     onCustomListAction(body) {
       const { action } = body;
-      this.$emit(this.identity + "-custom-list-action", action);
+      this.$emit(this.identity + '-custom-list-action', action);
       return action && action.action && action.action(body, this);
     },
 
@@ -1305,15 +1306,15 @@ export default {
     },
 
     onCardClicked(item) {
-      this.$emit("on-kanban-item-clicked", item);
+      this.$emit('on-kanban-item-clicked', item);
       switch (this.mergedOptions.tableRowClickAction) {
-        case "edit":
+        case 'edit':
           this.goToEditPage(item);
           break;
-        case "view":
+        case 'view':
           this.goToViewPage(item);
           break;
-        case "default":
+        case 'default':
           this.goToViewPage(item);
           break;
       }
@@ -1331,11 +1332,11 @@ export default {
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode;
       if (this.useRouterMode) {
-        let url = this.parentPath.replace("/edit", "");
-        if (previousDisplayMode !== "view") {
-          url = url.replace(`/${item ? item[this.primaryKey] : ""}`, "");
+        let url = this.parentPath.replace('/edit', '');
+        if (previousDisplayMode !== 'view') {
+          url = url.replace(`/${item ? item[this.primaryKey] : ''}`, '');
         } else {
-          url = `${this.parentPath}/${item ? item[this.primaryKey] : ""}`;
+          url = `${this.parentPath}/${item ? item[this.primaryKey] : ''}`;
         }
         window.history.pushState({}, null, url);
       }
@@ -1345,13 +1346,13 @@ export default {
     onViewDisplayCancelled(item) {
       if (this.useRouterMode) {
         const url = this.parentPath
-          .replace("/edit", "")
-          .replace("/:id", "")
-          .replace(`${item ? item[this.primaryKey] : ""}`, "");
+          .replace('/edit', '')
+          .replace('/:id', '')
+          .replace(`${item ? item[this.primaryKey] : ''}`, '');
         window.history.pushState({}, null, url);
       }
       const previousDisplayMode =
-        this.previousDisplayMode && this.previousDisplayMode !== "edit" && this.previousDisplayMode !== this.displayMode
+        this.previousDisplayMode && this.previousDisplayMode !== 'edit' && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode;
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
@@ -1389,25 +1390,25 @@ export default {
     },
 
     onListUpdated(datas) {
-      this.$emit("list-updated", datas);
-      this.$emit(this.identity + "-list-updated", datas);
+      this.$emit('list-updated', datas);
+      this.$emit(this.identity + '-list-updated', datas);
     },
 
     onTableRowClicked(props) {
       const { column, row } = props; // rowIndex and event are also available
-      if (column && (["url", "relation", "ACTIONS"].indexOf(column.type) > -1 || column.field === "ACTIONS")) {
+      if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === 'ACTIONS')) {
         return;
       }
       // this._actions && this._actions.view && this.$emit("view", row);
-      this.$emit("on-table-row-clicked", row);
+      this.$emit('on-table-row-clicked', row);
       switch (this.mergedOptions.tableRowClickAction) {
-        case "edit":
+        case 'edit':
           this.goToEditPage(row);
           break;
-        case "view":
+        case 'view':
           this.goToViewPage(row);
           break;
-        case "default":
+        case 'default':
           this.goToViewPage(row);
           break;
       }
@@ -1415,15 +1416,15 @@ export default {
 
     onListItemClicked(item) {
       // this._actions && this._actions.view && this.$emit("view", row);
-      this.$emit("on-list-item-clicked", item);
+      this.$emit('on-list-item-clicked', item);
       switch (this.mergedOptions.tableRowClickAction) {
-        case "edit":
+        case 'edit':
           this.goToEditPage(item);
           break;
-        case "view":
+        case 'view':
           this.goToViewPage(item);
           break;
-        case "default":
+        case 'default':
           this.goToViewPage(item);
           break;
       }
@@ -1432,14 +1433,14 @@ export default {
     confirm(message) {
       return new Promise((resolve, reject) => {
         Swal.fire({
-          title: this.$t("common.messages.are_you_sure"),
+          title: this.$t('common.messages.are_you_sure'),
           text: message,
-          type: "info",
+          type: 'info',
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: this.$t("common.buttons.yes"),
-          cancelButtonText: this.$t("common.buttons.cancel"),
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: this.$t('common.buttons.yes'),
+          cancelButtonText: this.$t('common.buttons.cancel'),
           reverseButtons: true
         })
           .then((result) => {
@@ -1450,11 +1451,11 @@ export default {
     },
 
     onLayoutUpdated(items) {
-      this.$emit("layout-updated", items);
+      this.$emit('layout-updated', items);
     },
 
     onLayoutFieldsUpdated(items) {
-      this.$emit("layout-fields-updated", items);
+      this.$emit('layout-fields-updated', items);
     },
 
     onOpenEditLayoutMode() {
@@ -1467,9 +1468,10 @@ export default {
 
     onCustomAction(body) {
       const { action } = body;
-      this.$emit(this.identity + "-custom-action", action);
+      this.$emit(this.identity + '-custom-action', action);
       return action && action.action && action.action(body, this);
     },
+
     getNestedItem() {
       return this.$http
         .get(`${this._url}`)

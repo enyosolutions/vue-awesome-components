@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
 export default {
-  name: "DisplayHtml",
+  name: 'DisplayHtml',
   mixins: [awesomeDisplayMixin]
 };
 </script>

@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-textArea",
+  name: 'field-textArea',
   mixins: [abstractField]
 };
 </script>

@@ -1,5 +1,5 @@
-import { get as objGet, forEach, isFunction, isString, isArray, debounce, isNil, uniqueId } from "lodash";
-import validators from "../utils/validators";
+import { get as objGet, forEach, isFunction, isString, isArray, debounce, isNil, uniqueId } from 'lodash';
+import validators from '../utils/validators';
 
 const convertValidator = (validator) => {
   if (isString(validator)) {
@@ -13,8 +13,8 @@ const convertValidator = (validator) => {
 };
 
 function attributesDirective(el, binding, vnode) {
-  let attrs = objGet(vnode.context, "schema.attributes", {});
-  let container = binding.value || "input";
+  let attrs = objGet(vnode.context, 'schema.attributes', {});
+  let container = binding.value || 'input';
   if (isString(container)) {
     attrs = objGet(attrs, container) || attrs;
   }
@@ -43,7 +43,7 @@ export default {
   },
 
   data() {
-    const fieldUID = uniqueId(this.fieldID + "_");
+    const fieldUID = uniqueId(this.fieldID + '_');
     return {
       fieldUID,
       touched: false,
@@ -66,7 +66,7 @@ export default {
       cache: false,
       get() {
         let val;
-        if (isFunction(objGet(this.schema, "get"))) {
+        if (isFunction(objGet(this.schema, 'get'))) {
           val = this.schema.get(this.model);
         } else {
           val = objGet(this.model, this.schema.model);
@@ -89,35 +89,35 @@ export default {
       }
     },
     disabled() {
-      return this.getValueFromOption(this.schema, "disabled");
+      return this.getValueFromOption(this.schema, 'disabled');
     },
     fieldClasses() {
-      return this.getValueFromOption(this.schema, "fieldClasses", []);
+      return this.getValueFromOption(this.schema, 'fieldClasses', []);
     },
     fieldOptions() {
-      return this.getValueFromOption(this.schema, "fieldOptions", {});
+      return this.getValueFromOption(this.schema, 'fieldOptions', {});
     },
     inputName() {
-      return this.getValueFromOption(this.schema, "inputName", "");
+      return this.getValueFromOption(this.schema, 'inputName', '');
     },
     placeholder() {
-      return this.getValueFromOption(this.schema, "placeholder", "");
+      return this.getValueFromOption(this.schema, 'placeholder', '');
     },
     readonly() {
-      return this.getValueFromOption(this.schema, "readonly");
+      return this.getValueFromOption(this.schema, 'readonly');
     },
     required() {
-      return this.getValueFromOption(this.schema, "required");
+      return this.getValueFromOption(this.schema, 'required');
     },
     values() {
-      return this.getValueFromOption(this.schema, "values", []);
+      return this.getValueFromOption(this.schema, 'values', []);
     }
   },
 
   watch: {
     errors: {
       handler(errors) {
-        this.$emit("errors-updated", errors);
+        this.$emit('errors-updated', errors);
       }
     }
   },
@@ -139,7 +139,7 @@ export default {
       this.touch();
 
       this.clearValidationErrors();
-      let validateAsync = objGet(this.formOptions, "validateAsync", false);
+      let validateAsync = objGet(this.formOptions, 'validateAsync', false);
 
       let results = [];
 
@@ -193,7 +193,7 @@ export default {
 
         this.errors = fieldErrors;
 
-        this.eventBus.$emit("field-validated", isValid, fieldErrors, this.fieldUID);
+        this.eventBus.$emit('field-validated', isValid, fieldErrors, this.fieldUID);
         return fieldErrors;
       };
 
@@ -204,7 +204,7 @@ export default {
       return Promise.all(results)
         .then(handleErrors)
         .catch((error) => {
-          console.warn("Problem during field validation", error);
+          console.warn('Problem during field validation', error);
         });
     },
 
@@ -212,7 +212,7 @@ export default {
       if (!isFunction(this.debouncedValidateFunc)) {
         this.debouncedValidateFunc = debounce(
           this.validate.bind(this),
-          objGet(this.formOptions, "validateDebounceTime", 500)
+          objGet(this.formOptions, 'validateDebounceTime', 500)
         );
       }
       this.debouncedValidateFunc();
@@ -229,13 +229,13 @@ export default {
       }
 
       if (changed) {
-        this.eventBus.$emit("model-updated", newValue, this.schema.model);
+        this.eventBus.$emit('model-updated', newValue, this.schema.model);
 
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema);
         }
-        if (objGet(this.formOptions, "validateAfterChanged", false)) {
-          if (objGet(this.formOptions, "validateDebounceTime", 500) > 0) {
+        if (objGet(this.formOptions, 'validateAfterChanged', false)) {
+          if (objGet(this.formOptions, 'validateDebounceTime', 500) > 0) {
             this.debouncedValidate();
           } else {
             this.validate();
@@ -250,13 +250,13 @@ export default {
 
     setModelValueByPath(path, value) {
       // convert array indexes to properties
-      let s = path.replace(/\[(\w+)\]/g, ".$1");
+      let s = path.replace(/\[(\w+)\]/g, '.$1');
 
       // strip a leading dot
-      s = s.replace(/^\./, "");
+      s = s.replace(/^\./, '');
 
       let o = this.model;
-      const a = s.split(".");
+      const a = s.split('.');
       let i = 0;
       const n = a.length;
       while (i < n) {
@@ -291,14 +291,14 @@ export default {
     touch() {
       if (!this.touched) {
         this.touched = true;
-        this.$emit("field-touched");
+        this.$emit('field-touched');
       }
     }
   },
   created() {
-    this.eventBus.$on("clear-validation-errors", this.clearValidationErrors);
-    this.eventBus.$on("validate-fields", this.validate);
-    this.eventBus.$emit("field-registering");
+    this.eventBus.$on('clear-validation-errors', this.clearValidationErrors);
+    this.eventBus.$on('validate-fields', this.validate);
+    this.eventBus.$emit('field-registering');
   },
   mounted() {
     const diff = function (a, b) {
@@ -349,8 +349,8 @@ export default {
     }
   },
   beforeDestroy() {
-    this.eventBus.$off("clear-validation-errors", this.clearValidationErrors);
-    this.eventBus.$off("validate-fields", this.validate);
-    this.eventBus.$emit("field-deregistering", this);
+    this.eventBus.$off('clear-validation-errors', this.clearValidationErrors);
+    this.eventBus.$off('validate-fields', this.validate);
+    this.eventBus.$emit('field-deregistering', this);
   }
 };

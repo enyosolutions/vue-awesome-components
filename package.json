@@ -119,6 +119,10 @@
     ],
     "rules": {
       "vue/no-reserved-keys": 0,
+      "quotes": [
+        "error",
+        "single"
+      ],
       "no-unused-vars": [
         "error",
         {
@@ -157,7 +161,8 @@
     "bracketSpacing": true,
     "semi": true,
     "useTabs": false,
-    "arrowParens": "always"
+    "arrowParens": "always",
+    "singleQuote": true
   },
   "postcss": {
     "plugins": {

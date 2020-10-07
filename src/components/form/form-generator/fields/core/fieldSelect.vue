@@ -25,17 +25,17 @@
 </template>
 
 <script>
-import { isObject, isNil, find } from "lodash";
-import abstractField from "../abstractField";
+import { isObject, isNil, find } from 'lodash';
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-select",
+  name: 'field-select',
   mixins: [abstractField],
 
   computed: {
     items() {
       let values = this.schema.values;
-      if (typeof values == "function") {
+      if (typeof values == 'function') {
         return this.groupValues(values.apply(this, [this.model, this.schema]));
       } else return this.groupValues(values);
     }
@@ -74,7 +74,7 @@ export default {
 
             // Initialising.
             arrayElement = {
-              group: "",
+              group: '',
               ops: []
             };
 
@@ -105,19 +105,19 @@ export default {
         return item.group;
       }
 
-      throw "Group name is missing! https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items";
+      throw 'Group name is missing! https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items';
     },
 
     getItemValue(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["value"] !== "undefined") {
+        if (typeof this.fieldOptions['value'] !== 'undefined') {
           return item[this.fieldOptions.value];
         } else {
           // Use 'id' instead of 'value' cause of backward compatibility
-          if (typeof item["id"] !== "undefined") {
+          if (typeof item['id'] !== 'undefined') {
             return item.id;
           } else {
-            throw "`id` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items";
+            throw '`id` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items';
           }
         }
       } else {
@@ -127,13 +127,13 @@ export default {
 
     getItemName(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["name"] !== "undefined") {
+        if (typeof this.fieldOptions['name'] !== 'undefined') {
           return item[this.fieldOptions.name];
         } else {
-          if (typeof item["name"] !== "undefined") {
+          if (typeof item['name'] !== 'undefined') {
             return item.name;
           } else {
-            throw "`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items";
+            throw '`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/select.html#select-field-with-object-items';
           }
         }
       } else {

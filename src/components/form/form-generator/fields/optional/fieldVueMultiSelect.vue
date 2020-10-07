@@ -46,22 +46,22 @@
 	</multiselect>
 </template>
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-vueMultiSelect",
+  name: 'field-vueMultiSelect',
   mixins: [abstractField],
   computed: {
     options() {
       let values = this.schema.values;
-      if (typeof values == "function") {
+      if (typeof values == 'function') {
         return values.apply(this, [this.model, this.schema]);
       } else {
         return values;
       }
     },
     customLabel() {
-      if (typeof this.fieldOptions.customLabel !== "undefined" && typeof this.fieldOptions.customLabel === "function") {
+      if (typeof this.fieldOptions.customLabel !== 'undefined' && typeof this.fieldOptions.customLabel === 'function') {
         return this.fieldOptions.customLabel;
       } else {
         // this will let the multiselect library use the default behavior if customLabel is not specified
@@ -75,13 +75,13 @@ export default {
     },
     addTag(newTag, id) {
       let onNewTag = this.fieldOptions.onNewTag;
-      if (typeof onNewTag == "function") {
+      if (typeof onNewTag == 'function') {
         onNewTag(newTag, id, this.options, this.value);
       }
     },
     onSearchChange(searchQuery, id) {
       let onSearch = this.fieldOptions.onSearch;
-      if (typeof onSearch == "function") {
+      if (typeof onSearch == 'function') {
         onSearch(searchQuery, id, this.options);
       }
     },
@@ -100,9 +100,9 @@ export default {
   },
   created() {
     // Check if the component is loaded globally
-    if (!this.$root.$options.components["multiselect"]) {
+    if (!this.$root.$options.components['multiselect']) {
       console.error(
-        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
+        '\'vue-multiselect\' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!'
       );
     }
   }

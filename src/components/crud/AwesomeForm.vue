@@ -485,18 +485,18 @@
   </div>
 </template>
 <script>
-import _ from "lodash";
-import Swal from "sweetalert2/dist/sweetalert2.js";
+import _ from 'lodash';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
-import parseJsonSchema from "../../mixins/parseJsonSchemaMixin";
-import apiErrorsMixin from "../../mixins/apiErrorsMixin";
-import apiConfigMixin from "../../mixins/apiConfigMixin";
-import awesomeFormMixin from "../../mixins/awesomeFormMixin";
-import relationMixin from "../../mixins/relationMixin";
-import notificationsMixin from "../../mixins/notificationsMixin";
+import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
+import apiErrorsMixin from '../../mixins/apiErrorsMixin';
+import apiConfigMixin from '../../mixins/apiConfigMixin';
+import awesomeFormMixin from '../../mixins/awesomeFormMixin';
+import relationMixin from '../../mixins/relationMixin';
+import notificationsMixin from '../../mixins/notificationsMixin';
 
-import i18nMixin from "../../mixins/i18nMixin";
-import { defaultActions } from "../../mixins/defaultProps";
+import i18nMixin from '../../mixins/i18nMixin';
+import { defaultActions } from '../../mixins/defaultProps';
 /*
 import Column from "./layout/Column.vue";
 import Tabs from "./layout/Tabs.vue";
@@ -504,12 +504,12 @@ import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
 */
 
-import "vue-good-table/dist/vue-good-table.css";
-import AwesomeCrud from "./AwesomeCrud";
-import AwesomeLayout from "./layout/AwesomeLayout";
+import 'vue-good-table/dist/vue-good-table.css';
+import AwesomeCrud from './AwesomeCrud';
+import AwesomeLayout from './layout/AwesomeLayout';
 
 const defaultOptions = {
-  mode: "local",
+  mode: 'local',
   url: null,
   columns: null,
   createPath: null,
@@ -519,21 +519,21 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  modalMode: "slide", // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
+  modalMode: 'slide', // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
   customTopActions: [],
   customTabletopActions: [],
-  responseField: "body",
+  responseField: 'body',
   useCustomLayout: false
 };
 
 export default {
-  name: "AwesomeForm",
-  introduction: "A component to quickly create a table UI with edit capabilities",
+  name: 'AwesomeForm',
+  introduction: 'A component to quickly create a table UI with edit capabilities',
   components: {
-    "awesome-crud": AwesomeCrud,
+    'awesome-crud': AwesomeCrud,
     /* Column,
     Tabs,
     Row,
@@ -560,46 +560,46 @@ export default {
     standalone: { type: Boolean, required: false, default: true },
     primaryKey: {
       type: String,
-      default: "id",
-      note: "The field to use as a primary key (id / _id)"
+      default: 'id',
+      note: 'The field to use as a primary key (id / _id)'
     },
     model: {
       type: Object,
       required: false,
       default: undefined,
       note:
-        "The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop."
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
       note:
-        "The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available"
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     crudNeedsRefresh: {
       type: Boolean,
       default: false,
-      note: "Define whether the content of the table list should be refreshed"
+      note: 'Define whether the content of the table list should be refreshed'
     },
     nestedSchemas: {
       type: Array,
       required: false,
       default: () => [],
-      note: "An array describing the data that is linked to the nested model. Serves for displaying a detailed object"
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
     },
     parent: {
       type: Object,
       required: false,
       note:
-        "The object containing the parent in case of a nested schema." +
-        "You don't actually to pass this, it's done automatically by the parent component itself"
+        'The object containing the parent in case of a nested schema.' +
+        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
     },
     nestedDisplayMode: {
       type: String,
       required: false,
-      default: "list",
-      note: `In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form`
+      default: 'list',
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     translations: {
       type: Object,
@@ -607,41 +607,41 @@ export default {
       default: () => ({
         AwesomeCrud: {
           labels: {
-            manageTitle: "Manage"
+            manageTitle: 'Manage'
           },
           buttons: {
-            view: "View",
-            cancel: "Cancel",
-            close: "Close"
+            view: 'View',
+            cancel: 'Cancel',
+            close: 'Close'
           }
         }
       }),
-      note: "Translation labels to use when vue-i18n is not present"
+      note: 'Translation labels to use when vue-i18n is not present'
     },
     mode: {
       type: String,
       required: true,
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
-        return ["create", "edit", "view", "bulkEdit"].indexOf(value) !== -1;
+        return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
       }
     },
     displayMode: {
       type: String,
       required: false,
-      default: "sidebar",
+      default: 'sidebar',
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
         return (
           [
-            "modal",
-            "sidebar",
-            "page",
-            "fullscreen",
-            "sidebar-left",
-            "sidebar-right",
-            "fade", // deprecated
-            "slide" // deprecated
+            'modal',
+            'sidebar',
+            'page',
+            'fullscreen',
+            'sidebar-left',
+            'sidebar-right',
+            'fade', // deprecated
+            'slide' // deprecated
           ].indexOf(value) !== -1
         );
       }
@@ -650,13 +650,13 @@ export default {
       type: Boolean,
       required: false,
       default: true,
-      node: "Controls if the actions (create / edit / view)  should update the current route url"
+      node: 'Controls if the actions (create / edit / view)  should update the current route url'
     },
     useSimpleCreateForm: {
       type: Boolean,
       required: false,
       default: true,
-      node: "If true then the create form will display only required attributes"
+      node: 'If true then the create form will display only required attributes'
     },
     options: {
       type: Object,
@@ -665,11 +665,11 @@ export default {
     actions: {
       type: Object,
       default: () => defaultActions,
-      note: "actions active in this instance"
+      note: 'actions active in this instance'
     },
     layout: {
       type: [Array, Object],
-      note: "Layout of the form",
+      note: 'Layout of the form',
       default: () => null
     },
     editLayoutMode: {
@@ -680,7 +680,7 @@ export default {
     return {
       AwesomeCrud,
       $modal: null,
-      parentPath: "",
+      parentPath: '',
       selectedItem: {},
       isRefreshing: false,
       nestedCrudNeedsRefresh: false,
@@ -688,7 +688,7 @@ export default {
       showBackDrop: false,
       mergedOptions: {},
       innerNestedSchemas: [],
-      activeNestedTab: "general",
+      activeNestedTab: 'general',
       formOptions: {
         validayeAsync: true,
         validateAfterLoad: false,
@@ -713,7 +713,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     _titlePlural() {
@@ -722,15 +722,15 @@ export default {
       }
 
       if (this.title) {
-        return this.$te(this.title + "s") ? this.$t(this.title + "s") : this.title + "s";
+        return this.$te(this.title + 's') ? this.$t(this.title + 's') : this.title + 's';
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}s`)
           ? this.$t(`app.labels.${this.identity}s`)
-          : _.startCase(this.identity + "s");
+          : _.startCase(this.identity + 's');
       }
-      return "";
+      return '';
     },
 
     _name() {
@@ -743,7 +743,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
     _namePlural() {
       if (this._model && this._model.namePlural) {
@@ -755,13 +755,13 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     _selectedItemUrl() {
       let url;
-      if (this._url.indexOf("?") > -1) {
-        url = new URL(this._url.indexOf("http") === 0 ? this._url : `http://localhost${this._url}`);
+      if (this._url.indexOf('?') > -1) {
+        url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
         url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
       } else {
         url = `${this._url}/${this.selectedItem[this.primaryKey]}`;
@@ -778,12 +778,12 @@ export default {
         return [];
       }
       const parsedFormSchema = this.parseSchema(this._schema);
-      parsedFormSchema.styleClasses = "row";
+      parsedFormSchema.styleClasses = 'row';
       parsedFormSchema.mode = this.mode;
       if (parsedFormSchema.fields) {
         parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
-          if (!field.styleClasses || field.styleClasses.indexOf("col-") === -1) {
-            field.styleClasses = `${field.styleClasses || ""} col-12`;
+          if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
+            field.styleClasses = `${field.styleClasses || ''} col-12`;
           }
           return field;
         });
@@ -815,7 +815,7 @@ export default {
       const url =
         this.url || (this.options && this.options.url) || (this._model && this._model.url) || `/${this.identity}`;
 
-      if (typeof url === "function") {
+      if (typeof url === 'function') {
         return url({
           parent: this.parent,
           context: this,
@@ -826,11 +826,11 @@ export default {
     },
 
     _formSchemaGrouped() {
-      return { groups: [{ ...this.formSchema, legend: "home" }] };
+      return { groups: [{ ...this.formSchema, legend: 'home' }] };
     },
 
     _isEmbedded() {
-      return this._isNested && (this.nestedDisplayMode === "view" || this.nestedDisplayMode === "edit");
+      return this._isNested && (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit');
     },
 
     _useCustomLayout() {
@@ -839,7 +839,7 @@ export default {
 
     _editItemTile() {
       if (!this.selectedItem) {
-        return "";
+        return '';
       }
 
       if (this._model && this._model.displayField && this.selectedItem[this._model.displayField]) {
@@ -849,7 +849,7 @@ export default {
       if (this.selectedItem[this.primaryKey]) {
         return this.selectedItem[this.primaryKey];
       }
-      return "";
+      return '';
     },
 
     _schema() {
@@ -858,17 +858,17 @@ export default {
   },
   watch: {
     // call again the method if the route changes
-    name: "loadModel",
-    identity: "loadModel",
-    model: "loadModel",
-    options: "mergeOptions",
-    crudNeedsRefresh: "refreshComponent",
-    item: "loadModel"
+    name: 'loadModel',
+    identity: 'loadModel',
+    model: 'loadModel',
+    options: 'mergeOptions',
+    crudNeedsRefresh: 'refreshComponent',
+    item: 'loadModel'
   },
   created() {
     if (!this.$http) {
       try {
-        const axios = require("axios");
+        const axios = require('axios');
         this.$http = axios;
       } catch (err) {
         // console.warn(err.message);
@@ -885,25 +885,25 @@ export default {
     if (this.$route) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
       if (this.$route.params.id) {
-        if (this.$route.params.id === "create" || this.$route.params.id === "new") {
+        if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
           delete this.$route.params.id;
           if (this.$route.query.item) {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
           }
-          this.$emit("create", this.selectedItem, { reset: false });
+          this.$emit('create', this.selectedItem, { reset: false });
 
           return;
         }
-        if (this.$route.params.id === "bulkEdit") {
+        if (this.$route.params.id === 'bulkEdit') {
           delete this.$route.params.id;
           if (this.$route.query.item) {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
           }
-          this.$emit("bulkEdit", this.selectedItem, { reset: false });
+          this.$emit('bulkEdit', this.selectedItem, { reset: false });
 
           return;
         }
-        this.parentPath = matched.path.replace("/edit", "").replace("/:id", "");
+        this.parentPath = matched.path.replace('/edit', '').replace('/:id', '');
       } else {
         this.parentPath = matched.path;
       }
@@ -913,7 +913,7 @@ export default {
     if (this[action]) {
       this[action](this.item);
     } else {
-      throw new Error("no_action_available_for_mode_" + this.mode);
+      throw new Error('no_action_available_for_mode_' + this.mode);
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -944,7 +944,7 @@ export default {
       this.nestedCrudNeedsRefresh = true;
 
       setTimeout(() => {
-        this.$emit("update:crudNeedsRefresh", false);
+        this.$emit('update:crudNeedsRefresh', false);
       }, 100);
     },
 
@@ -977,36 +977,36 @@ export default {
       // swal({title: this.$t('AwesomeDefault.messages.successfullyImported',{title: this.name}), type: 'success'})
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
-          title: this.$t("AwesomeDefault.messages.no_data_imported", {
+          title: this.$t('AwesomeDefault.messages.no_data_imported', {
             title: this._title
           }),
-          type: "warning"
+          type: 'warning'
         });
         return;
       }
 
       if (e.properData.length > 0) {
         this.$notify({
-          title: this.$t("AwesomeDefault.messages.successfullyImported", {
+          title: this.$t('AwesomeDefault.messages.successfullyImported', {
             title: this._title
           }),
-          type: "success"
+          type: 'success'
         });
       }
 
       if (e.improperData.length > 0) {
-        let message = "";
+        let message = '';
         e.improperData.forEach((element) => {
-          message += ` - ${Object.values(element).join(" | ")}, `;
+          message += ` - ${Object.values(element).join(' | ')}, `;
         });
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
           this.$notify({
-            title: `${e.improperData.length} ${this.$t("AwesomeDefault.messages.not_imported", {
+            title: `${e.improperData.length} ${this.$t('AwesomeDefault.messages.not_imported', {
               title: this._title
             })}`,
             message,
-            type: "warning",
+            type: 'warning',
             timeout: 30000
           });
         }, 0);
@@ -1019,14 +1019,14 @@ export default {
 
     exportTemplateCallBack() {
       if (!this.mergedOptions.importUrl) {
-        this.$notify({ title: "[WARN] missing export url", type: "warning" });
+        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http
-        .get(this.mergedOptions.importUrl + "-template", {})
+        .get(this.mergedOptions.importUrl + '-template', {})
         .then((res) => {
           if (res.data.url) {
-            const link = document.createElement("a");
+            const link = document.createElement('a');
             link.download = `${this.entity}_export`;
             link.href = res.data.url;
             link.click();
@@ -1063,11 +1063,11 @@ export default {
       }
 
       // if the crud is nested and should display as a form then remote load the data
-      if (this.parent && this.nestedDisplayMode === "object") {
+      if (this.parent && this.nestedDisplayMode === 'object') {
         this.nestedViewFunction();
       }
 
-      if (this.mode !== "bulkEdit") {
+      if (this.mode !== 'bulkEdit') {
         this.selectedItem = this.item;
       } else {
         this.selectedItem = {};
@@ -1108,7 +1108,7 @@ export default {
     getFormtype(property) {
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -1116,32 +1116,32 @@ export default {
         }
       }
       if (property.relation || property.relationUrl) {
-        return "VSelect";
+        return 'VSelect';
       }
       if (property.enum) {
-        return "select";
+        return 'select';
       }
       switch (type) {
-        case "string":
-          return "input";
-        case "number":
-          return "input";
-        case "boolean":
-          return "select"; // put enyoSelect after debugging all the issues...enyoSelect
+        case 'string':
+          return 'input';
+        case 'number':
+          return 'input';
+        case 'boolean':
+          return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
         default:
-          return "input";
+          return 'input';
       }
     },
     getSelectEnumFromStore(val) {
       const options =
-        _.isString(val) && val.indexOf("$store") === 0 ? _.get(this.$store.state, val.replace("$store.", "")) : val;
+        _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
 
     getFormInputType(property) {
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -1150,21 +1150,21 @@ export default {
       }
 
       switch (type) {
-        case "string":
+        case 'string':
           switch (property.format) {
-            case "email":
-              return "email";
-            case "date-time":
-              return "datetime";
+            case 'email':
+              return 'email';
+            case 'date-time':
+              return 'datetime';
             default:
-              return "text";
+              return 'text';
           }
-        case "number":
-          return "number";
-        case "boolean":
-        case "array":
-        case "object":
-          return "string";
+        case 'number':
+          return 'number';
+        case 'boolean':
+        case 'array':
+        case 'object':
+          return 'string';
         default:
           // console.error("type not known ", type, property);
           return type;
@@ -1180,7 +1180,7 @@ export default {
       }
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ["string", "number", "boolean"];
+        const possibleTypes = ['string', 'number', 'boolean'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -1188,40 +1188,40 @@ export default {
         }
       }
       if (property.relation) {
-        return "relation";
+        return 'relation';
       }
       switch (type) {
-        case "string":
+        case 'string':
           switch (property.format) {
-            case "date-time":
-              return "text";
+            case 'date-time':
+              return 'text';
             default:
-              return "text";
+              return 'text';
           }
-        case "number":
-          return "number";
-        case "boolean":
-          return "boolean";
-        case "array":
-        case "object":
-          return "object";
+        case 'number':
+          return 'number';
+        case 'boolean':
+          return 'boolean';
+        case 'array':
+        case 'object':
+          return 'object';
         default:
-          return "text";
+          return 'text';
       }
     },
 
     openModal() {
       switch (this.displayMode) {
-        case "modal":
-        case "fade":
-          document.body.classList.add("modal-open");
+        case 'modal':
+        case 'fade':
+          document.body.classList.add('modal-open');
           break;
-        case "slide":
-        case "sidebar":
-        case "sidebar-right":
-        case "sidebar-left":
-        case "fullscreen":
-          document.body.classList.add("modal-open");
+        case 'slide':
+        case 'sidebar':
+        case 'sidebar-right':
+        case 'sidebar-left':
+        case 'fullscreen':
+          document.body.classList.add('modal-open');
           break;
       }
       this.show = true;
@@ -1252,7 +1252,7 @@ export default {
         this.show = false;
         this.showBackdrop = false;
       }, 100);
-      document.body.classList.remove("modal-open");
+      document.body.classList.remove('modal-open');
     },
 
     cancel() {
@@ -1263,7 +1263,7 @@ export default {
     close() {
       //eslint-disable-next-line
       this.closeModal();
-      this.$emit("closeRequested", null, { context: this.mode });
+      this.$emit('closeRequested', null, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1274,7 +1274,7 @@ export default {
         this.editFunction(item);
         return;
       }
-      this.$router.push(this.mergedOptions.editPath.replace(":id", item[this.primaryKey]));
+      this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
     },
 
     goToViewPage(item) {
@@ -1285,7 +1285,7 @@ export default {
         this.viewFunction(item);
         return;
       }
-      this.$router.push(this.mergedOptions.viewPath.replace(":id", item[this.primaryKey]));
+      this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
     },
 
     createItem() {
@@ -1308,23 +1308,23 @@ export default {
       return this.$http
         .post(this._url, this.selectedItem)
         .then((res) => {
-          this.$emit(this.identity + "-item-created", res.data);
+          this.$emit(this.identity + '-item-created', res.data);
           Swal.fire({
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             showConfirmButton: false,
             timer: 3000,
-            title: this.$t("AwesomeDefault.messages.successfullyCreated", {
+            title: this.$t('AwesomeDefault.messages.successfullyCreated', {
               title: this.type
             }),
-            type: "success"
+            type: 'success'
           });
           this.tableNeedsRefresh = true;
           this.statsNeedsRefresh = true;
           this.nestedCrudNeedsRefresh = true;
           this.$forceUpdate();
           this.closeModal();
-          this.$emit("itemCreated", this.selectedItem, {
+          this.$emit('itemCreated', this.selectedItem, {
             context: this.mode
           });
         })
@@ -1356,7 +1356,7 @@ export default {
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
           element = _.merge(element, this.selectedItem);
-          this.$emit("itemsBulkEdited", element);
+          this.$emit('itemsBulkEdited', element);
           this.closeModal();
         }
       });
@@ -1385,21 +1385,21 @@ export default {
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
-          this.$emit(this.identity + "-item-updated", res.data);
+          this.$emit(this.identity + '-item-updated', res.data);
           Swal.fire({
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             showConfirmButton: false,
             timer: 3000,
-            title: this.$t("AwesomeDefault.messages.successfullyModified", {
+            title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),
-            type: "success"
+            type: 'success'
           });
           this.tableNeedsRefresh = true;
           this.nestedCrudNeedsRefresh = true;
           this.$forceUpdate();
-          this.$emit("itemEdited", this.selectedItem, {
+          this.$emit('itemEdited', this.selectedItem, {
             context: this.mode
           });
           this.closeModal();
@@ -1412,27 +1412,27 @@ export default {
     },
 
     createFunction(item) {
-      this.$emit("create", item);
+      this.$emit('create', item);
     },
 
     editFunction(item) {
-      this.$emit("edit", item);
+      this.$emit('edit', item);
     },
 
     viewFunction(item) {
-      this.$emit("view", item);
+      this.$emit('view', item);
     },
 
     deleteFunction(item) {
-      this.$emit("delete", item);
+      this.$emit('delete', item);
     },
 
     bulkEditFunction(items) {
-      this.$emit("bulkEdit", items);
+      this.$emit('bulkEdit', items);
     },
 
     getNestedItem() {
-      this.mode = "view";
+      this.mode = 'view';
       this.$http
         .get(`${this._selectedItemUrl}`)
         .then((res) => {
@@ -1449,13 +1449,13 @@ export default {
 
     customAction(body) {
       const { action } = body;
-      this.$emit(this.identity + "-custom-action", action);
+      this.$emit(this.identity + '-custom-action', action);
       return action && action.action && action.action(body, this);
     },
 
     listUpdated(datas) {
-      this.$emit("list-updated", datas);
-      this.$emit(this.identity + "-list-updated", datas);
+      this.$emit('list-updated', datas);
+      this.$emit(this.identity + '-list-updated', datas);
     },
 
     renderSidebar() {},
@@ -1464,14 +1464,14 @@ export default {
       return columns;
     },
     renderGroup() {},
-    renderForm(definition = { component: "VueFormGenerator", props: {} }) {},
+    renderForm(definition = { component: 'VueFormGenerator', props: {} }) {},
 
     openEditLayoutMode() {
-      this.$emit("open-edit-layout-mode");
+      this.$emit('open-edit-layout-mode');
     },
 
     closeEditLayoutMode() {
-      this.$emit("close-edit-layout-mode");
+      this.$emit('close-edit-layout-mode');
       //this.editLayoutMode = false;
     },
 
@@ -1487,7 +1487,7 @@ export default {
         legend: this.identity,
         fields: this.formSchema.fields.map((f) => f.model)
       };
-      this.$emit("layout-resetted", [newLayout]);
+      this.$emit('layout-resetted', [newLayout]);
     },
 
     exportLayout() {
@@ -1495,11 +1495,11 @@ export default {
     },
 
     onLayoutUpdated(items) {
-      this.$emit("layout-updated", items);
+      this.$emit('layout-updated', items);
     },
 
     onLayoutFieldsUpdated(items) {
-      this.$emit("layout-fields-updated", items);
+      this.$emit('layout-fields-updated', items);
     }
   }
 };

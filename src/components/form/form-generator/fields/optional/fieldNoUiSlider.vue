@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { isArray, defaults } from "lodash";
+import abstractField from '../abstractField';
+import { isArray, defaults } from 'lodash';
 
 export default {
-  name: "field-noUiSlider",
+  name: 'field-noUiSlider',
   mixins: [abstractField],
 
   data() {
@@ -29,10 +29,10 @@ export default {
 
   computed: {
     containPips() {
-      return typeof this.fieldOptions.pips !== "undefined";
+      return typeof this.fieldOptions.pips !== 'undefined';
     },
     containTooltip() {
-      return typeof this.fieldOptions.tooltips !== "undefined";
+      return typeof this.fieldOptions.tooltips !== 'undefined';
     }
   },
 
@@ -47,12 +47,12 @@ export default {
       }
     },
     formatValueToField(value) {
-      if (this.slider !== null && typeof this.slider.noUiSlider !== "undefined") {
+      if (this.slider !== null && typeof this.slider.noUiSlider !== 'undefined') {
         this.slider.noUiSlider.set(value);
       }
     },
     formatValueToModel(val) {
-      if (typeof this.slider.noUiSlider !== "undefined") {
+      if (typeof this.slider.noUiSlider !== 'undefined') {
         if (val instanceof Array) {
           return [Number(val[0]), Number(val[1])];
         } else {
@@ -64,7 +64,7 @@ export default {
       if (this.value != null) {
         return this.value;
       } else {
-        if (typeof this.fieldOptions.double !== "undefined") {
+        if (typeof this.fieldOptions.double !== 'undefined') {
           return [this.fieldOptions.min, this.fieldOptions.min];
         } else {
           return this.fieldOptions.min;
@@ -87,7 +87,7 @@ export default {
             }
           })
         );
-        this.slider.noUiSlider.on("change", this.onChange.bind(this));
+        this.slider.noUiSlider.on('change', this.onChange.bind(this));
       } else {
         console.warn(
           'noUiSlider is missing. Please download from https://github.com/leongersen/noUiSlider and load the script and CSS in the HTML head section!'
@@ -97,7 +97,7 @@ export default {
   },
 
   beforeDestroy() {
-    if (this.slider) this.slider.noUiSlider.off("change");
+    if (this.slider) this.slider.noUiSlider.off('change');
   }
 };
 </script>

@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
 
 export default {
-  name: "field-cleave",
+  name: 'field-cleave',
   mixins: [abstractField],
 
   data() {
@@ -36,18 +36,18 @@ export default {
             // onCreditCardTypeChanged: onCreditCardTypeChanged.bind(this),
             // Phone
             phone: false,
-            phoneRegionCode: "AU",
+            phoneRegionCode: 'AU',
             // Date
             date: false,
-            datePattern: ["d", "m", "Y"],
+            datePattern: ['d', 'm', 'Y'],
             // Numerals
             numeral: false,
-            numeralThousandsGroupStyle: "thousand",
+            numeralThousandsGroupStyle: 'thousand',
             numeralDecimalScale: 2,
-            numeralDecimalMark: ".",
+            numeralDecimalMark: '.',
             // General
             blocks: [],
-            delimiter: " ",
+            delimiter: ' ',
             prefix: null,
             numericOnly: false,
             uppercase: false,
@@ -56,12 +56,12 @@ export default {
           })
         );
 
-        if (this.cleave.properties && this.cleave.properties.hasOwnProperty("result")) {
-          this.$watch("cleave.properties.result", () => {
+        if (this.cleave.properties && this.cleave.properties.hasOwnProperty('result')) {
+          this.$watch('cleave.properties.result', () => {
             this.value = this.cleave.properties.result;
           });
         } else {
-          this.$el.addEventListener("input", this.inputChange);
+          this.$el.addEventListener('input', this.inputChange);
         }
       } else {
         console.warn(
@@ -80,7 +80,7 @@ export default {
   beforeDestroy() {
     if (this.cleave) {
       this.cleave.destroy();
-      this.$el.removeEventListener("input", this.inputChange);
+      this.$el.removeEventListener('input', this.inputChange);
     }
   }
 };

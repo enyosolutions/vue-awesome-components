@@ -229,15 +229,15 @@
 </template>
 
 <script>
-import _ from "lodash";
-import { Datetime } from "vue-datetime";
-import DateRangePicker from "vue2-daterange-picker";
-import "vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css";
-import moment from "moment";
-import i18nMixin from "../../mixins/i18nMixin";
+import _ from 'lodash';
+import { Datetime } from 'vue-datetime';
+import DateRangePicker from 'vue2-daterange-picker';
+import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css';
+import moment from 'moment';
+import i18nMixin from '../../mixins/i18nMixin';
 
 export default {
-  name: "AwesomeFilter",
+  name: 'AwesomeFilter',
   mixins: [i18nMixin],
   components: {
     Datetime,
@@ -259,76 +259,76 @@ export default {
     filters: [],
     rules: {
       text: [
-        "$eq",
-        "$ne",
-        "$like",
-        "$notLike",
-        "$startsWith",
-        "$endsWith",
-        "$substring",
-        "$isNull",
-        "$isNotNull",
-        "$isNotDefined"
+        '$eq',
+        '$ne',
+        '$like',
+        '$notLike',
+        '$startsWith',
+        '$endsWith',
+        '$substring',
+        '$isNull',
+        '$isNotNull',
+        '$isNotDefined'
       ],
       datetime: [
-        "$eq",
-        "$ne",
-        "$gt",
-        "$gte",
-        "$lt",
-        "$lte",
-        "$between",
-        "$notBetween",
-        "$isNull",
-        "$isNotNull",
-        "$isNotDefined"
+        '$eq',
+        '$ne',
+        '$gt',
+        '$gte',
+        '$lt',
+        '$lte',
+        '$between',
+        '$notBetween',
+        '$isNull',
+        '$isNotNull',
+        '$isNotDefined'
       ],
       number: [
-        "$eq",
-        "$ne",
-        "$gt",
-        "$gte",
-        "$lt",
-        "$lte",
-        "$between",
-        "$notBetween",
-        "$isNull",
-        "$isNotNull",
-        "$isDefined",
-        "$isNotDefined"
+        '$eq',
+        '$ne',
+        '$gt',
+        '$gte',
+        '$lt',
+        '$lte',
+        '$between',
+        '$notBetween',
+        '$isNull',
+        '$isNotNull',
+        '$isDefined',
+        '$isNotDefined'
       ],
       integer: [
-        "$eq",
-        "$ne",
-        "$gt",
-        "$gte",
-        "$lt",
-        "$lte",
-        "$between",
-        "$notBetween",
-        "$isNull",
-        "$isNotNull",
-        "$isDefined",
-        "$isNotDefined"
+        '$eq',
+        '$ne',
+        '$gt',
+        '$gte',
+        '$lt',
+        '$lte',
+        '$between',
+        '$notBetween',
+        '$isNull',
+        '$isNotNull',
+        '$isDefined',
+        '$isNotDefined'
       ],
-      relation: ["$eq", "$ne", "$isNull", "$isNotNull", "$isDefined", "$isNotDefined"], // temporary solution, soon we'll need to provide a relation picker.
-      boolean: ["$is", "$not", "$isNull", "$isNotNull", "$isDefined", "$isNotDefined"]
+      relation: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
+      boolean: ['$is', '$not', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
     },
     currentField: {},
-    currentValue: "",
+    currentValue: '',
     currentFilter: {},
     selectedFilters: [],
     dateRangePicker: {
       startDate: moment(),
-      endDate: moment().add(7, "days"),
+      endDate: moment().add(7, 'days'),
       locale: {
-        direction: "ltr", // direction of text
-        format: "DD-MM-YYYY", // fomart of the dates displayed
-        separator: " - ", // separator between the two ranges
-        applyLabel: "",
-        cancelLabel: "",
-        weekLabel: "",
-        customRangeLabel: "",
+        direction: 'ltr', // direction of text
+        format: 'DD-MM-YYYY', // fomart of the dates displayed
+        separator: ' - ', // separator between the two ranges
+        applyLabel: '',
+        cancelLabel: '',
+        weekLabel: '',
+        customRangeLabel: '',
         daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
         monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
         firstDay: 1 // ISO first day of week - see moment documenations for details
@@ -338,7 +338,7 @@ export default {
   methods: {
     addFilter() {
       const value =
-        ["$isNull", "$isNotNull", "$isDefined", "$isNotDefined"].indexOf(this.currentFilter.value) > -1
+        ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentFilter.value) > -1
           ? true
           : this.currentValue;
       if (Object.keys(this.currentField).length) {
@@ -349,8 +349,8 @@ export default {
         };
         this.selectedFilters.push(filter);
         this.currentField = {};
-        this.currentValue = "";
-        this.currentFilter = { text: this.$t("AwesomeFilter.filters.equals"), value: "$eq" };
+        this.currentValue = '';
+        this.currentFilter = { text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
         this.parseFilter(this.selectedFilters);
       }
     },
@@ -373,7 +373,7 @@ export default {
         }
       });
       if (options.dispatch) {
-        this.$emit("update-filter", advancedFilters, selectedFilters);
+        this.$emit('update-filter', advancedFilters, selectedFilters);
         // this.$emit("input", selectedFilters);
       }
     },
@@ -412,57 +412,57 @@ export default {
     currentField(newField) {
       this.currentFilter = this.getFilters[0];
       if (Object.keys(newField).length) {
-        if (newField.type === "datetime" || newField.type === "date") {
+        if (newField.type === 'datetime' || newField.type === 'date') {
           this.currentValue = new Date().toISOString();
-        } else if (newField.type === "boolean") {
+        } else if (newField.type === 'boolean') {
           this.currentValue = true;
         } else {
-          this.currentValue = "";
+          this.currentValue = '';
         }
       } else {
-        this.currentValue = "";
+        this.currentValue = '';
       }
     },
 
     currentFilter(newFilter) {
-      if (newFilter.value === "$between" || newFilter.value === "$notBetween") {
+      if (newFilter.value === '$between' || newFilter.value === '$notBetween') {
         this.currentValue = {
-          from: "",
-          to: ""
+          from: '',
+          to: ''
         };
       }
     }
   },
   mounted() {
     this.filters = [
-      { text: this.$t("AwesomeFilter.filters.equals"), value: "$eq" },
-      { text: this.$t("AwesomeFilter.filters.not-equals"), value: "$ne" },
-      { text: this.$t("AwesomeFilter.filters.is"), value: "$is" },
-      { text: this.$t("AwesomeFilter.filters.is-not"), value: "$not" },
-      { text: this.$t("AwesomeFilter.filters.greater-than"), value: "$gt" },
-      { text: this.$t("AwesomeFilter.filters.greater-or-equals"), value: "$gte" },
-      { text: this.$t("AwesomeFilter.filters.lesser-than"), value: "$lt" },
-      { text: this.$t("AwesomeFilter.filters.lesser-or-equals"), value: "$lte" },
-      { text: this.$t("AwesomeFilter.filters.between"), value: "$between" },
-      { text: this.$t("AwesomeFilter.filters.not-between"), value: "$notBetween" },
-      { text: this.$t("AwesomeFilter.filters.contains"), value: "$like" },
-      { text: this.$t("AwesomeFilter.filters.not-contains"), value: "$notLike" },
-      { text: this.$t("AwesomeFilter.filters.starts-with"), value: "$startsWith" },
-      { text: this.$t("AwesomeFilter.filters.ends-with"), value: "$endsWith" },
-      { text: this.$t("AwesomeFilter.filters.contains-also"), value: "$substring" },
-      { text: this.$t("AwesomeFilter.filters.is-null"), value: "$isNull" },
-      { text: this.$t("AwesomeFilter.filters.is-not-null"), value: "$isNotNull" },
-      { text: this.$t("AwesomeFilter.filters.is-defined"), value: "$isDefined" },
-      { text: this.$t("AwesomeFilter.filters.is-not-defined"), value: "$isNotDefined" }
+      { text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' },
+      { text: this.$t('AwesomeFilter.filters.not-equals'), value: '$ne' },
+      { text: this.$t('AwesomeFilter.filters.is'), value: '$is' },
+      { text: this.$t('AwesomeFilter.filters.is-not'), value: '$not' },
+      { text: this.$t('AwesomeFilter.filters.greater-than'), value: '$gt' },
+      { text: this.$t('AwesomeFilter.filters.greater-or-equals'), value: '$gte' },
+      { text: this.$t('AwesomeFilter.filters.lesser-than'), value: '$lt' },
+      { text: this.$t('AwesomeFilter.filters.lesser-or-equals'), value: '$lte' },
+      { text: this.$t('AwesomeFilter.filters.between'), value: '$between' },
+      { text: this.$t('AwesomeFilter.filters.not-between'), value: '$notBetween' },
+      { text: this.$t('AwesomeFilter.filters.contains'), value: '$like' },
+      { text: this.$t('AwesomeFilter.filters.not-contains'), value: '$notLike' },
+      { text: this.$t('AwesomeFilter.filters.starts-with'), value: '$startsWith' },
+      { text: this.$t('AwesomeFilter.filters.ends-with'), value: '$endsWith' },
+      { text: this.$t('AwesomeFilter.filters.contains-also'), value: '$substring' },
+      { text: this.$t('AwesomeFilter.filters.is-null'), value: '$isNull' },
+      { text: this.$t('AwesomeFilter.filters.is-not-null'), value: '$isNotNull' },
+      { text: this.$t('AwesomeFilter.filters.is-defined'), value: '$isDefined' },
+      { text: this.$t('AwesomeFilter.filters.is-not-defined'), value: '$isNotDefined' }
     ];
     this.currentFilter = {
-      text: this.$t("AwesomeFilter.filters.equals"),
-      value: "$eq"
+      text: this.$t('AwesomeFilter.filters.equals'),
+      value: '$eq'
     };
-    this.dateRangePicker.locale.applyLabel = this.$t("dateRangePicker.applyLabel");
-    this.dateRangePicker.locale.cancelLabel = this.$t("dateRangePicker.cancelLabel");
-    this.dateRangePicker.locale.weekLabel = this.$t("dateRangePicker.weekLabel");
-    this.dateRangePicker.locale.customRangeLabel = this.$t("dateRangePicker.customRangeLabel");
+    this.dateRangePicker.locale.applyLabel = this.$t('dateRangePicker.applyLabel');
+    this.dateRangePicker.locale.cancelLabel = this.$t('dateRangePicker.cancelLabel');
+    this.dateRangePicker.locale.weekLabel = this.$t('dateRangePicker.weekLabel');
+    this.dateRangePicker.locale.customRangeLabel = this.$t('dateRangePicker.customRangeLabel');
   }
 };
 </script>
