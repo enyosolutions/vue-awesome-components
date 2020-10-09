@@ -54,7 +54,7 @@
             >
           </div>
         </div>
-        <div class="column">
+        <div v-if="!['$isNull','$isNotNull','$isDefined','$isNotDefined'].includes(currentFilter.value)" class="column">
           <div v-if="Object.keys(currentField).length">
             <!-- TYPE NUMBER -->
             <input
@@ -312,7 +312,7 @@ export default {
         '$isNotDefined'
       ],
       relation: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
-      boolean: ['$is', '$not', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
+      boolean: ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
     },
     currentField: {},
     currentValue: '',
@@ -437,8 +437,6 @@ export default {
     this.filters = [
       { text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' },
       { text: this.$t('AwesomeFilter.filters.not-equals'), value: '$ne' },
-      { text: this.$t('AwesomeFilter.filters.is'), value: '$is' },
-      { text: this.$t('AwesomeFilter.filters.is-not'), value: '$not' },
       { text: this.$t('AwesomeFilter.filters.greater-than'), value: '$gt' },
       { text: this.$t('AwesomeFilter.filters.greater-or-equals'), value: '$gte' },
       { text: this.$t('AwesomeFilter.filters.lesser-than'), value: '$lt' },
@@ -449,7 +447,6 @@ export default {
       { text: this.$t('AwesomeFilter.filters.not-contains'), value: '$notLike' },
       { text: this.$t('AwesomeFilter.filters.starts-with'), value: '$startsWith' },
       { text: this.$t('AwesomeFilter.filters.ends-with'), value: '$endsWith' },
-      { text: this.$t('AwesomeFilter.filters.contains-also'), value: '$substring' },
       { text: this.$t('AwesomeFilter.filters.is-null'), value: '$isNull' },
       { text: this.$t('AwesomeFilter.filters.is-not-null'), value: '$isNotNull' },
       { text: this.$t('AwesomeFilter.filters.is-defined'), value: '$isDefined' },

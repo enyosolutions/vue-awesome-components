@@ -785,6 +785,9 @@ export default {
           if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
             field.styleClasses = `${field.styleClasses || ''} col-12`;
           }
+          if (parsedFormSchema.mode === 'bulkEdit') {
+            field.required = false;
+          }
           return field;
         });
       }
@@ -1357,9 +1360,9 @@ export default {
         if (element[this.primaryKey]) {
           element = _.merge(element, this.selectedItem);
           this.$emit('itemsBulkEdited', element);
-          this.closeModal();
         }
       });
+      this.closeModal();
     },
 
     editItem() {

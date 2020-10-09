@@ -34,8 +34,6 @@
     "filters": {
       "equals": "Equals",
       "not-equals": "Not equals",
-      "is": "Is",
-      "is-not": "Is not",
       "greater-than": "Greater than (>)",
       "greater-or-equals": "Greater or equals (>=)",
       "lesser-than": "Lesser than (<)",
@@ -46,7 +44,6 @@
       "not-contains": "Does not contains",
       "starts-with": "Starts with",
       "ends-with": "Ends with",
-      "contains-also": "Contains also",
       "is-null": "is null",
       "is-not-null": "is not null",
       "is-defined": "is defined",
@@ -73,6 +70,7 @@
     "empty": "empty",
     "searchInput": "Search",
     "more": "More actions",
+    "automatique-refresh": "Refresh automatically",
     "bulk": {
       "row-select": "row(s) selected",
       "clear": "clear",
