@@ -33,6 +33,17 @@
         >
           <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
         </button>
+        <div
+          v-if="_actions && _actions.automaticRefresh"
+          :class="'automatic-refresh ' + (autoRefresh ? ' active' : '')"
+        >
+          <i :class="'fa fa-history' + (isRefreshing ? ' fa-spin' : '')"></i>
+          <span>{{$t("AwesomeTable.automatique-refresh")}}</span>
+          <label class="switch">
+            <input type="checkbox" v-model="autoRefreshInterface">
+            <span class="slider round"></span>
+          </label>
+        </div>
         <div class="btn-group btn-group-sm float-right">
           <slot name="table-top-actions" />
           <div v-if="canHideColumns" class="dropdown">
@@ -534,6 +545,16 @@ export default {
     };
   },
   computed: {
+
+    autoRefreshInterface: {
+      get() {
+        return this.autoRefresh;
+      },
+      set(val) {
+        this.$emit('updateAutoRefresh', val);
+      }
+    },
+
     optionsComputed() {
       return _.merge(this.defaultOptions, this.options);
     },
@@ -733,7 +754,15 @@ export default {
     },
     entity: 'entityChanged',
     // store: changed => {},
-    rows: 'refreshLocalData'
+    rows: 'refreshLocalData',
+    autoRefresh(value) {
+      if (value) {
+        this.activateAutoRefresh();
+      } else {
+        clearInterval(this.refreshHandle);
+      }
+    }
+
   },
   created() {
     if (!this.$t) {
@@ -784,6 +813,17 @@ export default {
     // this.refreshLocalData();
 
     if (this.autoRefresh) {
+      this.activateAutoRefresh();
+    }
+  },
+  beforeDestroy() {
+    clearInterval(this.refreshHandle);
+  },
+
+  methods: {
+    startCase: _.startCase,
+
+    activateAutoRefresh() {
       this.numberOfRefreshCalls = 0;
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
@@ -801,15 +841,8 @@ export default {
 
         this.numberOfRefreshCalls += 1;
         this.getItems({ source: 'awTable_refreshHandle' });
-      }, this.autoRefreshInterval * 60000);
-    }
-  },
-  beforeDestroy() {
-    clearInterval(this.refreshHandle);
-  },
-
-  methods: {
-    startCase: _.startCase,
+      }, this.autoRefreshInterval * 2000);
+    },
 
     advancedFiltering(parsedFilters, filters) {
       this.$refs['filterPopover'].doClose();
@@ -1017,4 +1050,89 @@ export default {
 .aw-table .vgt-global-search__input .input__icon .magnifying-glass {
   display: none;
 }
+
+.automatic-refresh {
+  margin-left: 15px;
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #FAFAFA;
+  padding: 6px 10px;
+  border-radius: 24px;
+  border-top-left-radius: 0px;
+  transition: .3s ease-in-out;
+  i {
+    margin-right: 5px;
+    font-size: 14px;
+    color: #BFC3CA !important;
+  }
+  span {
+    font-size: 12px;
+    color: #BFC3CA !important;
+  }
+  &.active {
+    i, span {
+      color: #6d6d6d !important;
+    }
+  }
+}
+
+.switch {
+  margin-left: 10px;
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  margin-bottom: 0 !important;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #DDE2E8;
+  -webkit-transition: .3s ease-in-out;
+  transition: .3s ease-in-out;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #A4AAB5;
+  -webkit-transition: .3s ease-in-out;
+  transition: .3s ease-in-out;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  //box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+  background-color: white;
+}
+
 </style>

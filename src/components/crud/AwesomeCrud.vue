@@ -221,6 +221,7 @@
             @crud-list-updated="onListUpdated"
             @refresh="onTableRefresh"
             @onRowClicked="onTableRowClicked"
+            @updateAutoRefresh="updateAutoRefresh"
           >
             <template slot="table-top-more-actions">
               <upload-button
@@ -1412,6 +1413,10 @@ export default {
           this.goToViewPage(row);
           break;
       }
+    },
+
+    updateAutoRefresh(value) {
+      this.mergedOptions.autoRefresh = value;
     },
 
     onListItemClicked(item) {
