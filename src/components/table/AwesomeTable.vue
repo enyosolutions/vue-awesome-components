@@ -25,26 +25,23 @@
         <slot name="table-title">
           {{ _tableTitle }}
         </slot>
-        <button
-          v-if="_actions && _actions.refresh"
-          type="button"
-          class="btn btn-simple btn-alt-style btn-sm p-2"
-          @click="getItems({ useSkeleton: true })"
-        >
-          <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-        </button>
-        <div
-          v-if="_actions && _actions.automaticRefresh"
-          :class="'automatic-refresh ' + (autoRefresh ? ' active' : '')"
-        >
-          <i :class="'fa fa-history' + (isRefreshing ? ' fa-spin' : '')"></i>
-          <span>{{$t("AwesomeTable.automatique-refresh")}}</span>
+
+        <div v-if="_actions && _actions.refresh" :class="'automatic-refresh-button ' + (autoRefresh ? ' active' : '')">
+          <button
+            v-if="_actions && _actions.refresh"
+            type="button"
+            class="btn btn-simple btn-alt-style btn-sm p-2"
+            @click="getItems({ useSkeleton: true })"
+          >
+            <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
+          </button>
+          <span class="refresh-text">{{ $t('AwesomeTable.automatique-refresh') }}</span>
           <label class="switch">
-            <input type="checkbox" v-model="autoRefreshInterface">
+            <input type="checkbox" v-model="autoRefreshInterface" />
             <span class="slider round"></span>
           </label>
         </div>
-        <div class="btn-group btn-group-sm float-right">
+        <div class="btn-group btn-group-sm float-right mt-0">
           <slot name="table-top-actions" />
           <div v-if="canHideColumns" class="dropdown">
             <button
@@ -95,8 +92,8 @@
               @click="toggleAdvancedFilters"
             >
               <i class="fa fa-filter" />
-              {{ $t("AwesomeTable.buttons.filters") }}
-              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : "" }}
+              {{ $t('AwesomeTable.buttons.filters') }}
+              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
             </button>
 
             <div class="popper card mt-0" style="z-index: 1;">
@@ -124,7 +121,7 @@
               aria-expanded="false"
             >
               <i class="fa fa-plus" />
-              {{ $t("AwesomeTable.more") }}
+              {{ $t('AwesomeTable.more') }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <slot name="table-top-more-actions" />
@@ -136,7 +133,7 @@
                 @click="toggleFilter()"
               >
                 <i class="fa fa-filter" />
-                {{ $t("AwesomeTable.buttons.columnsFilters") }}
+                {{ $t('AwesomeTable.buttons.columnsFilters') }}
               </button>
               <button
                 v-if="_actions && _actions.export"
@@ -145,7 +142,7 @@
                 @click="exportCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("AwesomeTable.buttons.excel") }}
+                {{ $t('AwesomeTable.buttons.excel') }}
               </button>
 
               <button
@@ -155,7 +152,7 @@
                 @click="exportCurrentArrayToExcel"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("AwesomeTable.buttons.excel-currentpage") }}
+                {{ $t('AwesomeTable.buttons.excel-currentpage') }}
               </button>
             </div>
           </div>
@@ -254,7 +251,7 @@
               type="button"
             >
               <i class="fa fa-trash" />
-              {{ $t("AwesomeTable.bulk.delete") }}
+              {{ $t('AwesomeTable.bulk.delete') }}
             </button>
             <button
               v-if="_actions.bulkEdit"
@@ -263,7 +260,7 @@
               type="button"
             >
               <i class="fa fa-pencil"></i>
-              {{ $t("AwesomeTable.bulk.edit") }}
+              {{ $t('AwesomeTable.bulk.edit') }}
             </button>
           </div>
           <div slot="table-actions">
@@ -381,7 +378,7 @@
             </template>
           </template>
           <div slot="emptystate">
-            {{ $t("AwesomeTable.empty") }}
+            {{ $t('AwesomeTable.empty') }}
           </div>
         </vue-good-table>
       </div>
@@ -460,7 +457,7 @@ export default {
       })
     },
     autoRefresh: { type: Boolean, default: false },
-    autoRefreshInterval: { type: Number, default: 1 },
+    autoRefreshInterval: { type: Number, default: 20 },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
@@ -545,7 +542,6 @@ export default {
     };
   },
   computed: {
-
     autoRefreshInterface: {
       get() {
         return this.autoRefresh;
@@ -579,7 +575,7 @@ export default {
     formattedColumns() {
       if (!this.columns) {
         // eslint-disable-next-line
-        console.error("AwesomeTable MISSING COLUMNS");
+        console.error('AwesomeTable MISSING COLUMNS');
       }
       const newcolumns = this.columns.map((col) => {
         const newCol = {};
@@ -762,7 +758,6 @@ export default {
         clearInterval(this.refreshHandle);
       }
     }
-
   },
   created() {
     if (!this.$t) {
@@ -934,7 +929,7 @@ export default {
         this.$router.push({ query: { ...this.$route.query, sort } });
       }
       // eslint-disable-next-line
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.updateParams({ sort });
@@ -1051,29 +1046,43 @@ export default {
   display: none;
 }
 
-.automatic-refresh {
-  margin-left: 15px;
+.automatic-refresh-button {
   display: inline-flex;
+  margin-top: -5px;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
-  background-color: #FAFAFA;
-  padding: 6px 10px;
-  border-radius: 24px;
-  border-top-left-radius: 0px;
-  transition: .3s ease-in-out;
+  padding: 0px;
+  transition: 0.3s ease-in-out;
+  vertical-align: bottom;
+  button {
+    margin: 0;
+    margin-right: 10px;
+  }
   i {
     margin-right: 5px;
     font-size: 14px;
-    color: #BFC3CA !important;
+    color: #bfc3ca !important;
   }
   span {
     font-size: 12px;
-    color: #BFC3CA !important;
+    color: #bfc3ca !important;
+    max-width: 0px;
+    overflow: hidden;
+    transition: max-width ease-in-out 300ms 300ms;
+    text-overflow: hidden;
+    white-space: nowrap;
+    display: inline;
+  }
+  &:hover span {
+    display: initial;
+    max-width: 100%;
   }
   &.active {
-    i, span {
+    i,
+    span {
       color: #6d6d6d !important;
+      color: var(--primary) !important;
     }
   }
 }
@@ -1093,7 +1102,6 @@ export default {
   height: 0;
 }
 
-
 .slider {
   position: absolute;
   cursor: pointer;
@@ -1101,27 +1109,27 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #DDE2E8;
-  -webkit-transition: .3s ease-in-out;
-  transition: .3s ease-in-out;
+  background-color: #dde2e8;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
   border-radius: 34px;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 13px;
   width: 13px;
   left: 2px;
   bottom: 2px;
-  background-color: #A4AAB5;
-  -webkit-transition: .3s ease-in-out;
-  transition: .3s ease-in-out;
+  background-color: #a4aab5;
+  -webkit-transition: 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 input:focus + .slider {
@@ -1134,5 +1142,4 @@ input:checked + .slider:before {
   transform: translateX(13px);
   background-color: white;
 }
-
 </style>
