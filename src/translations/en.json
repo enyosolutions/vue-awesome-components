@@ -70,6 +70,7 @@
     "empty": "empty",
     "searchInput": "Search",
     "more": "More actions",
+    "automatique-refresh": "Refresh automatically",
     "bulk": {
       "row-select": "row(s) selected",
       "clear": "clear",
