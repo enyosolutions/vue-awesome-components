@@ -1296,9 +1296,9 @@ export default {
         if (element[this.primaryKey]) {
           element = _.merge(element, this.selectedItem);
           this.$emit("itemsBulkEdited", element);
-          this.closeModal();
         }
       });
+      this.closeModal();
     },
 
     editItem() {
