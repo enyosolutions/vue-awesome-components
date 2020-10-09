@@ -4,7 +4,7 @@
       :disabled="schema.disabled"
       :readonly="schema.readonly"
       :type="type"
-      :placeholder="placeholder"
+      :placeholder="_placeholder"
       :inputClass="inputClass"
       :key="refresh"
       :image-src="value"
@@ -18,16 +18,17 @@ import VueFormGenerator from '../../form/form-generator';
 // import moment from "moment";
 
 // You need a specific loader for CSS files
-import Base64Upload from "../../form/Base64Upload";
+import Base64Upload from '../../form/Base64Upload';
 
 export default {
   components: { Base64Upload },
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {
-      refresh: new Date(),
+      refresh: Date.now(),
       type: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputType,
-      placeholder: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder,
+      _placeholder:
+        this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder),
       inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
     };
   },

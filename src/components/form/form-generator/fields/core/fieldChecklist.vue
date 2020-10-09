@@ -1,66 +1,65 @@
 <template>
-	<div class="wrapper" v-attributes="'wrapper'">
-		<div 
-class="listbox form-control" 
-v-if="useListBox" :disabled="disabled">
-			<div
-				class="list-row"
-				v-for="item in items"
-				:key="getItemValue(item)"
-				:class="{ 'is-checked': isItemChecked(item) }">
-				<label>
-					<input
-						:id="fieldID"
-						type="checkbox"
-						:checked="isItemChecked(item)"
-						:disabled="disabled"
-						@change="onChanged($event, item)"
-						:name="getInputName(item)"
-						v-attributes="'input'"/>{{ getItemName(item) }}
-				</label>
-			</div>
-		</div>
-		<div 
-class="combobox form-control" 
-v-if="!useListBox" :disabled="disabled">
-			<div 
-class="mainRow" 
-@click="onExpandCombo" :class="{ expanded: comboExpanded }">
-				<div class="info">{{ selectedCount }} selected</div>
-				<div class="arrow"></div>
-			</div>
+  <div class="wrapper" v-attributes="'wrapper'">
+    <div class="listbox form-control" v-if="useListBox" :disabled="disabled">
+      <div
+        class="list-row"
+        v-for="item in items"
+        :key="getItemValue(item)"
+        :class="{ 'is-checked': isItemChecked(item) }"
+      >
+        <label>
+          <input
+            :id="fieldID"
+            type="checkbox"
+            :checked="isItemChecked(item)"
+            :disabled="disabled"
+            @change="onChanged($event, item)"
+            :name="getInputName(item)"
+            v-attributes="'input'"
+          />{{ getItemName(item) }}
+        </label>
+      </div>
+    </div>
+    <div class="combobox form-control" v-if="!useListBox" :disabled="disabled">
+      <div class="mainRow" @click="onExpandCombo" :class="{ expanded: comboExpanded }">
+        <div class="info">{{ selectedCount }} selected</div>
+        <div class="arrow"></div>
+      </div>
 
-			<div class="dropList">
-				<div
-					class="list-row"
-					v-if="comboExpanded"
-					v-for="item in items"
-					:key="getItemValue(item)"
-					:class="{ 'is-checked': isItemChecked(item) }">
-					<label>
-						<input
-							:id="fieldID"
-							type="checkbox"
-							:checked="isItemChecked(item)"
-							:disabled="disabled"
-							@change="onChanged($event, item)"
-							:name="getInputName(item)"
-							v-attributes="'input'"/>
-						{{ getItemName(item) }}
-					</label>
-				</div>
-			</div>
-		</div>
-	</div>
+      <div class="dropList">
+        <template v-if="comboExpanded">
+          <div
+            class="list-row"
+            v-for="item in items"
+            :key="getItemValue(item)"
+            :class="{ 'is-checked': isItemChecked(item) }"
+          >
+            <label>
+              <input
+                :id="fieldID"
+                type="checkbox"
+                :checked="isItemChecked(item)"
+                :disabled="disabled"
+                @change="onChanged($event, item)"
+                :name="getInputName(item)"
+                v-attributes="'input'"
+              />
+              {{ getItemName(item) }}
+            </label>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { isObject, isNil, clone } from "lodash";
-import abstractField from "../abstractField";
-import { slugify } from "../../utils/schema";
+import { isObject, isNil, clone } from 'lodash';
+import abstractField from '../abstractField';
+import { slugify } from '../../utils/schema';
 
 export default {
-  name: "field-checklist",
+  name: 'field-checklist',
   mixins: [abstractField],
 
   data() {
@@ -72,7 +71,7 @@ export default {
   computed: {
     items() {
       let values = this.schema.values;
-      if (typeof values == "function") {
+      if (typeof values == 'function') {
         return values.apply(this, [this.model, this.schema]);
       } else return values;
     },
@@ -89,20 +88,20 @@ export default {
   methods: {
     getInputName(item) {
       if (this.inputName && this.inputName.length > 0) {
-        return slugify(this.inputName + "_" + this.getItemValue(item));
+        return slugify(this.inputName + '_' + this.getItemValue(item));
       }
       return slugify(this.getItemValue(item));
     },
 
     getItemValue(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["value"] !== "undefined") {
+        if (typeof this.fieldOptions['value'] !== 'undefined') {
           return item[this.fieldOptions.value];
         } else {
-          if (typeof item["value"] !== "undefined") {
+          if (typeof item['value'] !== 'undefined') {
             return item.value;
           } else {
-            throw "`value` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values";
+            throw '`value` is not defined. If you want to use another key name, add a `value` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values';
           }
         }
       } else {
@@ -111,13 +110,13 @@ export default {
     },
     getItemName(item) {
       if (isObject(item)) {
-        if (typeof this.fieldOptions["name"] !== "undefined") {
+        if (typeof this.fieldOptions['name'] !== 'undefined') {
           return item[this.fieldOptions.name];
         } else {
-          if (typeof item["name"] !== "undefined") {
+          if (typeof item['name'] !== 'undefined') {
             return item.name;
           } else {
-            throw "`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values";
+            throw '`name` is not defined. If you want to use another key name, add a `name` property under `fieldOptions` in the schema. https://icebob.gitbooks.io/vueformgenerator/content/fields/checklist.html#checklist-field-with-object-values';
           }
         }
       } else {

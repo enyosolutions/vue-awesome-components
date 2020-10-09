@@ -31,10 +31,10 @@
   </enyo-card>
 </template>
 <script>
-import EnyoCard from "./EnyoCard.vue";
+import EnyoCard from './EnyoCard.vue';
 
 export default {
-  name: "EnyoStatsCard",
+  name: 'EnyoStatsCard',
   components: {
     EnyoCard
   },

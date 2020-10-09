@@ -23,10 +23,13 @@ export default {
     relationUrl: String,
     relationLabel: String,
     relationKey: String,
+    displayField: String, // used to find the display field for object (similar to relationLabel)
+    multiple: Boolean, // allow displaying an array of objects.
     storePath: String,
     store: Array,
     displayLabelCache: { type: Object, default: () => ({}) },
-    onClickUrl: [String, Function]
+    onClickUrl: [String, Function],
+    tag: { type: [String, Object], default: 'div' },
   },
   data() {
     return {

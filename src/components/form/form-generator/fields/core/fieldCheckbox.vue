@@ -12,10 +12,10 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-checkbox",
+  name: 'field-checkbox',
   mixins: [abstractField]
 };
 </script>

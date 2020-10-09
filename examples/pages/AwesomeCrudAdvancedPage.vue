@@ -17,11 +17,11 @@
       <li class="nav-item">
         <a
           class="nav-link"
-          id="profile-tab"
+          id="ticket-custom-tab"
           data-toggle="tab"
-          href="#profile"
+          href="#ticket-custom"
           role="tab"
-          aria-controls="profile"
+          aria-controls="ticket-custom"
           aria-selected="false"
           >Tickets (Uses custom layout system)</a
         >
@@ -122,7 +122,7 @@
         />
       </div>
 
-      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <div class="tab-pane fade" id="ticket-custom" role="tabpanel" aria-labelledby="profile-tab">
         <!--  url="https://jsonplaceholder.typicode.com/photos" -->
         <h2>Ticket model with custom layout</h2>
         <AutoProps
@@ -135,7 +135,7 @@
           <AwesomeCrud
             identity="ticket"
             :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-            :options="{ detailPageMode: 'fullscreen' }"
+            :options="{ detailPageMode: 'fullscreen', useCustomLayout: true }"
             :model="_ticketModel"
             url="http://localhost:3000/tickets"
             :apiResponseConfig="{
@@ -229,9 +229,18 @@
         <p>User can change the layout of awesome form</p>
         Props
         <ul>
-          <li><code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change the layout.</li>
-          <li><code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register layout.</li>
-          <li><code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg: <code>Informations</code>) </li>
+          <li>
+            <code>edit-mode</code> : <code>{ type: Boolean, required: true }</code>. Use to determine if user can change
+            the layout.
+          </li>
+          <li>
+            <code>layout</code> : <code>{ type: Array, required: true }</code>. Use to setup the default/register
+            layout.
+          </li>
+          <li>
+            <code>legend</code> : <code>{ type: String, required: false }</code>. Use to name the parent layout (eg:
+            <code>Informations</code>)
+          </li>
         </ul>
         Events
         <ul>
@@ -239,24 +248,24 @@
           <li><code>@layout-fields-updated</code> : Trigger when a field is move</li>
         </ul>
         <AutoProps
-            :component="AwesomeCrud"
-            :componentProps="{}"
-            :skip-props="['translations']"
-            :docked="false"
-            v-slot="{ userProps }"
+          :component="AwesomeCrud"
+          :componentProps="{}"
+          :skip-props="['translations']"
+          :docked="false"
+          v-slot="{ userProps }"
         >
           <AwesomeCrud
-              identity="ticket"
-              :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
-              :options="{ detailPageMode: 'fullscreen' }"
-              :model="_ticketModel"
-              url="http://localhost:3000/tickets"
-              :apiResponseConfig="{
+            identity="ticket"
+            :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+            :options="{ detailPageMode: 'fullscreen' }"
+            :model="_ticketModel"
+            url="http://localhost:3000/tickets"
+            :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count'
             }"
-              v-bind="userProps"
-              @layout-updated="onLayoutUpdated"
+            v-bind="userProps"
+            @layout-updated="onLayoutUpdated"
           />
         </AutoProps>
       </div>
@@ -266,14 +275,14 @@
   </div>
 </template>
 <script>
-import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
+import AutoProps from "vue-aw-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
 import photoSchema from "../fixtures/photo";
-import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
-import AwesomeForm from "vue-enyo-components/components/crud/AwesomeForm.vue";
-import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
+import AwesomeCrud from "vue-aw-components/components/crud/AwesomeCrud.vue";
+import AwesomeForm from "vue-aw-components/components/crud/AwesomeForm.vue";
+import LiveEdit from "vue-aw-components/components/form/LiveEdit.vue";
 
 export default {
   name: "AwesomeCrudAdvancedPage",
@@ -402,7 +411,6 @@ export default {
       this.showAwesomeForm = !this.showAwesomeForm;
     },
     onLayoutUpdated(items, event) {
-      console.log("onLayoutUpdated", items);
       localStorage.setItem("onLayoutUpdated", JSON.stringify(items));
       this.editedLayout = items;
     }
@@ -410,7 +418,6 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
 @import "../../src/main.scss";
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

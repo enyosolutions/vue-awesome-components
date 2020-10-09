@@ -1,4 +1,4 @@
-# vue-enyo-components
+# vue-aw-components
 > Super charge your dev with ready to use power components
 
 ## 0.6.1

@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
-import dateFieldHelper from "../../utils/dateFieldHelper";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
+import dateFieldHelper from '../../utils/dateFieldHelper';
 
 export default {
-  name: "field-pikaday",
+  name: 'field-pikaday',
   mixins: [abstractField],
   data() {
     return { picker: null };

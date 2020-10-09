@@ -21,7 +21,7 @@
 // import apiErrors from '@/mixins/api-errors';
 
 export default {
-  name: "UploadButton",
+  name: 'UploadButton',
   inheritAttrs: false,
   props: {
     name: String,
@@ -35,7 +35,7 @@ export default {
     reset() {
       const elem = this.$refs.inputButton;
       if (elem) {
-        elem.value = "";
+        elem.value = '';
       }
     },
     // eslint-disable-next-line
@@ -59,7 +59,7 @@ export default {
         if (size > this.options.maxSize) {
           this.$notify({
             message: `Upload ${size} size exceeding`,
-            type: "warning"
+            type: 'warning'
           });
           return;
         }
@@ -83,12 +83,12 @@ export default {
       });
 
       if (!this.options.targetUrl) {
-        this.$notify({ message: "Upload Url is Required", type: "warning" });
+        this.$notify({ message: 'Upload Url is Required', type: 'warning' });
         return;
       }
 
       if (!this.options.method) {
-        this.$notify({ message: "Upload Method is Required", type: "warning" });
+        this.$notify({ message: 'Upload Method is Required', type: 'warning' });
         return;
       }
 
@@ -97,7 +97,7 @@ export default {
         formData
       )
         .then(res => {
-          this.$emit("uploaded", res.data);
+          this.$emit('uploaded', res.data);
           setTimeout(() => {
             this.reset();
           }, 300);
@@ -109,7 +109,7 @@ export default {
       reader.onload = e => {
         const dataURI = e.target.result;
         if (dataURI) {
-          this.$emit("base64", dataURI);
+          this.$emit('base64', dataURI);
         }
       };
       reader.readAsDataURL(file);

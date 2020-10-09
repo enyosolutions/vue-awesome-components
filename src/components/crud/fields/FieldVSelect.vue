@@ -30,10 +30,11 @@
       :options="computedOptions"
       :disabled="disabled"
       :required="required"
-      :reduce="(item) => get(item, _trackBy)"
-      @search="searchDebounced"
+      @search="onSearch"
       :value="model[schema.model]"
       @input="updateSelected"
+      :reduce="reduce"
+      :getOptionLabel="formatLabel"
     ></v-select>
   </div>
 </template>
@@ -66,6 +67,7 @@ export default {
         this.apiOptions || this.schema.fieldOptions.values || this.schema.fieldOptions.options || this.schema.values
       );
     },
+    // @deprecated
     customLabel() {
       if (
         typeof this.schema.fieldOptions !== "undefined" &&
@@ -84,7 +86,22 @@ export default {
     },
 
     _trackBy() {
-      return this.$props.trackBy || this.fieldOptions.trackBy || this.schema.foreignKey;
+      return (
+        this.$props.trackBy ||
+        this.fieldOptions.trackBy ||
+        this.fieldOptions.relationKey ||
+        this.schema.relationKey ||
+        this.schema.foreignKey
+      );
+    },
+
+    _label() {
+      return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || "label";
+    },
+    _values() {
+      return Array.isArray(this.model[this.schema.model])
+        ? this.model[this.schema.model].map((v) => v[this._trackBy])
+        : this.model[this.schema.model];
     }
   },
   watch: {
@@ -190,8 +207,18 @@ export default {
         .then((res) => {
           vm.apiOptions = res.data.body;
         })
-        .finally(() => loading(false));
-    }, 150)
+        .finally(() => {
+          loading(false);
+          this.isDataReady = true;
+        });
+    }, 150),
+
+    formatLabel(item) {
+      return `${item[this._trackBy]} - ${this.get(item, this._label, "")}`;
+    },
+    reduce(item) {
+      return this.get(item, this._trackBy);
+    }
   }
 };
 </script>

@@ -108,13 +108,14 @@
             >
               <img
                class="card-img-top"
-                v-if="fields && fields.image"
-                :src="item[fields.image]"
-                :alt="item[fields.title]"
+                v-if="imageField"
+                :src="item[imageField]"
+                :alt="item[titleField]"
               />
               <div class="card-body">
-                  <h5 class="card-title" v-if="fields && fields.title && item[fields.title]">{{ item[fields.title] }}</h5>
-                <p class="card-text" v-if="fields && fields.description && item[fields.description]">{{ item[fields.description] }}</p>
+                  <h5 class="card-title aw-list-title" v-if="item[titleField]">{{ item[titleField] }}</h5>
+                  <h6 class="card-title aw-list-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
+                <p class="card-text aw-list-description" v-if="item[descriptionField]">{{ item[descriptionField] }}</p>
                 <template v-if="columns && columns.length">
                   <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
                       {{ key }} :
@@ -129,7 +130,7 @@
                       </AwesomeDisplay>
                   </div>
                 </template>
-                <p v-if="!Object.keys(fields).length" class="card-text">{{ $t('AwesomeList.labels.noData')}}</p>
+                <p v-if="!_useClassicLayout" class="card-text">{{ $t('AwesomeList.labels.noData')}}</p>
                 <div class="awesomelist-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
@@ -165,15 +166,15 @@
   </div>
 </template>
 <script>
-import apiErrors from "../../mixins/apiErrorsMixin";
-import i18nMixin from "../../mixins/i18nMixin";
-import apiListMixin from "../../mixins/apiListMixin";
-import AwesomeDisplay from "../crud/display/AwesomeDisplay";
-import Paginate from "vuejs-paginate";
-import _ from "lodash";
+import apiErrors from '../../mixins/apiErrorsMixin';
+import i18nMixin from '../../mixins/i18nMixin';
+import apiListMixin from '../../mixins/apiListMixin';
+import AwesomeDisplay from '../crud/display/AwesomeDisplay';
+import Paginate from 'vuejs-paginate';
+import _ from 'lodash';
 
 export default {
-  name: "AwesomeList",
+  name: 'AwesomeList',
   token: `
 
   `,
@@ -200,22 +201,18 @@ export default {
       type: [Number, String],
       default: undefined
     },
-    fields: {
-      type: Object,
-      default: () => ({
-        image: "",
-        title: "",
-        subtitle: "",
-        description: ""
-      })
-    },
+    imageField: String,
+    titleField: String,
+    subtitleField: String,
+    descriptionField: String,
+    displayFields: Array,
     translations: {
       type: Object,
       default: () => ({
-        "awesomelist.buttons.increase": "More items per row",
-        "awesomelist.buttons.decrease": "Less items per row",
-        "awesomelist.buttons.refresh": "Refresh",
-        "awesomelist.buttons.itemAction": "Open",
+        'awesomelist.buttons.increase': 'More items per row',
+        'awesomelist.buttons.decrease': 'Less items per row',
+        'awesomelist.buttons.refresh': 'Refresh',
+        'awesomelist.buttons.itemAction': 'Open',
       })
     },
     styles: {
@@ -234,7 +231,7 @@ export default {
       type: Object,
       default: () => ({
         fixedHeader: false,
-        maxHeight: "",
+        maxHeight: '',
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         customBulkActions: [],
@@ -250,6 +247,7 @@ export default {
     };
   },
   computed: {
+
     _listTitle() {
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
@@ -266,7 +264,7 @@ export default {
           ? this.$t(`app.labels.${this.identity}`)
           : _.startCase(this.identity);
       }
-      return "";
+      return '';
     },
 
     _itemHeight() {
@@ -277,7 +275,7 @@ export default {
           if (!height) {
             return 'auto';
           }
-      return _.isString(height) ? height : height + "px";
+      return _.isString(height) ? height : height + 'px';
     },
 
     _pageCount() {
@@ -286,21 +284,22 @@ export default {
         ? Math.ceil(this.totalCount / perPage)
         : 0;
     },
+
     itemWrapperClasses() {
       switch (this.itemsPerRow) {
         case 0:
         case 1:
         default:
-          return "col-12";
+          return 'col-12';
         case 2:
-          return "col-6";
+          return 'col-6';
         case 3:
-          return "col-4";
+          return 'col-4';
         case 4:
-          return "col-3";
+          return 'col-3';
         case 5:
         case 6:
-          return "col-2";
+          return 'col-2';
       }
     },
 
@@ -315,7 +314,7 @@ export default {
         if (!this.data) {
           return [];
         }
-        return this.mode === "remote"
+        return this.mode === 'remote'
           ? this.data
           : this.data.slice(startIndex, startIndex + perPage);
       },
@@ -323,6 +322,13 @@ export default {
         //eslint-disable-next-line
         console.warn(d);
       }
+    },
+
+    _useClassicLayout() {
+      return this.imageField &&
+      this.titleField &&
+      this.subtitleField &&
+      this.descriptionField;
     }
   },
   watch: {
@@ -380,18 +386,18 @@ export default {
     },
 
     handleItemClick($event, item) {
-      this.$emit("itemClicked", item);
+      this.$emit('itemClicked', item);
     },
 
     handleItemButtonClick($event, item) {
-      this.$emit("itemButtonClicked", item);
+      this.$emit('itemButtonClicked', item);
     },
 
 
 
     onPaginationChange(page) {
       this.serverParams.page = page;
-      if (this.mode !== "remote") {
+      if (this.mode !== 'remote') {
         return;
       }
       this.getItems();

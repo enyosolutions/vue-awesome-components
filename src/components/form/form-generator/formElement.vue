@@ -9,10 +9,10 @@
       v-bind="field.viewOptions"
       :type="fieldType"
       :value="model[field.model]"
-      :relation="field.fieldOptions.relation"
-      :relation-url="field.fieldOptions.relationUrl"
-      :relation-key="field.fieldOptions.relationKey"
-      :relation-label="field.fieldOptions.relationLabel"
+      :relation="field.viewOptions.relation"
+      :relation-url="field.viewOptions.relationUrl"
+      :relation-key="field.viewOptions.relationKey"
+      :relation-label="field.viewOptions.relationLabel"
     >
     </awesome-display>
     <div class="field-content" v-else>
@@ -50,13 +50,13 @@
   </div>
 </template>
 <script>
-import { get as objGet, isArray, isFunction, isNil } from "lodash";
-import { slugifyFormID } from "./utils/schema";
-import formMixin from "./formMixin.js";
-import AwesomeDisplay from "../../crud/display/AwesomeDisplay";
+import { get as objGet, isArray, isFunction, isNil } from 'lodash';
+import { slugifyFormID } from './utils/schema';
+import formMixin from './formMixin.js';
+import AwesomeDisplay from '../../crud/display/AwesomeDisplay';
 
 export default {
-  name: "form-element",
+  name: 'form-element',
   mixins: [formMixin],
   components: {
     AwesomeDisplay
@@ -99,21 +99,21 @@ export default {
   },
   computed: {
     fieldID() {
-      const idPrefix = objGet(this.options, "fieldIdPrefix", "");
+      const idPrefix = objGet(this.options, 'fieldIdPrefix', '');
       return slugifyFormID(this.field, idPrefix);
     },
     // Get type of field 'field-xxx'. It'll be the name of HTML element
     fieldType() {
-      if (this.field.mode === "view") {
+      if (this.field.mode === 'view') {
         if (this.field.viewOptions && this.field.viewOptions.type) {
           return this.field.viewOptions.type;
         }
         if (this.field.fieldOptions.relation) {
-          return "relation";
+          return 'relation';
         }
         return this.field.fieldOptions.inputType;
       } else {
-        return "field-" + this.field.type;
+        return 'field-' + this.field.type;
       }
     },
     // Should field type have a label?
@@ -121,10 +121,10 @@ export default {
       if (isNil(this.field.label)) {
         return false;
       }
-      let fieldOptions = this.getValueFromOption(this.field, "fieldOptions");
-      let condition = this.field.type === "input" && !isNil(fieldOptions);
+      let fieldOptions = this.getValueFromOption(this.field, 'fieldOptions');
+      let condition = this.field.type === 'input' && !isNil(fieldOptions);
       let relevantType = condition ? fieldOptions.inputType : this.field.type;
-      const typeWithoutLabel = ["button", "submit", "reset"];
+      const typeWithoutLabel = ['button', 'submit', 'reset'];
 
       return !typeWithoutLabel.includes(relevantType);
     },
@@ -136,19 +136,19 @@ export default {
     },
     fieldRowClasses() {
       let baseClasses = {
-        [objGet(this.options, "validationErrorClass", "error")]: this.fieldHasErrors,
-        [objGet(this.options, "validationSuccessClass", "valid")]: !this.fieldHasErrors && this.childTouched,
-        [objGet(this.options, "validationCleanClass", "clean")]: !this.fieldHasErrors && !this.childTouched,
-        disabled: this.getValueFromOption(this.field, "disabled"),
-        readonly: this.getValueFromOption(this.field, "readonly"),
-        featured: this.getValueFromOption(this.field, "featured"),
-        required: this.getValueFromOption(this.field, "required")
+        [objGet(this.options, 'validationErrorClass', 'error')]: this.fieldHasErrors,
+        [objGet(this.options, 'validationSuccessClass', 'valid')]: !this.fieldHasErrors && this.childTouched,
+        [objGet(this.options, 'validationCleanClass', 'clean')]: !this.fieldHasErrors && !this.childTouched,
+        disabled: this.getValueFromOption(this.field, 'disabled'),
+        readonly: this.getValueFromOption(this.field, 'readonly'),
+        featured: this.getValueFromOption(this.field, 'featured'),
+        required: this.getValueFromOption(this.field, 'required')
       };
 
       baseClasses = this.getStyleClasses(this.field, baseClasses);
 
       if (!isNil(this.field.type)) {
-        baseClasses["field-" + this.field.type] = true;
+        baseClasses['field-' + this.field.type] = true;
       }
 
       return baseClasses;

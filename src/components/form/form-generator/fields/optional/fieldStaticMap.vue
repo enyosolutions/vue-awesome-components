@@ -1,13 +1,13 @@
 <template>
-	<img :src="mapLink" >
+  <img :src="mapLink" />
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
 
 export default {
-  name: "field-staticmap",
+  name: 'field-staticmap',
   mixins: [abstractField],
 
   computed: {
@@ -15,8 +15,8 @@ export default {
       if (this.value) {
         let lat, lng;
         let options = defaults(this.fieldOptions, {
-          lat: "lat",
-          lng: "lng",
+          lat: 'lat',
+          lng: 'lng',
           zoom: 8,
           sizeX: 640,
           sizeY: 640
@@ -41,7 +41,7 @@ export default {
           'signature'
         ];
         for (let prop of props) {
-          if (typeof options[prop] !== "undefined") {
+          if (typeof options[prop] !== 'undefined') {
             url += `&${prop}=${options[prop]}`;
           }
         }
@@ -49,6 +49,7 @@ export default {
           return url;
         }
       }
+      return '';
     }
   }
 };

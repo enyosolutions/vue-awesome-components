@@ -13,10 +13,10 @@
 
 <script>
 /* global $ */
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-masked",
+  name: 'field-masked',
   mixins: [abstractField],
 
   mounted() {

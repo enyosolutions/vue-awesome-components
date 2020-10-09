@@ -1,55 +1,36 @@
-# vue-enyo-components
+# Vue Awesome components
 > Super charge your dev with ready to use power components
 
 A set of various vue components to simplify the creation of backoffices and admin panels.
 
-See [Github](https://github.com/enyosolutions-team/vue-enyo-components/).
+See [Github](https://github.com/enyosolutions-team/vue-aw-components/).
 
 
 ## Dependencies
 
-This package depends on certain packages that must be intalled separately.
-
-- bootstrap
-- vue-form-generator https://github.com/vue-generators/vue-form-generator
-```
-npm install vue-form-generator@3.0.0-beta.4
-```
-
-
-- `vue-datetime` for the date and time pickers
-```
-npm install vue-datetime
-```
-
-
-
-- `crip-vue-loading` for loading animations https://github.com/tahq69/vue-loading
-```
-npm install crip-vue-loading
-```
+This package depends on certain packages that must be intalled separately. All the needed packages are listed as peerDependencies.
 
 
 
 ## install
 ```
-yarn add vue-enyo-components
+yarn add vue-aw-components
 ```
 
 Add in your main.js
 ```
-import VueEnyoComponents from 'vue-enyo-components/plugin';
+import VueEnyoComponents from 'vue-aw-components/plugin';
 
 // or to import separately the components you need
 
-import {EnyoCard, EnyoAjaxTable} from 'vue-enyo-components';
+import {AwesomeList, AwesomeTable} from 'vue-aw-components';
 
 ```
 
 And for the styling you'll also need :
 
 ```
-import VueEnyoComponents from 'vue-enyo-components/build/style.css';
+import VueAwesomeComponents from 'vue-aw-components/build/style.css';
 
 ```
 
@@ -82,8 +63,17 @@ yarn run lint
 modelName and name  becomes `identity`
 `displayMode`  becomes `mode`
 
-#### awesome crud
+#### awesome form
 
 ##### props
 modelName and name  becomes `identity`
 `displayMode`  becomes `mode`
+
+
+
+#### awesome table (formerly enyo-ajax-table)
+
+##### props
+modelName and name  becomes `identity`
+`mode`  becomes `dataPaginationMode`
+`params`  becomes `apiQueryParams`

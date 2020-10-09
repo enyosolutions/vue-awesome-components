@@ -31,7 +31,7 @@
 </template>
 <script>
 export default {
-  name: "EnyoCard",
+  name: 'EnyoCard',
   props: {
     className: String,
     headerClass: String,

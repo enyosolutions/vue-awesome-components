@@ -53,9 +53,9 @@
   </div>
 </template>
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 export default {
-  name: "EnyoTimedStats",
+  name: 'EnyoTimedStats',
   components: {},
   props: {
     url: {type: String, default: ''},
@@ -77,9 +77,9 @@ export default {
     };
   },
   watch: {
-    statsNeedsRefresh: "getStats",
-    url: "getStats",
-    entity: "getStats"
+    statsNeedsRefresh: 'getStats',
+    url: 'getStats',
+    entity: 'getStats'
   },
   created() {
   },
@@ -109,7 +109,7 @@ export default {
     ),
 
     refreshCompleted() {
-      this.$emit("update:statsNeedsRefresh", false);
+      this.$emit('update:statsNeedsRefresh', false);
       // this.$emit('afterRefresh')
     }
   }

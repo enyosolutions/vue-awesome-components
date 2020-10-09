@@ -25,12 +25,12 @@
   </div>
 </template>
 <script>
-import AutoProps from "vue-enyo-components/components/misc/AutoProps.vue";
+import AutoProps from "vue-aw-components/components/misc/AutoProps.vue";
 import ticketSchema from "../fixtures/ticket";
 import ticketModel from "../fixtures/ticketModel";
 import userSchema from "../fixtures/user";
-import AwesomeCrud from "vue-enyo-components/components/crud/AwesomeCrud.vue";
-import LiveEdit from "vue-enyo-components/components/form/LiveEdit.vue";
+import AwesomeCrud from "vue-aw-components/components/crud/AwesomeCrud.vue";
+import LiveEdit from "vue-aw-components/components/form/LiveEdit.vue";
 
 export default {
   name: "AwesomeCrudPage",
@@ -161,7 +161,6 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
 @import "../../src/main.scss";
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;

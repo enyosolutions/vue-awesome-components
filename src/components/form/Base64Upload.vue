@@ -19,14 +19,14 @@ export default {
     disabled: [String, Boolean],
     readonly: [String, Boolean],
     imageStyle: Object,
-    type: { type: String, default: "image" },
-    placeholder: { type: String, default: "Choose a file" },
-    accept: { type: String, default: "" }
+    type: { type: String, default: 'image' },
+    placeholder: { type: String, default: 'Choose a file' },
+    accept: { type: String, default: '' }
   },
   data() {
     return {
       src: this.imageSrc,
-      name: ""
+      name: ''
     };
   },
   methods: {
@@ -35,11 +35,11 @@ export default {
         let file = event.target.files[0];
         let reader = new FileReader();
 
-        reader.addEventListener("load", (e) => {
+        reader.addEventListener('load', (e) => {
           this.src = e.target.result;
-          let [, base64] = this.src.split(",");
+          let [, base64] = this.src.split(',');
           this.name = file.name;
-          this.$emit("change", {
+          this.$emit('change', {
             size: file.size,
             type: file.type,
             name: file.name,

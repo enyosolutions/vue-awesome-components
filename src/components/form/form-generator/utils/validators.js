@@ -1,40 +1,40 @@
-import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction } from "lodash";
-import fecha from "fecha";
+import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction } from 'lodash';
+import fecha from 'fecha';
 
 let resources = {
-  fieldIsRequired: "This field is required!",
-  invalidFormat: "Invalid format!",
+  fieldIsRequired: 'This field is required!',
+  invalidFormat: 'Invalid format!',
 
-  numberTooSmall: "The number is too small! Minimum: {0}",
-  numberTooBig: "The number is too big! Maximum: {0}",
-  invalidNumber: "Invalid number",
-  invalidInteger: "The value is not an integer",
+  numberTooSmall: 'The number is too small! Minimum: {0}',
+  numberTooBig: 'The number is too big! Maximum: {0}',
+  invalidNumber: 'Invalid number',
+  invalidInteger: 'The value is not an integer',
 
-  textTooSmall: "The length of text is too small! Current: {0}, Minimum: {1}",
-  textTooBig: "The length of text is too big! Current: {0}, Maximum: {1}",
-  thisNotText: "This is not a text!",
+  textTooSmall: 'The length of text is too small! Current: {0}, Minimum: {1}',
+  textTooBig: 'The length of text is too big! Current: {0}, Maximum: {1}',
+  thisNotText: 'This is not a text!',
 
-  thisNotArray: "This is not an array!",
+  thisNotArray: 'This is not an array!',
 
-  selectMinItems: "Select minimum {0} items!",
-  selectMaxItems: "Select maximum {0} items!",
+  selectMinItems: 'Select minimum {0} items!',
+  selectMaxItems: 'Select maximum {0} items!',
 
-  invalidDate: "Invalid date!",
-  dateIsEarly: "The date is too early! Current: {0}, Minimum: {1}",
-  dateIsLate: "The date is too late! Current: {0}, Maximum: {1}",
+  invalidDate: 'Invalid date!',
+  dateIsEarly: 'The date is too early! Current: {0}, Minimum: {1}',
+  dateIsLate: 'The date is too late! Current: {0}, Maximum: {1}',
 
-  invalidEmail: "Invalid e-mail address!",
-  invalidURL: "Invalid URL!",
+  invalidEmail: 'Invalid e-mail address!',
+  invalidURL: 'Invalid URL!',
 
-  invalidCard: "Invalid card format!",
-  invalidCardNumber: "Invalid card number!",
+  invalidCard: 'Invalid card format!',
+  invalidCardNumber: 'Invalid card number!',
 
-  invalidTextContainNumber: "Invalid text! Cannot contains numbers or special characters",
-  invalidTextContainSpec: "Invalid text! Cannot contains special characters"
+  invalidTextContainNumber: 'Invalid text! Cannot contains numbers or special characters',
+  invalidTextContainSpec: 'Invalid text! Cannot contains special characters'
 };
 
 function checkEmpty(value, required, messages = resources) {
-  if (isNil(value) || value === "") {
+  if (isNil(value) || value === '') {
     if (required) {
       return [msg(messages.fieldIsRequired)];
     } else {
@@ -47,7 +47,7 @@ function checkEmpty(value, required, messages = resources) {
 function msg(text) {
   if (text != null && arguments.length > 1) {
     for (let i = 1; i < arguments.length; i++) {
-      text = text.replace("{" + (i - 1) + "}", arguments[i]);
+      text = text.replace('{' + (i - 1) + '}', arguments[i]);
     }
   }
 
@@ -214,7 +214,7 @@ const validators = {
 			https://github.com/chriso/validator.js/blob/master/src/lib/isCreditCard.js
 		*/
     const creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
-    const sanitized = value.replace(/[^0-9]+/g, "");
+    const sanitized = value.replace(/[^0-9]+/g, '');
     if (!creditCard.test(sanitized)) {
       return [msg(messages.invalidCard)];
     }

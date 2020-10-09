@@ -1,7 +1,6 @@
 export default {
   methods: {
     apiErrorCallback(err) {
-      this.$notifications.clear();
       if (err && !err.response) {
         // network error
         // console.log(err);

@@ -91,15 +91,15 @@
 </template>
 
 <script>
-import VueGridLayout from "vue-grid-layout";
-import Draggable from "vuedraggable";
-import i18nMixin from "../../../mixins/i18nMixin";
-import notificationsMixin from "../../../mixins/notificationsMixin";
-import _ from "lodash";
-import {v4 as uuidv4} from "uuid";
+import VueGridLayout from 'vue-grid-layout';
+import Draggable from 'vuedraggable';
+import i18nMixin from '../../../mixins/i18nMixin';
+import notificationsMixin from '../../../mixins/notificationsMixin';
+import _ from 'lodash';
+import {v4 as uuidv4} from 'uuid';
 
 export default {
-  name: "AwesomeLayout",
+  name: 'AwesomeLayout',
   components: {
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
@@ -131,11 +131,11 @@ export default {
   }),
   methods: {
     onLayoutUpdated(items) {
-      this.$emit("layout-updated", items);
+      this.$emit('layout-updated', items);
     },
 
     fieldChanged(items) {
-      this.$emit("layout-fields-updated", items);
+      this.$emit('layout-fields-updated', items);
     },
 
     // Add a new item to the grid
@@ -143,7 +143,7 @@ export default {
       const items = Object.assign([], this.layout);
       const newBlock = _.cloneDeep(this.newBlock);
       items.push({...newBlock, i: `aw-layout-item-${uuidv4()}`});
-      this.$emit("layout-updated", items);
+      this.$emit('layout-updated', items);
     },
 
     // remove item from the grid
@@ -152,11 +152,11 @@ export default {
 
       // check for existing fields
       if (items[index] && items[index].fields && items[index].fields.length) {
-        this.$notify({title: this.$t("AwesomeLayout.messages.emptyBlockBeforeDelete"), type: "warning"});
+        this.$notify({title: this.$t('AwesomeLayout.messages.emptyBlockBeforeDelete'), type: 'warning'});
         return;
       }
       items.splice(index, 1);
-      this.$emit("layout-updated", items);
+      this.$emit('layout-updated', items);
     }
   },
   computed: {

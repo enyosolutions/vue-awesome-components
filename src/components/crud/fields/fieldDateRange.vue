@@ -13,7 +13,7 @@ import VueFormGenerator from '../../form/form-generator';
 import moment from 'moment';
 import $ from 'jquery';
 
-const inputFormat = "YYYY-MM-DDTHH:mm:ssZ";
+const inputFormat = 'YYYY-MM-DDTHH:mm:ssZ';
 
 export default {
   mixins: [VueFormGenerator.abstractField],
@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     pickerType() {
-      return (this.schema.fieldOptions && this.schema.fieldOptions.type) || "datetime";
+      return (this.schema.fieldOptions && this.schema.fieldOptions.type) || 'datetime';
     }
   },
   methods: {
@@ -36,7 +36,7 @@ export default {
     formatValueToField(value) {
       if (value != null) {
         let dt;
-        if (typeof this.fieldOptions.format !== "undefined") {
+        if (typeof this.fieldOptions.format !== 'undefined') {
           dt = moment(value, this.fieldOptions.format).toDate();
         } else {
           dt = new Date(value);

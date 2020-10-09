@@ -19,28 +19,28 @@
  * https://github.com/gocanto/google-autocomplete
  */
 
-import abstractField from "../abstractField";
-import { isFunction } from "lodash";
+import abstractField from '../abstractField';
+import { isFunction } from 'lodash';
 
 /* global google */
 export default {
-  name: "field-googleAddress",
+  name: 'field-googleAddress',
   mixins: [abstractField],
 
   data() {
     return {
       // google autocomplete object
-      autocomplete: "",
+      autocomplete: '',
 
       // google inputs retrieved
       inputs: {
-        street_number: "long_name",
-        route: "long_name",
-        country: "long_name",
-        administrative_area_level_1: "long_name",
-        administrative_area_level_2: "long_name",
-        locality: "long_name",
-        postal_code: "short_name"
+        street_number: 'long_name',
+        route: 'long_name',
+        country: 'long_name',
+        administrative_area_level_1: 'long_name',
+        administrative_area_level_2: 'long_name',
+        locality: 'long_name',
+        postal_code: 'short_name'
       }
     };
   },
@@ -49,10 +49,10 @@ export default {
     this.$nextTick(() => {
       if (window.google && window.google.maps && window.google.maps.places && window.google.maps.places.Autocomplete) {
         this.autocomplete = new google.maps.places.Autocomplete(this.$el, {
-          types: ["geocode"]
+          types: ['geocode']
         });
 
-        this.autocomplete.addListener("place_changed", this.pipeAddress);
+        this.autocomplete.addListener('place_changed', this.pipeAddress);
       } else {
         console.warn(
           'Google Maps API is missing. Please add https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places script in the HTML head section!'

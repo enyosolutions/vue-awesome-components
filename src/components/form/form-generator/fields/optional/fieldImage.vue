@@ -27,33 +27,33 @@ title="Remove image" @click="remove"></div>
 </template>
 
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-image",
+  name: 'field-image',
   mixins: [abstractField],
 
   computed: {
     previewStyle() {
       if (this.fieldOptions.preview !== false) {
         return {
-          display: "block",
-          'background-image': this.value != null ? "url(" + this.value + ")" : "none"
+          display: 'block',
+          'background-image': this.value != null ? 'url(' + this.value + ')' : 'none'
         };
       } else {
         return {
-          display: "none"
+          display: 'none'
         };
       }
     },
 
     wrappedValue: {
       get() {
-        if (this.value && this.value.indexOf("data") === 0) return "<inline base64 image>";
+        if (this.value && this.value.indexOf('data') === 0) return '<inline base64 image>';
         else return this.value;
       },
       set(newValue) {
-        if (newValue && newValue.indexOf("http") === 0) {
+        if (newValue && newValue.indexOf('http') === 0) {
           this.value = newValue;
         }
       }
@@ -62,16 +62,16 @@ export default {
 
   watch: {
     model() {
-      let el = this.$el.querySelector("input.file");
+      let el = this.$el.querySelector('input.file');
       if (el) {
-        el.value = "";
+        el.value = '';
       }
     }
   },
 
   methods: {
     remove() {
-      this.value = "";
+      this.value = '';
     },
 
     fileChanged(event) {

@@ -11,11 +11,11 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { isFunction, isEmpty } from "lodash";
+import abstractField from '../abstractField';
+import { isFunction, isEmpty } from 'lodash';
 
 export default {
-  name: "field-submit",
+  name: 'field-submit',
   mixins: [abstractField],
 
   methods: {
@@ -25,8 +25,8 @@ export default {
         // when we have to validate data first
         $event.preventDefault();
 
-        this.eventBus.$emit("fields-validation-trigger");
-        this.eventBus.$on("fields-validation-terminated", (formErrors) => {
+        this.eventBus.$emit('fields-validation-trigger');
+        this.eventBus.$on('fields-validation-terminated', (formErrors) => {
           if (!isEmpty(formErrors) && isFunction(this.fieldOptions.onValidationError)) {
             this.fieldOptions.onValidationError(this.model, this.schema, formErrors, $event);
           } else if (isFunction(this.fieldOptions.onSubmit)) {

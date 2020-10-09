@@ -58,19 +58,19 @@
 </template>
 
 <script>
-  import i18nMixin from "../../mixins/i18nMixin";
-  import apiListMixin from "../../mixins/apiListMixin";
-  import apiErrorsMixin from "../../mixins/apiErrorsMixin";
+  import i18nMixin from '../../mixins/i18nMixin';
+  import apiListMixin from '../../mixins/apiListMixin';
+  import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 
-  import _ from "lodash";
+  import _ from 'lodash';
 
-  import KanbanList from "../misc/KanbanList";
-  import Draggable from "vuedraggable";
+  import KanbanList from '../misc/KanbanList';
+  import Draggable from 'vuedraggable';
 
-  import { defaultKanbanOptions } from "../../mixins/defaultProps";
+  import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
   export default {
-    name: "AwesomeKanban",
+    name: 'AwesomeKanban',
     components: {
       KanbanList,
       Draggable

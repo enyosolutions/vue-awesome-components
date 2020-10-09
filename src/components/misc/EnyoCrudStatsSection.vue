@@ -19,13 +19,13 @@
   </div>
 </template>
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 export default {
-  name: "EnyoCrudStatsSection",
+  name: 'EnyoCrudStatsSection',
   components: {},
   props: {
-    url: { type: String, default: "" },
-    entity: { type: String, default: "" },
+    url: { type: String, default: '' },
+    entity: { type: String, default: '' },
     statsNeedsRefresh: {
       type: Boolean,
       default: false
@@ -35,23 +35,23 @@ export default {
   data() {
     return {
       colors: [
-        "card-black",
-        "card-purple",
-        "card-teal",
-        "card-blue",
-        "card-success",
-        "card-warning",
-        "card-info",
-        "card-primary",
-        "card-danger"
+        'card-black',
+        'card-purple',
+        'card-teal',
+        'card-blue',
+        'card-success',
+        'card-warning',
+        'card-info',
+        'card-primary',
+        'card-danger'
       ],
       stats: []
     };
   },
   watch: {
-    statsNeedsRefresh: "getStats",
-    url: "getStats",
-    entity: "getStats"
+    statsNeedsRefresh: 'getStats',
+    url: 'getStats',
+    entity: 'getStats'
   },
   created() {},
   mounted() {
@@ -88,7 +88,7 @@ export default {
     ),
 
     refreshCompleted() {
-      this.$emit("update:statsNeedsRefresh", false);
+      this.$emit('update:statsNeedsRefresh', false);
     },
 
     getColor(index) {

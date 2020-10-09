@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
-import { isFunction } from "lodash";
+import abstractField from '../abstractField';
+import { isFunction } from 'lodash';
 
 export default {
-  name: "field-upload",
+  name: 'field-upload',
   mixins: [abstractField],
   methods: {
     onChange($event) {

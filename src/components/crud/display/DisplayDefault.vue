@@ -1,29 +1,32 @@
 <template>
   <div
-    class="pointer text-avoid-overflow"
+    class=""
     v-bind="$props"
     :class="
       $props.class + ' ajax-table-col-' + $props.field + ' ajax-table-col-value-' + valueClass + ' ' + $props.classes
     "
     :style="$props.styles"
+    :is="tag"
     @click="$emit('clicked', $props)"
   >
-    {{ $props.value || "..." }}
+    {{ valueDisplay }}
   </div>
 </template>
-
 <script>
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
-import { isString } from "lodash";
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import { isString } from 'lodash';
 
 export default {
-  name: "DisplayDefault",
+  name: 'DisplayDefault',
   mixins: [awesomeDisplayMixin],
   computed: {
+    valueDisplay() {
+      return this.value !== undefined ? this.value : '...';
+    },
     valueClass() {
       return this.$props.value && this.$props.value && isString(this.$props.value)
-        ? this.$props.value.replace(/(<([^>]+)>)/gi, "").replace(/ /g, "")
-        : "";
+        ? this.$props.value.replace(/(<([^>]+)>)/gi, '').replace(/ /g, '')
+        : '';
     }
   }
 };

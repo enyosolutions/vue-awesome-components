@@ -20,21 +20,21 @@
 </template>
 
 <script>
-import awesomeDisplayMixin from "../../../mixins/displayMixin";
-import apiConfigMixin from "../../../mixins/apiConfigMixin";
+import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import apiConfigMixin from '../../../mixins/apiConfigMixin';
 
-import DisplayImage from "./DisplayImage";
-import DisplayBoolean from "./DisplayBoolean";
-import DisplayDate from "./DisplayDate";
-import DisplayUrl from "./DisplayUrl";
-import DisplayHtml from "./DisplayHtml";
-import DisplayObject from "./DisplayObject";
-import DisplayRelation from "./DisplayRelation";
-import DisplayCheckbox from "./DisplayCheckbox";
-import DisplayDefault from "./DisplayDefault";
+import DisplayImage from './DisplayImage';
+import DisplayBoolean from './DisplayBoolean';
+import DisplayDate from './DisplayDate';
+import DisplayUrl from './DisplayUrl';
+import DisplayHtml from './DisplayHtml';
+import DisplayObject from './DisplayObject';
+import DisplayRelation from './DisplayRelation';
+import DisplayCheckbox from './DisplayCheckbox';
+import DisplayDefault from './DisplayDefault';
 
 export default {
-  name: "AwesomeDisplay",
+  name: 'AwesomeDisplay',
   mixins: [awesomeDisplayMixin, apiConfigMixin],
   components: {
     DisplayCheckbox,

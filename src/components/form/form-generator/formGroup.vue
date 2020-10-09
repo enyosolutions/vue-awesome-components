@@ -49,11 +49,11 @@
   </fieldset>
 </template>
 <script>
-import formMixin from "./formMixin.js";
-import { get as objGet, isFunction, isNil } from "lodash";
+import formMixin from './formMixin.js';
+import { get as objGet, isFunction, isNil } from 'lodash';
 
 export default {
-  name: "form-group",
+  name: 'form-group',
   mixins: [formMixin],
   props: {
     fields: {
@@ -70,7 +70,7 @@ export default {
     },
     tag: {
       type: String,
-      default: "fieldset",
+      default: 'fieldset',
       validator(value) {
         return value.length > 0;
       }
@@ -111,11 +111,12 @@ export default {
       if (this.group && this.group.legend) {
         return this.group.legend;
       }
+      return '';
     },
     groupRowClasses() {
       // TODO find a way to detect errors in child to add some classes (error/valid/etc)
       let baseClasses = {
-        "field-group": true
+        'field-group': true
       };
       if (!isNil(this.group)) {
         baseClasses = this.getStyleClasses(this.group, baseClasses);
@@ -159,14 +160,14 @@ export default {
     }
   },
   created() {
-    this.eventBus.$on("field-validated", () => {
+    this.eventBus.$on('field-validated', () => {
       this.$nextTick(() => {
         let containFieldWithError =
-          this.$refs.group.querySelector(".form-element." + objGet(this.options, "validationErrorClass", "error")) !==
+          this.$refs.group.querySelector('.form-element.' + objGet(this.options, 'validationErrorClass', 'error')) !==
           null;
         this.validationClass = {
-          [objGet(this.options, "validationErrorClass", "error")]: containFieldWithError,
-          [objGet(this.options, "validationSuccessClass", "valid")]: !containFieldWithError
+          [objGet(this.options, 'validationErrorClass', 'error')]: containFieldWithError,
+          [objGet(this.options, 'validationSuccessClass', 'valid')]: !containFieldWithError
         };
       });
     });

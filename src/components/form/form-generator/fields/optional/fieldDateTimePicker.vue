@@ -19,12 +19,12 @@
 
 <script>
 /* global $ */
-import abstractField from "../abstractField";
-import { defaults } from "lodash";
-import dateFieldHelper from "../../utils/dateFieldHelper";
+import abstractField from '../abstractField';
+import { defaults } from 'lodash';
+import dateFieldHelper from '../../utils/dateFieldHelper';
 
 export default {
-  name: "field-dateTimePicker",
+  name: 'field-dateTimePicker',
   mixins: [abstractField],
 
   methods: {
@@ -34,14 +34,14 @@ export default {
   mounted() {
     this.$nextTick(() => {
       if (window.$ && window.$.fn.datetimepicker) {
-        let input = this.$el.querySelector(".form-control");
+        let input = this.$el.querySelector('.form-control');
         $(this.$el)
           .datetimepicker(
             defaults(this.fieldOptions, {
               format: this.getDefaultInputFormat()
             })
           )
-          .on("dp.change", () => {
+          .on('dp.change', () => {
             this.value = input.value;
           });
       } else {
@@ -55,7 +55,7 @@ export default {
   beforeDestroy() {
     if (window.$ && window.$.fn.datetimepicker) {
       $(this.$el)
-        .data("DateTimePicker")
+        .data('DateTimePicker')
         .destroy();
     }
   }

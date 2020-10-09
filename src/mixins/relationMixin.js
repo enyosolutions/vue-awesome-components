@@ -1,8 +1,30 @@
+import _ from 'lodash';
+
 export default {
+  props: {
+    modelsStorePath: {
+      type: String,
+      default: 'data.models',
+      note:
+        'Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models'
+    }
+  },
   methods: {
-    getModelFromStore(modelId) {
-      if (this.$store && this.$store.state && !this.model) {
-        return this.$store.state.data.models.find((model) => model.identity === modelId || model.modelName === modelId);
+    getModelFromStore(modelId, modelsStorePath = null) {
+      modelsStorePath = modelsStorePath || this.modelsStorePath;
+      // if vuex is installed
+      if (this.$store && this.$store.state) {
+        // if we have path
+        if (modelsStorePath) {
+          const models = _.get(this.$store.state, modelsStorePath);
+          // if we have a list
+          if (models && Array.isArray(models)) {
+            return models.find((model) => model.identity === modelId || model.modelName === modelId);
+          }
+        }
+        else {
+          console.warn('[relationMixin][modelsStorePath] path not defined', modelsStorePath);
+        }
       }
       return;
     },
@@ -13,7 +35,10 @@ export default {
       if (prop.relationUrl) {
         return prop.relationUrl;
       } else {
-        const model = this.getModelFromStore(prop.relation);
+        let model = this.getModelFromStore(prop.relation);
+        if (!model) {
+          console.warn('[relationMixin][raceCondition] model not found for ', prop.relation, this.getModelFromStore(prop.relation), this.modelsStorePath);
+        }
         return model ? model.url || model.apiUrl : '';
       }
     },
@@ -39,7 +64,7 @@ export default {
         return prop.relationLabel;
       } else {
         const model = this.getModelFromStore(prop.relation);
-        return model ? model.titleField || 'label' : 'label';
+        return model ? model.titleField || 'label' : 'label2';
       }
     },
   }

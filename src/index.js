@@ -21,13 +21,14 @@ import FormGenerator from './components/form/form-generator';
 import { abstractField } from './components/form/form-generator';
 
 import apiErrorsMixin from './mixins/apiErrorsMixin';
+import notificationsMixin from './mixins/notificationsMixin';
 import rolesMixin from './mixins/rolesMixin';
 
 
 
 import install from './plugin';
 
-const VueEnyoComponents = {
+const VueAwesomeComponents = {
   AjaxTable: AwesomeTable,
   apiErrorsMixin,
   AutoProps,
@@ -49,6 +50,7 @@ const VueEnyoComponents = {
   UploadButton,
   FormGenerator,
   abstractField,
+  notificationsMixin,
 }
 
 export {
@@ -72,8 +74,10 @@ export {
   rolesMixin,
   TableAndChartsCard,
   UploadButton,
-  VueEnyoComponents,
+  VueAwesomeComponents as VueEnyoComponents,
+  VueAwesomeComponents,
   FormGenerator,
+  notificationsMixin,
 }
 
-export default VueEnyoComponents;
+export default VueAwesomeComponents;

@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import abstractField from "../abstractField";
+import abstractField from '../abstractField';
 
 export default {
-  name: "field-switch",
+  name: 'field-switch',
   mixins: [abstractField],
 
   methods: {

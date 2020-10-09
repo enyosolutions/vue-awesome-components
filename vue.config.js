@@ -1,18 +1,17 @@
-const path = require("path");
-const webpack = require("webpack");
-const version = require("./package.json").version;
-const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
+const version = require('./package.json').version;
+// const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const banner = `
 /**
- * vue-enyo-components ${version}
- * https://github.com/enyosolutions-team/vue-enyo-components/
+ * vue-aw-components ${version}
+ * https://github.com/enyosolutions-team/vue-aw-components/
  * Released under the MIT License.
  */
 `;
 
-
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let plugins = [];
 let optimization = {};
@@ -33,7 +32,7 @@ module.exports = {
 
     resolve: {
       alias: {
-        "vue-enyo-components": path.resolve(__dirname, "src")
+        'vue-aw-components': path.resolve(__dirname, 'src')
       }
     }
   },
@@ -43,7 +42,7 @@ module.exports = {
   },
 
   chainWebpack: (config) => {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       // config.externals = {
       //   'moment': 'moment',
       //   'vue-multiselect': 'vue-multiselect',
@@ -57,7 +56,7 @@ module.exports = {
       //   'lodash': 'lodash',
       //   'qs': 'qs',
       // };
-      config.plugin("banner").use(webpack.BannerPlugin, [
+      config.plugin('banner').use(webpack.BannerPlugin, [
         {
           banner,
           raw: true,
@@ -86,7 +85,7 @@ module.exports = {
       // ]);
     }
     else {
-      config.resolve.alias.set("vue-enyo-components", path.resolve(__dirname, "src"));
+      config.resolve.alias.set('vue-aw-components', path.resolve(__dirname, 'src'));
     }
   }
 };

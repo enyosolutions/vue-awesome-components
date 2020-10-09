@@ -1,7 +1,7 @@
 module.exports = {
   title: "Enyo vue components",
   description: "Components to speed up the development of a backoffice.",
-  // base: "/vue-enyo-components",
+  // base: "/vue-aw-components",
   base: "/",
   head: [
     [
@@ -30,7 +30,7 @@ module.exports = {
       { text: "AjaxTable", link: "/guide/ajaxtable/" },
       {
         text: "Github",
-        link: "https://github.com/enyosolutions-team/vue-enyo-components"
+        link: "https://github.com/enyosolutions-team/vue-aw-components"
       }
     ],
     sidebar: [
@@ -51,10 +51,10 @@ module.exports = {
         sidebarDepth: 2, // optional, defaults to 1
         children: [
           {
-            title: "AwesomeCrud",
+            title: "Awesome Crud",
             path: "/guide/awesomecrud/",
             sidebarDepth: 2,
-            collapsable: false,
+            collapsable: true,
             children: [
               { title: "Introduction", path: "/guide/awesomecrud/" },
               {
@@ -72,9 +72,9 @@ module.exports = {
             ]
           },
           {
-            title: "EnyoAjaxTable",
+            title: "Awesome Table",
             path: "/guide/ajaxtable/",
-            sidebarDepth: 2,
+            sidebarDepth: 1,
             collapsable: true,
             children: [
               { title: "Presentation", path: "/guide/ajaxtable/" },
@@ -84,13 +84,14 @@ module.exports = {
               }
             ]
           },
-          { title: "AwesomeList component", path: "/guide/awesomelist/" },
+          { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
+          { title: "Awesome List", path: "/guide/awesomelist/" },
+          { title: "Awesome Layout", path: "/guide/awesomelayout/" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
           { title: "EnyoSelect", path: "/guide/enyoselect.md" },
-          { title: "AwesomeKanban", path: "/guide/awesomekanban/" },
-          { title: "AwesomeLayout", path: "/guide/awesomelayout/"}
+
         ]
       },
       {
@@ -99,7 +100,7 @@ module.exports = {
       },
       {
         title: "Github",
-        path: "https://github.com/enyosolutions-team/vue-enyo-components"
+        path: "https://github.com/enyosolutions-team/vue-aw-components"
       }
     ]
   }
