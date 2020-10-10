@@ -64,7 +64,7 @@ export default {
         return prop.relationLabel;
       } else {
         const model = this.getModelFromStore(prop.relation);
-        return model ? model.titleField || 'label' : 'label2';
+        return model ? model.titleField || 'label' : 'label';
       }
     },
   }

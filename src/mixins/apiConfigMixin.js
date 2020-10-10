@@ -74,6 +74,8 @@ export default {
         this.url ||
         (this.options && this.options.url) ||
         (this._model && this._model.url) ||
+        (this.field && this.field.url) ||
+        (this.field && this.field.fieldoptions.url) ||
         (this.mergedOptions && this.mergedOptions.url) ||
         `/${this.modelName}`;
       if (typeof url === 'function') {
@@ -86,6 +88,7 @@ export default {
       }
       return url;
     },
+
     _translatedServerParams() {
       const translatedParams = {};
       Object.keys(this.serverParams || {}).forEach(field => {
@@ -117,4 +120,22 @@ export default {
       }
     }
   },
+
+  methods: {
+    getData(res) {
+      return this.apiResponseConfig &&
+        this.apiResponseConfig.dataPath &&
+        this.apiResponseConfig.dataPath != false
+        ? _.get(res, this.apiResponseConfig.dataPath)
+        : res.data;
+    },
+
+    getDataCount(res) {
+      return this.apiResponseConfig &&
+        this.apiResponseConfig.totalCountPath &&
+        this.apiResponseConfig.totalCountPath != false
+        ? _.get(res, this.apiResponseConfig.totalCountPath)
+        : res.data.totalCount
+    },
+  }
 };

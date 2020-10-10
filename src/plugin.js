@@ -42,6 +42,28 @@ const install = (Vue, options) => {
 
 
   if (options) {
+
+    // if (options.global) {
+    //   [FieldEnyoSelect,
+    //     FieldFileInput,
+    //     FieldJsonTextarea,
+    //     FieldDateTime,
+    //     FieldVSelect,
+    //     AwesomeCrud,
+    //     AwesomeForm,
+    //     AwesomeKanban,
+    //     FormGenerator,
+    //     EnyoSelect,
+    //     UploadButton,
+    //     LiveEdit,
+    //     EnyoCard,
+    //     EnyoStatsCard,
+    //     TableAndChartsCard,
+    //     EnyoCrudStatsSection,
+    //     AwesomeTable,].forEach(comp => {
+    //       comp.props = _.merge(AwesomeCrud.props, options.global.props);
+    //     })
+    // }
     if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
       AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
@@ -49,10 +71,14 @@ const install = (Vue, options) => {
     if (options['AwesomeTable'] && options['AwesomeTable'].props) {
       AwesomeTable.props = _.merge(AwesomeTable.props, options['AwesomeTable'].props);
     }
+    if (options['FieldVSelect'] && options['FieldVSelect'].props) {
+      FieldVSelect.props = _.merge(FieldVSelect.props, options['FieldVSelect'].props);
+    }
   }
 
   Vue.use(FormGenerator, {
-    fields: _.values(FormGenerator.fieldsLoader)
+    fields: _.values(FormGenerator.fieldsLoader),
+    options,
   });
 
   Vue.component('enyo-card', EnyoCard);

@@ -26,7 +26,7 @@
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
       :label="fieldOptions.label || 'label'"
-      :filterable="!dataUrl"
+      :filterable="!_useApiFilter"
       :options="computedOptions"
       :disabled="disabled"
       :required="required"
@@ -40,17 +40,51 @@
 </template>
 <script>
 /* eslint-disable */
-import VueFormGenerator from "../../form/form-generator";
-import selectMixin from "../../../mixins/selectMixin";
-import vSelect from "vue-select";
-import _ from "lodash";
+import VueFormGenerator from '../../form/form-generator';
+import selectMixin from '../../../mixins/selectMixin';
+import apiConfigMixin from '../../../mixins/apiConfigMixin';
+import vSelect from 'vue-select';
+import _ from 'lodash';
 
 export default {
   components: { vSelect },
   mixins: [selectMixin, VueFormGenerator.abstractField],
-  props: [], // 'schema', 'disabled', 'value' are in the abstract field
+  props: {
+    apiRequestConfig: {
+      type: Object,
+      note: 'This object define the configuration for talking to the api : filters, sort, pagination, etc',
+      default: () => ({
+        dataPath: '',
+        perPageField: 'perPage',
+        pageField: 'page',
+        filtersField: 'filters',
+        sortField: 'sort',
+        searchField: 'search'
+      })
+    },
+    apiResponseConfig: {
+      type: Object,
+      note: 'This object define the configuration for processing data coming from the api : count, data path',
+      default: () => ({
+        dataPath: 'data.body',
+        totalCountPath: 'data.totalCount'
+      })
+    },
+    apiQueryParams: {
+      type: Object,
+      default: () => ({}),
+      note:
+        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
+    },
+    apiRequestHeaders: { type: Object, default: () => ({}) },
+    preloadQueryParam: { type: String, default: 'perPage=10000' }
+  }, // 'schema', 'disabled', 'value' are in the abstract field
   mounted() {
-    this.onSearch(this.model[this.schema && this.schema.model] || "", () => null);
+    if (this.schema.fieldOptions && this.schema.fieldOptions.preload) {
+      this.preloadFn();
+    } else {
+      this.onSearch(this.model[this.schema && this.schema.model] || '', () => null);
+    }
   },
   data() {
     return {
@@ -70,9 +104,9 @@ export default {
     // @deprecated
     customLabel() {
       if (
-        typeof this.schema.fieldOptions !== "undefined" &&
-        typeof this.schema.fieldOptions.customLabel !== "undefined" &&
-        typeof this.schema.fieldOptions.customLabel === "function"
+        typeof this.schema.fieldOptions !== 'undefined' &&
+        typeof this.schema.fieldOptions.customLabel !== 'undefined' &&
+        typeof this.schema.fieldOptions.customLabel === 'function'
       ) {
         return this.schema.fieldOptions.customLabel;
       }
@@ -96,12 +130,23 @@ export default {
     },
 
     _label() {
-      return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || "label";
+      return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || 'label';
     },
     _values() {
       return Array.isArray(this.model[this.schema.model])
         ? this.model[this.schema.model].map((v) => v[this._trackBy])
         : this.model[this.schema.model];
+    },
+    _preloadQueryParam() {
+      return this.fieldOptions.preloadQueryParam || this.preloadQueryParam;
+    },
+
+    _usePreloadMode() {
+      return this.fieldOptions && this.fieldOptions.preload;
+    },
+
+    _useApiFilter() {
+      return this.dataUrl && !this._usePreloadMode;
     }
   },
   watch: {
@@ -127,7 +172,7 @@ export default {
     get: _.get,
     addTag(newTag, id) {
       const onNewTag = this.fieldOptions.onNewTag;
-      if (typeof onNewTag === "function") {
+      if (typeof onNewTag === 'function') {
         onNewTag(newTag, id, this.options, this.value);
       }
     },
@@ -145,7 +190,7 @@ export default {
         this.internalValue =
           this.internalOptions &&
           this.internalOptions.filter((option) => {
-            const searchKey = typeof option === "string" ? option : option[this._trackBy];
+            const searchKey = typeof option === 'string' ? option : option[this._trackBy];
             return value.indexOf(searchKey) > -1;
           });
         return;
@@ -153,7 +198,7 @@ export default {
       this.internalValue =
         this.internalOptions &&
         this.internalOptions.find((option) => {
-          const searchKey = typeof option === "string" ? option : option[this._trackBy];
+          const searchKey = typeof option === 'string' ? option : option[this._trackBy];
           return searchKey == value;
         });
 
@@ -167,31 +212,50 @@ export default {
 
     updateSelected(value) {
       this.internalValue = value;
-      if (!value || typeof value === "string" || typeof value === "number") {
-        this.$emit("input", value);
+      if (!value || typeof value === 'string' || typeof value === 'number') {
+        this.$emit('input', value);
         this.value = value;
       } else if (Array.isArray(value)) {
         const valueArray = value.map((item) => (this._trackBy && item[this._trackBy] ? item[this._trackBy] : item));
-        this.$emit("input", valueArray);
+        this.$emit('input', valueArray);
         this.value = valueArray;
       } else {
-        this.$emit("input", value[this._trackBy]);
+        this.$emit('input', value[this._trackBy]);
         this.value = value[this._trackBy];
       }
     },
 
     onSearch(search, loading) {
+      if (!this._useApiFilter) {
+        return;
+      }
       loading(true);
       this.search(loading, search, this);
     },
+
+    preloadFn() {
+      this.$http
+        .get(
+          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam || 'perPage=10000'}`,
+          {
+            params: { ...this.fieldOptions.queryParams }
+          }
+        )
+        .then((res) => {
+          this.apiOptions = this.getData(res);
+        })
+        .finally(() => {
+          this.isDataReady = true;
+        });
+    },
+
     search(loading, search, vm) {
-      this.isDataReady = false;
       this.$http
         .get(this.dataUrl, {
           params: { ...this.fieldOptions.queryParams, search }
         })
         .then((res) => {
-          this.apiOptions = res.data.body;
+          this.apiOptions = this.getData(res);
         })
         .finally(() => {
           loading(false);
@@ -201,23 +265,39 @@ export default {
 
     searchDebounced: _.debounce((loading, search, vm) => {
       vm.$http
-        .get(this.dataUrl, {
+        .get(vm.dataUrl, {
           params: { ...vm.fieldOptions.queryParams, search }
         })
         .then((res) => {
-          vm.apiOptions = res.data.body;
+          vm.apiOptions = vm.getData(res);
+          console.log(this.apiOptions, this.apiResponseConfig);
         })
         .finally(() => {
           loading(false);
-          this.isDataReady = true;
+          vm.isDataReady = true;
         });
     }, 150),
 
     formatLabel(item) {
-      return `${item[this._trackBy]} - ${this.get(item, this._label, "")}`;
+      return `${item[this._trackBy]} - ${this.get(item, this._label, '')}`;
     },
+
     reduce(item) {
       return this.get(item, this._trackBy);
+    },
+
+    getData(res) {
+      return this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
+        ? _.get(res, this.apiResponseConfig.dataPath)
+        : res.data;
+    },
+
+    getDataCount(res) {
+      return this.apiResponseConfig &&
+        this.apiResponseConfig.totalCountPath &&
+        this.apiResponseConfig.totalCountPath != false
+        ? _.get(res, this.apiResponseConfig.totalCountPath)
+        : res.data.totalCount;
     }
   }
 };
@@ -226,6 +306,18 @@ export default {
 <style scoped>
 .awesome-vue-select {
   width: 100%;
+}
+
+.awesome-vue-select .vs__clear {
+  border: none;
+}
+
+.awesome-vue-select .v-select:not(.vs--open) {
+  overflow-x: hidden;
+}
+
+.vs--searchable .vs__dropdown-toggle span {
+  white-space: nowrap;
 }
 
 .awesome-vue-select .vs__clear {

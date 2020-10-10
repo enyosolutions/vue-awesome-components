@@ -43,7 +43,40 @@ Vue.use(VueFormGenerator, {
 });
 
 
-Vue.use(VueEnyoComponents, { 'AwesomeCrud': { extends: { props: { primaryKey: { type: String, default: 'tintin' } } } } });
+Vue.use(VueEnyoComponents,
+  {
+    'global': {
+      props: {
+        apiResponseConfig: {
+          type: Object,
+          note: 'This object define the configuration for processing data coming from the api : count, data path',
+          default: () => ({
+            dataPath: 'data',
+            totalCountPath: 'data.totalCount'
+          })
+        }
+      }
+    },
+    'FieldVSelect': {
+      props: {
+        apiResponseConfig: {
+          type: Object,
+          note: 'This object define the configuration for processing data coming from the api : count, data path',
+          default: () => ({
+            dataPath: 'data',
+            totalCountPath: 'data.totalCount'
+          })
+        },
+        preloadQueryParam: {
+          default: '_limit=10'
+        }
+      }
+    },
+    'AwesomeCrud': {
+      props: { primaryKey: { type: String, default: 'id' } }
+    }
+
+  });
 
 Vue.config.productionTip = false;
 

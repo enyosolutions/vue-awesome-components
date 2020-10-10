@@ -4,17 +4,18 @@
       <slot name="label" :field="field" :getValueFromOption="getValueFromOption"></slot>
       <slot name="help" :field="field" :getValueFromOption="getValueFromOption"></slot>
     </label>
-    <awesome-display
-      v-if="field.mode === 'view'"
-      v-bind="field.viewOptions"
-      :type="fieldType"
-      :value="model[field.model]"
-      :relation="field.viewOptions.relation"
-      :relation-url="field.viewOptions.relationUrl"
-      :relation-key="field.viewOptions.relationKey"
-      :relation-label="field.viewOptions.relationLabel"
-    >
-    </awesome-display>
+    <template v-if="isViewMode">
+      <awesome-display
+        v-bind="field.viewOptions"
+        :type="viewFieldType"
+        :value="model[field.model]"
+        :relation="field.viewOptions.relation"
+        :relation-url="field.viewOptions.relationUrl"
+        :relation-key="field.viewOptions.relationKey"
+        :relation-label="field.viewOptions.relationLabel"
+      >
+      </awesome-display>
+    </template>
     <div class="field-content" v-else>
       <div class="field-wrap">
         <component
@@ -104,18 +105,20 @@ export default {
     },
     // Get type of field 'field-xxx'. It'll be the name of HTML element
     fieldType() {
-      if (this.field.mode === 'view') {
-        if (this.field.viewOptions && this.field.viewOptions.type) {
-          return this.field.viewOptions.type;
-        }
-        if (this.field.fieldOptions.relation) {
-          return 'relation';
-        }
-        return this.field.fieldOptions.inputType;
-      } else {
-        return 'field-' + this.field.type;
-      }
+      return 'field-' + (this.field && this.field.type ? this.field.type : 'input');
     },
+
+    // Get type of field 'field-xxx'. It'll be the name of HTML element
+    viewFieldType() {
+      if (this.field.viewOptions && this.field.viewOptions.type) {
+        return this.field.viewOptions.type;
+      }
+      if (this.field.fieldOptions.relation) {
+        return 'relation';
+      }
+      return this.field.fieldOptions.inputType;
+    },
+
     // Should field type have a label?
     fieldTypeHasLabel() {
       if (isNil(this.field.label)) {
@@ -155,6 +158,9 @@ export default {
     },
     buttonsAreVisible() {
       return isArray(this.field.buttons) && this.field.buttons.length > 0;
+    },
+    isViewMode() {
+      return this.field.mode === 'view';
     }
   },
   methods: {
@@ -184,7 +190,7 @@ export default {
 </script>
 <style lang="scss">
 $errorColor: #f00;
-.form-element:not([class*=" col-"]) {
+.form-element:not([class*=' col-']) {
   width: 100%;
 }
 .form-element {
@@ -209,7 +215,7 @@ $errorColor: #f00;
 
   &.required {
     > label:after {
-      content: "*";
+      content: '*';
       font-weight: normal;
       color: Red;
       // position: absolute;
@@ -226,7 +232,7 @@ $errorColor: #f00;
   }
 
   &.error {
-    input:not([type="checkbox"]),
+    input:not([type='checkbox']),
     textarea,
     select {
       border: 1px solid $errorColor;
@@ -238,7 +244,7 @@ $errorColor: #f00;
       font-size: 0.8em;
       span {
         display: block;
-        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAiklEQVR4Xt2TMQoCQQxF3xdhu72MpZU3GU/meBFLOztPYrVWsQmEWSaMsIXgK8P8RyYkMjO2sAN+K9gTIAmDAlzoUzE7p4IFytvDCQWJKSStYB2efcAvqZFM0BcstMx5naSDYFzfLhh/4SmRM+6Agw/xIX0tKEDFufeDNRUc4XqLRz3qabVIf3BMHwl6Ktexn3nmAAAAAElFTkSuQmCC");
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAiklEQVR4Xt2TMQoCQQxF3xdhu72MpZU3GU/meBFLOztPYrVWsQmEWSaMsIXgK8P8RyYkMjO2sAN+K9gTIAmDAlzoUzE7p4IFytvDCQWJKSStYB2efcAvqZFM0BcstMx5naSDYFzfLhh/4SmRM+6Agw/xIX0tKEDFufeDNRUc4XqLRz3qabVIf3BMHwl6Ktexn3nmAAAAAElFTkSuQmCC');
         background-repeat: no-repeat;
         padding-left: 17px;
         padding-top: 0px;

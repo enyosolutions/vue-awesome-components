@@ -1,20 +1,20 @@
 module.exports = {
-  $id: "http://enyosolutions.com/schemas/ticket.json",
-  type: "object",
-  required: ["id", "type", "subject", "body", "status", "regionId", "type", "userId"],
+  $id: 'http://enyosolutions.com/schemas/ticket.json',
+  type: 'object',
+  required: ['id', 'type', 'subject', 'body', 'status', 'regionId', 'type', 'userId'],
   formOptions: {
     optionsLayout: {
       layout: [
         {
-          "x": 0, "y": 0, "w": 3, "h": 6, "i": 0,
+          'x': 0, 'y': 0, 'w': 3, 'h': 6, 'i': 0,
           fields: ['type', 'url', 'test', 'id', 'test2']
         },
         {
-          "x": 3, "y": 0, "w": 3, "h": 3, "i": 1,
+          'x': 3, 'y': 0, 'w': 3, 'h': 3, 'i': 1,
           fields: ['regionId']
         },
         {
-          "x": 6, "y": 0, "w": 3, "h": 3, "i": 2,
+          'x': 6, 'y': 0, 'w': 3, 'h': 3, 'i': 2,
           fields: ['userId']
         },
       ],
@@ -22,135 +22,156 @@ module.exports = {
   },
   formGroups: [
     {
-      id: "infos",
-      title: "informations",
-      wrapperClasses: "col-3",
-      stylesClasses: "",
-      headerClasses: "text-primary",
-      type: "group",
+      id: 'infos',
+      title: 'informations',
+      wrapperClasses: 'col-3',
+      stylesClasses: '',
+      headerClasses: 'text-primary',
+      type: 'group',
       groups: [
         {
-          id: "metaData",
-          title: "metaData",
-          wrapperClasses: "col-6",
-          stylesClasses: "",
-          headerClasses: "text-primary",
-          type: "group"
+          id: 'metaData',
+          title: 'metaData',
+          wrapperClasses: 'col-6',
+          stylesClasses: '',
+          headerClasses: 'text-primary',
+          type: 'group'
         }
       ]
     },
     {
-      id: "details",
-      title: "Détails",
-      wrapperClasses: "col-9",
-      stylesClasses: "",
-      headerClasses: "text-danger"
+      id: 'details',
+      title: 'Détails',
+      wrapperClasses: 'col-9',
+      stylesClasses: '',
+      headerClasses: 'text-danger'
     }
   ],
   properties: {
     id: {
-      $id: "_id",
-      type: "number",
-      title: "numéro de course",
-      description: "Identifiant de la course",
+      $id: '_id',
+      type: 'number',
+      title: 'numéro de course',
+      description: 'Identifiant de la course',
       field: {
         // group: "infos"
       }
     },
     type: {
-      type: "string",
-      title: "Type de ticket",
-      description: "type de ticket",
+      type: 'string',
+      title: 'Type de ticket',
+      description: 'type de ticket',
       field: {
         required: true,
-        group: "infos.metaData"
+        group: 'infos.metaData'
       }
     },
     status: {
-      type: "string",
-      title: "Statut",
-      description: "Statut du ticket",
-      enum: ["new", "opened", "treated", "archived"],
+      type: 'string',
+      title: 'Statut',
+      description: 'Statut du ticket',
+      enum: ['new', 'opened', 'treated', 'archived'],
       field: {
-        group: "details",
-        enum: ["new", "opened", "treated", "archived"],
+        group: 'details',
+        enum: ['new', 'opened', 'treated', 'archived'],
         required: true,
-        type: "select"
+        type: 'select'
       }
     },
     regionId: {
-      type: "integer",
-      title: "numéro région",
-      description: "Identifiant de la région de course",
+      type: 'integer',
+      title: 'numéro région',
+      description: 'Identifiant de la région de course',
       field: {
-        group: "details",
+        group: 'details',
         required: true
       }
     },
     userId: {
-      type: "integer",
-      relation: "user",
-      relationUrl: "/user",
-      title: "numéro utilisateur",
-      description: "Identifiant utilisateur",
-      foreignKey: "_id",
-      label: "email",
+      type: 'integer',
+
+      title: 'numéro utilisateur',
+      description: 'Identifiant utilisateur',
+      relation: 'user',
+      relationUrl: '/users',
+      relationKey: 'id',
+      relationLabel: 'email',
       field: {
         required: false,
-        type: "VSelect",
-        group: "infos.metaData",
-        styleClasses: "col-6",
+        type: 'VSelect',
+        group: 'infos.metaData',
+        styleClasses: 'col-6',
         fieldOptions: {
-          trackBy: "_id",
-          label: "email"
+          trackBy: 'id',
+          label: 'email',
+
+        }
+      }
+    },
+    userId2: {
+      type: 'integer',
+      relation: 'user',
+      relationUrl: '/users',
+      relationKey: 'id',
+      relationLabel: 'email',
+      label: 'email',
+      field: {
+        required: false,
+        type: 'VSelect',
+        group: 'infos.metaData',
+        styleClasses: 'col-6',
+        fieldOptions: {
+          trackBy: 'id',
+          label: 'email',
+          preload: true
         }
       }
     },
     subject: {
-      type: "string",
-      title: "Sujet",
-      description: "Sujet du ticket",
+      type: 'string',
+      title: 'Sujet',
+      description: 'Sujet du ticket',
       field: {
-        group: "message",
+        group: 'message',
         required: true,
-        styleClasses: "col-6",
+        styleClasses: 'col-6',
       }
     },
     body: {
-      type: "string",
-      title: "Message",
-      description: "Texte saisi dans le ticket",
+      type: 'string',
+      title: 'Message',
+      description: 'Texte saisi dans le ticket',
       field: {
-        group: "message",
+        group: 'message',
         required: true,
-        type: "textArea",
-        classes: "col-6",
+        type: 'textArea',
+        classes: 'col-6',
       },
     },
     createdOn: {
-      type: ["string", "object"],
-      format: "date-time",
+      type: ['string', 'object'],
+      format: 'date-time',
       readonly: true,
       column: {
-        type: "datetime", format: 'DD_MM_YYYY (HH,MM)',
+        type: 'datetime', format: 'DD_MM_YYYY (HH,MM)',
         classes: 'badge badge-primary'
       },
       field: {
-        group: "metaData",
-        type: "dateTime",
-        classes: "col-6",
-        styles:"display:block"
+        group: 'metaData',
+        type: 'dateTime',
+        classes: 'col-6',
+        styles: 'display:block'
       }
     },
     lastModifiedOn: {
-      type: ["string", "object"],
-      format: "date-time",
+      type: ['string', 'object'],
+      format: 'date-time',
       readonly: true,
-      column: {type: "datetime"},
+      column: { type: 'datetime' },
       field: {
-        group: "metaData",
-        type: "dateTime",
-         classes: "col-6",
+        group: 'metaData',
+        type: 'dateTime',
+        classes: 'col-6',
       }
     }
   }

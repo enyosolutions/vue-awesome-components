@@ -119,7 +119,7 @@
                 type="button"
               >
                 <i class="fa fa-plus" />
-                {{ $t("AwesomeCrud.labels.createNew") }} {{ _name }}
+                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
               </button>
             </slot>
           </div>
@@ -245,7 +245,7 @@
                 @click="exportTemplateCallBack"
               >
                 <i class="fa fa-file-excel" />
-                {{ $t("AwesomeCrud.buttons.excel-template") }}
+                {{ $t('AwesomeCrud.buttons.excel-template') }}
               </button>
               <button
                 v-if="mergedOptions.useCustomLayout && _actions.editLayout"
@@ -254,7 +254,7 @@
                 @click="goToCreatePage({ editLayoutMode: true })"
               >
                 <i class="fa fa-th-large"></i>
-                {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                {{ $t('AwesomeCrud.buttons.openEditLayoutMode') }}
               </button>
             </template>
 
@@ -433,7 +433,8 @@ export default {
       type: String,
       required: false,
       default: 'table',
-      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     primaryKey: {
       type: String,
@@ -476,7 +477,7 @@ export default {
       required: false,
       note:
         'The object containing the parent in case of a nested schema.' +
-        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
+        "You don't actually to pass this, it's done automatically by the parent component itself"
     },
     useRouterMode: {
       type: Boolean,
@@ -833,7 +834,7 @@ export default {
     },
     callbackFunctionForBAse64(e) {
       // eslint-disable-next-line
-      console.log("Base 64 done", e);
+      console.log('Base 64 done', e);
     },
 
     importResponse(e) {
@@ -1362,7 +1363,7 @@ export default {
     onItemCreated(item) {
       this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
       // eslint-disable-next-line
-      console.log("EVENT", "onItemCreated", item);
+      console.log('EVENT', 'onItemCreated', item);
     },
 
     onItemsBulkEdited(item) {
@@ -1371,23 +1372,23 @@ export default {
 
     onItemEdited(...args) {
       // eslint-disable-next-line
-      console.log("EVENT", "onItemEdited", args);
+      console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
       // eslint-disable-next-line
-      console.log("EVENT", "onItemDeleted", args);
+      console.log('EVENT', 'onItemDeleted', args);
     },
     onItemViewed(...args) {
       // eslint-disable-next-line
-      console.warn("EVENT", "onItemViewed", args);
+      console.warn('EVENT', 'onItemViewed', args);
     },
     onItemValidated(...args) {
       // eslint-disable-next-line
-      console.warn("EVENT", "onItemValidated", args);
+      console.warn('EVENT', 'onItemValidated', args);
     },
     onItemValidationFailed(...args) {
       // eslint-disable-next-line
-      console.warn("EVENT", "onItemValidationFailed", args);
+      console.warn('EVENT', 'onItemValidationFailed', args);
     },
 
     onListUpdated(datas) {
@@ -1482,7 +1483,7 @@ export default {
         .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =
-            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data.body;
+            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
         })
         .catch(this.apiErrorCallback)
         .finally(() => {
@@ -1512,7 +1513,7 @@ export default {
 }
 
 .glyphicon-calendar:before {
-  content: "\f073";
+  content: '\f073';
 }
 
 .view-mode {
