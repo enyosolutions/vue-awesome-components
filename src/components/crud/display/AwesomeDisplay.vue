@@ -1,13 +1,44 @@
 <template>
-  <display-image v-if="$props.type === 'image'" v-bind="$props" :src="$props.value"></display-image>
-  <display-boolean v-else-if="$props.type === 'boolean'" v-bind="$props" :value="$props.value"></display-boolean>
-  <display-url v-else-if="$props.type === 'url'" v-bind="$props" :value="$props.value"></display-url>
-  <display-html v-else-if="$props.type === 'html'" v-bind="$props" :value="$props.value"></display-html>
-  <display-object v-else-if="$props.type === 'object'" v-bind="$props" :value="$props.value"></display-object>
-  <display-checkbox v-else-if="$props.type === 'checkbox'" v-bind="$props" :value="$props.value"></display-checkbox>
-  <display-date v-else-if="$props.type === 'date'" v-bind="$props" :value="$props.value"></display-date>
-  <display-date v-else-if="$props.type === 'datetime'" v-bind="$props" :value="$props.value"></display-date>
+  <display-image class="aw-display" v-if="$props.type === 'image'" v-bind="$props" :src="$props.value"></display-image>
+  <display-boolean
+    class="aw-display"
+    v-else-if="$props.type === 'boolean'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-boolean>
+  <display-url class="aw-display" v-else-if="$props.type === 'url'" v-bind="$props" :value="$props.value"></display-url>
+  <display-html
+    class="aw-display"
+    v-else-if="$props.type === 'html'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-html>
+  <display-object
+    class="aw-display"
+    v-else-if="$props.type === 'object'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-object>
+  <display-checkbox
+    class="aw-display"
+    v-else-if="$props.type === 'checkbox'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-checkbox>
+  <display-date
+    class="aw-display"
+    v-else-if="$props.type === 'date'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-date>
+  <display-date
+    class="aw-display"
+    v-else-if="$props.type === 'datetime'"
+    v-bind="$props"
+    :value="$props.value"
+  ></display-date>
   <display-relation
+    class="aw-display"
     v-else-if="$props.type === 'relation'"
     v-bind="$props"
     :relation="relation"
@@ -16,7 +47,7 @@
     :relationLabel="relationLabel"
     :value="$props.value"
   ></display-relation>
-  <display-default v-else v-bind="$props" :value="$props.value"></display-default>
+  <display-default class="aw-display" v-else v-bind="$props" :value="$props.value"></display-default>
 </template>
 
 <script>

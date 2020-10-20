@@ -25,8 +25,8 @@ export const defaultKanbanOptions = {
   moveList: false,
   moveCard: true,
   fields: [],
-  filterField: '',
-  filterValues: [],
+  splittingField: '',
+  splittingValues: [],
   customListActions: [],
   sortField: '',
   sortOrder: 'DESC'

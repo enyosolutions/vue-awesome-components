@@ -87,7 +87,7 @@ export default {
         range: {},
         sort: {},
 
-        page: 1, // what page I want to show
+        page: 0, // what page I want to show
         perPage: this.mode === 'remote' ? this.perPage : this.limit // how many items I'm showing per page
       },
       columnFilters: {},

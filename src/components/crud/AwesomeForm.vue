@@ -40,7 +40,7 @@
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t("AwesomeCrud.labels.add_a") }} {{ _title || _name }}
+                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _title || _name }}
                       </h3>
 
                       <div
@@ -55,7 +55,7 @@
                           @click="openEditLayoutMode"
                         >
                           <i class="fa fa-th-large"></i>
-                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                          {{ $t('AwesomeCrud.buttons.openEditLayoutMode') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -64,7 +64,7 @@
                           @click="exportLayout"
                         >
                           <i class="fa fa-download"></i>
-                          {{ $t("AwesomeCrud.buttons.exportLayout") }}
+                          {{ $t('AwesomeCrud.buttons.exportLayout') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -73,7 +73,7 @@
                           @click="resetLayout"
                         >
                           <i class="fa fa-eraser"></i>
-                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                          {{ $t('AwesomeCrud.buttons.resetLayout') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -82,7 +82,7 @@
                           @click="closeEditLayoutMode"
                         >
                           <i class="fa fa-save"></i>
-                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                          {{ $t('AwesomeCrud.buttons.closeEditLayoutMode') }}
                         </button>
                       </div>
 
@@ -136,10 +136,10 @@
                     <div class="modal-footer" v-if="!_isEmbedded">
                       <slot name="add-modal-footer">
                         <button type="button" class="btn btn-default btn-simple mr-auto" @click="cancel()">
-                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                          {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
                         <button type="submit" class="btn btn-primary ml-auto">
-                          {{ $t("AwesomeCrud.buttons.save") }}
+                          {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                       </slot>
                     </div>
@@ -150,11 +150,11 @@
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.edit") }} {{ _name }}
+                        {{ $t('AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
                       </h3>
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
-                        {{ $t("AwesomeCrud.labels.view") }} {{ _name }} <b>{{ _editItemTile }}</b>
+                        {{ $t('AwesomeCrud.labels.view') }} {{ _name }} <b>{{ _editItemTile }}</b>
                       </h3>
 
                       <div
@@ -169,7 +169,7 @@
                           @click="openEditLayoutMode"
                         >
                           <i class="fa fa-th-large"></i>
-                          {{ $t("AwesomeCrud.buttons.openEditLayoutMode") }}
+                          {{ $t('AwesomeCrud.buttons.openEditLayoutMode') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -178,7 +178,7 @@
                           @click="exportLayout"
                         >
                           <i class="fa fa-download"></i>
-                          {{ $t("AwesomeCrud.buttons.exportLayout") }}
+                          {{ $t('AwesomeCrud.buttons.exportLayout') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -187,7 +187,7 @@
                           @click="resetLayout"
                         >
                           <i class="fa fa-eraser"></i>
-                          {{ $t("AwesomeCrud.buttons.resetLayout") }}
+                          {{ $t('AwesomeCrud.buttons.resetLayout') }}
                         </button>
                         <button
                           v-if="editLayoutMode && layout"
@@ -196,7 +196,7 @@
                           @click="closeEditLayoutMode"
                         >
                           <i class="fa fa-save"></i>
-                          {{ $t("AwesomeCrud.buttons.closeEditLayoutMode") }}
+                          {{ $t('AwesomeCrud.buttons.closeEditLayoutMode') }}
                         </button>
                       </div>
 
@@ -217,7 +217,7 @@
                       >
                         <li class="nav-item">
                           <a class="nav-link active" data-toggle="tab" @click="activeNestedTab = 'general'">
-                            {{ $te("app.labels." + identity) ? $te("app.labels." + identity) : startCase(identity) }}
+                            {{ $te('app.labels.' + identity) ? $te('app.labels.' + identity) : startCase(identity) }}
                           </a>
                         </li>
                         <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
@@ -373,7 +373,7 @@
                           class="btn btn-default btn-simple mr-auto"
                           @click="cancel"
                         >
-                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                          {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
                         <template v-if="mergedOptions.customInlineActions">
                           <template v-for="(action, index) in mergedOptions.customInlineActions">
@@ -396,13 +396,13 @@
                               "
                             >
                               <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : "" }}</span>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
                             </button>
                           </template>
                         </template>
 
                         <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
-                          {{ $t("AwesomeCrud.buttons.save") }}
+                          {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
@@ -411,7 +411,7 @@
                           @click.prevent.stop="$emit('edit', selectedItem)"
                         >
                           <i class="fa fa-pencil" />
-                          {{ $t("AwesomeCrud.buttons.edit") }}
+                          {{ $t('AwesomeCrud.buttons.edit') }}
                         </button>
                         <button
                           v-if="mode === 'view' && !standalone"
@@ -419,7 +419,7 @@
                           class="btn btn-primary ml-2"
                           @click="closeModal()"
                         >
-                          {{ $t("AwesomeCrud.buttons.close") }}
+                          {{ $t('AwesomeCrud.buttons.close') }}
                         </button>
                       </slot>
                     </div>
@@ -429,7 +429,7 @@
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t("AwesomeCrud.labels.add_a") }} {{ title }}
+                        {{ $t('AwesomeCrud.labels.add_a') }} {{ title }}
                       </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
@@ -457,10 +457,10 @@
                     <div class="modal-footer" v-if="!_isEmbedded">
                       <slot name="add-modal-footer">
                         <button type="button" class="btn btn-default btn-main-style mr-auto" @click="cancel()">
-                          {{ $t("AwesomeCrud.buttons.cancel") }}
+                          {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
                         <button type="submit" class="btn btn-primary ml-auto">
-                          {{ $t("AwesomeCrud.buttons.save") }}
+                          {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                       </slot>
                     </div>
@@ -593,13 +593,14 @@ export default {
       required: false,
       note:
         'The object containing the parent in case of a nested schema.' +
-        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
+        "You don't actually to pass this, it's done automatically by the parent component itself"
     },
     nestedDisplayMode: {
       type: String,
       required: false,
       default: 'list',
-      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     translations: {
       type: Object,
@@ -655,7 +656,7 @@ export default {
     useSimpleCreateForm: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
       node: 'If true then the create form will display only required attributes'
     },
     options: {
@@ -937,7 +938,7 @@ export default {
     startCase: _.startCase,
     refreshComponent() {
       // eslint-disable-next-line
-      console.log("refresh component watcher");
+      console.log('refresh component watcher');
       if (this.identity) {
         this.loadModel();
       }
@@ -973,7 +974,7 @@ export default {
     },
     callbackFunctionForBAse64(e) {
       // eslint-disable-next-line
-      console.log("Base 64 done", e);
+      console.log('Base 64 done', e);
     },
 
     importResponse(e) {
@@ -1245,8 +1246,6 @@ export default {
       if (this.standalone) {
         return;
       }
-      //eslint-disable-next-line
-      console.log("close modal called");
       if (this.parentPath && this.updateRouter) {
         window.history.replaceState({}, null, `${this.parentPath}`);
       }
@@ -1260,7 +1259,7 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.$emit("cancel", this.item, { context: this.mode });
+      this.$emit('cancel', this.item, { context: this.mode });
     },
 
     close() {
@@ -1294,19 +1293,19 @@ export default {
     createItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("AWESOMECRUD ERROR:: No url for submitting");
+        console.warn('AWESOMECRUD ERROR:: No url for submitting');
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("AWESOMECRUD ERROR:: validation errors", error);
+          console.error('AWESOMECRUD ERROR:: validation errors', error);
           return;
         }
       } else {
         // eslint-disable-next-line
-        console.warn("Unable to find the reference to the schema form on ", this.$route.path);
+        console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       return this.$http
         .post(this._url, this.selectedItem)
@@ -1342,19 +1341,19 @@ export default {
     bulkEditItems() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("AWESOMECRUD ERROR:: No url for submitting");
+        console.warn('AWESOMECRUD ERROR:: No url for submitting');
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("AWESOMECRUD ERROR:: validation errors", error);
+          console.error('AWESOMECRUD ERROR:: validation errors', error);
           return;
         }
       } else {
         // eslint-disable-next-line
-        console.warn("Unable to find the reference to the schema form on ", this.$route.path);
+        console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
@@ -1368,19 +1367,19 @@ export default {
     editItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn("AWESOMECRUD ERROR:: No url for submitting");
+        console.warn('AWESOMECRUD ERROR:: No url for submitting');
         return false;
       }
       if (!this.selectedItem[this.primaryKey]) {
         // eslint-disable-next-line
-        console.warn("AWESOMECRUD ERROR:: No primary key on this them", this.selectedItem, this.primaryKey);
+        console.warn('AWESOMECRUD ERROR:: No primary key on this them', this.selectedItem, this.primaryKey);
         return false;
       }
       if (this.$refs.form) {
         const errors = this.$refs.form.validate();
         if (errors.length > 0) {
           // eslint-disable-next-line
-          console.error("AWESOMECRUD ERROR:: validation errors", errors);
+          console.error('AWESOMECRUD ERROR:: validation errors', errors);
           return;
         }
       }
@@ -1535,6 +1534,9 @@ export default {
 }
 .vue-form-generator {
   .form-element {
+    label {
+      display: block;
+    }
     .hint {
       font-size: 60%;
       color: #999;
@@ -1599,7 +1601,7 @@ body.modal-open .bootstrap-datetimepicker-widget {
 }
 
 .glyphicon-calendar:before {
-  content: "\f073";
+  content: '\f073';
 }
 
 .view-mode {

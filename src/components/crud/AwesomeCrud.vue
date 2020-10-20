@@ -74,10 +74,27 @@
             @close-edit-layout-mode="onCloseEditLayoutMode"
           />
         </div>
+
         <div
           class="col-12"
           v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
         >
+          <!--
+          <ul class="nav nav-tabs nav-justified nav-fill">
+            <li class="nav-item bg-primary">
+              <a class="nav-link active " href="#">Active</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Longer nav link</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+          </ul>
+          -->
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -165,8 +182,10 @@
                 (displayMode === 'kanban' ||
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
             "
+            v-bind="_kanbanOptions"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :columns="kanbanFieldsComputed"
-            :fields="kanbanOptions.fields"
+            :fields="_kanbanOptions.fields"
             :entity="identity"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
@@ -176,8 +195,7 @@
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :useRouterMode="useRouterMode"
-            :options="mergedOptions"
-            :kanban-options="kanbanOptions"
+            :options="_kanbanOptions.options"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
             @listChanged="onListChanged"
@@ -475,9 +493,8 @@ export default {
     parent: {
       type: Object,
       required: false,
-      note:
-        'The object containing the parent in case of a nested schema.' +
-        "You don't actually to pass this, it's done automatically by the parent component itself"
+      note: `The object containing the parent in case of a nested schema.
+        'You don't actually to pass this, it's done automatically by the parent component itself`
     },
     useRouterMode: {
       type: Boolean,
@@ -647,10 +664,10 @@ export default {
     kanbanFieldsComputed() {
       const allColumns = this.parseColumns(this.schemaComputed.properties);
       let columns = [];
-      if (this.kanbanOptions && !Array.isArray(this.kanbanOptions.fields)) {
+      if (this._kanbanOptions && !Array.isArray(this._kanbanOptions.fields)) {
         return [];
       }
-      this.kanbanOptions.fields.forEach((field) => {
+      this._kanbanOptions.fields.forEach((field) => {
         columns.push(_.filter(allColumns, ['field', field]));
       });
       columns = _.flatten(columns);
@@ -713,6 +730,10 @@ export default {
           'slide' // deprecated
         ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
+    },
+
+    _kanbanOptions() {
+      return _.merge({}, defaultKanbanOptions, this.kanbanOptions);
     }
   },
   watch: {

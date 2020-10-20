@@ -1,5 +1,5 @@
 <template>
-  <div class="text-avoid-overflow awesome-display-relation" v-bind="$props">
+  <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
     <template v-for="value in _values">
       <div :key="value">
         <span v-if="value" class="badge badge-info">
@@ -147,12 +147,12 @@ export default {
 </script>
 
 <style>
-.awesome-display-relation {
+.aw-display-relation {
   position: relative;
 }
 
-.awesome-display-relation .copy-link,
-.awesome-display-relation .external-link {
+.aw-display-relation .copy-link,
+.aw-display-relation .external-link {
   visibility: hidden;
   opacity: 0;
   transition: all 50ms linear 100ms;
@@ -161,7 +161,7 @@ export default {
   cursor: pointer;
 }
 
-.awesome-display-relation:hover .external-link {
+.aw-display-relation:hover .external-link {
   visibility: visible;
   display: inline-block;
   opacity: 1;
@@ -169,7 +169,7 @@ export default {
   margin-top: 2px;
 }
 
-.awesome-display-relation:hover .copy-link {
+.aw-display-relation:hover .copy-link {
   visibility: visible;
   opacity: 1;
   display: inline-block;
