@@ -593,7 +593,7 @@ export default {
       required: false,
       note:
         'The object containing the parent in case of a nested schema.' +
-        "You don't actually to pass this, it's done automatically by the parent component itself"
+        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
     },
     nestedDisplayMode: {
       type: String,
@@ -1655,6 +1655,5 @@ body.modal-open .bootstrap-datetimepicker-widget {
   padding-left: 3px;
   min-height: 30px;
   margin-left: -3px;
-  border-bottom: 1px solid;
 }
 </style>
