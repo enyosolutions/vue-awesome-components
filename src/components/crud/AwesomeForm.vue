@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content aw-form">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
@@ -7,7 +7,7 @@
             <!-- START OF create MODAL -->
             <div
               :id="identity + 'FormModal'"
-              class="AwesomeForm"
+              class="AwesomeForm aw-form"
               :class="{
                 'modal slide':
                   displayMode === 'slide' ||
@@ -1648,5 +1648,13 @@ body.modal-open .bootstrap-datetimepicker-widget {
 .aw-form-header-actions {
   flex: auto;
   justify-content: flex-end;
+}
+
+.aw-form .aw-display {
+  border-left: 3px solid #eee;
+  padding-left: 3px;
+  min-height: 30px;
+  margin-left: -3px;
+  border-bottom: 1px solid;
 }
 </style>
