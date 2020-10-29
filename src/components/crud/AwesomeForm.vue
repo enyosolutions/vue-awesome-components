@@ -593,7 +593,8 @@ export default {
       required: false,
       note:
         'The object containing the parent in case of a nested schema.' +
-        'You don\'t actually to pass this, it\'s done automatically by the parent component itself'
+        // eslint-disable-next-line
+        "You don't actually to pass this, it's done automatically by the parent component itself"
     },
     nestedDisplayMode: {
       type: String,
@@ -1507,6 +1508,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.modal-backdrop.show {
+  display: block;
+}
 .vue-form-generator textarea.form-control {
   min-height: 150px;
 }

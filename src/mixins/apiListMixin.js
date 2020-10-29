@@ -201,7 +201,7 @@ export default {
       }
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line
-        console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+        //  console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
       return this.$http

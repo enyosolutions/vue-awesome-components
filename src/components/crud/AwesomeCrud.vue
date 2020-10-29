@@ -130,7 +130,7 @@
                 </button>
               </template>
               <button
-                v-if="_actions.create"
+                v-if="canShowCreateButton"
                 class="btn btn-secondary btn-simple"
                 @click="goToCreatePage()"
                 type="button"
@@ -734,6 +734,13 @@ export default {
 
     _kanbanOptions() {
       return _.merge({}, defaultKanbanOptions, this.kanbanOptions);
+    },
+
+    canShowCreateButton() {
+      return (
+        this._actions.create &&
+        !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this.mergedOptions.detailPageMode === 'page')
+      );
     }
   },
   watch: {

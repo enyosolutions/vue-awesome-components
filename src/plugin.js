@@ -23,6 +23,7 @@ import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 import AwesomeTable from './components/table/AwesomeTable.vue';
+import notificationsMixin from './mixins/notificationsMixin.js';
 
 
 
@@ -114,6 +115,17 @@ const install = (Vue, options) => {
   if (!Vue.prototype.$http) {
     Vue.prototype.$http = axios.create({});
   }
+
+  if (!Vue.prototype.$notify) {
+    Vue.prototype.$notify = notificationsMixin.methods.$notify;
+  }
+  Vue.prototype._notify = notificationsMixin.methods.$notify;
+
+  if (!Vue.prototype.$confirm) {
+    Vue.prototype.$confirm = notificationsMixin.methods.$confirm;
+  }
+  Vue.prototype._confirm = notificationsMixin.methods.$confirm;
+
 
   // DIRECTIVES
   Vue.directive('click-outside', vClickOutside);
