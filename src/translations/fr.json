@@ -1,0 +1,131 @@
+{
+  "AwesomeDefault": {
+    "messages": {
+      "are_you_sure": "Êtes-vous sur ?",
+      "wont_be_able_recover": "Cette action est irréversible",
+      "successfullyCreated": "Créé avec succès.",
+      "successfullyModified": "Modifié avec succès.",
+      "successfullyImported": "Importé avec succès",
+      "no_data_imported": "Pas de données importées",
+      "not_imported": "Non importé"
+    }
+  },
+  "AwesomeKanban": {
+    "labels": {
+      "addList": "Ajouter une liste",
+      "add": "Ajouter",
+      "listName": "Nom de la liste",
+      "removeList": "Supprimer la liste",
+      "noData": "Pas de champs sélectionnés"
+    }
+  },
+  "AwesomeFilter": {
+    "labels": {
+      "filterData": "Filtrer les données",
+      "filterValue": "Valeur du filtre",
+      "fields": "Champs",
+      "filters": "Filtres",
+      "values": "Valeurs",
+      "activeFilter": "Filtres actifs",
+      "addFilter": "Ajouter un filtre",
+      "from": "De",
+      "to": "à"
+    },
+    "filters": {
+      "equals": "Equals",
+      "not-equals": "Not equals",
+      "greater-than": "Greater than (>)",
+      "greater-or-equals": "Greater or equals (>=)",
+      "lesser-than": "Lesser than (<)",
+      "lesser-or-equals": "Lesser or equals (<=)",
+      "between": "Between",
+      "not-between": "Not Between",
+      "contains": "Contains",
+      "not-contains": "Does not contains",
+      "starts-with": "Starts with",
+      "ends-with": "Ends with",
+      "is-null": "is null",
+      "is-not-null": "is not null",
+      "is-defined": "is defined",
+      "is-not-defined": "is not defined"
+    }
+  },
+  "AwesomeTable": {
+    "buttons": {
+      "filters": "Filtres",
+      "refresh": "Rafraichir",
+      "excel-currentpage": "Exporter la page en cours",
+      "searchInput": "Rechercher",
+      "view": "Voir",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "columnsFilters": "Activer/Désactiver les filtres de colonnes"
+    },
+    "next": "Suivant",
+    "prev": "Précédent",
+    "rows_per_page": "Rows per page",
+    "of": "of",
+    "page": "page",
+    "all": "all",
+    "empty": "empty",
+    "searchInput": "Search",
+    "more": "More actions",
+    "automatique-refresh": "Refresh automatically",
+    "bulk": {
+      "row-select": "row(s) selected",
+      "clear": "clear",
+      "delete": "delete",
+      "edit": "edit"
+    }
+  },
+  "AwesomeCrud": {
+    "labels": {
+      "manageTitle": "Manage",
+      "createNew": "Create a new",
+      "view": "View",
+      "edit": "Edit"
+    },
+    "buttons": {
+      "yes_delete_it": "Yes i confirm",
+      "view": "Open",
+      "cancel": "Cancel",
+      "close": "Close",
+      "edit": "Edit",
+      "save": "Save",
+      "bulkEdit": "Multiple Edit",
+      "openEditLayoutMode": "Edit Layout",
+      "closeEditLayoutMode": "Close editor",
+      "resetLayout": "Reset the layout",
+      "exportLayout": "Export the layout"
+    },
+    "messages": {
+      "successfullyModified": "Successfully modified."
+    }
+  },
+  "dateRangePicker": {
+    "applyLabel": "Apply",
+    "cancelLabel": "Cancel",
+    "weekLabel": "W",
+    "customRangeLabel": "Custom Range"
+  },
+  "AwesomeList": {
+    "labels": {
+      "noData": "No fields selected"
+    }
+  },
+  "AwesomeLayout": {
+    "messages": {
+      "emptyBlockBeforeDelete": "you must empty the block before you can delete it."
+    }
+  },
+  "Notifications": {
+    "messages": {
+      "are_you_sure": "Are you sure ?"
+    },
+    "buttons": {
+      "yes": "Yes",
+      "cancel": "Cancel",
+      "close": "Close"
+    }
+  }
+}

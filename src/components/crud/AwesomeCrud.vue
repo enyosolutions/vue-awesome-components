@@ -130,13 +130,15 @@
                 </button>
               </template>
               <button
-                v-if="canShowCreateButton"
-                class="btn btn-secondary btn-simple"
+                :disabled="!canShowCreateButton"
+                class="btn btn-primary btn-simple aw-button-add"
                 @click="goToCreatePage()"
                 type="button"
               >
-                <i class="fa fa-plus" />
-                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                <template v-if="canShowCreateButton">
+                  <i class="fa fa-plus" />
+                  {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                </template>
               </button>
             </slot>
           </div>

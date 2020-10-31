@@ -278,8 +278,21 @@ export default {
         });
     }, 150),
 
+    templateParser(source, data) {
+      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+      var compiled = _.template(source);
+      return compiled(data);
+    },
+
     formatLabel(item) {
-      return `${item[this._trackBy]} - ${this.get(item, this._label, '')}`;
+      let label = this._label;
+      if (label.indexOf('{{') > -1) {
+        label = templateParser(label, item);
+      } else {
+        label = this.get(item, this._label, '');
+      }
+
+      return `${item[this._trackBy]} - ${label}`;
     },
 
     reduce(item) {

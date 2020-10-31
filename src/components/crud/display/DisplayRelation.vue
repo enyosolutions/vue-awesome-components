@@ -58,6 +58,20 @@ export default {
     getLabel(value) {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
+    templateParser(source, data) {
+      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+      var compiled = _.template(source);
+      return compiled(data);
+    },
+    formatLabel(item, passedLabel = null) {
+      let label = passedLabel || this._label || this._relationLabel;
+      if (label.indexOf('{{') > -1) {
+        label = this.templateParser(label, item);
+      } else {
+        label = this.get(item, this._label, '');
+      }
+      return label;
+    },
 
     getStoreLabel(value) {
       if (!value) {
@@ -110,7 +124,7 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          const result = `${_.get(data, this.relationKey)} - ${_.get(data, this.relationLabel, '')}`;
+          const result = `${_.get(data, this.relationKey)} - ${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }
