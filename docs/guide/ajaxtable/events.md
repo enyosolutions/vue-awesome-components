@@ -11,35 +11,35 @@ Called when the refresh button is clicked
 ## create
 
 Called when the create button is clicked. For this button to appear :
-- the special `ACTIONS` column must be added to the list of columns
+- the special `__ACTIONS` column must be added to the list of columns
 - The create action must be set to `true` (it is by default)
 
 ## view
 
 Called when the `view` button is clicked or when the user clicks on the row. For this to work the view action must be set to `true` in the options (it is by default)
 
-Additionally for the button to appear the special `ACTIONS` column must be added to the list of columns
+Additionally for the button to appear the special `__ACTIONS` column must be added to the list of columns
 
 
 ## edit
 
 Called when the `edit` button is clicked  <i class="fa fa-edit"></i> . For this but``
 ton to appear :
-- the special `ACTIONS` column must be added to the list of columns
+- the special `__ACTIONS` column must be added to the list of columns
 - The edit action must be set to `true` (it is by default)
 
 
 ## delete
 
 Called when the ## delete button is clicked  <i class="fa fa-edit"></i> . For this button to appear :
-- the special `ACTIONS` column must be added to the list of columns
+- the special `__ACTIONS` column must be added to the list of columns
 - The ## delete action must be set to `true` (it is by default)
 
 
 ## customAction
 
 Called when the a custom action button is clicked. For the button to appear :
-- the special `ACTIONS` column must be added to the list of columns (if the action is an inline action)
+- the special `__ACTIONS` column must be added to the list of columns (if the action is an inline action)
 
 The `customAction` event return an object with various properties to help you treat the action.
 

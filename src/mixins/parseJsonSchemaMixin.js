@@ -144,9 +144,9 @@ export default {
         }
       });
 
-      if (!newcolumns.find((col) => col.field === 'ACTIONS')) {
+      if (!newcolumns.find((col) => col.field === '__ACTIONS')) {
         newcolumns.push({
-          field: 'ACTIONS',
+          field: '__ACTIONS',
           label: 'Actions',
           type: 'ACTIONS',
           filterable: false,

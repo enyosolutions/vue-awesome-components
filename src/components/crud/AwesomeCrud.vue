@@ -1428,7 +1428,7 @@ export default {
 
     onTableRowClicked(props) {
       const { column, row } = props; // rowIndex and event are also available
-      if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === 'ACTIONS')) {
+      if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
         return;
       }
       // this._actions && this._actions.view && this.$emit("view", row);

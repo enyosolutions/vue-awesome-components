@@ -5,11 +5,22 @@
         <span v-if="value" class="badge badge-info">
           {{ getLabel(value) }}
         </span>
-        <router-link v-if="value && !onClickUrl" :to="'/app/' + relation + '/' + value" class="external-link">
+        <router-link
+          v-if="value && !onClickUrl"
+          :to="'/app/' + kebabCase(relation) + '/' + value"
+          class="external-link"
+        >
           &nbsp; <i class="fa fa-external-link text-info"></i>
         </router-link>
 
-        <router-link v-if="value && onClickUrl" :to="onClickUrl + '/' + value" class="external-link">
+        <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
+          &nbsp; <i class="fa fa-external-link text-info"></i>
+        </div>
+        <router-link
+          v-if="value && onClickUrl && !isFunction(onClickUrl)"
+          :to="onClickUrl + '/' + value"
+          class="external-link"
+        >
           &nbsp; <i class="fa fa-external-link text-info"></i>
         </router-link>
 
@@ -55,6 +66,8 @@ export default {
     };
   },
   methods: {
+    kebabCase: _.kebabCase,
+    isFunction: _.isFunction,
     getLabel(value) {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },

@@ -79,7 +79,7 @@ This is the configuration of the `Kanban` component.
 | filterValues | `Array` | `['failed', 'completed', 'scheduled']` | Allow you to determine which value is used to create a list |
 | sortField | `String` | `id` | Allow you to change to default sort the list by a `Fields`. |
 | sortOrder | `String` | `DESC` | Allow you to change the sort order. Link with `sortField`. |
-    
+
 ## Events
 ### @removeList
 Event emitted when a list is removed
@@ -99,13 +99,13 @@ methods: {
 }
 ```
 ### @listChanged
-Event emitted when a list is changed. 
+Event emitted when a list is changed.
 ```vue
 <awesome-kanban
    :lists="lists"
    :columns="columns"
    @listChanged="onListChanged"
-/> 
+/>
 ```
 ```js
 methods: {
@@ -149,8 +149,7 @@ methods: {
 ### @customListAction
 Event emitted when a custom list action is clecked.
 For the button to appear :
-* The special `ACTIONS` must be added to the `kanbanOptions`.
-
+``
 The `@customListAction` event return an object with various properties to help you treat the action.
 
 | Property   |     Type      |     Usage      |
@@ -175,4 +174,4 @@ methods: {
     return action && action.action && action.action(body, this);
   }
 }
-```
+````

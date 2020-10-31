@@ -52,7 +52,7 @@
               aria-haspopup="true"
               aria-expanded="false"
             >
-              Columns
+              {{ $t('AwesomeTable.columns') }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 100vh; overflow: auto;">
               <button
@@ -63,9 +63,9 @@
                 href="#"
                 :class="{
                   'text-light bg-primary': columnsState[col.field],
-                  'bg-info': col.field === 'ACTIONS'
+                  'bg-info': col.field === '__ACTIONS'
                 }"
-                :disabled="col.field === 'ACTIONS'"
+                :disabled="col.field === '__ACTIONS'"
                 @click="toggleColumn(col.field)"
               >
                 {{ col.label }}
@@ -310,7 +310,7 @@
               >
               </awesome-display>
 
-              <span v-if="props.column.field === 'ACTIONS'" class="text-right">
+              <span v-if="props.column.field === '__ACTIONS'" class="text-right">
                 <slot name="table-row-actions" :item="props.row">
                   <template v-if="optionsComputed && optionsComputed.customInlineActions">
                     <template v-for="(action, index) in optionsComputed.customInlineActions">
@@ -684,14 +684,14 @@ export default {
           this.$set(this.columnsState, col.field, idx < this.columnsDisplayed);
         });
       }
-      if (!newcolumns.find((col) => col.field === 'ACTIONS') && !this._actions.noActions) {
+      if (!newcolumns.find((col) => col.field === '__ACTIONS') && !this._actions.noActions) {
         newcolumns.push({
-          field: 'ACTIONS',
+          field: '__ACTIONS',
           label: 'Actions',
           filterOptions: { enabled: false }
         });
         // eslint-disable-next-line
-        this.columnsState.ACTIONS = true;
+        this.columnsState.__ACTIONS = true;
       }
       return newcolumns;
     },
@@ -704,8 +704,8 @@ export default {
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter((col) => this.columnsState[col.field]);
 
-        if (!this.columnsState.ACTIONS) {
-          const actions = this.formattedColumns.find((col) => col.field === 'ACTIONS');
+        if (!this.columnsState.__ACTIONS) {
+          const actions = this.formattedColumns.find((col) => col.field === '__ACTIONS');
           if (actions) {
             cols.push(actions);
           }
