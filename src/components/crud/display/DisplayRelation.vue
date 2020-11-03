@@ -74,14 +74,14 @@ export default {
     templateParser(source, data) {
       console.warn('templateParser');
       _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-      var compiled = _.template(source);
+      const compiled = _.template(source);
       return compiled(data);
     },
     formatLabel(item, passedLabel = null) {
       let field = passedLabel || this._relationLabel;
       console.warn('formatLabel', field);
       let label = '';
-      if (label.indexOf('{{') > -1) {
+      if (field.indexOf('{{') > -1) {
         console.warn('searching', item, field, label);
         label = this.templateParser(field, item);
       } else {
