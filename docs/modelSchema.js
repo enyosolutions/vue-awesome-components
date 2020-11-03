@@ -1,5 +1,6 @@
 module.exports = {
-  $id: 'http://enyosolutions.com/schema.json',
+  $id: 'http://enyosolutions.com/model
+    .json',
   type: 'object',
   properties: {
     identity: "string",
@@ -11,7 +12,7 @@ module.exports = {
     schema: {
       type: "object",
       properties: {
-        "$ref": "http://enyosolutions.com/schema.json"
+        "$ref": "http://enyosolutions.com/field.json"
       }
     },
     admin: {

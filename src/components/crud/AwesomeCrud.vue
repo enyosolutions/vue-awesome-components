@@ -292,7 +292,7 @@ import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
-import notificationsMixin from '../../mixins/notificationsMixin';
+// import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
@@ -433,8 +433,8 @@ export default {
     apiConfigMixin,
     awesomeFormMixin,
     relationMixin,
-    parseJsonSchema,
-    notificationsMixin
+    parseJsonSchema
+    // notificationsMixin
   ],
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },

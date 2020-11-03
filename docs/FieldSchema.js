@@ -1,5 +1,5 @@
 module.exports = {
-  $id: 'http://enyosolutions.com/schema-field.json',
+  $id: 'http://enyosolutions.com/field.json',
   type: 'object',
   properties: {
     title: {
@@ -56,7 +56,7 @@ module.exports = {
           type: 'string',
           title: 'The type of the field, comming from https://vue-generators.gitbook.io/vue-generators/fields',
           example: 'EnyoSelect, dateTime, textArea',
-          enum: ['string', 'input', 'number', 'list-of-value', 'list-of-data', 'EnyoSelect', 'dateTime', 'textArea'],
+          enum: ['string', 'input', 'number', 'list-of-value', 'list-of-data', 'EnyoSelect', 'dateTime', 'textArea', 'VSelect', 'date', 'datetime', 'time'],
         },
         inputType: {
           type: 'string',
@@ -95,17 +95,17 @@ module.exports = {
           properties: {
             type: {
               type: 'string',
-              title:
+              description:
                 'The type that links to the field option. In case of a dateTime selector, this would be date or datetime',
               enum: ['date', 'datetime'],
             },
             multiple: {
               type: 'boolean',
-              title: 'If the select is multiple (for selects)',
+              description: 'If the select is multiple (for selects)',
             },
             enum: {
               type: ['string', 'array'],
-              title:
+              description:
                 'The list of values to use for the select. If the value is string and starts with $store then the value is taken from the vuejs $store',
               example: '$store.listOfValues.users',
             },
@@ -129,7 +129,8 @@ module.exports = {
         },
         validator: {
           type: 'Array',
-          title:
+          title: 'Validator',
+          description:
             'the validators used to validate fields https://vue-generators.gitbook.io/vue-generators/validation/built-in-validators',
           example: ['string'],
         },
@@ -141,12 +142,12 @@ module.exports = {
       properties: {
         title: {
           type: 'string',
-          title: 'The title of the field',
+          title: 'The title of the column',
         },
         type: {
           type: 'string',
           title: 'The type of the column, comming from vuegoodtable and some coming from awesomedisplay',
-          enum: ['image', 'string', 'number', 'date', 'datetime', 'list-of-value'],
+          enum: ['string', 'number', 'date', 'datetime', 'image', 'html', 'relation', 'object', 'boolean', 'url'],
         },
         hidden: {
           type: 'string',
