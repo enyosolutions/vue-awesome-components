@@ -72,17 +72,22 @@ export default {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
     templateParser(source, data) {
+      console.warn('templateParser');
       _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
       var compiled = _.template(source);
       return compiled(data);
     },
     formatLabel(item, passedLabel = null) {
-      let label = passedLabel || this._label || this._relationLabel;
+      let field = passedLabel || this._relationLabel;
+      console.warn('formatLabel', field);
+      let label = '';
       if (label.indexOf('{{') > -1) {
-        label = this.templateParser(label, item);
+        console.warn('searching', item, field, label);
+        label = this.templateParser(field, item);
       } else {
-        label = this.get(item, this._label, '');
+        label = _.get(item, field, '');
       }
+
       return label;
     },
 
@@ -137,7 +142,11 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
+          console.warn('I GOT THE MODEL FROM THE API', data);
+          console.warn('I GOT THE MODEL FROM THE API twice', data);
+          console.warn('I GOT THE MODEL FROM THE API', _.get(data, this.relationKey));
           const result = `${_.get(data, this.relationKey)} - ${this.formatLabel(data, this.relationLabel)}`;
+          console.warn('lable', result);
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }

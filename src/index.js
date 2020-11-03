@@ -54,6 +54,7 @@ const VueAwesomeComponents = {
 }
 
 export {
+  abstractField,
   apiErrorsMixin,
   AutoProps,
   AwesomeForm,

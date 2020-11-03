@@ -125,6 +125,12 @@ module.exports = {
               title: 'The field to use as the Label in the select',
               example: 'username',
             },
+
+            displayContextActions: {
+              type: 'boolean',
+              title: 'Should we display the add/edit button?',
+              description: 'When the field type is VueSelect and when the field is used to display a relation then this serve to create a new item',
+            }
           },
         },
         validator: {

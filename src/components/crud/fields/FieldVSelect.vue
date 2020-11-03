@@ -36,6 +36,46 @@
       :reduce="reduce"
       :getOptionLabel="formatLabel"
     ></v-select>
+    <div v-if="schema.relation || schema.relationRoute" class="aw-field-select-add-relation">
+      <template v-if="model && model[schema.model]">
+        <router-link
+          v-if="!schema.relationRoute"
+          :to="'/app/' + kebabCase(schema.relation) + '/' + model[schema.model] + ''"
+          class="external-link"
+        >
+          <i class="fa fa-eye text-info"></i>
+        </router-link>
+        <router-link
+          v-if="!schema.relationRoute"
+          :to="'/app/' + kebabCase(schema.relation) + '/' + model[schema.model] + '/edit'"
+          class="external-link"
+        >
+          <i class="fa fa-edit text-info"></i>
+        </router-link>
+      </template>
+      <router-link
+        v-if="!schema.relationRoute"
+        :to="'/app/' + kebabCase(schema.relation) + '/new'"
+        class="external-link"
+      >
+        <i class="fa fa-plus text-info"></i>
+      </router-link>
+
+      <div
+        v-if="schema.relationRoute && isFunction(schema.relationRoute)"
+        @click="addNewUrl('new')"
+        class="external-link"
+      >
+        &nbsp; <i class="fa fa-plus text-info"></i>
+      </div>
+      <router-link
+        v-if="schema.relationRoute && !isFunction(schema.relationRoute)"
+        :to="addNewUrl + '/new'"
+        class="external-link"
+      >
+        &nbsp; <i class="fa fa-plus text-info"></i>
+      </router-link>
+    </div>
   </div>
 </template>
 <script>
@@ -77,7 +117,8 @@ export default {
         "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
-    preloadQueryParam: { type: String, default: 'perPage=10000' }
+    preloadQueryParam: { type: String, default: 'perPage=10000' },
+    addNewUrl: { type: [String, Function], default: '' }
   }, // 'schema', 'disabled', 'value' are in the abstract field
   mounted() {
     if (this.schema.fieldOptions && this.schema.fieldOptions.preload) {
@@ -129,7 +170,7 @@ export default {
       );
     },
 
-    _label() {
+    _labelField() {
       return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || 'label';
     },
     _values() {
@@ -170,6 +211,8 @@ export default {
 
   methods: {
     get: _.get,
+    kebabCase: _.kebabCase,
+    isFunction: _.isFunction,
     addTag(newTag, id) {
       const onNewTag = this.fieldOptions.onNewTag;
       if (typeof onNewTag === 'function') {
@@ -285,11 +328,11 @@ export default {
     },
 
     formatLabel(item) {
-      let label = this._label;
-      if (label.indexOf('{{') > -1) {
-        label = templateParser(label, item);
+      let label;
+      if (this._labelField.indexOf('{{') > -1) {
+        label = this.templateParser(this._labelField, item);
       } else {
-        label = this.get(item, this._label, '');
+        label = this.get(item, this._labelField, '');
       }
 
       return `${item[this._trackBy]} - ${label}`;
@@ -335,5 +378,25 @@ export default {
 
 .awesome-vue-select .vs__clear {
   border: none;
+}
+
+.aw-field-select-add-relation {
+  position: absolute;
+  top: 6px;
+  right: 15px;
+}
+.aw-field-select-add-relation a {
+  text-decoration: none;
+  font-weight: 500;
+}
+.aw-field-select-add-relation span {
+  opacity: 0;
+  max-width: 0;
+  transition: all linear 200ms;
+  text-decoration: none;
+}
+.aw-field-select-add-relation:hover span {
+  opacity: 1;
+  max-width: 100px;
 }
 </style>
