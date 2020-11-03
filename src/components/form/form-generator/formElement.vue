@@ -6,13 +6,13 @@
     </label>
     <template v-if="isViewMode">
       <awesome-display
-        v-bind="field.viewOptions"
+        v-bind="field.displayOptions"
         :type="viewFieldType"
         :value="model[field.model]"
-        :relation="field.viewOptions.relation"
-        :relation-url="field.viewOptions.relationUrl"
-        :relation-key="field.viewOptions.relationKey"
-        :relation-label="field.viewOptions.relationLabel"
+        :relation="field.displayOptions.relation"
+        :relation-url="field.displayOptions.relationUrl"
+        :relation-key="field.displayOptions.relationKey"
+        :relation-label="field.displayOptions.relationLabel"
       >
       </awesome-display>
     </template>
@@ -110,8 +110,8 @@ export default {
 
     // Get type of field 'field-xxx'. It'll be the name of HTML element
     viewFieldType() {
-      if (this.field.viewOptions && this.field.viewOptions.type) {
-        return this.field.viewOptions.type;
+      if (this.field.displayOptions && this.field.displayOptions.type) {
+        return this.field.displayOptions.type;
       }
       if (this.field.fieldOptions.relation) {
         return 'relation';

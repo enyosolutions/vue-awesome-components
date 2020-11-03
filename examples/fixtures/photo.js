@@ -101,7 +101,7 @@ module.exports = {
       field: {
         required: true,
         type: "textArea",
-        viewOptions: {
+        displayOptions: {
           type: 'html'
         }
       },

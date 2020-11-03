@@ -41,7 +41,7 @@ export default {
                 placeholder: prop.description || prop.title || _.startCase(key),
                 url: relationUrl || prop.relationUrl || prop.relation,
                 trackBy: relationKey || prop.foreignKey || 'id',
-                label: relationLabel || 'label', // key label for enyo select
+                label: relationLabel || 'label', // key label for enyo select >
                 name: relationLabel || 'label', // key label for native select
                 step: prop.field && prop.field.step,
                 readonly: this.displayMode === 'view' || (prop.field && prop.field.readonly),
@@ -101,16 +101,20 @@ export default {
             if (field.type === 'enyoSelect' && !field.fieldOptions.options) {
               field.options = field.values;
             }
-            field.viewOptions = prop.field && prop.field.viewOptions || {
+            if (field.viewOptions && !field.displayOptions) {
+              console.warn('@deprecated, please rename field.viewOptions into field.displayOptions');
+              field.viewOptions = field.displayOptions;
+            }
+            field.displayOptions = prop.field && prop.field.displayOptions || {
               ...prop.column,
               type: this.getColumnType(prop),
               classes: (prop.column && prop.column.classes),
               styles: (prop.column && prop.column.styles)
             }
-            field.viewOptions.relation = field.viewOptions.relation || prop.relation;
-            field.viewOptions.relationUrl = field.viewOptions.relationUrl || relationUrl;
-            field.viewOptions.relationKey = field.viewOptions.relationKey || relationKey;
-            field.viewOptions.relationLabel = field.viewOptions.relationLabel || relationLabel;
+            field.displayOptions.relation = field.displayOptions.relation || prop.relation;
+            field.displayOptions.relationUrl = field.displayOptions.relationUrl || relationUrl;
+            field.displayOptions.relationKey = field.displayOptions.relationKey || relationKey;
+            field.displayOptions.relationLabel = field.displayOptions.relationLabel || relationLabel;
             fields.push(field);
           }
         }

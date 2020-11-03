@@ -124,7 +124,7 @@ The awesome crud configuration schema.
               example: 'username',
             },
           },
-          viewOptions: {
+          displayOptions: {
             title: 'Options to be used on custom forms fields like view mode',
              properties: {
             type: {
