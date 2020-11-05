@@ -216,12 +216,22 @@
                         class="nav nav-tabs mt-0 mb-4"
                       >
                         <li class="nav-item">
-                          <a class="nav-link active" data-toggle="tab" @click="activeNestedTab = 'general'">
+                          <a
+                            class="nav-link"
+                            data-toggle="tab"
+                            :class="{ active: activeNestedTab === 'general' }"
+                            @click="activeNestedTab = 'general'"
+                          >
                             {{ $te('app.labels.' + identity) ? $te('app.labels.' + identity) : startCase(identity) }}
                           </a>
                         </li>
                         <li v-for="(ns, index) in nestedModels" :key="index" class="nav-item">
-                          <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.identity">
+                          <a
+                            class="nav-link"
+                            :class="{ active: activeNestedTab === ns.identity }"
+                            data-toggle="tab"
+                            @click="activeNestedTab = ns.identity"
+                          >
                             <i v-if="ns.icon" :class="ns.icon" />
                             {{ $t(ns.title || ns.name || ns.identity) }}
                           </a>
@@ -408,7 +418,7 @@
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
-                          @click.prevent.stop="$emit('edit', selectedItem)"
+                          @click.prevent.stop="editFunction(selectedItem)"
                         >
                           <i class="fa fa-pencil" />
                           {{ $t('AwesomeCrud.buttons.edit') }}
@@ -417,7 +427,7 @@
                           v-if="mode === 'view' && !standalone"
                           type="button"
                           class="btn btn-primary ml-2"
-                          @click="closeModal()"
+                          @click="close()"
                         >
                           {{ $t('AwesomeCrud.buttons.close') }}
                         </button>
@@ -1305,6 +1315,7 @@ export default {
         if (this.updateRouter) {
           window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         }
+        this.activeNestedTab = 'general';
         this.viewFunction(item);
         return;
       }
@@ -1349,7 +1360,7 @@ export default {
           this.statsNeedsRefresh = true;
           this.nestedCrudNeedsRefresh = true;
           this.$forceUpdate();
-          this.closeModal();
+          this.close();
           this.$emit('itemCreated', this.selectedItem, {
             context: this.mode
           });
@@ -1385,7 +1396,7 @@ export default {
           this.$emit('itemsBulkEdited', element);
         }
       });
-      this.closeModal();
+      this.close();
     },
 
     editItem() {
@@ -1429,7 +1440,7 @@ export default {
           this.$emit('itemEdited', this.selectedItem, {
             context: this.mode
           });
-          this.closeModal();
+          this.close();
         })
         .catch(this.apiErrorCallback)
         .finally(() => {
@@ -1443,6 +1454,7 @@ export default {
     },
 
     editFunction(item) {
+      this.activeNestedTab = 'general';
       this.$emit('edit', item);
     },
 

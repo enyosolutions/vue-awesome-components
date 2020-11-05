@@ -300,7 +300,7 @@
             <Skeleton v-if="showSkeleton" :count="1" :loading="true"></Skeleton>
             <template v-else>
               <awesome-display
-                v-if="props.column.field !== 'ACTIONS'"
+                v-if="props.column.field !== '__ACTIONS'"
                 v-bind="props.column"
                 :apiResponseConfig="apiResponseConfig"
                 :apiRequestHeaders="apiRequestHeaders"
@@ -310,7 +310,7 @@
               >
               </awesome-display>
 
-              <span v-if="props.column.field === '__ACTIONS'" class="text-right">
+              <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
                 <slot name="table-row-actions" :item="props.row">
                   <template v-if="optionsComputed && optionsComputed.customInlineActions">
                     <template v-for="(action, index) in optionsComputed.customInlineActions">
@@ -1044,6 +1044,10 @@ export default {
 
 .aw-table .vgt-global-search__input .input__icon .magnifying-glass {
   display: none;
+}
+
+.aw-table-actions-field {
+  white-space: nowrap;
 }
 
 .automatic-refresh-button {
