@@ -27,7 +27,7 @@ module.exports = {
       { text: "Home", link: "/" },
       { text: "Components", link: "/guide/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
-      { text: "AjaxTable", link: "/guide/ajaxtable/" },
+      { text: "AwesomeTable", link: "/guide/ajaxtable/" },
       {
         text: "Github",
         link: "https://github.com/enyosolutions-team/vue-aw-components"
@@ -57,6 +57,7 @@ module.exports = {
             collapsable: true,
             children: [
               { title: "Introduction", path: "/guide/awesomecrud/" },
+              { title: "AwesomeCrud Props", path: "/guide/awesomecrud/props.md" },
               {
                 title: "Configuration of the schema",
                 path: "/guide/awesomecrud/schema-configuration.md"
@@ -73,17 +74,18 @@ module.exports = {
           },
           {
             title: "Awesome Table",
-            path: "/guide/ajaxtable/",
+            path: "/guide/awesometable/",
             sidebarDepth: 1,
             collapsable: true,
             children: [
-              { title: "Presentation", path: "/guide/ajaxtable/" },
+              { title: "Presentation", path: "/guide/awesometable/" },
               {
                 title: "Events",
-                path: "/guide/ajaxtable/events.md"
+                path: "/guide/awesometable/events.md"
               }
             ]
           },
+          { title: "Awesome Form", path: "/guide/awesomeform/" },
           { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
           { title: "Awesome List", path: "/guide/awesomelist/" },
           { title: "Awesome Layout", path: "/guide/awesomelayout/" },

@@ -212,7 +212,7 @@
                     </div>
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
-                        v-if="nestedSchemas && nestedSchemas.length && mode !== 'create'"
+                        v-if="nestedModels && nestedModels.length && mode !== 'create'"
                         class="nav nav-tabs mt-0 mb-4"
                       >
                         <li class="nav-item">
@@ -220,7 +220,7 @@
                             {{ $te('app.labels.' + identity) ? $te('app.labels.' + identity) : startCase(identity) }}
                           </a>
                         </li>
-                        <li v-for="ns in nestedSchemas" :key="ns.$id" class="nav-item">
+                        <li v-for="(ns, index) in nestedModels" :key="index" class="nav-item">
                           <a class="nav-link" data-toggle="tab" @click="activeNestedTab = ns.identity">
                             <i v-if="ns.icon" :class="ns.icon" />
                             {{ $t(ns.title || ns.name || ns.identity) }}
@@ -336,14 +336,14 @@
                           </template>
                           <template
                             v-if="
-                              nestedSchemas &&
-                                nestedSchemas.length &&
+                              nestedModels &&
+                                nestedModels.length &&
                                 (mode === 'view' || mode === 'edit') &&
                                 selectedItem
                             "
                           >
                             <div
-                              v-for="ns in nestedSchemas"
+                              v-for="ns in nestedModels"
                               :key="ns.$id"
                               class="tab-pane nested-tab fade"
                               :class="{
@@ -519,7 +519,6 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  modalMode: 'slide', // fade | slide | full / renamed to prop displayMode  Deprecated BC BREAK
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
@@ -547,7 +546,7 @@ export default {
     apiConfigMixin,
     awesomeFormMixin,
     relationMixin,
-    parseJsonSchema,
+    parseJsonSchema
     // notificationsMixin
   ],
   props: {
@@ -583,6 +582,12 @@ export default {
       note: 'Define whether the content of the table list should be refreshed'
     },
     nestedSchemas: {
+      type: Array,
+      required: false,
+      default: () => [],
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
+    },
+    nestedModels: {
       type: Array,
       required: false,
       default: () => [],
@@ -626,7 +631,8 @@ export default {
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
         return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
-      }
+      },
+      description: 'Define what mode should the form be used in (create| edit | view | bulkEdit '
     },
     displayMode: {
       type: String,
@@ -676,6 +682,12 @@ export default {
     },
     editLayoutMode: {
       type: Boolean
+    },
+    useRouterMode: {
+      type: Boolean,
+      required: false,
+      default: true,
+      node: 'Controls if the actions (create / edit / view)  should update the current route url'
     }
   },
   data() {
@@ -689,7 +701,7 @@ export default {
       show: false,
       showBackDrop: false,
       mergedOptions: {},
-      innerNestedSchemas: [],
+      innerNestedModels: [],
       activeNestedTab: 'general',
       formOptions: {
         validayeAsync: true,
@@ -882,12 +894,16 @@ export default {
     this.loadModel();
   },
   mounted() {
+    if (this.nestedSchemas) {
+      console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
+    }
+
     // allow old property names to still work
     if (this.modelName) {
       this.identity = this.modelName;
     }
     this.loadModel();
-    if (this.$route) {
+    if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
       if (this.$route.params.id) {
         if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
@@ -1091,6 +1107,8 @@ export default {
                 ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
+            this.$emit('itemFetched', this.selectedItem);
+            this.$emit(this.identity + 'ItemFetched', this.selectedItem);
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -1277,7 +1295,9 @@ export default {
         this.editFunction(item);
         return;
       }
-      this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
+      this.$router.push(
+        this.mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+      );
     },
 
     goToViewPage(item) {
@@ -1288,7 +1308,9 @@ export default {
         this.viewFunction(item);
         return;
       }
-      this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
+      this.$router.push(
+        this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+      );
     },
 
     createItem() {
@@ -1308,6 +1330,7 @@ export default {
         // eslint-disable-next-line
         console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
+      this.mergeSelectedItemWithRequestProps();
       return this.$http
         .post(this._url, this.selectedItem)
         .then((res) => {
@@ -1385,6 +1408,7 @@ export default {
         }
       }
 
+      this.mergeSelectedItemWithRequestProps();
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
@@ -1425,6 +1449,10 @@ export default {
     viewFunction(item) {
       this.$emit('view', item);
     },
+    nestedViewFunction(item) {
+      this.$emit('nestedView', item);
+      this.openModal();
+    },
 
     deleteFunction(item) {
       this.$emit('delete', item);
@@ -1443,6 +1471,7 @@ export default {
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
+          this.$emit('item-fetched', this.selectedItem);
         })
         .catch(this.apiErrorCallback)
         .finally(() => {

@@ -1,6 +1,5 @@
 module.exports = {
-  $id: 'http://enyosolutions.com/model
-    .json',
+  $id: 'http://enyosolutions.com/model.json',
   type: 'object',
   properties: {
     identity: "string",
@@ -18,7 +17,15 @@ module.exports = {
     admin: {
       type: "object",
       properties: {
-        "$ref": "http://enyosolutions.com/schema.json"
+        "nestedSchemas": {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+
+            }
+          }
+        }
       }
     }
   },

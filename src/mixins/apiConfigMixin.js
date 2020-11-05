@@ -30,9 +30,19 @@ export default {
     },
     apiQueryParams: {
       type: Object,
-      default: () => ({}),
+      default: () => (undefined),
       note:
         'A params object containing parameters that will be passed as query params to the api request.\n It\'s up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.'
+    },
+    apiRequestPermanentBodyParams: {
+      type: Object,
+      default: () => ({}),
+      description: 'Object of data that will always be merged in the request sent to the server'
+    },
+    apiRequestPermanentQueryParams: {
+      type: Object,
+      default: () => ({}),
+      description: 'A params object containing parameters that will be passed as query params to the api request.\n It\'s up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.'
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
     entity: {
@@ -137,5 +147,11 @@ export default {
         ? _.get(res, this.apiResponseConfig.totalCountPath)
         : res.data.totalCount
     },
+
+    mergeSelectedItemWithRequestProps() {
+      if (this.apiRequestPermanentBodyParams) {
+        this.selectedItem = _.merge(this.selectedItem, this.apiRequestPermanentBodyParams);
+      }
+    }
   }
 };

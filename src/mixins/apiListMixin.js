@@ -109,7 +109,7 @@ export default {
 
     _translatedServerParams() {
       const translatedParams = {};
-      const serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+      const serverParams = _.merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
       Object.keys(serverParams).forEach(field => {
         const newKey = this.apiRequestConfig[field + 'Field'] || field;
         translatedParams[newKey] = serverParams[field];

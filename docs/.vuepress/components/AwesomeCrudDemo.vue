@@ -28,22 +28,22 @@
           col1: 'qq',
           col2: 'some data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq2',
           col2: 'some moore data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq3',
           col2: 'a third data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
-        },
+          notDisplayedColumn: 'ghosted'
+        }
       ]"
-      :options="{ modalMode: 'fade', actions: { create: true } }"
+      :options="{ detailPageMode: 'modal', actions: { create: true } }"
     />
 
     <br />
@@ -60,22 +60,22 @@
           col1: 'qq',
           col2: 'some data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq2',
           col2: 'some moore data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq3',
           col2: 'a third data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
-        },
+          notDisplayedColumn: 'ghosted'
+        }
       ]"
-      :options="{ modalMode: 'slide', actions: { create: true } }"
+      :options="{ detailPageMode: 'slide', actions: { create: true } }"
     />
   </div>
 </template>
@@ -86,14 +86,14 @@ import ticketModel from '../../../examples/fixtures/ticket.js';
 
 export default {
   name: 'AwesomeCrudDemo',
-  components: {AwesomeCrud },
+  components: { AwesomeCrud },
   props: {},
   mounted() {},
   data() {
     return {
-      ticketModel,
+      ticketModel
     };
-  },
+  }
 };
 </script>
 

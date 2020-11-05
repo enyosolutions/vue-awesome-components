@@ -72,17 +72,14 @@ export default {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
     templateParser(source, data) {
-      console.warn('templateParser');
       _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
       const compiled = _.template(source);
       return compiled(data);
     },
     formatLabel(item, passedLabel = null) {
       let field = passedLabel || this._relationLabel;
-      console.warn('formatLabel', field);
       let label = '';
       if (field.indexOf('{{') > -1) {
-        console.warn('searching', item, field, label);
         label = this.templateParser(field, item);
       } else {
         label = _.get(item, field, '');
@@ -111,7 +108,6 @@ export default {
       }
 
       const item = $store && $store.find((elm) => elm[this.relationKey] === value);
-      console.warn('$store', item, $store, this.relationKey);
       if (!item) {
         return;
       }

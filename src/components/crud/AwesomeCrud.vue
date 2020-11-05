@@ -18,6 +18,7 @@
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
+            @nestedView="nestedViewFunction"
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onViewDisplayCancelled"
@@ -54,6 +55,7 @@
             :standalone="false"
             @create="goToCreatePage"
             @view="goToViewPage"
+            @nestedView="nestedViewFunction"
             @edit="goToEditPage"
             @delete="goToDeletePage"
             @cancel="onEditDisplayCancelled"
@@ -211,6 +213,7 @@
                 (displayMode === 'table' ||
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
+            v-bind="$props"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -487,6 +490,12 @@ export default {
       note: 'Define whether the content of the table list should be refreshed'
     },
     nestedSchemas: {
+      type: Array,
+      required: false,
+      default: () => [],
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
+    },
+    nestedModels: {
       type: Array,
       required: false,
       default: () => [],
@@ -770,6 +779,9 @@ export default {
     if (!this.identity) {
       throw new Error('missing_required_props_identity');
     }
+    if (this.nestedSchemas && this.nestedSchemas.length) {
+      console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
+    }
     this.loadModel();
 
     if (this._isNested) {
@@ -976,7 +988,7 @@ export default {
       ) {
         this.getNestedItem().then(() => {
           if (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'object') {
-            this.openModal();
+            //  this.openModal();
           }
           if (this.nestedDisplayMode === 'edit') {
             // this.editFunction(this.selectedItem);
@@ -993,9 +1005,9 @@ export default {
       if (!this._url) {
         return;
       }
-      if (this.$route && this.$route.params && this.$route.params.id) {
+      if (this.$route && this.$route.params && this.$route.params.id && this.useRouterMode) {
         this.$http
-          .get(`${this._url}/${this.$route.params.id}`)
+          .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
           .then((res) => {
             const matched = this.$route.matched[this.$route.matched.length - 1];
             const data =
@@ -1168,7 +1180,9 @@ export default {
 
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
-        return this.$router.push(this.mergedOptions.deletePath.replace(':id', item[this.primaryKey]));
+        return this.$router.push(
+          this.mergedOptions.deletePath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        );
       }
 
       this.deleteFunction(item);
@@ -1181,7 +1195,9 @@ export default {
 
     goToEditPage(item) {
       if (this.mergedOptions.editPath) {
-        return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
+        return this.$router.push(
+          this.mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        );
       }
       if (this.useRouterMode) {
         window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
@@ -1191,7 +1207,9 @@ export default {
 
     goToViewPage(item) {
       if (this.mergedOptions.viewPath) {
-        return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
+        return this.$router.push(
+          this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        );
       }
       if (this.useRouterMode) {
         window.history.replaceState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
