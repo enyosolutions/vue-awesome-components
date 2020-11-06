@@ -440,6 +440,8 @@ export default {
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
     title: { type: String, default: '' },
+    name: { type: String, default: '' },
+    namePlural: { type: String, default: '' },
     translations: {
       type: Object,
       default: () => ({

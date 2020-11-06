@@ -24,6 +24,7 @@
             @cancel="onViewDisplayCancelled"
             @closeRequested="onViewDisplayCancelled"
             @customAction="onCustomAction"
+            @beforeCreate="forwardEvent.bind(this, 'beforeCreate')"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
             @itemsBulkEdited="onItemsBulkEdited"
@@ -442,6 +443,8 @@ export default {
   props: {
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
+    name: { type: [String, Boolean], required: false, default: undefined },
+    namePlural: { type: [String, Boolean], required: false, default: undefined },
     modelName: {
       type: String,
       required: false,
@@ -506,6 +509,11 @@ export default {
       required: false,
       note: `The object containing the parent in case of a nested schema.
         'You don't actually to pass this, it's done automatically by the parent component itself`
+    },
+    parentIdentity: {
+      type: String,
+      required: false,
+      description: 'The identity of the parent'
     },
     useRouterMode: {
       type: Boolean,
@@ -618,6 +626,9 @@ export default {
       if (this._model && this._model.name) {
         return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
       }
+      if (this.name) {
+        return this.$te(this.name) ? this.$t(this.name) : _.startCase(this.name);
+      }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
@@ -634,6 +645,10 @@ export default {
     _namePlural() {
       if (this._model && this._model.namePlural) {
         return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+      }
+
+      if (this.namePlural) {
+        return this.$te(this.namePlural) ? this.$t(this.namePlural) : _.startCase(this.namePlural);
       }
 
       if (this.identity) {
@@ -1537,6 +1552,10 @@ export default {
         .finally(() => {
           this.isRefreshing = false;
         });
+    },
+
+    forwardEvent(...args) {
+      this.$emit(...args);
     }
   }
 };

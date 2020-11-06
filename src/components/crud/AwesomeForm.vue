@@ -40,7 +40,7 @@
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _title || _name }}
+                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
                       </h3>
 
                       <div
@@ -365,6 +365,7 @@
                                 v-if="activeNestedTab === ns.identity"
                                 v-bind="ns"
                                 :parent="selectedItem"
+                                :parentIdentity="model.identity || identity"
                                 :useRouterMode="false"
                                 :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
                               >
@@ -439,7 +440,7 @@
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t('AwesomeCrud.labels.add_a') }} {{ title }}
+                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
                       </h3>
                       <button
                         v-if="!standalone && !_isEmbedded"
@@ -564,6 +565,8 @@ export default {
     bulkItems: { type: Array, required: false },
     title: { type: String, required: false, default: undefined },
     pageTitle: { type: String, required: false, default: undefined },
+    name: { type: [String, Boolean], required: false, default: undefined },
+    namePlural: { type: [String, Boolean], required: false, default: undefined },
     identity: { type: String, required: true },
     modelName: { type: String, required: false },
     standalone: { type: Boolean, required: false, default: true },
@@ -610,6 +613,11 @@ export default {
         'The object containing the parent in case of a nested schema.' +
         // eslint-disable-next-line
         "You don't actually to pass this, it's done automatically by the parent component itself"
+    },
+    parentIdentity: {
+      type: String,
+      required: false,
+      note: 'The model identity of the parent.'
     },
     nestedDisplayMode: {
       type: String,
@@ -762,6 +770,10 @@ export default {
         return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
       }
 
+      if (this.namePlural) {
+        return this.$te(this.namePlural) ? this.$t(this.namePlural) : _.startCase(this.namePlural);
+      }
+
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
@@ -904,7 +916,7 @@ export default {
     this.loadModel();
   },
   mounted() {
-    if (this.nestedSchemas) {
+    if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
 
@@ -1009,7 +1021,7 @@ export default {
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
           title: this.$t('AwesomeDefault.messages.no_data_imported', {
-            title: this._title
+            title: this._name
           }),
           type: 'warning'
         });
@@ -1019,7 +1031,7 @@ export default {
       if (e.properData.length > 0) {
         this.$notify({
           title: this.$t('AwesomeDefault.messages.successfullyImported', {
-            title: this._title
+            title: this._name
           }),
           type: 'success'
         });
@@ -1034,7 +1046,7 @@ export default {
         setTimeout(() => {
           this.$notify({
             title: `${e.improperData.length} ${this.$t('AwesomeDefault.messages.not_imported', {
-              title: this._title
+              title: this._name
             })}`,
             message,
             type: 'warning',
@@ -1119,6 +1131,15 @@ export default {
             this.selectedItem = data;
             this.$emit('itemFetched', this.selectedItem);
             this.$emit(this.identity + 'ItemFetched', this.selectedItem);
+            this.$awEventBus &&
+              this.$awEventBus.$emit('item-fetched', {
+                component: 'aw-form',
+                context: this,
+                item: this.selectedItem,
+                identity: this.identity,
+                parentIdentity: this.parentIdentity,
+                parent: this.parent
+              });
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -1342,10 +1363,37 @@ export default {
         console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       this.mergeSelectedItemWithRequestProps();
+      console.warn('⏩BEFORE CREATE');
+
+      this.$emit('before-create', {
+        component: 'aw-form',
+        context: this,
+        item: this.selectedItem,
+        identity: this.identity,
+        parent: this.parent
+      });
+      this.$awEventBus &&
+        this.$awEventBus.$emit('before-create', {
+          component: 'aw-form',
+          context: this,
+          item: this.selectedItem,
+          identity: this.identity,
+          parentIdentity: this.parentIdentity,
+          parent: this.parent
+        });
       return this.$http
         .post(this._url, this.selectedItem)
         .then((res) => {
           this.$emit(this.identity + '-item-created', res.data);
+          this.$awEventBus &&
+            this.$awEventBus.$emit(this.identity + '-item-created', {
+              component: 'aw-form',
+              context: this,
+              item: res.data,
+              identity: this.identity,
+              parentIdentity: this.parentIdentity,
+              parent: this.parent
+            });
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -1420,6 +1468,14 @@ export default {
       }
 
       this.mergeSelectedItemWithRequestProps();
+      this.$awEventBus &&
+        this.$awEventBus.$emit('before-update', {
+          context: this,
+          item: res.data,
+          identity: this.identity,
+          parentIdentity: this.parentIdentity,
+          parent: this.parent
+        });
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
@@ -1484,6 +1540,15 @@ export default {
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
           this.$emit('item-fetched', this.selectedItem);
+          this.$awEventBus &&
+              this.$awEventBus.$emit('item-fetched', {
+                component: 'aw-form',
+                context: this,
+                item: this.selectedItem,
+                identity: this.identity,
+                parentIdentity: this.parentIdentity,
+                parent: this.parent
+              });
         })
         .catch(this.apiErrorCallback)
         .finally(() => {

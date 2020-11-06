@@ -89,6 +89,7 @@ module.exports = {
           { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
           { title: "Awesome List", path: "/guide/awesomelist/" },
           { title: "Awesome Layout", path: "/guide/awesomelayout/" },
+          { title: "Awesome Event Bus", path: "/guide/awesomeBus/" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },

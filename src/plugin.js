@@ -112,6 +112,9 @@ const install = (Vue, options) => {
 
   Vue.component('awesome-kanban', AwesomeKanban);
 
+  if (!Vue.prototype.$awEventBus) {
+    Vue.prototype.$awEventBus = new Vue();
+  }
   if (!Vue.prototype.$http) {
     Vue.prototype.$http = axios.create({});
   }

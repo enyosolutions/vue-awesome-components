@@ -16,7 +16,7 @@
           </template>
           <template v-if="!_valueIsArray">
             <label>{{ key }}:</label>
-            <label class="text-primary">{{ value }}</label> |
+            <label class="">{{ value }}</label> |
           </template>
         </div>
       </template>
