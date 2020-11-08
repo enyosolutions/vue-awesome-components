@@ -46,6 +46,9 @@ Vue.use(VueFormGenerator, {
 
 Vue.use(VueEnyoComponents,
   {
+    config: {
+      modelsStorePath: 'model.models'
+    },
     'global': {
       props: {
         apiResponseConfig: {

@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content aw-crud" :class="'aw-crud-mode-' + displayMode">
     <div class="container-fluid">
       <div class="row ">
         <div class="col-12 awesomecrud-detail-section">
@@ -242,7 +242,7 @@
             @bulkEdit="goToBulkEditPage"
             @customAction="onCustomAction"
             @customBulkAction="onCustomBulkAction"
-            @crud-list-updated="onListUpdated"
+            @table-updated="onListUpdated"
             @refresh="onTableRefresh"
             @onRowClicked="onTableRowClicked"
             @updateAutoRefresh="updateAutoRefresh"
@@ -296,6 +296,7 @@ import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
+import awEmitMixin from '../../mixins/awEmitMixin';
 // import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
@@ -437,7 +438,8 @@ export default {
     apiConfigMixin,
     awesomeFormMixin,
     relationMixin,
-    parseJsonSchema
+    parseJsonSchema,
+    awEmitMixin
     // notificationsMixin
   ],
   props: {
@@ -624,10 +626,10 @@ export default {
 
     _name() {
       if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+        return this.$te(this._model.name) ? this.$t(this._model.name) : this._model.name;
       }
       if (this.name) {
-        return this.$te(this.name) ? this.$t(this.name) : _.startCase(this.name);
+        return this.$te(this.name) ? this.$t(this.name) : this.name;
       }
 
       if (this.identity) {
@@ -1405,6 +1407,7 @@ export default {
         }
         window.history.pushState({}, null, url);
       }
+
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 
@@ -1420,6 +1423,7 @@ export default {
         this.previousDisplayMode && this.previousDisplayMode !== 'edit' && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode;
+
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 

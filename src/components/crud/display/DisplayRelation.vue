@@ -138,11 +138,7 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          console.warn('I GOT THE MODEL FROM THE API', data);
-          console.warn('I GOT THE MODEL FROM THE API twice', data);
-          console.warn('I GOT THE MODEL FROM THE API', _.get(data, this.relationKey));
           const result = `${_.get(data, this.relationKey)} - ${this.formatLabel(data, this.relationLabel)}`;
-          console.warn('lable', result);
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }

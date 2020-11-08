@@ -81,26 +81,26 @@
   },
   "AwesomeCrud": {
     "labels": {
-      "manageTitle": "Manage",
-      "createNew": "Create a new",
-      "view": "View",
-      "edit": "Edit"
+      "manageTitle": "Gestion des",
+      "createNew": "Créer un(e)",
+      "view": "Voir",
+      "edit": "Editer"
     },
     "buttons": {
       "yes_delete_it": "Yes i confirm",
       "view": "Open",
-      "cancel": "Cancel",
-      "close": "Close",
-      "edit": "Edit",
-      "save": "Save",
-      "bulkEdit": "Multiple Edit",
-      "openEditLayoutMode": "Edit Layout",
-      "closeEditLayoutMode": "Close editor",
+      "cancel": "Anuler",
+      "close": "Fermer",
+      "edit": "Editer",
+      "save": "Enregistrer",
+      "bulkEdit": "Edition groupée",
+      "openEditLayoutMode": "Editer le layout",
+      "closeEditLayoutMode": "Fermer 'l'éditeur",
       "resetLayout": "Reset the layout",
       "exportLayout": "Export the layout"
     },
     "messages": {
-      "successfullyModified": "Successfully modified."
+      "successfullyModified": "Modification réussie."
     }
   },
   "dateRangePicker": {
@@ -121,12 +121,12 @@
   },
   "Notifications": {
     "messages": {
-      "are_you_sure": "Are you sure ?"
+      "are_you_sure": "Êtes-vous sûr ?"
     },
     "buttons": {
-      "yes": "Yes",
-      "cancel": "Cancel",
-      "close": "Close"
+      "yes": "Oui",
+      "cancel": "Anuler",
+      "close": "Fermer"
     }
   }
 }

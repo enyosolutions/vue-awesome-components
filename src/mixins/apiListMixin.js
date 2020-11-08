@@ -6,9 +6,11 @@ import qs from 'qs';
 import moment from 'moment';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
+import awEmitMixin from './awEmitMixin';
+
 
 export default {
-  mixins: [apiConfigMixin],
+  mixins: [apiConfigMixin, awEmitMixin],
   props: {
     rows: { type: Array, default: () => [] },
     primaryKey: { type: String, default: 'id' },
@@ -204,9 +206,10 @@ export default {
         //  console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
+      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this.url })
       return this.$http
         .get(
-          `${this.url}?${qs.stringify(this._translatedServerParams, {})}`,
+          `${this.url}${this.url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
           {}
         )
         .then(res => {
@@ -223,8 +226,10 @@ export default {
               this.apiResponseConfig.totalCountPath != false
               ? _.get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
-          this.$emit('crud-list-updated', this.data);
-          this.$emit('dataChanged', this.data);
+          this.$emit('crud-list-updated', this.data); // @deprecated
+          this.$awEmit('table-refreshed', { component: 'aw-table', url: this.url, data: this.data })
+          this.$emit('dataChanged', this.data); // @deprecated
+          this.$emit('data-changed', this.data);
         })
         .catch(err => {
           // eslint-disable-next-line

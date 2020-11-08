@@ -67,6 +67,14 @@ module.exports = {
                 path: "/guide/awesomecrud/configuration-options.md"
               },
               {
+                title: "Events (wip)",
+                path: "/guide/awesomecrud/events.md"
+              },
+              {
+                title: "Css classes",
+                path: "/guide/awesomecrud/classes.md"
+              },
+              {
                 title: "Examples",
                 path: "/guide/awesomecrud/examples.md"
               }

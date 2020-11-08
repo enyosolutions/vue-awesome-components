@@ -225,17 +225,19 @@
                             {{ $te('app.labels.' + identity) ? $te('app.labels.' + identity) : startCase(identity) }}
                           </a>
                         </li>
-                        <li v-for="(ns, index) in nestedModels" :key="index" class="nav-item">
-                          <a
-                            class="nav-link"
-                            :class="{ active: activeNestedTab === ns.identity }"
-                            data-toggle="tab"
-                            @click="activeNestedTab = ns.identity"
-                          >
-                            <i v-if="ns.icon" :class="ns.icon" />
-                            {{ $t(ns.title || ns.name || ns.identity) }}
-                          </a>
-                        </li>
+                        <template v-for="(ns, index) in nestedModels">
+                          <li v-if="ns && ns.identity" :key="index" class="nav-item nested-model-tab-link">
+                            <a
+                              class="nav-link"
+                              :class="{ active: activeNestedTab === ns.identity }"
+                              data-toggle="tab"
+                              @click="activeNestedTab = ns.identity"
+                            >
+                              <i v-if="ns.icon" :class="ns.icon" />
+                              {{ $t(ns.title || ns.name || ns.identity) }}
+                            </a>
+                          </li>
+                        </template>
                       </ul>
                       <slot name="edit-form" :selectedItem="selectedItem">
                         <div class="tab-content">
@@ -352,26 +354,29 @@
                                 selectedItem
                             "
                           >
-                            <div
-                              v-for="ns in nestedModels"
-                              :key="ns.$id"
-                              class="tab-pane nested-tab fade"
-                              :class="{
-                                'active show': activeNestedTab === ns.identity
-                              }"
-                            >
+                            <template v-for="ns in nestedModels">
                               <div
-                                :is="AwesomeCrud"
-                                v-if="activeNestedTab === ns.identity"
-                                v-bind="ns"
-                                :parent="selectedItem"
-                                :parentIdentity="model.identity || identity"
-                                :useRouterMode="false"
-                                :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+                                v-if="ns && ns.identity"
+                                :key="ns.$id"
+                                class="tab-pane nested-tab fade"
+                                :class="{
+                                  'active show': activeNestedTab === ns.identity
+                                }"
                               >
-                                <div slot="crud-title" />
+                                <div
+                                  :is="AwesomeCrud"
+                                  v-if="activeNestedTab === ns.identity"
+                                  v-bind="ns"
+                                  :parent="selectedItem"
+                                  :parentIdentity="model.identity || identity"
+                                  :useRouterMode="false"
+                                  :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+                                  class="aw-crud-nested-model"
+                                >
+                                  <div slot="crud-title" />
+                                </div>
                               </div>
-                            </div>
+                            </template>
                           </template>
                         </div>
                       </slot>
@@ -504,6 +509,8 @@ import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
+import awEmitMixin from '../../mixins/awEmitMixin';
+
 // import notificationsMixin from '../../mixins/notificationsMixin';
 
 import i18nMixin from '../../mixins/i18nMixin';
@@ -557,7 +564,8 @@ export default {
     apiConfigMixin,
     awesomeFormMixin,
     relationMixin,
-    parseJsonSchema
+    parseJsonSchema,
+    awEmitMixin
     // notificationsMixin
   ],
   props: {
@@ -1129,17 +1137,15 @@ export default {
                 ? _.get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
-            this.$emit('itemFetched', this.selectedItem);
-            this.$emit(this.identity + 'ItemFetched', this.selectedItem);
-            this.$awEventBus &&
-              this.$awEventBus.$emit('item-fetched', {
-                component: 'aw-form',
-                context: this,
-                item: this.selectedItem,
-                identity: this.identity,
-                parentIdentity: this.parentIdentity,
-                parent: this.parent
-              });
+            this.$emit('itemFetched', this.selectedItem); // @deprecated
+            this.$awEmit('item-fetched', {
+              component: 'aw-form',
+              context: this,
+              item: _.cloneDeep(data),
+              identity: this.identity,
+              parentIdentity: this.parentIdentity,
+              parent: this.parent
+            });
           })
           .catch(this.apiErrorCallback)
           .finally(() => {
@@ -1363,37 +1369,26 @@ export default {
         console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       this.mergeSelectedItemWithRequestProps();
-      console.warn('⏩BEFORE CREATE');
 
-      this.$emit('before-create', {
+      this.$awEmit('before-create', {
         component: 'aw-form',
         context: this,
         item: this.selectedItem,
         identity: this.identity,
+        parentIdentity: this.parentIdentity,
         parent: this.parent
       });
-      this.$awEventBus &&
-        this.$awEventBus.$emit('before-create', {
-          component: 'aw-form',
-          context: this,
-          item: this.selectedItem,
-          identity: this.identity,
-          parentIdentity: this.parentIdentity,
-          parent: this.parent
-        });
       return this.$http
         .post(this._url, this.selectedItem)
         .then((res) => {
-          this.$emit(this.identity + '-item-created', res.data);
-          this.$awEventBus &&
-            this.$awEventBus.$emit(this.identity + '-item-created', {
-              component: 'aw-form',
-              context: this,
-              item: res.data,
-              identity: this.identity,
-              parentIdentity: this.parentIdentity,
-              parent: this.parent
-            });
+          this.$awEmit('item-created', {
+            component: 'aw-form',
+            context: this,
+            item: res.data,
+            identity: this.identity,
+            parentIdentity: this.parentIdentity,
+            parent: this.parent
+          });
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -1471,7 +1466,7 @@ export default {
       this.$awEventBus &&
         this.$awEventBus.$emit('before-update', {
           context: this,
-          item: res.data,
+          item: this.selectedItem,
           identity: this.identity,
           parentIdentity: this.parentIdentity,
           parent: this.parent
@@ -1479,7 +1474,7 @@ export default {
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
-          this.$emit(this.identity + '-item-updated', res.data);
+          this.$awEmit('item-edited', { data: res.data });
           Swal.fire({
             toast: true,
             position: 'top-end',
@@ -1539,16 +1534,15 @@ export default {
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
-          this.$emit('item-fetched', this.selectedItem);
-          this.$awEventBus &&
-              this.$awEventBus.$emit('item-fetched', {
-                component: 'aw-form',
-                context: this,
-                item: this.selectedItem,
-                identity: this.identity,
-                parentIdentity: this.parentIdentity,
-                parent: this.parent
-              });
+          this.$emit('itemFfetched', this.selectedItem); // @deprecated
+          this.$awEemit('item-fetched', {
+            component: 'aw-form',
+            context: this,
+            item: this.selectedItem,
+            identity: this.identity,
+            parentIdentity: this.parentIdentity,
+            parent: this.parent
+          });
         })
         .catch(this.apiErrorCallback)
         .finally(() => {

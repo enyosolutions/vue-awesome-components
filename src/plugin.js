@@ -10,6 +10,8 @@ import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 import AwesomeCrud from './components/crud/AwesomeCrud.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
 import AwesomeKanban from './components/table/AwesomeKanban.vue';
+import AwesomeList from './components/table/AwesomeList.vue';
+import AwesomeTable from './components/table/AwesomeTable.vue';
 
 import FormGenerator from './components/form/form-generator';
 
@@ -22,7 +24,7 @@ import EnyoStatsCard from './components/card/EnyoStatsCard.vue';
 import TableAndChartsCard from './components/card/TableAndChartsCard.vue';
 
 import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
-import AwesomeTable from './components/table/AwesomeTable.vue';
+
 import notificationsMixin from './mixins/notificationsMixin.js';
 
 
@@ -65,10 +67,20 @@ const install = (Vue, options) => {
     //       comp.props = _.merge(AwesomeCrud.props, options.global.props);
     //     })
     // }
+    Vue.prototype.awComponentsConfig = {};
+
+    if (options.config) {
+      Vue.prototype.awComponentsConfig = options.config;
+    }
     if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
       AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
-
+    if (options['AwesomeForm'] && options['AwesomeForm'].props) {
+      AwesomeForm.props = _.merge(AwesomeForm.props, options['AwesomeForm'].props);
+    }
+    if (options['AwesomeList'] && options['AwesomeList'].props) {
+      AwesomeList.props = _.merge(AwesomeList.props, options['AwesomeList'].props);
+    }
     if (options['AwesomeTable'] && options['AwesomeTable'].props) {
       AwesomeTable.props = _.merge(AwesomeTable.props, options['AwesomeTable'].props);
     }
@@ -103,6 +115,7 @@ const install = (Vue, options) => {
   Vue.component('ajax-table', AwesomeTable);
   Vue.component('enyo-ajax-table', AwesomeTable);
   Vue.component('AwesomeTable', AwesomeTable);
+  Vue.component('AwesomeList', AwesomeList);
 
   Vue.component('AwesomeForm', AwesomeForm);
 

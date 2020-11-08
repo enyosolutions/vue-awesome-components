@@ -1,10 +1,11 @@
 import _ from 'lodash';
+import Vue from 'vue';
 
 export default {
   props: {
     modelsStorePath: {
       type: String,
-      default: 'data.models',
+      default: (Vue.prototype.awComponentsConfig && Vue.prototype.awComponentsConfig.modelsStorePath) || 'data.models',
       note:
         'Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models'
     }
@@ -37,7 +38,7 @@ export default {
       } else {
         let model = this.getModelFromStore(prop.relation);
         if (!model) {
-          console.warn('[relationMixin][raceCondition] model not found for ', prop.relation, this.getModelFromStore(prop.relation), this.modelsStorePath);
+          console.warn('[relationMixin][raceCondition] model not found for', prop.relation, 'in', this.modelsStorePath);
         }
         return model ? model.url || model.apiUrl : '';
       }

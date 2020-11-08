@@ -15,6 +15,7 @@ export default {
     _isNestedDetail() {
       return (
         this._isNested &&
+        // ((this.selectedItem && this.selectedItem[this.primaryKey]) ||
         ((this.selectedItem && this.selectedItem[this.primaryKey]) ||
           this.nestedDisplayMode === 'view' ||
           this.nestedDisplayMode === 'edit')

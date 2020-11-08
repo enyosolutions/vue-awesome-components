@@ -395,6 +395,8 @@ import { Skeleton } from 'vue-loading-skeleton';
 import apiErrors from '../../mixins/apiErrorsMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import i18nMixin from '../../mixins/i18nMixin';
+import awEmitMixin from '../../mixins/awEmitMixin';
+
 import { defaultActions } from '../../mixins/defaultProps';
 
 import _ from 'lodash';
@@ -421,7 +423,7 @@ export default {
     popper: Popper,
     Skeleton
   },
-  mixins: [i18nMixin, apiErrors, apiListMixin],
+  mixins: [i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {
     columns: {
       type: Array,

@@ -7,7 +7,7 @@ import _ from 'lodash';
 export default {
   props: {
     primaryKey: { type: String, default: 'id' },
-    url: { type: String, default: '' },
+    url: { type: [String, Function], default: '' },
     apiRequestConfig: {
       type: Object,
       note: 'This object define the configuration for talking to the api : filters, sort, pagination, etc',
@@ -87,7 +87,7 @@ export default {
         (this.field && this.field.url) ||
         (this.field && this.field.fieldoptions.url) ||
         (this.mergedOptions && this.mergedOptions.url) ||
-        `/${this.modelName}`;
+        `/${this.identity}`;
       if (typeof url === 'function') {
         return url({
           parent: this.parent,
