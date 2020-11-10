@@ -335,10 +335,11 @@
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': activeNestedTab === 'general'
+                                'active show': !activeNestedTab || activeNestedTab === 'general'
                               }"
                             >
                               <VueFormGenerator
+                                v-if="!activeNestedTab || activeNestedTab === 'general'"
                                 :schema.sync="formSchema"
                                 :model="selectedItem"
                                 :options="formOptions"
