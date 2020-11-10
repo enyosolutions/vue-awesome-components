@@ -909,6 +909,7 @@ export default {
     name: 'loadModel',
     identity: 'loadModel',
     model: 'loadModel',
+    mode: 'loadModel',
     options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
     item: 'loadModel'
@@ -934,6 +935,9 @@ export default {
       this.identity = this.modelName;
     }
     this.loadModel();
+    if (this.item) {
+      this.selectedItem = this.item;
+    }
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
       if (this.$route.params.id) {
@@ -963,7 +967,7 @@ export default {
 
     const action = `${this.mode}Function`;
     if (this[action]) {
-      this[action](this.item);
+      this[action](this.selectedItem);
     } else {
       throw new Error('no_action_available_for_mode_' + this.mode);
     }
@@ -1322,7 +1326,7 @@ export default {
     close() {
       //eslint-disable-next-line
       this.closeModal();
-      this.$emit('closeRequested', null, { context: this.mode });
+      this.$emit('closeRequested', this.item, { context: this.mode });
     },
 
     goToEditPage(item) {
