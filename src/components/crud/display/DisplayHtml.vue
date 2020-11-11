@@ -1,5 +1,16 @@
 <template>
-  <div v-bind="$props" class="pointer" :class="$props.classes" :style="$props.styles" v-html="$props.value"></div>
+  <!-- <div v-bind="$props" class="pointer" :class="$props.classes" :style="$props.styles" v-html="$props.value"></div> -->
+  <div>
+    <iframe
+      v-bind="$props"
+      value=""
+      class="aw-display-iframe"
+      :class="$props.classes"
+      :style="$props.styles"
+      :srcdoc="$props.value"
+      frameborder="0"
+    ></iframe>
+  </div>
 </template>
 
 <script>
@@ -11,4 +22,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.aw-display-iframe {
+  width: 100%;
+}
+</style>
