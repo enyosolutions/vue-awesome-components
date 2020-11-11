@@ -13,14 +13,14 @@ import qs from 'qs';
 import VueI18n from "vue-i18n";
 import axios from 'axios';
 import Datetime from 'vue-datetime';
-import VueFormGenerator from './components/form/form-generator';
+import FormGenerator from './components/form/form-generator';
+import notificationsMixin from './mixins/notificationsMixin';
 import VueGoodTablePlugin from 'vue-good-table';
 import VueRouter from 'vue-router';
 import Multiselect from 'vue-multiselect'
 
 import App from './App.vue';
 import VueEnyoComponents from './plugin';
-import { FormGenerator, notificationsMixin } from 'vue-aw-components';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Importing Lodash
@@ -36,11 +36,11 @@ Vue.use(VueRouter);
 
 Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
-Vue.component('vue-form-generator', VueFormGenerator, []);
+Vue.component('vue-form-generator', FormGenerator, []);
 Vue.mixin(notificationsMixin);
 
-Vue.use(VueFormGenerator, {
-  fields: _.values(VueFormGenerator.fieldsLoader)
+Vue.use(FormGenerator, {
+  fields: _.values(FormGenerator.fieldsLoader)
 });
 
 
