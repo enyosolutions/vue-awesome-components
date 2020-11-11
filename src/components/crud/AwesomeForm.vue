@@ -231,7 +231,7 @@
                               class="nav-link"
                               :class="{ active: activeNestedTab === ns.identity }"
                               data-toggle="tab"
-                              @click="activeNestedTab = ns.identity"
+                              @click="activeNestedTab = (ns && ns.identity) || 'general'"
                             >
                               <i v-if="ns.icon" :class="ns.icon" />
                               {{ $t(ns.title || ns.name || ns.identity) }}
@@ -526,6 +526,7 @@ import GroupedForm from "./layout/GroupedForm.vue";
 import 'vue-good-table/dist/vue-good-table.css';
 import AwesomeCrud from './AwesomeCrud';
 import AwesomeLayout from './layout/AwesomeLayout';
+import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 const defaultOptions = {
   mode: 'local',
@@ -909,7 +910,7 @@ export default {
     name: 'loadModel',
     identity: 'loadModel',
     model: 'loadModel',
-    mode: 'loadModel',
+    mode: 'onModeChanged',
     options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
     item: 'loadModel'
@@ -923,7 +924,6 @@ export default {
         // console.warn(err.message);
       }
     }
-    this.loadModel();
   },
   mounted() {
     if (this.nestedSchemas && this.nestedSchemas.length) {
@@ -934,9 +934,14 @@ export default {
     if (this.modelName) {
       this.identity = this.modelName;
     }
-    this.loadModel();
+
     if (this.item) {
       this.selectedItem = this.item;
+    }
+
+    this.loadModel();
+    if (this.mode === 'create') {
+      this.selectedItem = createDefaultObject(this.formSchema);
     }
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
@@ -1008,6 +1013,12 @@ export default {
       this.statsNeedsRefresh = true;
     },
 
+    onModeChanged(newmode, oldMode) {
+      if (newmode === 'create') {
+        this.selectedItem = createDefaultObject(this.formSchema);
+      }
+      this.loadModel();
+    },
     mergeOptions() {
       /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
       if (this.options.deletePermitted && this._actions.delete) {
@@ -1123,10 +1134,10 @@ export default {
         this.nestedViewFunction();
       }
 
-      if (this.mode !== 'bulkEdit') {
-        this.selectedItem = this.item;
+      if (this.mode === 'bulkEdit' || this.mode === 'create') {
+        this.selectedItem = {} || createDefaultObject(this.formSchema);
       } else {
-        this.selectedItem = {};
+        this.selectedItem = this.item;
       }
       if (!this._url) {
         return;
@@ -1155,7 +1166,7 @@ export default {
           .catch(this.apiErrorCallback)
           .finally(() => {
             this.isRefreshing = false;
-            this.needsRefresh = false;
+            this.$emit('input:needs-refresh', false);
           });
       }
     },

@@ -51,7 +51,7 @@
             createPageLayoutComputed
             :item="selectedItem"
             :bulk-items="selectedItems"
-            :needs-refresh="awesomeEditNeedsRefresh"
+            :needs-refresh.sync="awesomeEditNeedsRefresh"
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
@@ -306,6 +306,7 @@ import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
+import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
 
@@ -1154,17 +1155,19 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
+      // console.warn('setDisplayMode', mode, item);
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
-      if (item && mode !== 'bulkEdit') {
-        this.selectedItem = item;
-        this.selectedItems = [];
-      } else {
+      if (mode === 'bulkEdit') {
         this.selectedItem = {};
         this.selectedItems = item;
+      } else {
+        this.selectedItem = item;
+        this.selectedItems = [];
       }
       this.displayMode = mode;
-      if (mode === 'table') {
+      if (['table', 'list', 'kanban'].indexOf(mode) > -1) {
         this.tableNeedsRefresh = options.refresh;
+        this.selectedItem = {};
       } else {
         this.awesomeEditNeedsRefresh = options.refresh;
       }
@@ -1175,12 +1178,12 @@ export default {
         return this.$router.push(this.mergedOptions.createPath);
       }
       if (options.reset) {
-        this.selectedItem = {};
+        this.selectedItem = createDefaultObject(this.formSchema);
       }
       if (options.editLayoutMode) {
         this.editLayoutMode = options.editLayoutMode;
       }
-      this.setDisplayMode('create', null);
+      this.setDisplayMode('create', this.selectedItem);
       if (this.useRouterMode) {
         window.history.replaceState({}, null, `${this.parentPath}/new`);
       }
