@@ -234,7 +234,7 @@
                               @click="activeNestedTab = (ns && ns.identity) || 'general'"
                             >
                               <i v-if="ns.icon" :class="ns.icon" />
-                              {{ $t(ns.title || ns.name || ns.identity) }}
+                              {{ upperFirst($t(ns.namePlural || ns.title || ns.identity)) }}
                             </a>
                           </li>
                         </template>
@@ -993,6 +993,7 @@ export default {
   methods: {
     $alert: Swal,
     startCase: _.startCase,
+    upperFirst: _.upperFirst,
     refreshComponent() {
       // eslint-disable-next-line
       console.log('refresh component watcher');
