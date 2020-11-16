@@ -10,7 +10,9 @@
 
 ## props
 
+<ClientOnly>
 <ComponentDoc component="EnyoStats" />
+</ClientOnly>
 
 
 ## Examples

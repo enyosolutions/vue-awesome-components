@@ -25,7 +25,9 @@
 ## props
 
 
+<ClientOnly>
 <ComponentDoc :component="'AwesomeTable'" />
+</ClientOnly>
 
 
 ## columns types
