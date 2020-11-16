@@ -8,6 +8,7 @@
 
 # Vue Awesome Crud Examples
 
-<!--
+
+<ClientOnly>
 <AwesomeCrudDemo />
--->
+</ClientOnly>

@@ -192,5 +192,7 @@ This component magically create lists and edit data based on a json schema.
 
 ## props
 
-< ComponentDoc :component="'AwesomeCrud'" / >
+<ClientOnly>
+<ComponentDoc :component="'AwesomeCrud'" />
+</ClientOnly>
 
