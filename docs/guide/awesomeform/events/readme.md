@@ -1,11 +1,15 @@
-# Events of Ajax table
+---
+sidebar: auto
+---
 
-The AjaxTable component features some events to create some interaction.
+# Events of AwesomeTable
+
+The AwesomeTable component features some events to create some interaction.
 
 ## refresh
 
 Called when the refresh button is clicked
-['image']!(./images/ajaxtable-refresh.png)
+['image']!(./images/awesometable-refresh.png)
 
 
 ## create

@@ -39,28 +39,28 @@
 </template>
 <script>
 import marked from 'marked';
-import VueEnyoComponents from '../../../src';
+import VueAwesomeComponents from '../../../src';
 export default {
   name: 'ComponentDoc',
   props: {
     component: {
       type: [Object, String],
-      required: true,
+      required: true
     },
     documentation: {
-      type: Object,
+      type: Object
     },
     ignoreMixins: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   mounted() {},
   data() {
     return {
       _component: {},
       merged: this.process(this.component, this.documentation),
-      typesForCodeTag: ['array', 'object', 'function'],
+      typesForCodeTag: ['array', 'object', 'function']
     };
   },
   getDoc(component, documentation, ignoreMixins) {
@@ -69,10 +69,10 @@ export default {
   mounted() {},
   methods: {
     process(component, documentation, ignoreMixins) {
-    //  let VueEnyoComponents = {};
+      //  let VueAwesomeComponents = {};
       let _component;
-      if (typeof component === 'string' && VueEnyoComponents[component]) {
-        _component = VueEnyoComponents[component];
+      if (typeof component === 'string' && VueAwesomeComponents[component]) {
+        _component = VueAwesomeComponents[component];
       } else {
         _component = component;
       }
@@ -94,7 +94,7 @@ export default {
       if (!match) return text;
       const indent = Math.min.apply(
         Math,
-        match.map(x => x.length)
+        match.map((x) => x.length)
       );
       const re = new RegExp(`^[ \\t]{${indent}}`, 'gm');
       return indent > 0 ? text.replace(re, '') : text;
@@ -116,7 +116,7 @@ export default {
           required: v.required || false,
           default: this.getDefault(v.default, v.type, objInfo),
           // defaultTypeStr - this will be sets from the function which is on line above (getDefault)
-          note: v.note || '',
+          note: v.note || ''
         });
 
         map[k] = objInfo;
@@ -136,7 +136,7 @@ export default {
       // if default is function
       if (dTypeStr === 'function') {
         // if there are types object or array and not function
-        if (['array', 'object'].some(i => typeStr.includes(i)) && !typeStr.includes('function')) {
+        if (['array', 'object'].some((i) => typeStr.includes(i)) && !typeStr.includes('function')) {
           // get result from function
           const dResult = d();
 
@@ -172,8 +172,8 @@ export default {
     },
     hasMixins(component) {
       return typeof component.mixins !== 'undefined';
-    },
-  },
+    }
+  }
 };
 
 function getTypeString(variable) {

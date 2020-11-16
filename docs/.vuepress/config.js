@@ -1,9 +1,13 @@
 module.exports = {
-  title: "Enyo vue components",
+  title: "Vue Awesome Components",
   description: "Components to speed up the development of a backoffice.",
   // base: "/vue-aw-components",
   base: "/",
   head: [
+    ['meta', { name: 'theme-color', content: 'orange' }],
+    ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
+    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
+    ,
     [
       "link",
       {
@@ -22,12 +26,12 @@ module.exports = {
     ]
   ],
   themeConfig: {
-    logo: "http://www.enyosolutions.com/data/uploads/156320809647.png",
+    logo: "https://www.enyosolutions.com/theme/images/rocket.svg",
     nav: [
       { text: "Home", link: "/" },
       { text: "Components", link: "/guide/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
-      { text: "AwesomeTable", link: "/guide/ajaxtable/" },
+      { text: "AwesomeTable", link: "/guide/awesometable/" },
       {
         text: "Github",
         link: "https://github.com/enyosolutions-team/vue-aw-components"
@@ -46,7 +50,7 @@ module.exports = {
       },
       {
         title: "Components", // required
-        path: "/Guide/", // optional, which should be a absolute path.
+        path: "/guide/", // optional, which should be a absolute path.
         collapsable: false, // optional, defaults to true
         sidebarDepth: 2, // optional, defaults to 1
         children: [
@@ -68,7 +72,7 @@ module.exports = {
               },
               {
                 title: "Events (wip)",
-                path: "/guide/awesomecrud/events.md"
+                path: "/guide/awesomecrud/events/readme.md"
               },
               {
                 title: "Css classes",
@@ -93,11 +97,12 @@ module.exports = {
               }
             ]
           },
-          { title: "Awesome Form", path: "/guide/awesomeform/" },
+
+          { title: "Awesome Form", path: "/guide/awesomeform/readme.md" },
           { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
           { title: "Awesome List", path: "/guide/awesomelist/" },
           { title: "Awesome Layout", path: "/guide/awesomelayout/" },
-          { title: "Awesome Event Bus", path: "/guide/awesomeBus/" },
+          { title: "Awesome Event Bus", path: "/guide/awesomeBus/readme.md" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },

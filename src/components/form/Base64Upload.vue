@@ -1,13 +1,8 @@
 <template>
   <div class="base64-upload">
-    <img :src="src" v-if="type == 'image'" :style="imageStyle" />
-    <p v-if="type != 'image'" :class="inputClass">{{ name || placeholder }}</p>
-    <input
-      type="file"
-      :disabled="disabled || readonly"
-      :accept="type == 'image' ? 'image/*' : '*'"
-      @change="onChange"
-    />
+    <img :src="srcComputed" v-if="isImage" :style="imageStyle" />
+    <p v-if="!isImage" :class="inputClass">{{ name || placeholder }}</p>
+    <input type="file" :disabled="disabled || readonly" :accept="isImage ? 'image/*' : '*'" @change="onChange" />
   </div>
 </template>
 
@@ -28,6 +23,25 @@ export default {
       src: this.imageSrc,
       name: ''
     };
+  },
+  computed: {
+    isImage() {
+      return (
+        (this.src && this.type && this.type.indexOf('image') === 0) ||
+        (this.src && this.src.type && this.src.type.indexOf('image') === 0)
+      );
+    },
+    srcComputed() {
+      let src = this.src || this.imageSrc;
+      if (!src) {
+        return '';
+      }
+      if (src && src.base64) {
+        src = src && src.base64 ? src.base64 : src;
+        return src.indexOf('data:') === 0 ? src : `data:${this.type};base64,${src}`;
+      }
+      return src;
+    }
   },
   methods: {
     onChange(event) {

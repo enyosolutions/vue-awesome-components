@@ -826,7 +826,7 @@ export default {
       this.numberOfRefreshCalls = 0;
       this.refreshHandle = setInterval(() => {
         if (this.numberOfRefreshCalls > 300) {
-          this.$notify({
+          this.$awNotify({
             title: 'too much calls, aborting tracking',
             type: 'warning'
           });
@@ -959,7 +959,7 @@ export default {
 
     exportCallBack() {
       if (!this.exportUrl) {
-        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
+        this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http

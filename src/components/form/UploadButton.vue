@@ -1,20 +1,9 @@
 <template>
   <div class="clearfix">
-    <button
-      type="button"
-      :class="options.class || 'btn btn-info'"
-      @click="buttonClick"
-    >
+    <button type="button" :class="options.class || 'btn btn-info'" @click="buttonClick">
       <i class="fa fa-file-excel"></i> {{ options.label || 'Upload' }}
     </button>
-    <input
-      ref="inputButton"
-      type="file"
-      name="file"
-      style="display: none"
-      visbility="hidden"
-      @change="filesChange"
-    >
+    <input ref="inputButton" type="file" name="file" style="display: none" visbility="hidden" @change="filesChange" />
   </div>
 </template>
 <script>
@@ -57,7 +46,7 @@ export default {
       if (this.options.maxSize) {
         const size = file.size && file.size / Math.pow(1000, 2);
         if (size > this.options.maxSize) {
-          this.$notify({
+          this.$awNotify({
             message: `Upload ${size} size exceeding`,
             type: 'warning'
           });
@@ -78,25 +67,22 @@ export default {
       const fieldName = e.target.name;
       const fileList = e.target.files;
 
-      Array.from(Array(fileList.length).keys()).map(x => {
+      Array.from(Array(fileList.length).keys()).map((x) => {
         formData.append(fieldName, fileList[x], fileList[x].name);
       });
 
       if (!this.options.targetUrl) {
-        this.$notify({ message: 'Upload Url is Required', type: 'warning' });
+        this.$awNotify({ message: 'Upload Url is Required', type: 'warning' });
         return;
       }
 
       if (!this.options.method) {
-        this.$notify({ message: 'Upload Method is Required', type: 'warning' });
+        this.$awNotify({ message: 'Upload Method is Required', type: 'warning' });
         return;
       }
 
-      this.$http[this.options.method.toLowerCase()](
-        this.options.targetUrl,
-        formData
-      )
-        .then(res => {
+      this.$http[this.options.method.toLowerCase()](this.options.targetUrl, formData)
+        .then((res) => {
           this.$emit('uploaded', res.data);
           setTimeout(() => {
             this.reset();
@@ -106,7 +92,7 @@ export default {
     },
     base64(e, file) {
       const reader = new FileReader();
-      reader.onload = e => {
+      reader.onload = (e) => {
         const dataURI = e.target.result;
         if (dataURI) {
           this.$emit('base64', dataURI);
@@ -117,5 +103,4 @@ export default {
   }
 };
 </script>
-<style>
-</style>
+<style></style>

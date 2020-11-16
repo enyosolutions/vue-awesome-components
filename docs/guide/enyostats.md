@@ -10,7 +10,7 @@
 
 ## props
 
-<ComponentDoc component="EnyoStats" />
+< ComponentDoc component="EnyoStats" />
 
 
 ## Examples

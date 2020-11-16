@@ -4,7 +4,7 @@ export default {
       if (err && !err.response) {
         // network error
         // console.log(err);
-        this.$notify({
+        this.$awNotify({
           title: this.$t('common.messages.network_error'),
           type: 'warning'
         });
@@ -17,7 +17,7 @@ export default {
       } else {
         message = this.parseErrorResponse(err.response || err.data || err);
       }
-      this.$notify({
+      this.$awNotify({
         title: message,
         type: 'warning'
       });

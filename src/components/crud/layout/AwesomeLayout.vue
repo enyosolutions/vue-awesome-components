@@ -157,7 +157,7 @@ export default {
 
       // check for existing fields
       if (items[index] && items[index].fields && items[index].fields.length) {
-        this.$notify({ title: this.$t('AwesomeLayout.messages.emptyBlockBeforeDelete'), type: 'warning' });
+        this.$awNotify({ title: this.$t('AwesomeLayout.messages.emptyBlockBeforeDelete'), type: 'warning' });
         return;
       }
       items.splice(index, 1);

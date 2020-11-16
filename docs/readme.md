@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: ''
-heroText: Enyo vue components
+heroText: Vue Awesome Components
 tagline: Super charge your dev with ready to use power components
 actionText: Get Started →
 actionLink: /guide/
@@ -16,9 +16,9 @@ footer: MIT Licensed | Copyright © 2019-present Enyosolutions
 ---
 
 
-## enyo Vue components
+## Vue Awesome Components
 
-Enyo vue components is a set of useful components  geared torwards the creation of quick back office pages. It features widgets and components to make your life easier.
+Vue Awesome Components is a set of useful components  geared torwards the creation of quick back office pages. It features widgets and components to make your life easier.
 
 
 

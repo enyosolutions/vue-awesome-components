@@ -10,7 +10,7 @@
 
 ## props
 
-<ComponentDoc component="TableAndChartsCard" />
+< ComponentDoc component="TableAndChartsCard" />
 
 
 ## Examples

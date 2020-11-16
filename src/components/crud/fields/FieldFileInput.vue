@@ -4,7 +4,7 @@
       :disabled="schema.disabled"
       :readonly="schema.readonly"
       :type="type"
-      :placeholder="_placeholder"
+      :placeholder="placeholderComputed"
       :inputClass="inputClass"
       :key="refresh"
       :image-src="value"
@@ -27,12 +27,14 @@ export default {
     return {
       refresh: Date.now(),
       type: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputType,
-      _placeholder:
-        this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder),
       inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
     };
   },
-  computed: {},
+  computed: {
+    placeholderComputed() {
+      return this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder);
+    }
+  },
   watch: {
     value(change, old) {
       if (change !== old) {
@@ -47,8 +49,11 @@ export default {
   beforeDestroy() {},
   methods: {
     onChangeImage(file) {
-      // console.log('Field File input', Object.keys(file));
-      this.value = file.base64;
+      console.warn('Field File input', Object.keys(file), this.type, file.type, file.name);
+      if (file && file.type.indexOf('image') > -1) {
+        this.type = file.type;
+      }
+      this.value = file;
     }
   }
 };

@@ -1,4 +1,4 @@
-# Enyo Ajax table
+# AwesomeTable
 
 ## presentation
 
@@ -10,7 +10,7 @@
 
 
 ```
-  <EnyoAjaxTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
+  <AwesomeTable  :title="title" :columns="tableColumns" :rows="dataSource" :tableNeedsRefresh="needsRefresh" :options="tableOptions">
   <template slot="table-actions"></template>
   <template slot="table-top-actions"></template>
   <template slot="table-top-more-actions"></template>
@@ -18,14 +18,14 @@
   <template slot="table-row-actions"></template>
 
   <!-- END OF ARRAY -->
-  </EnyoAjaxTable>
+  </AwesomeTable>
   ```
 
 
 ## props
 
 
-<ComponentDoc :component="'AwesomeTable'" />
+< ComponentDoc :component="'AwesomeTable'" />
 
 
 ## columns types
@@ -75,4 +75,4 @@
 
 ## Examples
 
-<AjaxTableDemo />
+<   AjaxTableDemo />

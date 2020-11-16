@@ -910,7 +910,7 @@ export default {
       }
 
       if (e.properData.length > 0) {
-        this.$notify({
+        this.$awNotify({
           title: this.$t('common.messages.successfullyImported', {
             title: this._title
           }),
@@ -925,7 +925,7 @@ export default {
         });
         message = message.substring(0, message.length - 2);
         setTimeout(() => {
-          this.$notify({
+          this.$awNotify({
             title: `${e.improperData.length} ${this.$t('common.messages.not_imported', {
               title: this._title
             })}`,
@@ -943,7 +943,7 @@ export default {
 
     exportTemplateCallBack() {
       if (!this.mergedOptions.importUrl) {
-        this.$notify({ title: '[WARN] missing export url', type: 'warning' });
+        this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
       this.$http

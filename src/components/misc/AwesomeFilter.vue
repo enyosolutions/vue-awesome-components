@@ -1,7 +1,7 @@
 <template>
   <div class="awesome-filter">
     <div class="filtering" v-if="editFilters">
-      <h6 class="card-subtitle text-muted mb-2">{{ $t("AwesomeFilter.labels.filterData") }}</h6>
+      <h6 class="card-subtitle text-muted mb-2">{{ $t('AwesomeFilter.labels.filterData') }}</h6>
       <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column">
           <button
@@ -11,11 +11,11 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            {{ Object.keys(currentField).length ? currentField.label : $t("AwesomeFilter.labels.fields") }}
+            {{ Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields') }}
           </button>
           <div class="dropdown-menu" aria-labelledby="field">
             <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{
-              $t("AwesomeFilter.labels.fields")
+              $t('AwesomeFilter.labels.fields')
             }}</a>
             <a
               href=""
@@ -38,11 +38,11 @@
             aria-expanded="false"
             :disabled="!(currentField && currentField.field)"
           >
-            {{ Object.keys(currentFilter).length ? currentFilter.text : $t("AwesomeFilter.labels.filters") }}
+            {{ Object.keys(currentFilter).length ? currentFilter.text : $t('AwesomeFilter.labels.filters') }}
           </button>
           <div class="dropdown-menu" aria-labelledby="filter">
             <a href="" @click.prevent="currentFilter = {}" class="dropdown-item">{{
-              $t("AwesomeFilter.labels.filters")
+              $t('AwesomeFilter.labels.filters')
             }}</a>
             <a
               href=""
@@ -54,7 +54,10 @@
             >
           </div>
         </div>
-        <div v-if="!['$isNull','$isNotNull','$isDefined','$isNotDefined'].includes(currentFilter.value)" class="column">
+        <div
+          v-if="!['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(currentFilter.value)"
+          class="column"
+        >
           <div v-if="Object.keys(currentField).length">
             <!-- TYPE NUMBER -->
             <input
@@ -94,11 +97,11 @@
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                {{ Object.keys(currentValue).length ? currentValue : $t("AwesomeFilter.labels.values") }}
+                {{ Object.keys(currentValue).length ? currentValue : $t('AwesomeFilter.labels.values') }}
               </button>
               <div class="dropdown-menu" aria-labelledby="field">
                 <a href="" @click.prevent="currentValue = ''" class="dropdown-item">{{
-                  $t("AwesomeFilter.labels.values")
+                  $t('AwesomeFilter.labels.values')
                 }}</a>
                 <a
                   href=""
@@ -194,18 +197,18 @@
           type="button"
           class="btn btn-primary btn-block"
         >
-          {{ $t("AwesomeFilter.labels.addFilter") }}
+          {{ $t('AwesomeFilter.labels.addFilter') }}
         </button>
       </div>
     </div>
     <div class="active-filter" v-if="displayFilters && advancedFilters && advancedFilters.length">
-      <h6 class="card-subtitle mb-2 text-muted">{{ $t("AwesomeFilter.labels.activeFilter") }}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{{ $t('AwesomeFilter.labels.activeFilter') }}</h6>
       <div class="chip-groups">
         <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in advancedFilters" :key="index">
           <div class="chip-content">
-            <span>{{ filter.field ? filter.field.label : "" }}</span>
+            <span>{{ filter.field ? filter.field.label : '' }}</span>
             <strong class="ml-2 mr-2">
-              {{ filter.filter ? filter.filter.text : "" }}
+              {{ filter.filter ? filter.filter.text : '' }}
             </strong>
             <div v-if="typeof filter.value === 'object'">
               <span v-for="(value, index) in filter.value" :key="index">
@@ -495,7 +498,7 @@ export default {
 
   .chip-groups {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
     height: auto;

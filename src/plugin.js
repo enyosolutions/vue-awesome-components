@@ -8,6 +8,7 @@ import FieldDateTime from './components/crud/fields/fieldDateTime.vue';
 import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 // import FieldDateRange from './components/crud/fields/fieldDateRange.vue';
 import AwesomeCrud from './components/crud/AwesomeCrud.vue';
+import AwesomeLayout from './components/crud/layout/AwesomeLayout.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
 import AwesomeKanban from './components/table/AwesomeKanban.vue';
 import AwesomeList from './components/table/AwesomeList.vue';
@@ -37,7 +38,7 @@ import {
  * You can register global components here and use them as a plugin in your main Vue instance
  */
 
-const install = (Vue, options) => {
+const install = (Vue, options = {}) => {
   // if (!Vue.$root.$options.components.multiselect) {
   //   // eslint-disable-next-line
   //   console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
@@ -67,6 +68,7 @@ const install = (Vue, options) => {
     //       comp.props = _.merge(AwesomeCrud.props, options.global.props);
     //     })
     // }
+    //    const { exclude } = options;
     Vue.prototype.awComponentsConfig = {};
 
     if (options.config) {
@@ -116,6 +118,7 @@ const install = (Vue, options) => {
   Vue.component('enyo-ajax-table', AwesomeTable);
   Vue.component('AwesomeTable', AwesomeTable);
   Vue.component('AwesomeList', AwesomeList);
+  Vue.component('AwesomeLayout', AwesomeLayout);
 
   Vue.component('AwesomeForm', AwesomeForm);
 
@@ -133,7 +136,7 @@ const install = (Vue, options) => {
   }
 
   if (!Vue.prototype.$notify) {
-    Vue.prototype.$notify = notificationsMixin.methods.$notify;
+    Vue.prototype.$notify = notificationsMixin.methods.$awNotify;
   }
   Vue.prototype._notify = notificationsMixin.methods.$notify;
 

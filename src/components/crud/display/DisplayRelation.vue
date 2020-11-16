@@ -164,8 +164,8 @@ export default {
 
     copy(value) {
       this.copyToClipboard(`${this.getLabel(value)}`);
-      if (this.$notify) {
-        this.$notify(
+      if (this.$awNotify) {
+        this.$awNotify(
           this.$te('awesome-display.value-copied') ? this.$t('awesome-display.value-copied') : 'Value copied'
         );
       }

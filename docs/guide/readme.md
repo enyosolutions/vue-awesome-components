@@ -3,47 +3,31 @@
 ## Dependencies
 
 This package depends on certain packages that must be intalled separately.
-
-- bootstrap
-- vue-form-generator https://github.com/vue-generators/vue-form-generator
-```
-npm install vue-form-generator@3.0.0-beta.4
-```
-
-
-- `vue-datetime` for the date and time pickers
-```
-npm install vue-datetime
-```
-
-
-
-- `crip-vue-loading` for loading animations https://github.com/tahq69/vue-loading
-```
-npm install crip-vue-loading
-```
+They are all listed in the peer dependencies of the project.
 
 
 
 ## install
 ```
+## add yarn to your project
 yarn add vue-aw-components
 ```
 
+
 Add in your main.js
 ```
-import VueEnyoComponents from 'vue-aw-components/plugin';
+import VueAwesomeComponents from 'vue-aw-components/plugin';
 
 // or to import separately the components you need
 
-import {EnyoCard, EnyoAjaxTable} from 'vue-aw-components';
+import {EnyoCard, AwesomeTable} from 'vue-aw-components';
 
 ```
 
 And for the styling you'll also need :
 
 ```
-import VueEnyoComponents from 'vue-aw-components/build/style.css';
+import VueAwesomeComponents from 'vue-aw-components/src/main.scss';
 
 ```
 

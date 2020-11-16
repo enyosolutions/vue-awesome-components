@@ -17,7 +17,7 @@
 ## props
 
 
-<ComponentDoc :component="'AwesomeForm'" />
+< ComponentDoc :component="'AwesomeForm'" />
 
 
 ## columns types
