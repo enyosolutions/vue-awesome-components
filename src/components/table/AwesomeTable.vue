@@ -930,7 +930,8 @@ export default {
       // second param is a deprecated one
       sort[field.field] = params[0].type || params[0].sortType;
       if (this.useRouterMode) {
-        this.$router.push({ query: { ...this.$route.query, sort } });
+        // @todo add change pushed change
+        // this.$router.push({ query: { ...this.$route.query, sort } });
       }
       // eslint-disable-next-line
       if (this.mode !== 'remote') {
