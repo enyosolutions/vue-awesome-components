@@ -49,7 +49,6 @@ export default {
   beforeDestroy() {},
   methods: {
     onChangeImage(file) {
-      console.warn('Field File input', Object.keys(file), this.type, file.type, file.name);
       if (file && file.type.indexOf('image') > -1) {
         this.type = file.type;
       }

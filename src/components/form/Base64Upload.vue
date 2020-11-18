@@ -9,13 +9,13 @@
 <script>
 export default {
   props: {
-    imageSrc: String,
+    imageSrc: [String, Object],
     inputClass: String,
     disabled: [String, Boolean],
     readonly: [String, Boolean],
     imageStyle: Object,
     type: { type: String, default: 'image' },
-    placeholder: { type: String, default: 'Choose a file' },
+    placeholder: { type: String, default: 'Click or drop a file' },
     accept: { type: String, default: '' }
   },
   data() {
@@ -74,7 +74,8 @@ export default {
 
 .base64-upload p {
   width: 100%;
-  border: 1px solid #999;
+  border: 1px solid #ccc;
+  border-radius: 3px;
   text-align: left;
   padding: 5px;
 }

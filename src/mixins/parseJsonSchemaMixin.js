@@ -2,6 +2,112 @@ import _ from 'lodash';
 
 export default {
   methods: {
+
+    getFormtype(property) {
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+
+      if (property.enum) {
+        return 'select';
+      }
+      if (property.relation || property.relationUrl) {
+        return 'VSelect';
+      }
+      switch (type) {
+        case 'string':
+          return 'input';
+        case 'integer':
+        case 'number':
+          return 'input';
+        case 'boolean':
+          return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
+        default:
+          return 'input';
+      }
+    },
+
+    getFormInputType(property) {
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+
+      switch (type) {
+        case 'string':
+          switch (property.format) {
+            case 'email':
+              return 'email';
+            case 'date-time':
+              return 'datetime';
+            default:
+              return 'text';
+          }
+        case 'number':
+        case 'integer':
+          return 'number';
+        case 'boolean':
+        case 'array':
+        case 'object':
+          return 'string';
+        default:
+          // console.error("type not known ", type, property);
+          return type;
+      }
+    },
+
+    getColumnType(property) {
+      if (property.column && property.column.type) {
+        return property.column.type;
+      }
+      if (property.columnType) {
+        return property.columnType;
+      }
+      let { type } = property;
+      if (Array.isArray(type)) {
+        const possibleTypes = ['string', 'number', 'boolean'];
+        for (let i = 0; i < possibleTypes.length; i++) {
+          if (property.type.indexOf(possibleTypes[i]) > -1) {
+            type = possibleTypes[i];
+          }
+        }
+      }
+      if (property.relation) {
+        return 'relation';
+      }
+      switch (type) {
+        case 'string':
+          switch (property.format) {
+            case 'date-time':
+              return 'text';
+            default:
+              return 'text';
+          }
+        case 'number':
+        case 'integer':
+          return 'number';
+        case 'boolean':
+          return 'boolean';
+        case 'array':
+        case 'object':
+          return 'object';
+        default:
+          return 'text';
+      }
+    },
+
+
     parseSchema(schema, prefix = '') {
       if (!schema.properties) {
         return [];
@@ -91,6 +197,7 @@ export default {
                 { id: '', label: '-' }
               ];
             }
+            // datetime picker icons
             if (field.type === 'dateTime') {
               field.fieldOptions.icons = {
                 time: 'fa fa-clock-o',
@@ -99,8 +206,20 @@ export default {
                 down: 'fa fa-arrow-down'
               };
             }
+
+            // default items for selects
             if (field.type === 'enyoSelect' && !field.fieldOptions.options) {
               field.options = field.values;
+            }
+
+            if (field.required) {
+              if (!field.validator) {
+                field.validator = [];
+              }
+              if (typeof (field.validator) === 'string') {
+                field.validator = [field.validator];
+              }
+              field.validator.push('required');
             }
             if (field.viewOptions && !field.displayOptions) {
               console.warn('@deprecated, please rename field.viewOptions into field.displayOptions');

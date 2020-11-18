@@ -90,6 +90,7 @@ module.exports = {
           type: 'number',
           title: 'the maximum number of characters',
         },
+
         fieldOptions: {
           title: 'Options to be used on custom forms fields like multiselect, toggle etc',
           properties: {
@@ -134,10 +135,9 @@ module.exports = {
           },
         },
         validator: {
-          type: 'Array',
+          type: ['string', 'array', 'function'],
           title: 'Validator',
-          description:
-            'the validators used to validate fields https://vue-generators.gitbook.io/vue-generators/validation/built-in-validators',
+          description: 'Custom validator to use to validate the field. can be default validators, or custom ones. Default validators are : required | number | integer | double | string | array | date | regexp (using field.pattern) | email | url | credit card | alpha | alphaNumeric',
           example: ['string'],
         },
       },

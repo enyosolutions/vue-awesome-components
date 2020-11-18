@@ -1,6 +1,6 @@
 <template>
   <div v-bind="$props" :class="$props.classes" :style="$props.styles">
-    <span class="pointer">
+    <span class="pointer" v-if="$props.src">
       <img :src="$props.src" alt="image" class="ajax-table-img" />
     </span>
   </div>

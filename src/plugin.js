@@ -148,6 +148,9 @@ const install = (Vue, options = {}) => {
 
   // DIRECTIVES
   Vue.directive('click-outside', vClickOutside);
+
+  // MIXINS
+  Vue.mixin(notificationsMixin);
 };
 
 export default install;

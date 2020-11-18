@@ -56,7 +56,7 @@
           <template slot="errors" slot-scope="{ childErrors, field, getValueFromOption }">
             <slot name="errors" :errors="childErrors" :field="field" :getValueFromOption="getValueFromOption">
               <div class="errors help-block">
-                <span v-for="(error, index) in childErrors" :key="index" v-html="error"></span>
+                <span v-for="(error, index) in childErrors" :key="index" v-html="translate(error)"></span>
               </div>
             </slot>
           </template>
@@ -192,6 +192,12 @@ export default {
   },
 
   methods: {
+    translate(...args) {
+      if ((this.$te, this.$te(...args))) {
+        return this.$t(...args);
+      }
+      return args && args[0];
+    },
     fillErrors(fieldErrors, errors, uid) {
       if (isArray(fieldErrors) && fieldErrors.length > 0) {
         fieldErrors.forEach((error) => {
@@ -308,7 +314,7 @@ export default {
   .form-control {
     // Default Bootstrap .form-control style
     display: block;
-    &:not([class*=" col-"]) {
+    &:not([class*=' col-']) {
       width: 100%;
     }
     padding: 6px 12px;
@@ -331,7 +337,7 @@ export default {
       display: inline-block;
       width: 16px;
       height: 14px;
-      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAA+UlEQVQ4ja3TS0oDQRAG4C8+lq7ceICICoLGK7iXuNBbeAMJuPVOIm7cqmDiIncIggg+cMZFaqCnZyYKWtB0df31V1VXdfNH6S2wD9CP8xT3KH8T9BiTcE7XBMOfyBcogvCFO9ziLWwFRosyV+QxthNsA9dJkEYlvazsQdi3sBv6Ol6TBLX+HWT3fcQZ3vGM5fBLk+ynAU41m1biCXvhs4OPBDuBpa6GxF0P8YAj3GA1d1qJfdoS4DOIcIm1DK9x8iaWeDF/SP3QU6zRROpjLDFLsFlibx1jJaMkSIGrWKntvItcyTBKzCcybsvc9ZmYz3kz9Ooz/b98A8yvW13B3ch6AAAAAElFTkSuQmCC");
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAA+UlEQVQ4ja3TS0oDQRAG4C8+lq7ceICICoLGK7iXuNBbeAMJuPVOIm7cqmDiIncIggg+cMZFaqCnZyYKWtB0df31V1VXdfNH6S2wD9CP8xT3KH8T9BiTcE7XBMOfyBcogvCFO9ziLWwFRosyV+QxthNsA9dJkEYlvazsQdi3sBv6Ol6TBLX+HWT3fcQZ3vGM5fBLk+ynAU41m1biCXvhs4OPBDuBpa6GxF0P8YAj3GA1d1qJfdoS4DOIcIm1DK9x8iaWeDF/SP3QU6zRROpjLDFLsFlibx1jJaMkSIGrWKntvItcyTBKzCcybsvc9ZmYz3kz9Ooz/b98A8yvW13B3ch6AAAAAElFTkSuQmCC');
       background-repeat: no-repeat;
       background-position: center center;
     } // .icon
@@ -363,7 +369,7 @@ export default {
     /* This bridges the gap so you can mouse into the tooltip without it disappearing */
     .helpText:before {
       bottom: -20px;
-      content: " ";
+      content: ' ';
       display: block;
       height: 20px;
       left: 0;
@@ -387,7 +393,7 @@ export default {
     }
 
     button,
-    input[type="submit"] {
+    input[type='submit'] {
       // Default Bootstrap button style
       display: inline-block;
       padding: 6px 12px;
