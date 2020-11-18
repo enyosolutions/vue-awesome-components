@@ -34,7 +34,7 @@ module.exports = {
       { text: "AwesomeTable", link: "/guide/awesometable/" },
       {
         text: "Github",
-        link: "https://github.com/enyosolutions-team/vue-aw-components"
+        link: "https://github.com/enyosolutions-team/vue-awesome-components/"
       }
     ],
     sidebar: [
@@ -52,7 +52,7 @@ module.exports = {
         title: "Components", // required
         path: "/guide/", // optional, which should be a absolute path.
         collapsable: false, // optional, defaults to true
-        sidebarDepth: 2, // optional, defaults to 1
+        sidebarDepth: 1, // optional, defaults to 1
         children: [
           {
             title: "Awesome Crud",
@@ -72,7 +72,7 @@ module.exports = {
               },
               {
                 title: "Events (wip)",
-                path: "/guide/awesomecrud/events/readme.md"
+                path: "/guide/awesomecrud/events.md"
               },
               {
                 title: "Css classes",
@@ -97,12 +97,11 @@ module.exports = {
               }
             ]
           },
-
-          { title: "Awesome Form", path: "/guide/awesomeform/readme.md" },
+          { title: "Awesome Form", path: "/guide/awesomeform/" },
           { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
           { title: "Awesome List", path: "/guide/awesomelist/" },
           { title: "Awesome Layout", path: "/guide/awesomelayout/" },
-          { title: "Awesome Event Bus", path: "/guide/awesomeBus/readme.md" },
+          { title: "Awesome Event Bus", path: "/guide/awesomeBus/" },
           { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
           { title: "EnyoStats", path: "/guide/enyostats.md" },
           { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
@@ -116,7 +115,7 @@ module.exports = {
       },
       {
         title: "Github",
-        path: "https://github.com/enyosolutions-team/vue-aw-components"
+        path: "https://github.com/enyosolutions-team/vue-awesome-components/"
       }
     ]
   }
