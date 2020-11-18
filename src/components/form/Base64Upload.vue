@@ -14,7 +14,7 @@ export default {
     disabled: [String, Boolean],
     readonly: [String, Boolean],
     imageStyle: Object,
-    type: { type: String, default: 'image' },
+    type: { type: String, default: 'text' },
     placeholder: { type: String, default: 'Click or drop a file' },
     accept: { type: String, default: '' }
   },

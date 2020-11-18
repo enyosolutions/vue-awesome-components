@@ -142,10 +142,9 @@ export default {
             const field = {
               type: (prop.field && prop.field.type) || this.getFormtype(prop),
               label: prop.title || prop.description || _.startCase(key),
-              placeholder: prop.description || prop.title || _.startCase(key),
+              placeholder: prop.placeholder,
               default: prop.default,
               fieldOptions: (prop.field && prop.field.fieldOptions) || {
-                placeholder: prop.description || prop.title || _.startCase(key),
                 url: relationUrl || prop.relationUrl || prop.relation,
                 trackBy: relationKey || prop.foreignKey || 'id',
                 label: relationLabel || 'label', // key label for enyo select >

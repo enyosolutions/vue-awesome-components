@@ -1,5 +1,5 @@
 <template>
-  <div class="input-group field-file-input">
+  <div class="input-group field-file-input aw-form-field-image-picker">
     <base64-upload
       :disabled="schema.disabled"
       :readonly="schema.readonly"
@@ -26,10 +26,7 @@ export default {
   data() {
     return {
       refresh: Date.now(),
-      type:
-        this.schema &&
-        this.schema.fieldOptions &&
-        (this.schema.fieldOptions.type || this.schema.fieldOptions.inputType),
+      type: 'image',
       inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
     };
   },
@@ -52,8 +49,8 @@ export default {
   beforeDestroy() {},
   methods: {
     onChangeImage(file) {
-      if (file && file.type.indexOf('image') > -1) {
-        this.type = file.type;
+      if (!file || !file.type.indexOf('image') > -1) {
+        return;
       }
       this.value = file;
     }

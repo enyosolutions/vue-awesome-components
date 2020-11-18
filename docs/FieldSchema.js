@@ -56,7 +56,7 @@ module.exports = {
           type: 'string',
           title: 'The type of the field, comming from https://vue-generators.gitbook.io/vue-generators/fields',
           example: 'EnyoSelect, dateTime, textArea',
-          enum: ['string', 'input', 'number', 'list-of-value', 'list-of-data', 'EnyoSelect', 'dateTime', 'textArea', 'VSelect', 'date', 'datetime', 'time'],
+          enum: ['string', 'input', 'number', 'list-of-value', 'list-of-data', 'EnyoSelect', 'dateTime', 'textArea', 'JsonTextarea', 'VSelect', 'date', 'datetime', 'time', 'fileInput', 'ImagePicker'],
         },
         inputType: {
           type: 'string',
