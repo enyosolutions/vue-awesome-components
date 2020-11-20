@@ -1,5 +1,15 @@
 # vue-aw-components
 
+
+- AwesomeCrud
+- AwesomeForm
+- AwesomeTable
+- AwesomeList
+- AwesomeLayout
+- AwesomeKanban
+- AwesomeBus
+
+
 ## Dependencies
 
 This package depends on certain packages that must be intalled separately.
