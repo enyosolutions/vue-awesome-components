@@ -1,4 +1,4 @@
-# vue-enyo-components
+# vue-awesome-components
 > Super charge your dev with ready to use power components
 
 A set of various vue components to simplify the creation of backoffices and admin panels.
