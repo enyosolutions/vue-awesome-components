@@ -1551,6 +1551,7 @@ export default {
         legend: this.identity,
         fields: this.formSchema.fields.map((f) => f.model)
       };
+
       this.$emit('layout-resetted', [newLayout]);
     },
 
