@@ -97,9 +97,9 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style lang="scss">
 @import '~bootstrap/dist/css/bootstrap.min.css';
-@import '../../../dist/css/app.css';
+@import '../../../src/main.scss';
 
 table {
   margin: 0px;
@@ -137,10 +137,10 @@ table {
   > thead > tr > th,
   > tfoot > tr > th {
     border-bottom-width: 1px;
-    font-size: $font-size-small;
+    font-size: 12px;
     text-transform: uppercase;
-    color: $dark-gray;
-    font-weight: $font-weight-normal;
+    color: #333;
+    font-weight: 400;
     padding-bottom: 5px;
     border-top: none !important;
     border-bottom: none;
@@ -148,7 +148,7 @@ table {
   }
 
   .td-actions .btn {
-    @include opacity(0.36);
+    opacity: 0.36;
 
     &.btn-xs {
       padding-left: 3px;
@@ -165,7 +165,7 @@ table {
 
     &:hover {
       .td-actions .btn {
-        @include opacity(1);
+        opacity: 1;
       }
     }
   }
@@ -186,10 +186,10 @@ table {
 
     thead > tr > th {
       border-bottom-width: 1px;
-      font-size: $font-size-small;
+      font-size: 12px;
       text-transform: uppercase;
-      color: $dark-gray;
-      font-weight: $font-weight-normal;
+      color: #555;
+      font-weight: 400;
       padding-bottom: 5px;
       border-top: none !important;
       border-bottom: none;
