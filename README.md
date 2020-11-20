@@ -5,6 +5,9 @@ A set of various vue components to simplify the creation of backoffices and admi
 
 See [Github](https://github.com/enyosolutions-team/vue-aw-components/).
 
+## Documentation
+
+https://enyosolutions-team.github.io/vue-awesome-components/
 
 ## Dependencies
 

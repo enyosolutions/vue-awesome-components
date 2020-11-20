@@ -1,8 +1,8 @@
 module.exports = {
   title: "Vue Awesome Components",
   description: "Components to speed up the development of a backoffice.",
-  // base: "/vue-aw-components",
-  base: "/",
+  base: "/vue-awesome-components/",
+  // base: "/",
   head: [
     ['meta', { name: 'theme-color', content: 'orange' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],

@@ -49,7 +49,7 @@ export default {
   beforeDestroy() {},
   methods: {
     onChangeImage(file) {
-      if (!file || !file.type.indexOf('image') > -1) {
+      if (!file || !file.type.indexOf('image') === -1) {
         return;
       }
       this.value = file;

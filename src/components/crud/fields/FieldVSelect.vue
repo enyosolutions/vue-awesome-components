@@ -134,7 +134,7 @@ export default {
   },
   computed: {
     fieldOptions() {
-      return this.schema.fieldOptions || {};
+      return this.schema.fieldOptions || this.$props.fieldOptions || {};
     },
     // we need to override the mixin definition
     internalOptions() {
@@ -334,11 +334,16 @@ export default {
       } else {
         label = this.get(item, this._labelField, '');
       }
-
+      if (this.fieldOptions.taggable) {
+        return item;
+      }
       return `${item[this._trackBy]} - ${label}`;
     },
 
     reduce(item) {
+      if (this.fieldOptions.taggable) {
+        return item && item[this._trackBy] ? item[this._trackBy] : item;
+      }
       return this.get(item, this._trackBy);
     },
 
@@ -359,13 +364,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
 .awesome-vue-select {
   width: 100%;
 }
 
-.awesome-vue-select .vs__clear {
+.vue-form-generator .awesome-vue-select button.vs__clear,
+.vue-form-generator .awesome-vue-select button.vs__deselect {
   border: none;
+  background: transparent;
 }
 
 .awesome-vue-select .v-select:not(.vs--open) {
@@ -378,6 +385,11 @@ export default {
 
 .awesome-vue-select .vs__clear {
   border: none;
+}
+
+.awesome-vue-select .vs__selected {
+  background: var(--primary, #eee);
+  color: white;
 }
 
 .aw-field-select-add-relation {

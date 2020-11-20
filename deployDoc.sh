@@ -20,6 +20,6 @@ git commit -m 'deploy: github pages'
 # git push -f git@github.com:<USERNAME>/vue-aw-components.github.io.git master
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:enyosolutions-team/vue-aw-components.git master:gh-pages
+git push -f git@github.com:enyosolutions-team/vue-awesome-components.git master:gh-pages
 
 cd -
