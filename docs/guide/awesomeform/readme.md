@@ -20,7 +20,7 @@
 <ClientOnly>
 <ComponentDoc :component="'AwesomeForm'" />
 </ClientOnly>
-
+displayMode
 
 ## columns types
 

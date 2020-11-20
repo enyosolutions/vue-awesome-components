@@ -667,6 +667,17 @@ export default {
       type: String,
       required: false,
       default: 'sidebar',
+      node: `Manages the way the form is displayed. This field is relevant mostly when using Awesome form as part of AwesomeCrud.
+
+        'modal': Display as a modal
+        'fade': (legacy)  Display as a modal
+        'slide': (legacy)  Display as right size side menu
+        'sidebar':   Display as right size side menu
+        'sidebar-right':   Display as right size side menu
+        'sidebar-left':  Display as Left size side menu
+        'fullscreen':   Display as a full screen component
+        'page':   Display as a full screen component
+      `,
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
         return (
