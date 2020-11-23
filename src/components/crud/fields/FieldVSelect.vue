@@ -334,8 +334,9 @@ export default {
       } else {
         label = this.get(item, this._labelField, '');
       }
+
       if (this.fieldOptions.taggable) {
-        return item;
+        return label || item;
       }
       return `${item[this._trackBy]} - ${label}`;
     },
@@ -388,7 +389,7 @@ export default {
 }
 
 .awesome-vue-select .vs__selected {
-  background: var(--primary, #eee);
+  background: var(--primary, #eee) !important;
   color: white;
 }
 
