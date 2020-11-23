@@ -29,6 +29,7 @@ module.exports = {
     logo: "https://www.enyosolutions.com/theme/images/rocket.svg",
     nav: [
       { text: "Home", link: "/" },
+      { text: "Getting started", link: "/guide/" },
       { text: "Components", link: "/guide/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
       { text: "AwesomeTable", link: "/guide/awesometable/" },
@@ -53,62 +54,72 @@ module.exports = {
         path: "/guide/", // optional, which should be a absolute path.
         collapsable: false, // optional, defaults to true
         sidebarDepth: 1, // optional, defaults to 1
+      },
+      {
+        title: "Awesome Table",
+        path: "/guide/awesometable/",
+        sidebarDepth: 1,
+        collapsable: true,
         children: [
+          { title: "Presentation", path: "/guide/awesometable/" },
+          { title: "Props", path: "/guide/awesometable/props.md" },
           {
-            title: "Awesome Crud",
-            path: "/guide/awesomecrud/",
-            sidebarDepth: 2,
-            collapsable: true,
-            children: [
-              { title: "Introduction", path: "/guide/awesomecrud/" },
-              { title: "AwesomeCrud Props", path: "/guide/awesomecrud/props.md" },
-              {
-                title: "Configuration of the schema",
-                path: "/guide/awesomecrud/schema-configuration.md"
-              },
-              {
-                title: "Configuration Options",
-                path: "/guide/awesomecrud/configuration-options.md"
-              },
-              {
-                title: "Events (wip)",
-                path: "/guide/awesomecrud/events.md"
-              },
-              {
-                title: "Css classes",
-                path: "/guide/awesomecrud/classes.md"
-              },
-              {
-                title: "Examples",
-                path: "/guide/awesomecrud/examples.md"
-              }
-            ]
+            title: "Events",
+            path: "/guide/awesometable/events.md"
           },
           {
-            title: "Awesome Table",
-            path: "/guide/awesometable/",
-            sidebarDepth: 1,
-            collapsable: true,
-            children: [
-              { title: "Presentation", path: "/guide/awesometable/" },
-              {
-                title: "Events",
-                path: "/guide/awesometable/events.md"
-              }
-            ]
-          },
-          { title: "Awesome Form", path: "/guide/awesomeform/" },
-          { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
-          { title: "Awesome List", path: "/guide/awesomelist/" },
-          { title: "Awesome Layout", path: "/guide/awesomelayout/" },
-          { title: "Awesome Event Bus", path: "/guide/awesomeBus/" },
-          { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
-          { title: "EnyoStats", path: "/guide/enyostats.md" },
-          { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
-          { title: "EnyoSelect", path: "/guide/enyoselect.md" },
-
+            title: "Examples",
+            path: "/guide/awesometable/examples.md"
+          }
         ]
       },
+      {
+        title: "Awesome Crud",
+        path: "/guide/awesomecrud/",
+        sidebarDepth: 1,
+        collapsable: true,
+        children: [
+          { title: "Introduction", path: "/guide/awesomecrud/" },
+          {
+            title: "Props",
+            path: "/guide/awesomecrud/props.md"
+          },
+          {
+            title: "Configuration of the schema",
+            path: "/guide/awesomecrud/schema-configuration.md"
+          },
+          {
+            title: "Configuration Options",
+            path: "/guide/awesomecrud/configuration-options.md"
+          },
+
+          {
+            title: "Actions",
+            path: "/guide/awesomecrud/actions.md"
+          },
+          {
+            title: "Events (wip)",
+            path: "/guide/awesomecrud/events.md"
+          },
+          {
+            title: "Css classes",
+            path: "/guide/awesomecrud/classes.md"
+          },
+          {
+            title: "Examples",
+            path: "/guide/awesomecrud/examples.md"
+          }
+        ]
+      },
+      { title: "Awesome Form", path: "/guide/awesomeform/" },
+      { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
+      { title: "Awesome List", path: "/guide/awesomelist/" },
+      { title: "Awesome Layout", path: "/guide/awesomelayout/" },
+      { title: "Awesome Event Bus", path: "/guide/awesomeBus/" },
+      { title: "TableAndChartsCard", path: "/guide/tableandchartscard" },
+      { title: "EnyoStats", path: "/guide/enyostats.md" },
+      { title: "EnyoChartCard", path: "/guide/enyochartcard.md" },
+      { title: "EnyoSelect", path: "/guide/enyoselect.md" },
       {
         title: "Next steps",
         path: "/next-steps.md"

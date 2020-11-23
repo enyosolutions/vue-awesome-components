@@ -1,4 +1,29 @@
-# Events of Ajax table
+# Events of AwesomeTable
+
+
+
+## events
+
+
+| Type              | description                                                             |
+|-------------------|-------------------------------------------------------------------------|
+| dataChanged       | after the request to get list of items for the table is sent to the api |
+| crud-list-updated | after the request to get list of items for the table is sent to the api |
+| afterRefresh      | after the local refresh of the table (no api)                           |
+
+
+## Awesome bus events
+
+
+| Type               | description                                                              |
+|--------------------|--------------------------------------------------------------------------|
+| before-api-refresh | Before the request to get list of items for the table is sent to the api |
+| table-refreshed    | after the request to get list of items for the table is sent to the api  |
+
+
+
+
+
 
 The AjaxTable component features some events to create some interaction.
 

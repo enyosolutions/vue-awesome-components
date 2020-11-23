@@ -1,8 +1,6 @@
 ---
-{
-  "title": "Awesome Crud",
+  "title": "Awesome Crud"
   "lang": "en-US"
-}
 ---
 
 
@@ -156,61 +154,3 @@ This component magically create lists and edit data based on a json schema.
 
 ```
 
- ## configure forms
-
-
- ### Display mode
-
-   `detailPageMode: 'sidebar', // modal | sidebar | `
-
- ### fields types
-
-
-  ### Actions
-
-  The crud compoenent allows to define which actions are enabled on a component. There are many default actions that can be configured.
-
-  - create
-  - edit
-  - noActions (globally disable all actions)
-  - search
-  - filter
-  - create
-  - view
-  - delete
-  - export
-  - import
-  - dateFilter
-  - refresh
-
-
-  ### custom actions
-
-  In addition to the default actions on a awesome crud it's also possible to create custom actions.
-
-
-
-## props
-
-<ClientOnly>
-<ComponentDoc :component="'AwesomeCrud'" />
-</ClientOnly>
-
-## Options prop fields
-
-The options property is an option object that controls various behaviors of the awesomecrud component.
-
-###  detailPageMode:
-
-Manages the way the form is displayed. This field is relevant mostly when using Awesome form as part of AwesomeCrud.
-
-####  Possbile values :
-
-- modal': Display as a modal
-- fade': (legacy)  Display as a modal
-- slide': (legacy)  Display as right size side menu
-- sidebar':   Display as right size side menu
-- sidebar-right':   Display as right size side menu
-- sidebar-left':  Display as Left size side menu
-- fullscreen':   Display as a full screen component
-- page':   Display as a full screen component

@@ -1,0 +1,4 @@
+# Examples
+<ClientOnly>
+<AjaxTableDemo/>
+</ClientOnly>

@@ -1,13 +1,16 @@
 <template>
-  <article v-if="merged && merged.name" class="propdoc">
+  <article v-if="merged && merged.name" class=" aw-propdoc propdoc">
     <table v-if="merged.props" class="props">
-      <tr class="proprow labels">
+      <tr class="proprow labels header">
         <th class="propcol name required">
           name
           <span>(required)</span>
         </th>
         <th class="propcol type">
           type
+        </th>
+        <th class="propcol default">
+          Possible values
         </th>
         <th class="propcol default">
           default
@@ -17,22 +20,46 @@
         </th>
       </tr>
       <tr v-for="(propinfo, propname) in merged.props" :key="propname" class="proprow">
-        <td class="propcol name" :class="{ required: propinfo.required }">
-          <span>{{ propname }}</span>
-        </td>
-        <td class="propcol type">
-          {{ propinfo.type }}
-        </td>
-        <td class="propcol default">
-          <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
-          <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap;">{{
-            propinfo.default
-          }}</code>
-          <span v-else>{{ propinfo.default }}</span>
-        </td>
-        <td class="propcol notes">
-          {{ propinfo.note }}
-        </td>
+        <slot name="prop-row" v-bind:prop="propinfo">
+          <td class="propcol name" :class="{ required: propinfo.required }">
+            <slot name="prop-col-name" v-bind:prop="propinfo">
+              <span>{{ propinfo.name }}</span>
+            </slot>
+          </td>
+          <td class="propcol type">
+            <slot name="prop-col-type" v-bind:prop="propinfo">
+              {{ propinfo.type }}
+            </slot>
+          </td>
+          <td class="propcol default">
+            <slot name="prop-col-values" v-bind:prop="propinfo">
+              <template v-if="propinfo.values">
+                <template v-if="Array.isArray(propinfo.values)">
+                  <span class="badge badge-primary" v-for="val in propinfo.values" :value="val" v-bind:key="val">{{
+                    val
+                  }}</span>
+                </template>
+                <template v-else>
+                  <span>{{ propinfo.values }}</span>
+                </template>
+              </template>
+            </slot>
+          </td>
+          <td class="propcol default">
+            <slot name="prop-col-default" v-bind:prop="propinfo">
+              <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
+              <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap;">{{
+                propinfo.default
+              }}</code>
+              <span v-else>{{ propinfo.default }}</span>
+            </slot>
+          </td>
+          <td class="propcol notes">
+            <slot name="prop-col-description" v-bind:prop="propinfo">
+              {{ propinfo.note || propinfo.description }}
+            </slot>
+          </td>
+        </slot>
       </tr>
     </table>
   </article>
@@ -112,11 +139,14 @@ export default {
         let objInfo = {};
 
         objInfo = Object.assign(objInfo, {
+          name: k,
           type: this.getType(v.type),
           required: v.required || false,
+          values: v.values || false,
           default: this.getDefault(v.default, v.type, objInfo),
           // defaultTypeStr - this will be sets from the function which is on line above (getDefault)
-          note: v.note || ''
+          note: v.note || '',
+          description: v.description || ''
         });
 
         map[k] = objInfo;
@@ -183,3 +213,45 @@ function getTypeString(variable) {
     .toLowerCase();
 }
 </script>
+
+<style>
+.badge {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 3px;
+  padding: 0 6px;
+  color: #fff;
+  background: var(--primary, #fe4d17);
+}
+
+.badge.primary {
+  background: var(--primary, #fe4d17);
+}
+.badge.warning {
+  background: var(--primary, #fe4d17);
+}
+pre {
+  line-height: 1.4;
+  padding: 0.25rem 0.5rem;
+  margin: 0.85rem 0;
+  background-color: #282c34;
+  border-radius: 6px;
+  color: #fff;
+  overflow: auto;
+}
+
+.theme-default-content code {
+  background-color: #2c3e50;
+  color: #eee;
+  border-radius: 2px;
+  overflow: auto;
+  margin-bottom: 1px;
+}
+
+.theme-default-content .aw-propdoc code {
+  display: block;
+}
+</style>

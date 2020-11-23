@@ -502,7 +502,8 @@ export default {
 
     mode: {
       default: 'local',
-      type: String
+      type: String,
+      values: ['local', 'remote']
     }
   },
   data() {

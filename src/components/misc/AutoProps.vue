@@ -1,5 +1,5 @@
 <template>
-  <article v-if="merged" class="propdoc">
+  <article v-if="merged" class="propdoc aw-auto-props">
     <div>
       <slot v-bind:userProps="mergedProps">
         <div :is="component" v-bind="mergedProps" />
@@ -351,7 +351,7 @@ function getTypeString(variable) {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .props {
   .proprow:nth-child(even) {
     background-color: transparentize(#2b3b43, 0.95);
