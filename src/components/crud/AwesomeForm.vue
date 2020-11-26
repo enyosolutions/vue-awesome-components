@@ -101,6 +101,7 @@
                         <AwesomeLayout
                           v-if="_useCustomLayout"
                           :edit-mode="editLayoutMode"
+                          :fields-list="_getFieldsList"
                           :layout="layout"
                           @layout-updated="onLayoutUpdated"
                           @layout-fields-updated="onLayoutFieldsUpdated"
@@ -246,6 +247,7 @@
                               v-if="_useCustomLayout"
                               :edit-mode="editLayoutMode"
                               :layout="layout"
+                              :fields-list="_getFieldsList"
                               @layout-updated="onLayoutUpdated"
                               @layout-fields-updated="onLayoutFieldsUpdated"
                             >
@@ -915,7 +917,23 @@ export default {
 
     _schema() {
       return this.schema || (this._model && this._model.schema);
-    }
+    },
+
+    _getFieldsList() {
+      const fieldsList = [];
+      this.formSchema.fields.forEach((field) => {
+        let exist = false;
+        this.layout.forEach((layout) => {
+          if (_.includes(layout.fields, field.model)) {
+            exist = true;
+          }
+        })
+        if (!exist) {
+          fieldsList.push(field.model);
+        }
+      })
+      return fieldsList;
+    },
   },
   watch: {
     // call again the method if the route changes
@@ -1185,7 +1203,7 @@ export default {
     },
 
     getShemaForFields(fields) {
-      if (!fields) {
+      if (!fields || !fields.length) {
         return;
       }
       const fieldsDefinition = this.formSchema.fields.filter((f) => {

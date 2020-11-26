@@ -3,7 +3,7 @@
     <grid-layout
       :layout.sync="layout"
       :col-num="12"
-      :row-height="30"
+      :row-height="80"
       :is-draggable="isDraggable"
       :is-resizable="isResizable"
       :vertical-compact="verticalCompact"
@@ -21,10 +21,10 @@
         :i="item.i || index"
         :key="item.i"
         :maxW="12"
-        :minH="2"
+        :minH="3"
         dragIgnoreFrom="a, button, .form-element, .draggable-item"
       >
-        <div :class="editMode ? 'card card-primary p-0' : 'p-0'">
+        <div :class="editMode ? 'awesome-layout-list card card-primary p-0' : 'p-0'">
           <div v-if="item.legend || editMode" class="draggable-header bg-primary">
             <div class="legend">
               <i class="fa fa-pencil" v-if="editMode"></i>
@@ -50,10 +50,10 @@
               ghost-class="moving-card"
             >
               <template v-if="editMode">
-                <div v-for="(field, index) in item.fields" :key="index" class="col-12 pl-0 pr-0 mb-1 mt-1">
+                <div v-for="(field, index) in item.fields" :key="index">
                   <div :class="editMode ? 'draggable-item card' : ''">
                     <div :class="editMode ? 'card-body p-2' : ''">
-                      <slot name="field" :field="field"></slot>
+                      <slot name="field" :field="field">{{field}}</slot>
                     </div>
                   </div>
                 </div>
@@ -89,9 +89,26 @@
         </div>
       </grid-item>
     </grid-layout>
-    <button v-if="editMode" type="button" class="btn btn-primary btn-add-item " @click="addItemToGrid()">
-      <i class="fa fa-plus"></i>
-    </button>
+    <section v-if="editMode" class="awesome-layout-actions">
+      <button type="button" class="btn btn-primary btn-add-item " @click="addItemToGrid()">
+        <i class="fa fa-plus"></i>
+      </button>
+      <Draggable
+        class="draggable-list"
+        group="fields"
+        @change="fieldChanged"
+        ghost-class="moving-card"
+        :list="fieldsList"
+      >
+        <div v-for="(field, index) in fieldsList" :key="index">
+          <div class="draggable-item card">
+            <div class="card-body p-2">
+              {{field.model || field.label || field.title || field}}
+            </div>
+          </div>
+        </div>
+      </Draggable>
+    </section>
   </div>
 </template>
 
@@ -99,8 +116,6 @@
 import VueGridLayout from 'vue-grid-layout';
 import Draggable from 'vuedraggable';
 import i18nMixin from '../../../mixins/i18nMixin';
-// import notificationsMixin from '../../../mixins/notificationsMixin';
-import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
@@ -119,6 +134,12 @@ export default {
     editMode: {
       type: Boolean,
       default: () => false
+    },
+    fieldsList: {
+      type: Array,
+      required: false,
+      default: () => [],
+      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
     }
   },
   data: () => ({
@@ -132,7 +153,7 @@ export default {
       maxW: 12,
       minH: 2,
       fields: []
-    }
+    },
   }),
   methods: {
     onLayoutUpdated(items) {
@@ -146,8 +167,14 @@ export default {
     // Add a new item to the grid
     addItemToGrid() {
       const items = Object.assign([], this.layout);
-      const newBlock = _.cloneDeep(this.newBlock);
-      items.push({ ...newBlock, i: `aw-layout-item-${uuidv4()}` });
+      items.push({
+        x: (this.layout.length * 3) % 12,
+        y: this.layout.length + 12,
+        w: 3,
+        h: 3,
+        i: `aw-layout-item-${uuidv4()}`,
+        fields: []
+      });
       this.$emit('layout-updated', items);
     },
 
@@ -187,7 +214,15 @@ export default {
 .awesome-layout {
   width: 100%;
   position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  .vue-grid-layout {
+    width: 100%;
+  }
 
+  .awesome-layout-list {
+    height: 100%;
+  }
   .draggable-header {
     height: 30px;
     width: 100%;
@@ -221,39 +256,55 @@ export default {
 
   .moving-card {
     opacity: 0.4;
+    height: auto;
     background: #f7fafc;
     border: 1px solid #4299e1;
   }
 
   .draggable-list {
     min-height: 140px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: center;
   }
 
   .draggable-item {
     cursor: grab;
+    height: 80px;
   }
 
   .item {
     .card {
       margin: 0;
-      height: inherit;
     }
 
     .item-draggable {
-      padding: 0 10px;
+      height: 100%;
     }
   }
 
-  .btn-add-item {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+  .awesome-layout-actions {
+    background-color: white;
+    height: 80vh;
+    position: relative;
+    width: 200px;
+    border-radius: 10px;
+    box-shadow: 0 3px 3px -2px rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12);
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: center;
+    padding: 15px;
+    .draggable-list {
+      overflow: auto;
+    }
+    .card {
+      margin: 10px 0;
+    }
   }
-
   .vue-form-generator {
     width: 100%;
   }
