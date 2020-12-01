@@ -39,6 +39,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/awesomelayout">Awesome Layout</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/awesomebuilder">Awesome Builder</a>
+          </li>
         </ul>
       </div>
     </nav>

@@ -14,7 +14,7 @@
 
 
 ## Features
-- Custom Filters on top of the awesome crud.
+- Custom Filters on top of the awesome crud. <Badge text="DONE" color="danger"/>
 - Support for custom format of api response
 - implement nested schemas for crud <Badge text="DONE"/>
 - forward parameters to a awesome crud in order to force the value of some fields
@@ -30,6 +30,7 @@ Ex: if on product i set edit:false then the route /product/:id/edit should not e
 - Create list component for listing items (like in search results)
 - Inline actions buttons should appear also when you are viewing / editing a form
 - Add Hability to select many items and execute custom actions on them.
+- Add Awesome Builder that allow to create page with custom module <Badge text="WIP" color="danger"/>
 
 ## DataSource
 - Make awesome crud work without a schema (eg. just with an url)
