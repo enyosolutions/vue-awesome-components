@@ -1,19 +1,28 @@
 <template>
   <div class="awesome-builder-module">
-    <div @click="closeElement" class="awesome-builder-module-header">
+    <div class="awesome-builder-module-header">
       <i :class="'awesome-builder-module-icon fa ' + icon"></i>
       <div class="awesome-builder-module-text">
         <p class="awesome-builder-module-title">
-          {{title}}
+          {{title}} {{uuid}}
         </p>
         <p class="awesome-builder-module-description">
           {{description}}
         </p>
       </div>
+      <div v-if="placed" class="awesome-builder-module-actions">
+        <button @click="expendElement" class="btn btn-info btn-simple btn-sm p-2">
+          <i v-if="_extended" class="fa fa-eye"></i>
+          <i v-else class="fa fa-eye-slash"></i>
+        </button>
+        <button @click="removeElement" class="btn btn-danger btn-simple btn-sm p-2">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
     </div>
     <hr v-if="_extended"/>
     <div v-if="_extended" class="awesome-builder-module-content">
-      <slot name="content"></slot>
+      <slot></slot>
       <button @click="doneEditing" class="btn btn-primary validate-button">Done Editing</button>
     </div>
   </div>
@@ -27,6 +36,10 @@ export default {
   name: 'AwesomeBuilderModule',
   mixins: [i18nMixin],
   props: {
+    uuid: {
+      type: String,
+      required: true,
+    },
     icon: {
       type: String,
       required: false,
@@ -42,21 +55,29 @@ export default {
       required: false,
       default: () => 'Default description for builder\'s module'
     },
+    placed: {
+      type: Boolean,
+      required: true,
+      default: () => false,
+    }
   },
   data: () => ({
-    extended: true,
-    placed: false,
-    uid: null,
+    extended: false,
   }),
   methods: {
-    closeElement() {
+    expendElement() {
       if (this.placed) {
         this.extended = !this.extended;
       }
     },
+
+    removeElement() {
+      this.$awEventBus && this.$awEventBus.$emit('aw-builder-module-removed', this.uuid)
+    },
+
     doneEditing() {
       // TODO : Fetch data from component
-      this.closeElement();
+      this.expendElement();
     }
   },
 
@@ -65,12 +86,10 @@ export default {
       return this.extended && this.placed;
     }
   },
-  created() {
-    this.uid = `aw-builder-module-${uuidv4()}`
-  },
   mounted() {
-    this.$awEventBus && this.$awEventBus.$on(`aw-builder-module-placed-${this.uid}`, () => {
+    this.$awEventBus && this.$awEventBus.$on(`aw-builder-module-placed-${this.uuid}`, () => {
       this.placed = true;
+      this.extended = true;
     })
   }
 }
@@ -98,6 +117,13 @@ export default {
     align-items: center;
     width: 100%;
     cursor: pointer;
+
+    .awesome-builder-module-actions {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+    }
 
     .awesome-builder-module-icon {
       font-size: 50px;

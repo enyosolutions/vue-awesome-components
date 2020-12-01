@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'AwesomeBuilderNoModule'
+  name: 'AwesomeBuilderNoContent'
 }
 </script>
 

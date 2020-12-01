@@ -1,7 +1,7 @@
 <template>
   <div class="awesome-builder">
     <div class="awesome-builder-content">
-      <AwesomeBuilderNoModule :class="dragging ? 'dragging': null" v-if="!content.length"/>
+      <AwesomeBuilderNoContent :class="dragging ? 'dragging': null" v-if="!content.length"/>
       <Draggable
         group="module"
         :list="content"
@@ -9,22 +9,42 @@
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
-        @add="onAdd"
+        @change="onChange"
       >
-        <component :ref="`aw-builder-content-${index}`" v-bind:is="module" v-for="(module, index) in content" :key="index"></component>
+        <component
+            v-for="(module, index) in content"
+            :key="index"
+            v-bind:is="module.name"
+            @uuid-generated="module.uuid = $event"
+            :uuid="module.uuid"
+            :placed="true"
+        />
       </Draggable>
     </div>
     <div class="awesome-builder-modules">
-      <Draggable
-        group="module"
-        :list="modulesList"
-        animation="200"
-        class="awesome-builder-modules-list"
-        @start="dragging = true"
-        @end="dragging = false"
-      >
-        <component v-bind:is="module" v-for="(module, index) in modulesList" :key="index"></component>
-      </Draggable>
+      <div class="card">
+        <div class="card-body">
+          <input v-model="search" class="form-control" type="text" placeholder="Search...">
+        </div>
+        <Draggable
+            :group="{ name: 'module', pull: 'clone', put: false }"
+            :list="modulesList"
+            animation="200"
+            class="awesome-builder-modules-list"
+            @start="dragging = true"
+            @end="dragging = false"
+        >
+          <component
+              v-for="(module, index) in _moduleSearched"
+              :key="index"
+              v-bind:is="module.name"
+              :placed="false"
+          />
+        </Draggable>
+      </div>
+    </div>
+    <div class="debug">
+      {{content}}
     </div>
   </div>
 </template>
@@ -32,31 +52,61 @@
 <script>
 import Draggable from 'vuedraggable';
 import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
-import AwesomeBuilderNoModule from '@/components/builder/AwesomeBuilderNoModule';
+import AwesomeBuilderNoContent from '@/components/builder/AwesomeBuilderNoContent';
 import modules from '@/components/builder/modules';
+import _ from 'lodash';
 
 export default {
   name: 'AwesomeBuilder',
   components: {
     Draggable,
     AwesomeBuilderModule,
-    AwesomeBuilderNoModule,
+    AwesomeBuilderNoContent,
   },
   data: () => ({
     content: [],
     modulesList: modules,
     dragging: false,
+    search: '',
   }),
   methods: {
-    onAdd(event) {
-      const moduleUUID = this.$refs[`aw-builder-content-${event.newIndex}`][0].$children[0].uid;
-      this.$awEventBus && this.$awEventBus.$emit(`aw-builder-module-placed-${moduleUUID}`)
+    onChange(event) {
+      if (event.added) {
+        this.content[event.added.newIndex].placed = true;
+      }
+    }
+  },
+  mounted() {
+    this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
+      this.content = _.filter(this.content, (item) => {
+        return item.uuid !== uuid;
+      });
+    })
+  },
+  computed: {
+    _moduleSearched() {
+      if (this.search === '') {
+        return this.modulesList;
+      }
+      return this.modulesList.filter((item) => {
+        return item.toLowerCase().indexOf(this.search.toLowerCase()) >= 0;
+      });
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.debug {
+  position: fixed;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .2);
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .dragging {
   transition: opacity .3s ease-in-out;
   opacity: .8;
@@ -76,6 +126,7 @@ export default {
     justify-content: flex-start;
     align-items: center;
     position: relative;
+    overflow-y: auto;
     .awesome-builder-content-list {
       height: 100%;
       width: 80%;
@@ -91,11 +142,15 @@ export default {
     overflow-y: auto;
     width: 22%;
     position: relative;
+    .card {
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
     .awesome-builder-modules-list {
-      height: 100%;
       width: 100%;
+      height: 100%;
       position: absolute;
-      top: 0;
+      top: 60px;
       left: 0;
       right: 0;
       bottom: 0;

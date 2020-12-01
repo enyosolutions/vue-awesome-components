@@ -7,7 +7,9 @@ const modules = [];
 requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName);
   const componentName = fileName.replace(/(\.\/|\.vue)/g, '');
-  modules.push(componentName);
+  modules.push({
+    name: componentName
+  });
 
   Vue.component(componentName, componentConfig.default || componentConfig);
 });

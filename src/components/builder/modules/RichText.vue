@@ -1,6 +1,6 @@
 <template>
-  <AwesomeBuilderModule :icon="module.icon" :title="module.title" :description="module.description">
-    <template v-slot:content>
+  <AwesomeBuilderModule :icon="module.icon" :title="module.title" :description="module.description" :uuid="_uuid" :placed="placed">
+    <template>
       <div class="rich-text">
         <quill-editor
           v-model="content"
@@ -21,10 +21,12 @@ import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 
 import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
+import builderModuleMixin from '@/mixins/builderModuleMixin';
 import { quillEditor } from 'vue-quill-editor';
 
 export default {
   name: 'RichText',
+  mixins: [builderModuleMixin],
   components: {
     AwesomeBuilderModule,
     quillEditor
