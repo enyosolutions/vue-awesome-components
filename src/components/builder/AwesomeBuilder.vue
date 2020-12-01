@@ -15,8 +15,8 @@
             v-for="(module, index) in content"
             :key="index"
             v-bind:is="module.name"
-            @uuid-generated="module.uuid = $event"
-            :uuid="module.uuid"
+            :index="index"
+            :uuid.sync="module.uuid"
             :placed="true"
         />
       </Draggable>

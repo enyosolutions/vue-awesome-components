@@ -10,7 +10,7 @@ export default {
     placed: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   data: () => ({
     //
@@ -22,7 +22,7 @@ export default {
     _uuid() {
       if (!this.uuid) {
         const uuid = uuidv4();
-        this.$emit('uuid-generated', uuid);
+        this.$emit('update:uuid', uuid);
         return uuid;
       }
       return this.uuid;
