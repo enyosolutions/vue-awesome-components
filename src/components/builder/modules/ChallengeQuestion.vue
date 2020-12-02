@@ -1,5 +1,5 @@
 <template>
-  <AwesomeBuilderModule :icon="module.icon" :title="module.title" :description="module.description" :uuid="_uuid" :placed="placed">
+  <AwesomeBuilderModule :options="options" :uuid="_uuid" :placed="placed">
     <template>
       <div class="module-challenge-question">
         <div class="challenge-question-header">
@@ -31,7 +31,7 @@ export default {
   mixins: [builderModuleMixin],
   components: {AwesomeBuilderModule},
   data: () => ({
-    module: {
+    options: {
       icon: 'fa-question-circle',
       title: 'Challenge Question',
       description: 'Ask a question with only one correct answer.',

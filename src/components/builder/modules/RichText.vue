@@ -1,5 +1,5 @@
 <template>
-  <AwesomeBuilderModule :icon="module.icon" :title="module.title" :description="module.description" :uuid="_uuid" :placed="placed">
+  <AwesomeBuilderModule :options="options" :uuid="_uuid" :placed="placed">
     <template>
       <div class="rich-text">
         <quill-editor
@@ -32,7 +32,7 @@ export default {
     quillEditor
   },
   data: () => ({
-    module: {
+    options: {
       icon: 'fa-pencil-square-o',
       title: 'Text',
       description: 'Include formatted text & Images'

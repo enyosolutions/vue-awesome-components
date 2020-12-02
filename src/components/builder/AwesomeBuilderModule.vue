@@ -1,13 +1,13 @@
 <template>
   <div class="awesome-builder-module">
     <div class="awesome-builder-module-header">
-      <i :class="'awesome-builder-module-icon fa ' + icon"></i>
+      <i :class="'awesome-builder-module-icon fa ' + options.icon"></i>
       <div class="awesome-builder-module-text">
         <p class="awesome-builder-module-title">
-          {{title}} {{uuid}}
+          {{options.title}} {{uuid}}
         </p>
         <p class="awesome-builder-module-description">
-          {{description}}
+          {{options.description}}
         </p>
       </div>
       <div v-if="placed" class="awesome-builder-module-actions">
@@ -32,28 +32,23 @@
 import i18nMixin from '@/mixins/i18nMixin';
 import { v4 as uuidv4 } from 'uuid';
 
+const defaultOptions = {
+  title: 'Default title',
+  description: 'Default description for builder\'s module',
+  icon: 'fa-th-large'
+}
+
 export default {
   name: 'AwesomeBuilderModule',
   mixins: [i18nMixin],
   props: {
+    options: {
+      type: Object,
+      default: () => defaultOptions
+    },
     uuid: {
       type: String,
       required: true,
-    },
-    icon: {
-      type: String,
-      required: false,
-      default: () => 'fa-th-large'
-    },
-    title: {
-      type: String,
-      required: false,
-      default: () => 'Title'
-    },
-    description: {
-      type: String,
-      required: false,
-      default: () => 'Default description for builder\'s module'
     },
     placed: {
       type: Boolean,
@@ -105,7 +100,7 @@ export default {
   border-radius: 5px;
   margin: 10px 0;
   width: 100%;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12);
   hr {
     width: 100%;

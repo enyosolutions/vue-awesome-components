@@ -1,5 +1,5 @@
 <template>
-  <AwesomeBuilderModule title="test2" description="test2" :uuid="_uuid" :placed="placed">
+  <AwesomeBuilderModule :uuid="_uuid" :placed="placed">
     <template>
       <h2>Test 2</h2>
     </template>

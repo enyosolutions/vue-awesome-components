@@ -1,0 +1,63 @@
+<template>
+  <div class="awesome-builder-content">
+    <AwesomeBuilderNoContent :class="dragging ? 'dragging': null" v-if="!content.length"/>
+    <Draggable
+        group="module"
+        :list="content"
+        animation="200"
+        class="awesome-builder-content-list"
+        @start="dragging = true"
+        @end="dragging = false"
+    >
+      <component v-for="(module, index) in content"
+                 :key="index"
+                 v-bind:is="module.name"
+                 :uuid.sync="module.uuid"
+                 :placed="true"
+      />
+    </Draggable>
+  </div>
+</template>
+
+<script>
+import Draggable from 'vuedraggable';
+import AwesomeBuilderNoContent from '@/components/builder/AwesomeBuilderNoContent';
+
+export default {
+  name: 'AwesomeBuilderContent',
+  components: {
+    Draggable,
+    AwesomeBuilderNoContent
+  },
+  props: {
+    content: {
+      type: Array
+    }
+  },
+  data: () => ({
+    dragging: false
+  }),
+}
+</script>
+
+<style scoped lang="scss">
+.awesome-builder-content {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  overflow-y: auto;
+  margin: 10px;
+  .awesome-builder-content-list {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+</style>

@@ -19,7 +19,7 @@ export default {
   align-items: center;
   background-color: white;
   border-radius: 5px;
-  width: 80%;
+  width: 100%;
   min-height: 20vh;
   margin: 10px 0;
   padding: 80px;

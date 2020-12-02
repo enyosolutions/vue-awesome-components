@@ -1,26 +1,6 @@
 <template>
   <div class="awesome-builder">
-    <div class="awesome-builder-content">
-      <AwesomeBuilderNoContent :class="dragging ? 'dragging': null" v-if="!content.length"/>
-      <Draggable
-        group="module"
-        :list="content"
-        animation="200"
-        class="awesome-builder-content-list"
-        @start="dragging = true"
-        @end="dragging = false"
-        @change="onChange"
-      >
-        <component
-            v-for="(module, index) in content"
-            :key="index"
-            v-bind:is="module.name"
-            :index="index"
-            :uuid.sync="module.uuid"
-            :placed="true"
-        />
-      </Draggable>
-    </div>
+    <AwesomeBuilderContent :content.sync="content"/>
     <div class="awesome-builder-modules">
       <div class="card">
         <div class="card-body">
@@ -51,8 +31,8 @@
 
 <script>
 import Draggable from 'vuedraggable';
+import AwesomeBuilderContent from '@/components/builder/AwesomeBuilderContent';
 import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
-import AwesomeBuilderNoContent from '@/components/builder/AwesomeBuilderNoContent';
 import modules from '@/components/builder/modules';
 import _ from 'lodash';
 
@@ -61,7 +41,7 @@ export default {
   components: {
     Draggable,
     AwesomeBuilderModule,
-    AwesomeBuilderNoContent,
+    AwesomeBuilderContent,
   },
   data: () => ({
     content: [],
@@ -70,11 +50,7 @@ export default {
     search: '',
   }),
   methods: {
-    onChange(event) {
-      if (event.added) {
-        this.content[event.added.newIndex].placed = true;
-      }
-    }
+    //
   },
   mounted() {
     this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
@@ -109,7 +85,7 @@ export default {
 }
 .dragging {
   transition: opacity .3s ease-in-out;
-  opacity: .8;
+  opacity: .4;
 }
 .awesome-builder {
   display: flex;
@@ -118,25 +94,6 @@ export default {
   height: 90vh;
   width: 100%;
   overflow: hidden;
-  .awesome-builder-content {
-    margin: 10px 50px;
-    flex: 1;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    position: relative;
-    overflow-y: auto;
-    .awesome-builder-content-list {
-      height: 100%;
-      width: 80%;
-      position: absolute;
-      top: 0;
-      left: 10%;
-      right: 0;
-      bottom: 0;
-    }
-  }
   .awesome-builder-modules {
     margin: 10px;
     overflow-y: auto;
