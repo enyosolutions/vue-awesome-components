@@ -1,12 +1,14 @@
 import Vue from 'vue';
 
-const requireComponent = require.context('.', false, /\.vue$/);
+const requireComponent = require.context('.', true, /\.vue$/);
 
 const modules = [];
 
 requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName);
-  const componentName = fileName.replace(/(\.\/|\.vue)/g, '');
+  let componentName = fileName.replace(/(\.\/|\.vue)/g, '');
+  componentName = componentName.split('/');
+  componentName = componentName[componentName.length - 1];
   modules.push({
     name: componentName
   });

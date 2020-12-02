@@ -1,6 +1,6 @@
 <template>
   <div class="awesome-builder-module">
-    <div class="awesome-builder-module-header">
+    <div class="awesome-builder-module-header draggable">
       <i :class="'awesome-builder-module-icon fa ' + options.icon"></i>
       <div class="awesome-builder-module-text">
         <p class="awesome-builder-module-title">
@@ -57,7 +57,7 @@ export default {
     }
   },
   data: () => ({
-    extended: false,
+    extended: true,
   }),
   methods: {
     expendElement() {

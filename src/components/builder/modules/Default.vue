@@ -1,7 +1,7 @@
 <template>
   <AwesomeBuilderModule :uuid="_uuid" :placed="placed">
     <template>
-      <h2>Test 2</h2>
+      <h2>Default module</h2>
     </template>
   </AwesomeBuilderModule>
 </template>
@@ -11,7 +11,7 @@ import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
 
 export default {
-  name: 'Test2',
+  name: 'Default',
   mixins: [builderModuleMixin],
   components: {
     AwesomeBuilderModule,

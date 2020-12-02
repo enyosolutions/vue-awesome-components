@@ -34,7 +34,7 @@ export default {
   data: () => ({
     options: {
       icon: 'fa-pencil-square-o',
-      title: 'Text',
+      title: 'Rich Text',
       description: 'Include formatted text & Images'
     },
     content: '<h2>I am Example</h2>',

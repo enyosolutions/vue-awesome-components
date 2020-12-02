@@ -8,6 +8,7 @@
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
+        handle=".draggable"
     >
       <component v-for="(module, index) in content"
                  :key="index"
