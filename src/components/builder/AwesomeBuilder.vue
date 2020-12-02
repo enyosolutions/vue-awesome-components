@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="debug">
-      {{content}}
+      {{ content }}
     </div>
   </div>
 </template>
@@ -65,14 +65,14 @@ export default {
         return this.modulesList;
       }
       return this.modulesList.filter((item) => {
-        return item.toLowerCase().indexOf(this.search.toLowerCase()) >= 0;
+        return item.name.toLowerCase().indexOf(this.search.toLowerCase()) >= 0;
       });
     }
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .debug {
   position: fixed;
   bottom: 0;
@@ -83,10 +83,12 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .dragging {
   transition: opacity .3s ease-in-out;
   opacity: .4;
 }
+
 .awesome-builder {
   display: flex;
   flex-flow: row nowrap;
@@ -94,23 +96,50 @@ export default {
   height: 90vh;
   width: 100%;
   overflow: hidden;
+
   .awesome-builder-modules {
     margin: 10px;
     overflow-y: auto;
     width: 22%;
     position: relative;
+
     .card {
       margin-top: 10px;
       margin-bottom: 0;
     }
+
     .awesome-builder-modules-list {
       width: 100%;
       height: 100%;
       position: absolute;
-      top: 60px;
+      top: 75px;
       left: 0;
       right: 0;
       bottom: 0;
+      display: flex;
+      flex-flow: row wrap;
+
+      .awesome-builder-module {
+        flex: 1;
+        margin: 5px;
+        box-sizing: border-box;
+
+        .awesome-builder-module-header {
+          display: flex;
+          flex-flow: column nowrap;
+          justify-content: center;
+          align-items: center;
+          .awesome-builder-module-icon {
+            font-size: 24px;
+          }
+          .awesome-builder-module-text {
+            margin-left: 0;
+            .awesome-builder-module-title {
+              text-align: center;
+            }
+          }
+        }
+      }
     }
   }
 }

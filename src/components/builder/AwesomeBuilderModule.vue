@@ -4,9 +4,9 @@
       <i :class="'awesome-builder-module-icon fa ' + options.icon"></i>
       <div class="awesome-builder-module-text">
         <p class="awesome-builder-module-title">
-          {{options.title}} {{uuid}}
+          {{options.title}}
         </p>
-        <p class="awesome-builder-module-description">
+        <p v-if="placed" class="awesome-builder-module-description">
           {{options.description}}
         </p>
       </div>
