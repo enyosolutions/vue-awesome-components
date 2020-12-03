@@ -212,7 +212,7 @@
                     </div>
                     <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
                       <ul
-                        v-if="nestedModels && nestedModels.length && mode !== 'create'"
+                        v-if="nestedModels && nestedModels.length && mode !== 'create' && nestedLayoutMode !== 'list'"
                         class="nav nav-tabs mt-0 mb-4"
                       >
                         <li class="nav-item">
@@ -335,11 +335,12 @@
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': !activeNestedTab || activeNestedTab === 'general'
+                                'active show':
+                                  !activeNestedTab || activeNestedTab === 'general' || nestedLayoutMode === 'list',
+                                'card p-5': nestedLayoutMode === 'list'
                               }"
                             >
                               <VueFormGenerator
-                                v-if="!activeNestedTab || activeNestedTab === 'general'"
                                 :schema.sync="formSchema"
                                 :model="selectedItem"
                                 :options="formOptions"
@@ -362,12 +363,21 @@
                                 :key="ns.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show': activeNestedTab === ns.identity
+                                  'active show in': activeNestedTab === ns.identity || nestedLayoutMode === 'list'
                                 }"
                               >
+                                <template v-if="nestedLayoutMode === 'list'">
+                                  <h3 class="nested-model-title">
+                                    {{
+                                      $te('app.labels.' + ns.identity)
+                                        ? $te('app.labels.' + ns.identity)
+                                        : startCase(ns.identity)
+                                    }}
+                                  </h3>
+                                  <hr />
+                                </template>
                                 <div
                                   :is="AwesomeCrud"
-                                  v-if="activeNestedTab === ns.identity"
                                   v-bind="ns"
                                   :parent="selectedItem"
                                   :parentIdentity="model.identity || identity"
@@ -728,6 +738,14 @@ export default {
       required: false,
       default: true,
       node: 'Controls if the actions (create / edit / view)  should update the current route url'
+    },
+    nestedLayoutMode: {
+      type: String,
+      required: false,
+      default: 'tabs',
+      values: ['tabs', 'vertical-tabs', 'list'],
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     }
   },
   data() {

@@ -462,8 +462,17 @@ export default {
       type: String,
       required: false,
       default: 'table',
+      values: ['view', 'edit', 'object', 'table'],
       note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+    },
+    nestedLayoutMode: {
+      type: String,
+      required: false,
+      default: 'horizontal-tabs',
+      values: ['horizontal-tabs', 'vertical-tabs', 'list'],
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     primaryKey: {
       type: String,
