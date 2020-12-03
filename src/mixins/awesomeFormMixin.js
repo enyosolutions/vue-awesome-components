@@ -12,7 +12,12 @@ export default {
     _isNested() {
       return this.parent;
     },
-    _isNestedDetail() {
+
+    _isEmbedded() {
+      return this._isNested && (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit');
+    },
+
+    _isANestedDetailView() {
       return (
         this._isNested &&
         // ((this.selectedItem && this.selectedItem[this.primaryKey]) ||
@@ -25,6 +30,7 @@ export default {
     _isNestedCreate() {
       return this._isNested && this.selectedItem && this.viewMode === 'create';
     },
+
     _noFormActions() {
       return this._isNested && (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit');
     },

@@ -198,7 +198,9 @@
   }
 }
 
-.modal-dialog.modal-full {
+.modal-dialog.modal-full,
+.modal-dialog.modal-fullscreen
+ {
   width: 100%;
   height: 100%;
   margin: 0;
