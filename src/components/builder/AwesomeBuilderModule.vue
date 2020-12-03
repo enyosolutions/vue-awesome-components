@@ -30,7 +30,6 @@
 
 <script>
 import i18nMixin from '@/mixins/i18nMixin';
-import { v4 as uuidv4 } from 'uuid';
 
 const defaultOptions = {
   title: 'Default title',
