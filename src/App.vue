@@ -40,7 +40,10 @@
             <a class="nav-link" href="/awesomelayout">Awesome Layout</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/awesomebuilder">Awesome Builder</a>
+            <a class="nav-link" href="/awesomebuilder-editor">Awesome Builder Editor</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/awesomebuilder-page">Awesome Builder Page</a>
           </li>
         </ul>
       </div>

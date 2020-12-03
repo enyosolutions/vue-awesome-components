@@ -1,12 +1,12 @@
 <template>
-  <AwesomeBuilder/>
+  <AwesomeBuilder mode="view"/>
 </template>
 
 <script>
 import AwesomeBuilder from '@/components/builder/AwesomeBuilder';
 
 export default {
-  name: 'AwesomeBuilderPage',
+  name: 'AwesomeBuilderViewPage',
   components: {
     AwesomeBuilder
   },

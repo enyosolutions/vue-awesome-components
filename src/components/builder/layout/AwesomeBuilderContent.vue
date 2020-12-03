@@ -14,7 +14,8 @@
           v-for="(module, index) in content" :key="index"
           v-bind:is="module.name"
           :uuid.sync="module.uuid"
-          :placed="true"
+          @update:insideData="module.insideData = $event"
+          mode="edit"
       />
     </Draggable>
   </div>
@@ -22,7 +23,7 @@
 
 <script>
 import Draggable from 'vuedraggable';
-import AwesomeBuilderNoContent from '@/components/builder/AwesomeBuilderNoContent';
+import AwesomeBuilderNoContent from '@/components/builder/layout/AwesomeBuilderNoContent';
 
 export default {
   name: 'AwesomeBuilderContent',
@@ -53,7 +54,6 @@ export default {
   align-items: center;
   position: relative;
   overflow-y: auto;
-  margin: 10px;
 
   .awesome-builder-content-list {
     height: 100%;

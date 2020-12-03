@@ -1,20 +1,22 @@
 <template>
-  <AwesomeBuilderModule :options="options" :uuid="_uuid" :placed="placed">
-    <div class="module-columns">
-      <div class="column">
-        <AwesomeBuilderContent :content.sync="list1"></AwesomeBuilderContent>
+  <AwesomeBuilderModule :options="options" :uuid="_uuid" :mode="mode">
+    <template v-slot:editor>
+      <div class="module-columns">
+        <div class="column">
+          <AwesomeBuilderContent :content.sync="list1"></AwesomeBuilderContent>
+        </div>
+        <div class="column">
+          <AwesomeBuilderContent :content.sync="list2"></AwesomeBuilderContent>
+        </div>
       </div>
-      <div class="column">
-        <AwesomeBuilderContent :content.sync="list2"></AwesomeBuilderContent>
-      </div>
-    </div>
+    </template>
   </AwesomeBuilderModule>
 </template>
 
 <script>
-import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
+import AwesomeBuilderModule from '@/components/builder/layout/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
-import AwesomeBuilderContent from '@/components/builder/AwesomeBuilderContent';
+import AwesomeBuilderContent from '@/components/builder/layout/AwesomeBuilderContent';
 import _ from "lodash";
 
 export default {

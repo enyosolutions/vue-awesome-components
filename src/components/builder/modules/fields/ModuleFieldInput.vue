@@ -1,95 +1,37 @@
 <template>
-  <AwesomeBuilderModule :uuid="_uuid" :placed="placed" :options="options">
-    {{model}}
-    <div class="field-module">
-      <VueFormGenerator
-          :schema.sync="formSchema"
-          :model="model"
-          ref="form"
-          class="field-configuration"
-          tag="div"
-      />
-      <!--<form class="field-configuration">
-        <div class="field-input">
-          <label for="model">Model</label>
-          <input v-model="field.model" class="form-control" type="text" placeholder="Model" id="model">
+  <AwesomeBuilderModule :uuid="_uuid" :mode="mode" :options="options">
+    <template v-slot:editor>
+      {{insideData.model}}
+      <div class="field-module">
+        <VueFormGenerator
+            :schema.sync="formSchema"
+            :model="insideData.model"
+            ref="form"
+            class="field-configuration"
+            tag="div"
+        />
+        <div class="field-preview" v-if="eventBus">
+          <FormElement :event-bus="eventBus" :field="insideData.model.fields">
+            <template v-slot:label>
+              {{insideData.model.fields.label}}
+            </template>
+            <template v-slot:hint>
+              {{insideData.model.fields.hint}}
+            </template>
+          </FormElement>
         </div>
-        <div class="field-input">
-          <label for="placeholder">Placeholder</label>
-          <input v-model="field.placeholder" class="form-control" type="text" placeholder="Placeholder" id="placeholder">
-        </div>
-        <div class="field-input">
-          <label for="label">Label</label>
-          <input v-model="field.label" class="form-control" type="text" placeholder="Label" id="label">
-        </div>
-        <div class="field-input">
-          <label for="hint">Hint</label>
-          <input v-model="field.hint" class="form-control" type="text" placeholder="Hint" id="hint">
-        </div>
-        <div class="field-input">
-          <label for="styleClasses">Style classes</label>
-          <input v-model="field.styleClasses" class="form-control" type="text" placeholder="Style classes" id="styleClasses">
-        </div>
-        <div class="field-checkbox">
-          <div class="field-input">
-            <input v-model="field.required" type="checkbox" id="required">
-            <label class="form-check-label" for="required">Is Required</label>
-          </div>
-          <div class="field-input">
-            <input v-model="field.readonly" type="checkbox" id="readonly">
-            <label class="form-check-label" for="readonly">Is Readonly</label>
-          </div>
-          <div class="field-input">
-            <input v-model="field.disabled" type="checkbox" id="disabled">
-            <label class="form-check-label" for="disabled">Is Disabled</label>
-          </div>
-          <div class="field-input">
-            <input v-model="field.hasRelation" type="checkbox" id="hasRelation">
-            <label class="form-check-label" for="hasRelation">has Relation</label>
-          </div>
-        </div>
-        <div v-if="field.hasRelation" class="field-relation">
-          <div class="field-input">
-            <label for="relation">Relation name</label>
-            <input v-model="field.relation" class="form-control" type="text" placeholder="Relation name" id="relation">
-          </div>
-          <div class="field-input">
-            <label for="foreignKey">Foreign Key</label>
-            <input v-model="field.foreignKey" class="form-control" type="text" placeholder="Foreign Key" id="foreignKey">
-          </div>
-          <div class="field-input">
-            <label for="relationKey">Relation Key</label>
-            <input v-model="field.relationKey" class="form-control" type="text" placeholder="Relation Key" id="relationKey">
-          </div>
-          <div class="field-input">
-            <label for="relationLabel">Relation Label</label>
-            <input v-model="field.relationLabel" class="form-control" type="text" placeholder="Relation Label" id="relationLabel">
-          </div>
-        </div>
-      </form>-->
-      <div class="field-preview" v-if="eventBus">
-        <FormElement :event-bus="eventBus" :field="model.fields">
-          <template v-slot:label>
-            {{model.fields.label}}
-          </template>
-          <template v-slot:hint>
-            {{model.fields.hint}}
-          </template>
-        </FormElement>
       </div>
-    </div>
+    </template>
   </AwesomeBuilderModule>
 </template>
 
 <script>
-import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
+import AwesomeBuilderModule from '@/components/builder/layout/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
 import parseJsonSchemaMixin from '@/mixins/parseJsonSchemaMixin';
 import relationMixin from '@/mixins/relationMixin';
 import FormElement from '@/components/form/form-generator/formElement';
 import FieldSchema from '@/components/builder/modules/schemas/FieldSchema';
-
-import {v4 as uuidv4} from 'uuid';
 
 export default {
   name: 'ModuleFieldInput',
@@ -102,36 +44,21 @@ export default {
       description: 'Add field input'
     },
     eventBus: null,
-    model: {
-      fields: {
-        type: 'input',
-        fieldOptions: {
-          inputType: 'text'
-        },
-      },
-    },
-    // field: {
-    //   type: 'input',
-    //   label: '',
-    //   placeholder: '',
-    //   values: [],
-    //   required: true,
-    //   hint: '',
-    //   model: 'Default model',
-    //   validator: ['required'],
-    //   readonly: undefined,
-    //   disabled: undefined,
-    //   styleClasses: 'col-12',
-    //   hasRelation: false,
-    //   relation: undefined,
-    //   foreignKey: undefined,
-    //   relationKey: undefined,
-    //   relationLabel: undefined,
-    //   group: undefined,
-    //   mode: 'edit'
-    // },
     FieldSchema
   }),
+  created() {
+    this.insideData = {
+      model: {
+        fields: {
+          type: 'input',
+          fieldOptions: {
+            inputType: 'text'
+          },
+        },
+      },
+    };
+    this.renderingComponent = 'form-element'
+  },
   mounted() {
     // this.field.id = uuidv4();
     if (this.$awEventBus) {

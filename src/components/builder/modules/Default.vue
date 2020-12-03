@@ -1,13 +1,13 @@
 <template>
-  <AwesomeBuilderModule :uuid="_uuid" :placed="placed">
-    <template>
-      <h2>Default module</h2>
+  <AwesomeBuilderModule :uuid="_uuid" :mode="mode">
+    <template v-slot:editor>
+      <input v-model="insideData" type="text">
     </template>
   </AwesomeBuilderModule>
 </template>
 
 <script>
-import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
+import AwesomeBuilderModule from '@/components/builder/layout/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
 
 export default {
@@ -16,6 +16,9 @@ export default {
   components: {
     AwesomeBuilderModule,
   },
+  mounted() {
+    this.renderingComponent = 'Default'
+  }
 }
 </script>
 

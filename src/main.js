@@ -145,8 +145,12 @@ const router = new VueRouter({
       component: () => import('../examples/pages/AwesomeLayoutPage')
     },
     {
-      path: '/awesomebuilder',
-      component: () => import('../examples/pages/AwesomeBuilderPage')
+      path: '/awesomebuilder-editor',
+      component: () => import('../examples/pages/AwesomeBuilderEditorPage')
+    },
+    {
+      path: '/awesomebuilder-page',
+      component: () => import('../examples/pages/AwesomeBuilderViewPage')
     }
   ]
 });

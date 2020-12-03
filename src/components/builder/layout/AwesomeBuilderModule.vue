@@ -1,16 +1,16 @@
 <template>
   <div class="awesome-builder-module">
-    <div class="awesome-builder-module-header draggable">
+    <div v-if="mode === 'edit' || mode === 'tile'" class="awesome-builder-module-header draggable">
       <i :class="'awesome-builder-module-icon fa ' + options.icon"></i>
       <div class="awesome-builder-module-text">
         <p class="awesome-builder-module-title">
           {{options.title}}
         </p>
-        <p v-if="placed" class="awesome-builder-module-description">
+        <p v-if="mode === 'edit'" class="awesome-builder-module-description">
           {{options.description}}
         </p>
       </div>
-      <div v-if="placed" class="awesome-builder-module-actions">
+      <div v-if="mode === 'edit'" class="awesome-builder-module-actions">
         <button @click="expendElement" class="btn btn-info btn-simple btn-sm p-2">
           <i v-if="_extended" class="fa fa-eye"></i>
           <i v-else class="fa fa-eye-slash"></i>
@@ -22,8 +22,12 @@
     </div>
     <hr v-if="_extended"/>
     <div v-if="_extended" class="awesome-builder-module-content">
-      <slot></slot>
+      <slot v-if="mode === 'edit'" name="editor"></slot>
+      <slot v-if="mode === 'view'" name="view"></slot>
       <button @click="doneEditing" class="btn btn-primary validate-button">Done Editing</button>
+    </div>
+    <div v-if="mode === 'view'" class="awesome-builder-mode-view">
+
     </div>
   </div>
 </template>
@@ -49,18 +53,18 @@ export default {
       type: String,
       required: true,
     },
-    placed: {
-      type: Boolean,
+    mode: {
+      type: String,
       required: true,
-      default: () => false,
+      default: 'edit', // tile | edit | view
     }
   },
   data: () => ({
-    extended: true,
+    extended: false,
   }),
   methods: {
     expendElement() {
-      if (this.placed) {
+      if (this.mode === 'edit') {
         this.extended = !this.extended;
       }
     },
@@ -77,12 +81,11 @@ export default {
 
   computed: {
     _extended() {
-      return this.extended && this.placed;
+      return this.extended && this.mode === 'edit';
     }
   },
   mounted() {
     this.$awEventBus && this.$awEventBus.$on(`aw-builder-module-placed-${this.uuid}`, () => {
-      this.placed = true;
       this.extended = true;
     })
   }

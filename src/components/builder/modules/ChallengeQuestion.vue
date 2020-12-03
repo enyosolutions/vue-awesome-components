@@ -1,6 +1,6 @@
 <template>
-  <AwesomeBuilderModule :options="options" :uuid="_uuid" :placed="placed">
-    <template>
+  <AwesomeBuilderModule :options="options" :uuid="_uuid" :mode="mode">
+    <template v-slot:editor>
       <div class="module-challenge-question">
         <div class="challenge-question-header">
           <input v-model="question" type="text" class="form-control" placeholder="What is the correct answer ?">
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import AwesomeBuilderModule from '@/components/builder/AwesomeBuilderModule';
+import AwesomeBuilderModule from '@/components/builder/layout/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
 
 export default {
