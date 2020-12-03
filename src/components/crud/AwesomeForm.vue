@@ -95,6 +95,7 @@
                         <AwesomeLayout
                           v-if="_useCustomLayout"
                           :edit-mode="editLayoutMode"
+                          :fields-list="_getFieldsList"
                           :layout="layout"
                           @layout-updated="onLayoutUpdated"
                           @layout-fields-updated="onLayoutFieldsUpdated"
@@ -258,6 +259,7 @@
                               v-if="_useCustomLayout"
                               :edit-mode="editLayoutMode"
                               :layout="layout"
+                              :fields-list="_getFieldsList"
                               @layout-updated="onLayoutUpdated"
                               @layout-fields-updated="onLayoutFieldsUpdated"
                             >
@@ -968,6 +970,21 @@ export default {
     },
     _shouldHaveSlideClasses() {
       return !this._isNested && ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
+    },
+    _getFieldsList() {
+      const fieldsList = [];
+      this.formSchema.fields.forEach((field) => {
+        let exist = false;
+        this.layout.forEach((layout) => {
+          if (_.includes(layout.fields, field.model)) {
+            exist = true;
+          }
+        });
+        if (!exist) {
+          fieldsList.push(field.model);
+        }
+      });
+      return fieldsList;
     }
   },
   watch: {
@@ -1243,7 +1260,7 @@ export default {
     },
 
     getShemaForFields(fields) {
-      if (!fields) {
+      if (!fields || !fields.length) {
         return;
       }
       const fieldsDefinition = this.formSchema.fields.filter((f) => {

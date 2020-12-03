@@ -46,7 +46,7 @@ The layout system use `vue-grid-layout`.
 | y | `Number` | `true` | Initial vertical position of the item |
 | w | `Number` | `true` | Initial width of the item. |
 | h | `Number` | `true` | Initial height of the item. |
-| i | `Number` | `true` | Unique identifier of the item. |
+| i | `Number` | `true` | Unique identifier of the item. (auto generated) |
 | fields | `Array` | `false` | The fields is identified by the key. (eg: `['id', 'name']`) |
 | legend | `String` | `false` | It is displayed on top of the layout. |
 
@@ -60,6 +60,19 @@ The default layout used to manage can be empty array.
 ```vue
 <awesome-layout
   :layout="layout"
+/>
+```
+
+### fieldsList
+
+type: `Array (required: false)`
+
+A list of the available list (provided by default by the schema)
+
+```vue
+<awesome-layout
+  :layout="layout"
+  :fields-list="fieldsList"
 />
 ```
 
