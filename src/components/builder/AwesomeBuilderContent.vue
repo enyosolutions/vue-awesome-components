@@ -1,20 +1,20 @@
 <template>
   <div class="awesome-builder-content">
-    <AwesomeBuilderNoContent :class="dragging ? 'dragging': null" v-if="!content.length"/>
+    <AwesomeBuilderNoContent v-if="!content.length"/>
     <Draggable
         group="module"
-        :list="content"
         animation="200"
+        :list="content"
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
         handle=".draggable"
     >
-      <component v-for="(module, index) in content"
-                 :key="index"
-                 v-bind:is="module.name"
-                 :uuid.sync="module.uuid"
-                 :placed="true"
+      <component
+          v-for="(module, index) in content" :key="index"
+          v-bind:is="module.name"
+          :uuid.sync="module.uuid"
+          :placed="true"
       />
     </Draggable>
   </div>
@@ -36,8 +36,11 @@ export default {
     }
   },
   data: () => ({
-    dragging: false
+    dragging: false,
   }),
+  methods: {
+    //
+  },
 }
 </script>
 
@@ -51,6 +54,7 @@ export default {
   position: relative;
   overflow-y: auto;
   margin: 10px;
+
   .awesome-builder-content-list {
     height: 100%;
     width: 100%;

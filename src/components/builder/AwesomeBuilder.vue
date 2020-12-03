@@ -10,6 +10,8 @@
             :group="{ name: 'module', pull: 'clone', put: false }"
             :list="modulesList"
             animation="200"
+            :sort="false"
+            :clone="handleClone"
             class="awesome-builder-modules-list"
             @start="dragging = true"
             @end="dragging = false"
@@ -22,9 +24,6 @@
           />
         </Draggable>
       </div>
-    </div>
-    <div class="debug">
-      {{ content }}
     </div>
   </div>
 </template>
@@ -50,7 +49,11 @@ export default {
     search: '',
   }),
   methods: {
-    //
+    handleClone(item) {
+      let cloneMe = JSON.parse(JSON.stringify(item));
+      this.$delete(cloneMe, 'uuid');
+      return cloneMe;
+    }
   },
   mounted() {
     this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
@@ -76,6 +79,8 @@ export default {
 .debug {
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   background-color: rgba(0, 0, 0, .2);
   width: 100%;
   height: 50px;

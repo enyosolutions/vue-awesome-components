@@ -10,10 +10,9 @@ requireComponent.keys().forEach((fileName) => {
   componentName = componentName.split('/');
   componentName = componentName[componentName.length - 1];
   modules.push({
-    name: componentName
+    name: componentConfig.default.name || componentName
   });
-
-  Vue.component(componentName, componentConfig.default || componentConfig);
+  Vue.component(componentConfig.default.name || componentName, componentConfig.default || componentConfig);
 });
 
 export default modules;

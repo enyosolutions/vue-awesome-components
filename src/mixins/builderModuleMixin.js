@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     _uuid() {
-      if (!this.uuid) {
+      if (!this.uuid && this.placed) {
         const uuid = uuidv4();
         this.$emit('update:uuid', uuid);
         return uuid;
