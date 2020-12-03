@@ -22,6 +22,16 @@
         </div>
       </div>
     </template>
+    <template v-slot:view>
+      <FormElement :event-bus="$awEventBus" :field="insideData.model.fields">
+        <template v-slot:label>
+          {{insideData.model.fields.label}}
+        </template>
+        <template v-slot:hint>
+          {{insideData.model.fields.hint}}
+        </template>
+      </FormElement>
+    </template>
   </AwesomeBuilderModule>
 </template>
 

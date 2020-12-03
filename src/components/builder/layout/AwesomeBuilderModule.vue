@@ -1,5 +1,5 @@
 <template>
-  <div class="awesome-builder-module">
+  <div :class="'awesome-builder-module '+ mode">
     <div v-if="mode === 'edit' || mode === 'tile'" class="awesome-builder-module-header draggable">
       <i :class="'awesome-builder-module-icon fa ' + options.icon"></i>
       <div class="awesome-builder-module-text">
@@ -20,14 +20,13 @@
         </button>
       </div>
     </div>
-    <hr v-if="_extended"/>
-    <div v-if="_extended" class="awesome-builder-module-content">
-      <slot v-if="mode === 'edit'" name="editor"></slot>
-      <slot v-if="mode === 'view'" name="view"></slot>
+    <hr v-if="mode === 'edit' && _extended"/>
+    <div v-if="mode === 'edit' && _extended" class="awesome-builder-module-content">
+      <slot name="editor"></slot>
       <button @click="doneEditing" class="btn btn-primary validate-button">Done Editing</button>
     </div>
     <div v-if="mode === 'view'" class="awesome-builder-mode-view">
-
+      <slot v-if="mode === 'view'" name="view"></slot>
     </div>
   </div>
 </template>
@@ -98,12 +97,14 @@ export default {
   flex-flow: column nowrap;
   justify-content: center;
   align-items: flex-start;
-  background-color: white;
   border-radius: 5px;
   margin: 10px 0;
   width: 100%;
   padding: 10px;
-  box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12);
+  &.edit, &.tile {
+    background-color: white;
+    box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12);
+  }
   hr {
     width: 100%;
   }
@@ -147,6 +148,9 @@ export default {
     display: flex;
     justify-content: flex-start;
     flex-flow: column nowrap;
+  }
+  .awesome-builder-mode-view {
+    width: 100%;
   }
   .validate-button {
     width: 100%;

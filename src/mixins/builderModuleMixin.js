@@ -11,11 +11,21 @@ export default {
       type: String,
       required: true,
       default: 'edit' // tile | edit | view
-    }
+    },
+    data: null
   },
   data: () => ({
     insideData: null,
   }),
+  mounted() {
+    if (this.data) {
+      if (typeof this.data === 'string') {
+        this.insideData = this.data
+      } else {
+        this.insideData = Object.assign(this.insideData, this.data);
+      }
+    }
+  },
   methods: {
     insideDataUpdated() {
       this.$emit('update:insideData', this.insideData);

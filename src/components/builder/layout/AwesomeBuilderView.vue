@@ -1,7 +1,10 @@
 <template>
   <div class="awesome-builder-view">
     <div v-for="(module, index) in content" :key="index">
-      {{module}}
+      <component v-bind:is="module.name"
+                 mode="view"
+                 :data="module.insideData"
+      />
     </div>
   </div>
 </template>
@@ -12,12 +15,8 @@ export default {
   name: 'AwesomeBuilderView',
   data: () => ({
     content: [],
-    eventBus: null,
   }),
   mounted() {
-    if (this.$awEventBus) {
-      this.eventBus = this.$awEventBus;
-    }
     this.content = JSON.parse(localStorage.getItem('awesome-builder-view-test'));
   }
 }
@@ -26,5 +25,6 @@ export default {
 <style scoped lang="scss">
 .awesome-builder-view {
   text-align: left;
+  background-color: white;
 }
 </style>
