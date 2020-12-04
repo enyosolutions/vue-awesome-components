@@ -110,20 +110,7 @@ module.exports = {
           {title: "Awesome Kanban", path: "/guide/awesomekanban/"},
           {title: "Awesome List", path: "/guide/awesomelist/"},
           {title: "Awesome Layout", path: "/guide/awesomelayout/"},
-          {
-            title: "Awesome Builder",
-            path: "/guide/awesomebuilder/",
-            children: [
-              {
-                title: 'Create a module',
-                path: '/guide/awesomebuilder/create-module.md'
-              },
-              {
-                title: 'Module',
-                path: '/guide/awesomebuilder/module.md'
-              }
-            ]
-          },
+          {title: "Awesome Builder", path: "/guide/awesomebuilder/"},
           {title: "Awesome Event Bus", path: "/guide/awesomeBus/"},
           {title: "TableAndChartsCard", path: "/guide/tableandchartscard"},
           {title: "EnyoStats", path: "/guide/enyostats.md"},

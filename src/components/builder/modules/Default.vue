@@ -19,9 +19,6 @@ export default {
   components: {
     AwesomeBuilderModule,
   },
-  mounted() {
-    this.renderingComponent = 'Default'
-  }
 }
 </script>
 

@@ -67,7 +67,6 @@ export default {
         },
       },
     };
-    this.renderingComponent = 'form-element'
   },
   mounted() {
     // this.field.id = uuidv4();

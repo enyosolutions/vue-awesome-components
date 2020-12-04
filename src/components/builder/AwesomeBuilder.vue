@@ -35,8 +35,4 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
-.awesome-builder {
-
-}
 </style>
