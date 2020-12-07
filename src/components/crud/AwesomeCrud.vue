@@ -334,7 +334,7 @@ const defaultOptions = {
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
-  customTopActions: [],
+  customAwFormTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: 'view'
 };
