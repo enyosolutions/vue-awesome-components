@@ -4,17 +4,14 @@
       <div class="row">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
           <div class="text-left">
-            <!-- START OF create MODAL -->
+            <!-- START OF MODAL -->
             <div
               :id="identity + 'FormModal'"
               class="AwesomeForm aw-form"
               :class="{
-                'modal slide':
-                  displayMode === 'slide' ||
-                  displayMode === 'sidebar' ||
-                  displayMode === 'sidebar-left' ||
-                  displayMode === 'sidebar-right',
-                'modal fade': displayMode === 'fade' || displayMode === 'modal' || displayMode === 'fullscreen',
+                modal: _shouldHaveModalClasses,
+                slide: _shouldHaveSlideClasses,
+                fade: displayMode === 'fade' || displayMode === 'modal' || displayMode === 'fullscreen',
                 'page  fade': displayMode === 'page',
                 show: this.show
               }"
@@ -24,13 +21,10 @@
               <div
                 class
                 :class="{
-                  'modal-dialog': displayMode !== 'page',
-                  'modal-full-height':
-                    displayMode === 'slide' ||
-                    displayMode === 'sidebar' ||
-                    displayMode === 'sidebar-right' ||
-                    displayMode === 'sidebar-left',
-                  'modal-full': displayMode === 'fullscreen',
+                  'modal-dialog': displayMode !== 'page' && !_isNested,
+                  'modal-nested': _isNested,
+                  'modal-full-height': _shouldHaveSlideClasses,
+                  'modal-fullscreen': displayMode === 'fullscreen',
 
                   'modal-lg': displayMode === 'modal' || displayMode === 'fade'
                 }"
@@ -101,6 +95,7 @@
                         <AwesomeLayout
                           v-if="_useCustomLayout"
                           :edit-mode="editLayoutMode"
+                          :fields-list="_getFieldsList"
                           :layout="layout"
                           @layout-updated="onLayoutUpdated"
                           @layout-fields-updated="onLayoutFieldsUpdated"
@@ -146,9 +141,20 @@
                   </form>
                 </div>
                 <!--  EDITS -->
-                <div v-if="mode === 'edit' || mode === 'view'" class="modal-content">
+                <div
+                  v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView"
+                  :class="{
+                    'modal-content': !_isNested
+                  }"
+                >
                   <form @submit.prevent="editItem()">
-                    <div class="modal-header bg-primary text-white">
+                    <div
+                      class="modal-header"
+                      :class="{
+                        'bg-primary text-white': !_isANestedDetailView,
+                        'd-none': _isANestedDetailView
+                      }"
+                    >
                       <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t('AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
@@ -156,7 +162,62 @@
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
                         {{ $t('AwesomeCrud.labels.view') }} {{ _name }} <b>{{ _editItemTile }}</b>
                       </h3>
-
+                      <div class="btn-group m-0 aw-form-header-actions" v-if="mergedOptions.customAwFormTopActions">
+                        <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
+                          <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
+                            <button
+                                class="btn dropdown-toggle"
+                                :class="action.class"
+                                type="button"
+                                :id="action.name + '-' + index"
+                                data-toggle="dropdown"
+                                arias-haspopup="true"
+                                aria-expanded="false"
+                            >
+                              <i v-if="action.icon" :class="action.icon"></i>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                            </button>
+                            <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
+                              <a
+                                  v-for="(child, index) in action.children"
+                                  :key="child.id || index"
+                                  class="dropdown-item"
+                                  @click="$emit('customAction', {
+                                    action,
+                                    item: selectedItem,
+                                    location: 'top',
+                                    id: action.name + '-' + index,
+                                    child
+                                  });"
+                              >
+                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : ''}}</span>
+                              </a>
+                            </div>
+                          </div>
+                          <div v-else :key="index">
+                            <button
+                                type="button"
+                                :key="index"
+                                class="btn"
+                                :class="action.class"
+                                :id="action.name + '-' + index"
+                                :data-title="action.title || action.label"
+                                :data-tooltip="action.title || action.label"
+                                @click="
+                                $emit('customAction', {
+                                  action,
+                                  item: selectedItem,
+                                  location: 'inline',
+                                  id: action.name + '-' + index
+                                });
+                              "
+                            >
+                              <i v-if="action.icon" :class="action.icon"></i>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
+                            </button>
+                          </div>
+                        </template>
+                      </div>
                       <div
                         v-if="_useCustomLayout && _actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
@@ -210,9 +271,16 @@
                         <span aria-hidden="true" class="text-white">&times;</span>
                       </button>
                     </div>
-                    <div class="modal-body" :class="{ 'view-mode': mode === 'view' }">
+                    <div
+                      class=""
+                      :class="{
+                        'modal-body': !_isANestedDetailView,
+                        'modal-body-nested': _isANestedDetailView,
+                        'view-mode': mode === 'view'
+                      }"
+                    >
                       <ul
-                        v-if="nestedModels && nestedModels.length && mode !== 'create'"
+                        v-if="nestedModels && nestedModels.length && mode !== 'create' && nestedLayoutMode !== 'list'"
                         class="nav nav-tabs mt-0 mb-4"
                       >
                         <li class="nav-item">
@@ -246,6 +314,7 @@
                               v-if="_useCustomLayout"
                               :edit-mode="editLayoutMode"
                               :layout="layout"
+                              :fields-list="_getFieldsList"
                               @layout-updated="onLayoutUpdated"
                               @layout-fields-updated="onLayoutFieldsUpdated"
                             >
@@ -332,14 +401,22 @@
                           </div>
 
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
+                            <template v-if="nestedLayoutMode === 'list'">
+                              <h3 class="nested-model-title text-primary font-italic" data-toggle="collapse">
+                                {{ getNestedTabsTitle({ identity, title }) }}
+                              </h3>
+                              <hr class="mb-1" />
+                            </template>
                             <div
+                              :id="'list-collapse-' + identity"
                               class="tab-pane nested-tab fade"
                               :class="{
-                                'active show': !activeNestedTab || activeNestedTab === 'general'
+                                'active show':
+                                  !activeNestedTab || activeNestedTab === 'general' || nestedLayoutMode === 'list',
+                                'card p-5 ': nestedLayoutMode === 'list'
                               }"
                             >
                               <VueFormGenerator
-                                v-if="!activeNestedTab || activeNestedTab === 'general'"
                                 :schema.sync="formSchema"
                                 :model="selectedItem"
                                 :options="formOptions"
@@ -362,18 +439,32 @@
                                 :key="ns.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show': activeNestedTab === ns.identity
+                                  'active show in': activeNestedTab === ns.identity || nestedLayoutMode === 'list'
                                 }"
                               >
+                                <template v-if="nestedLayoutMode === 'list'">
+                                  <h3
+                                    class="nested-model-title mt-5 text-primary font-italic mb-0"
+                                    data-toggle="collapse"
+                                    :data-target="'#list-collapse-' + ns.identity"
+                                  >
+                                    {{ getNestedTabsTitle(ns) }}
+                                  </h3>
+                                  <hr class="mt-0" />
+                                </template>
                                 <div
+                                  :id="'list-collapse-' + ns.identity"
                                   :is="AwesomeCrud"
-                                  v-if="activeNestedTab === ns.identity"
                                   v-bind="ns"
                                   :parent="selectedItem"
                                   :parentIdentity="model.identity || identity"
                                   :useRouterMode="false"
-                                  :crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-                                  class="aw-crud-nested-model"
+                                  :crud-needs-refresh="nestedElementsNeedRefresh"
+                                  :needs-refresh="nestedElementsNeedRefresh"
+                                  @input:needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
+                                  @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
+                                  @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
+                                  class="aw-crud-nested-model collapse show"
                                 >
                                   <div slot="crud-title" />
                                 </div>
@@ -492,7 +583,7 @@
           <!-- END OF create MODAL -->
           <div
             :id="identity + 'Backdrop'"
-            v-if="displayMode !== 'page' && displayMode !== 'fullscreen' && show"
+            v-if="_shouldShowBackdrop"
             class="modal-backdrop backdrop-custom show"
             :class="displayMode"
             style="background: #111;"
@@ -543,7 +634,7 @@ const defaultOptions = {
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
-  customTopActions: [],
+  customAwFormTopActions: [],
   customTabletopActions: [],
   responseField: 'body',
   useCustomLayout: false
@@ -574,8 +665,8 @@ export default {
   props: {
     item: { type: Object, required: true },
     bulkItems: { type: Array, required: false },
-    title: { type: String, required: false, default: undefined },
-    pageTitle: { type: String, required: false, default: undefined },
+    title: { type: [String, Boolean], required: false, default: undefined },
+    pageTitle: { type: [String, Boolean], required: false, default: undefined },
     name: { type: [String, Boolean], required: false, default: undefined },
     namePlural: { type: [String, Boolean], required: false, default: undefined },
     identity: { type: String, required: true },
@@ -600,7 +691,7 @@ export default {
       note:
         'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
-    crudNeedsRefresh: {
+    needsRefresh: {
       type: Boolean,
       default: false,
       note: 'Define whether the content of the table list should be refreshed'
@@ -676,7 +767,7 @@ export default {
         'sidebar-right':   Display as right size side menu
         'sidebar-left':  Display as Left size side menu
         'fullscreen':   Display as a full screen component
-        'page':   Display as a full screen component
+        'page':   Display as an in page component
       `,
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
@@ -728,6 +819,14 @@ export default {
       required: false,
       default: true,
       node: 'Controls if the actions (create / edit / view)  should update the current route url'
+    },
+    nestedLayoutMode: {
+      type: String,
+      required: false,
+      default: 'horizontal-tabs',
+      values: ['horizontal-tabs', 'vertical-tabs', 'list'],
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     }
   },
   data() {
@@ -737,7 +836,7 @@ export default {
       parentPath: '',
       selectedItem: {},
       isRefreshing: false,
-      nestedCrudNeedsRefresh: false,
+      nestedElementsNeedRefresh: false,
       show: false,
       showBackDrop: false,
       mergedOptions: {},
@@ -890,12 +989,8 @@ export default {
       return { groups: [{ ...this.formSchema, legend: 'home' }] };
     },
 
-    _isEmbedded() {
-      return this._isNested && (this.nestedDisplayMode === 'view' || this.nestedDisplayMode === 'edit');
-    },
-
     _useCustomLayout() {
-      return !!(this.options.useCustomLayout && this.layout);
+      return !!(this.options && this.options.useCustomLayout && this.layout);
     },
 
     _editItemTile() {
@@ -915,6 +1010,36 @@ export default {
 
     _schema() {
       return this.schema || (this._model && this._model.schema);
+    },
+
+    _shouldShowBackdrop() {
+      return !this._isNested && this.displayMode !== 'page' && this.displayMode !== 'fullscreen' && this.show;
+    },
+
+    _shouldHaveModalClasses() {
+      return (
+        !this._isNested &&
+        ['fade', 'modal', 'fullscreen', 'sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) >
+          -1
+      );
+    },
+    _shouldHaveSlideClasses() {
+      return !this._isNested && ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
+    },
+    _getFieldsList() {
+      const fieldsList = [];
+      this.formSchema.fields.forEach((field) => {
+        let exist = false;
+        this.layout.forEach((layout) => {
+          if (_.includes(layout.fields, field.model)) {
+            exist = true;
+          }
+        });
+        if (!exist) {
+          fieldsList.push(field.model);
+        }
+      });
+      return fieldsList;
     }
   },
   watch: {
@@ -924,7 +1049,7 @@ export default {
     model: 'loadModel',
     mode: 'onModeChanged',
     options: 'mergeOptions',
-    crudNeedsRefresh: 'refreshComponent',
+    needsRefresh: 'refreshComponent',
     item: 'loadModel'
   },
   created() {
@@ -955,6 +1080,12 @@ export default {
     if (this.mode === 'create') {
       this.selectedItem = createDefaultObject(this.formSchema);
     }
+
+    this.nestedElementsNeedRefresh = true;
+    setTimeout(() => {
+      this.nestedElementsNeedRefresh = false;
+    }, 100);
+
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
       if (this.$route.params.id) {
@@ -1006,19 +1137,20 @@ export default {
     $alert: Swal,
     startCase: _.startCase,
     upperFirst: _.upperFirst,
-    refreshComponent() {
-      // eslint-disable-next-line
-      console.log('refresh component watcher');
+    refreshComponent(newVal, preVal) {
+      if (!newVal || newVal === false) {
+        return;
+      }
       if (this.identity) {
         this.loadModel();
       }
 
-      this.tableNeedsRefresh = true;
-      this.statsNeedsRefresh = true;
-      this.nestedCrudNeedsRefresh = true;
+      this.nestedElementsNeedRefresh = true;
 
       setTimeout(() => {
+        this.nestedElementsNeedRefresh = false;
         this.$emit('update:crudNeedsRefresh', false);
+        this.$emit('input:crudNeedsRefresh', false);
       }, 100);
     },
 
@@ -1034,7 +1166,7 @@ export default {
     },
     mergeOptions() {
       /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
-      if (this.options.deletePermitted && this._actions.delete) {
+      if (this.options && this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
           this.$store.state &&
@@ -1091,9 +1223,7 @@ export default {
           });
         }, 0);
       }
-      this.tableNeedsRefresh = true;
-      this.statsNeedsRefresh = true;
-      this.nestedCrudNeedsRefresh = true;
+      this.nestedElementsNeedRefresh = true;
       this.$forceUpdate();
     },
 
@@ -1117,9 +1247,6 @@ export default {
     },
 
     loadModel() {
-      if (!this.options) {
-        this.options = {};
-      }
       this.mergeOptions();
       setTimeout(() => {
         this.openModal();
@@ -1185,7 +1312,7 @@ export default {
     },
 
     getShemaForFields(fields) {
-      if (!fields) {
+      if (!fields || !fields.length) {
         return;
       }
       const fieldsDefinition = this.formSchema.fields.filter((f) => {
@@ -1339,9 +1466,7 @@ export default {
             }),
             type: 'success'
           });
-          this.tableNeedsRefresh = true;
-          this.statsNeedsRefresh = true;
-          this.nestedCrudNeedsRefresh = true;
+          this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
           this.close();
           this.$emit('itemCreated', this.selectedItem, {
@@ -1351,6 +1476,7 @@ export default {
         .catch(this.apiErrorCallback)
         .finally(() => {
           this.isRefreshing = false;
+          this.nestedElementsNeedRefresh = false;
         });
 
       // return false;
@@ -1445,8 +1571,7 @@ export default {
             }),
             type: 'success'
           });
-          this.tableNeedsRefresh = true;
-          this.nestedCrudNeedsRefresh = true;
+          this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
           this.$emit('itemEdited', this.selectedItem, {
             context: this.mode
@@ -1456,6 +1581,7 @@ export default {
         .catch(this.apiErrorCallback)
         .finally(() => {
           this.isRefreshing = false;
+          this.nestedElementsNeedRefresh = false;
         });
       return false;
     },
@@ -1565,6 +1691,18 @@ export default {
 
     onLayoutFieldsUpdated(items) {
       this.$emit('layout-fields-updated', items);
+    },
+
+    getNestedTabsTitle(ns) {
+      if (ns.name) {
+        return ns.name;
+      }
+      if (ns.title) {
+        return ns.title;
+      }
+      return this.$te('awForm.labels.tabs.' + ns.identity)
+        ? this.$t('awForm.labels.tabs.' + ns.identity)
+        : this.startCase(ns.identity);
     }
   }
 };
@@ -1708,6 +1846,18 @@ body.modal-open .bootstrap-datetimepicker-widget {
   .container-fluid {
     padding-left: 0;
     padding-right: 0;
+
+    .aw-form {
+      .modal-nested {
+        .modal-header {
+          position: static;
+          text-align: left;
+        }
+      }
+
+      .modal-body-nested {
+      }
+    }
   }
 }
 
@@ -1721,5 +1871,69 @@ body.modal-open .bootstrap-datetimepicker-widget {
   padding-left: 3px;
   min-height: 30px;
   margin-left: -3px;
+}
+
+.aw-form {
+  .modal {
+    &.slide {
+      .modal-dialog {
+        margin: 0;
+      }
+    }
+
+    .modal-dialog.modal-full,
+    .modal-dialog.modal-fullscreen {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      max-width: 100vw;
+      max-height: 100vh;
+      transform: none;
+
+      .modal-content {
+        height: 100%;
+
+        form {
+          margin: 0;
+        }
+
+        .modal-header {
+          position: absolute;
+          top: 0;
+          right: 0;
+          left: 0;
+          height: 50px;
+          padding: 10px;
+          border: 0;
+        }
+
+        .modal-title {
+          font-weight: 300;
+          font-size: 1.2em;
+          color: #fff;
+          line-height: 30px;
+        }
+
+        .modal-body {
+          position: absolute;
+          top: 50px;
+          bottom: 60px;
+          width: 100%;
+          font-weight: 300;
+          overflow: auto;
+        }
+
+        .modal-footer {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          height: 60px;
+          padding: 10px;
+          background: #f1f3f5;
+        }
+      }
+    }
+  }
 }
 </style>

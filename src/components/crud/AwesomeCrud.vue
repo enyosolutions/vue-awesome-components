@@ -12,8 +12,10 @@
             :identity="identity"
             :displayMode="mergedOptions.detailPageMode"
             :layout="viewPageLayoutComputed"
+            :parent="parent"
             :item="selectedItem"
-            :needs-refresh="awesomeEditNeedsRefresh"
+            :needs-refresh.sync="awesomeEditNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
             @create="goToCreatePage"
@@ -133,21 +135,25 @@
                 </button>
               </template>
               <button
+                v-if="
+                  canShowCreateButton &&
+                    !_isANestedDetailView &&
+                    (displayMode === 'table' ||
+                      (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
+                "
                 :disabled="!canShowCreateButton"
                 class="btn btn-primary btn-simple aw-button-add"
                 @click="goToCreatePage()"
                 type="button"
               >
-                <template v-if="canShowCreateButton">
-                  <i class="fa fa-plus" />
-                  {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
-                </template>
+                <i class="fa fa-plus" />
+                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
               </button>
             </slot>
           </div>
           <AwesomeList
             v-if="
-              !_isNestedDetail &&
+              !_isANestedDetailView &&
                 (displayMode === 'list' ||
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
             "
@@ -183,7 +189,7 @@
           </AwesomeList>
           <AwesomeKanban
             v-if="
-              !_isNestedDetail &&
+              !_isANestedDetailView &&
                 (displayMode === 'kanban' ||
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
             "
@@ -210,7 +216,7 @@
           </AwesomeKanban>
           <AwesomeTable
             v-if="
-              !_isNestedDetail &&
+              !_isANestedDetailView &&
                 (displayMode === 'table' ||
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
@@ -328,7 +334,7 @@ const defaultOptions = {
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
-  customTopActions: [],
+  customAwFormTopActions: [],
   customTabletopActions: [],
   tableRowClickAction: 'view'
 };
@@ -458,13 +464,7 @@ export default {
       required: true,
       note: 'Deprecated use identity'
     },
-    nestedDisplayMode: {
-      type: String,
-      required: false,
-      default: 'table',
-      note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
-    },
+
     primaryKey: {
       type: String,
       default: 'id',
@@ -495,6 +495,11 @@ export default {
       default: false,
       note: 'Define whether the content of the table list should be refreshed'
     },
+    needsRefresh: {
+      type: Boolean,
+      default: false,
+      note: 'Define whether the content of the component should be refreshed'
+    },
     nestedSchemas: {
       type: Array,
       required: false,
@@ -506,6 +511,22 @@ export default {
       required: false,
       default: () => [],
       note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
+    },
+    nestedDisplayMode: {
+      type: String,
+      required: false,
+      default: 'table',
+      values: ['view', 'edit', 'object', 'table'],
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+    },
+    nestedLayoutMode: {
+      type: String,
+      required: false,
+      default: 'horizontal-tabs',
+      values: ['horizontal-tabs', 'vertical-tabs', 'list'],
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     parent: {
       type: Object,
@@ -662,8 +683,8 @@ export default {
       return '';
     },
 
-    // _url() szee apiConfigMixin
-    // _selectedItemUrl() szee apiConfigMixin
+    // _url() see apiConfigMixin
+    // _selectedItemUrl() see apiConfigMixin
 
     schemaComputed() {
       return this.schema || (this._model && this._model.schema);
@@ -778,7 +799,8 @@ export default {
     model: 'loadModel',
     'parent.id': 'loadModel',
     options: 'mergeOptions',
-    crudNeedsRefresh: 'refreshComponent'
+    crudNeedsRefresh: 'refreshComponent',
+    needsRefresh: 'refreshComponent'
   },
   created() {
     window._vue = this;
@@ -806,7 +828,7 @@ export default {
       this.displayMode = this.nestedDisplayMode;
     }
     /*
-    if (this._isNestedDetail && this.viewMode === "detail") {
+    if (this._isANestedDetailView && this.viewMode === "detail") {
       this.viewMode = this.nestedDisplayMode;
     }
 */
@@ -853,19 +875,28 @@ export default {
 
   methods: {
     $alert: Swal,
-    refreshComponent() {
+    refreshComponent(newVal, preVal) {
+      if (!newVal || newVal === false) {
+        return;
+      }
       // console.log("refresh component watcher");
       if (this.identity) {
         this.loadModel();
       }
 
-      this.tableNeedsRefresh = false;
+      this.tableNeedsRefresh = true;
       this.statsNeedsRefresh = true;
       this.awesomeEditNeedsRefresh = true;
       this.nestedCrudNeedsRefresh = true;
 
       setTimeout(() => {
+        this.tableNeedsRefresh = false;
+        this.statsNeedsRefresh = false;
+        //  this.awesomeEditNeedsRefresh = false;
+        this.nestedCrudNeedsRefresh = false;
         this.$emit('update:crudNeedsRefresh', false);
+        this.$emit('input:crudNeedsRefresh', false);
+        this.$emit('input:needs-refresh', false);
       }, 100);
     },
 
@@ -874,7 +905,7 @@ export default {
     },
 
     mergeOptions() {
-      if (this.options.deletePermitted && this._actions.delete) {
+      if (this.options && this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
           this.$store.state &&
@@ -961,9 +992,6 @@ export default {
     },
 
     loadModel() {
-      if (!this.options) {
-        this.options = {};
-      }
       this.mergeOptions();
 
       if (!this._model && !this.schema) {
@@ -1125,7 +1153,9 @@ export default {
     },
 
     goToViewPage(item) {
-      if (this.mergedOptions.viewPath) {
+      if (item && this.mergedOptions.viewPath && item[this.primaryKey]) {
+        console.warn('item[this.primaryKey]', item, item[this.primaryKey]);
+        alert(item[this.primaryKey]);
         return this.$router.push(
           this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
         );

@@ -5,14 +5,14 @@
     :style="$props.styles"
     v-bind="$props"
   >
-    <template v-if="displayField && !_useArrayMode && !multiple">
-      {{ value && value[displayField] }}
+    <template v-if="!_useArrayMode && !multiple">
+      {{ displayField ? value && value[displayField] : value }}
     </template>
     <template v-else>
       <template v-for="(value, key) of $props.value" class="label label-info">
         <div :key="key" class="badge badge-info aw-display-object-item mr-1">
           <template v-if="multiple">
-            {{ value && value[displayField] }}
+            {{ (value && value[displayField]) || value }}
           </template>
           <template v-if="!_valueIsArray">
             <label>{{ key }}:</label>
@@ -35,7 +35,7 @@ export default {
       return Array.isArray(this.value);
     },
     _useArrayMode() {
-      return this.multiple && this.displayField;
+      return this.multiple && this._valueIsArray;
     }
   }
 };

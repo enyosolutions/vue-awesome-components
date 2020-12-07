@@ -3,8 +3,10 @@
  */
 
 import _ from 'lodash';
+import templatingMixin from './templatingMixin';
 
 export default {
+  mixins: [templatingMixin],
   props: {
     primaryKey: { type: String, default: 'id' },
     url: { type: [String, Function], default: '' },
@@ -95,6 +97,14 @@ export default {
           currentItem: this.selectedItem,
           items: this.items
         });
+      }
+      if (url && url.indexOf('{{') > -1) {
+        return this.templateParseUrl(url, {
+          parent: this.parent,
+          context: this,
+          currentItem: this.selectedItem,
+          items: this.items
+        })
       }
       return url;
     },
