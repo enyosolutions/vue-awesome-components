@@ -21,7 +21,9 @@
               <div
                 class
                 :class="{
-                  'modal-dialog': displayMode !== 'page' && !_isNested,
+                  'modal-dialog': displayMode !== 'page',
+                  'modal-dialog-centered': displayMode !== 'page',
+                  'modal-dialog-scrollable': displayMode !== 'page',
                   'modal-nested': _isNested,
                   'modal-full-height': _shouldHaveSlideClasses,
                   'modal-fullscreen': displayMode === 'fullscreen',
@@ -143,18 +145,10 @@
                 <!--  EDITS -->
                 <div
                   v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView"
-                  :class="{
-                    'modal-content': !_isNested
-                  }"
+                  class='modal-content'
                 >
                   <form @submit.prevent="editItem()">
-                    <div
-                      class="modal-header"
-                      :class="{
-                        'bg-primary text-white': !_isANestedDetailView,
-                        'd-none': _isANestedDetailView
-                      }"
-                    >
+                    <div class="modal-header bg-primary text-white">
                       <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t('AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
@@ -217,9 +211,8 @@
                       </button>
                     </div>
                     <div
-                      class=""
+                      class="modal-body"
                       :class="{
-                        'modal-body': !_isANestedDetailView,
                         'modal-body-nested': _isANestedDetailView,
                         'view-mode': mode === 'view'
                       }"
@@ -958,18 +951,14 @@ export default {
     },
 
     _shouldShowBackdrop() {
-      return !this._isNested && this.displayMode !== 'page' && this.displayMode !== 'fullscreen' && this.show;
+      return this.displayMode !== 'page' && this.displayMode !== 'fullscreen' && this.show;
     },
 
     _shouldHaveModalClasses() {
-      return (
-        !this._isNested &&
-        ['fade', 'modal', 'fullscreen', 'sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) >
-          -1
-      );
+      return ['fade', 'modal', 'fullscreen', 'sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
     },
     _shouldHaveSlideClasses() {
-      return !this._isNested && ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
+      return ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
     },
     _getFieldsList() {
       const fieldsList = [];
