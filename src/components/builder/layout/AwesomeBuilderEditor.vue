@@ -63,13 +63,27 @@ export default {
     },
     saveContent() {
       localStorage.setItem('awesome-builder-view-test', JSON.stringify(this.content));
-    }
+    },
+    removeDeep(array, uuid) {
+      array.forEach((module, index) => {
+        if (module.uuid === uuid) {
+          array.splice(index, 1);
+        } else {
+          if (array[index].insideData) {
+            Object.keys(array[index].insideData).forEach((key) => {
+              this.removeDeep(array[index].insideData[key], uuid);
+            })
+          }
+        }
+      })
+      return array;
+    },
   },
   mounted() {
     this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
-      this.content = _.filter(this.content, (item) => {
-        return item.uuid !== uuid;
-      });
+      const copy = JSON.parse(JSON.stringify(this.content));
+      const array = this.removeDeep(copy, uuid);
+      this.content = array;
     })
   },
   computed: {

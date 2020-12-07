@@ -83,11 +83,6 @@ export default {
       return this.extended && this.mode === 'edit';
     }
   },
-  mounted() {
-    this.$awEventBus && this.$awEventBus.$on(`aw-builder-module-placed-${this.uuid}`, () => {
-      this.extended = true;
-    })
-  }
 }
 </script>
 

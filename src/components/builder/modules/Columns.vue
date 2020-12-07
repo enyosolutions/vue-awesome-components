@@ -3,10 +3,10 @@
     <template v-slot:editor>
       <div class="module-columns">
         <div class="column">
-          <AwesomeBuilderContent :content.sync="list1"></AwesomeBuilderContent>
+          <AwesomeBuilderContent :content.sync="insideData.list1"></AwesomeBuilderContent>
         </div>
         <div class="column">
-          <AwesomeBuilderContent :content.sync="list2"></AwesomeBuilderContent>
+          <AwesomeBuilderContent :content.sync="insideData.list2"></AwesomeBuilderContent>
         </div>
       </div>
     </template>
@@ -17,7 +17,7 @@
 import AwesomeBuilderModule from '@/components/builder/layout/AwesomeBuilderModule';
 import builderModuleMixin from '@/mixins/builderModuleMixin';
 import AwesomeBuilderContent from '@/components/builder/layout/AwesomeBuilderContent';
-import _ from "lodash";
+import _ from 'lodash';
 
 export default {
   name: 'Columns',
@@ -29,18 +29,18 @@ export default {
       description: 'Allow you to separate content two column',
       icon: 'fa-columns'
     },
-    list1: [],
-    list2: [],
   }),
   mounted() {
-    this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
-      this.list1 = _.filter(this.list1, (item) => {
-        return item.uuid !== uuid;
-      });
-      this.list2 = _.filter(this.list2, (item) => {
-        return item.uuid !== uuid;
-      });
-    })
+    this.insideData.list1 = [];
+    this.insideData.list2 = [];
+    // this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
+    //   this.insideData.list1 = _.filter(this.insideData.list1, (item) => {
+    //     return item.uuid !== uuid;
+    //   });
+    //   this.insideData.list2 = _.filter(this.insideData.list2, (item) => {
+    //     return item.uuid !== uuid;
+    //   });
+    // })
   }
 }
 </script>

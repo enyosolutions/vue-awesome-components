@@ -8,6 +8,7 @@
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
+        @change="onChange"
         handle=".draggable"
     >
       <component
@@ -40,7 +41,9 @@ export default {
     dragging: false,
   }),
   methods: {
-    //
+    onChange() {
+      this.$forceUpdate();
+    }
   },
 }
 </script>

@@ -15,7 +15,7 @@ export default {
     data: null
   },
   data: () => ({
-    insideData: null,
+    insideData: {},
   }),
   mounted() {
     if (this.data) {
