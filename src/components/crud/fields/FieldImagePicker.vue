@@ -10,6 +10,14 @@
       :image-src="value"
       @change="onChangeImage"
     />
+    <div class="image-picker-actions" v-if="value">
+      <button @click.prevent="openImageInTab" type="button" class="btn btn-simple btn-alt-style btn-sm p-2">
+        <i class="fa fa-external-link"></i>
+      </button>
+      <button @click.prevent="removeImage" type="button" class="btn btn-simple btn-alt-style btn-sm p-2">
+        <i class="fa fa-trash"></i>
+      </button>
+    </div>
   </div>
 </template>
 <script>
@@ -48,6 +56,12 @@ export default {
 
   beforeDestroy() {},
   methods: {
+    openImageInTab() {
+      window.open(this.value, '_blank');
+    },
+    removeImage() {
+      this.value = '';
+    },
     onChangeImage(file) {
       if (!file || !file.type.indexOf('image') === -1) {
         return;
@@ -65,6 +79,20 @@ export default {
     cursor: pointer;
     width: 100%;
     height: auto;
+  }
+}
+.aw-form-field-image-picker {
+  position: relative;
+  .image-picker-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 5px;
   }
 }
 </style>
