@@ -935,7 +935,7 @@ export default {
     },
 
     _useCustomLayout() {
-      return !!(this.options.useCustomLayout && this.layout);
+      return !!(this.options && this.options.useCustomLayout && this.layout);
     },
 
     _editItemTile() {
@@ -1111,7 +1111,7 @@ export default {
     },
     mergeOptions() {
       /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
-      if (this.options.deletePermitted && this._actions.delete) {
+      if (this.options && this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
           this.$store.state &&
@@ -1192,9 +1192,6 @@ export default {
     },
 
     loadModel() {
-      if (!this.options) {
-        this.options = {};
-      }
       this.mergeOptions();
       setTimeout(() => {
         this.openModal();

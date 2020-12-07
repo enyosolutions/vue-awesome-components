@@ -328,6 +328,9 @@ export default {
     },
 
     formatLabel(item) {
+      if (_.isString(item) || _.isNumber(item)) {
+        return item;
+      }
       let label;
       if (this._labelField.indexOf('{{') > -1) {
         label = this.templateParser(this._labelField, item);
@@ -342,6 +345,9 @@ export default {
     },
 
     reduce(item) {
+      if (_.isString(item) || _.isNumber(item)) {
+        return item;
+      }
       if (this.fieldOptions.taggable) {
         return item && item[this._trackBy] ? item[this._trackBy] : item;
       }

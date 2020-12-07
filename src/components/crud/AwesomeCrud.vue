@@ -683,8 +683,8 @@ export default {
       return '';
     },
 
-    // _url() szee apiConfigMixin
-    // _selectedItemUrl() szee apiConfigMixin
+    // _url() see apiConfigMixin
+    // _selectedItemUrl() see apiConfigMixin
 
     schemaComputed() {
       return this.schema || (this._model && this._model.schema);
@@ -905,7 +905,7 @@ export default {
     },
 
     mergeOptions() {
-      if (this.options.deletePermitted && this._actions.delete) {
+      if (this.options && this.options.deletePermitted && this._actions.delete) {
         if (
           this.$store &&
           this.$store.state &&
@@ -992,9 +992,6 @@ export default {
     },
 
     loadModel() {
-      if (!this.options) {
-        this.options = {};
-      }
       this.mergeOptions();
 
       if (!this._model && !this.schema) {
@@ -1156,7 +1153,9 @@ export default {
     },
 
     goToViewPage(item) {
-      if (this.mergedOptions.viewPath) {
+      if (item && this.mergedOptions.viewPath && item[this.primaryKey]) {
+        console.warn('item[this.primaryKey]', item, item[this.primaryKey]);
+        alert(item[this.primaryKey]);
         return this.$router.push(
           this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
         );

@@ -7,9 +7,10 @@
     :id="fieldID"
     :class="fieldClasses"
     v-attributes="'input'"
+    :multiple="schema.multi"
   >
     <option v-if="!fieldOptions.hideNoneSelectedText" :disabled="schema.required" :value="null">
-      {{ fieldOptions.noneSelectedText || "&lt;Nothing selected&gt;" }}
+      {{ fieldOptions.noneSelectedText || '&lt;Nothing selected&gt;' }}
     </option>
 
     <template v-for="item in items">

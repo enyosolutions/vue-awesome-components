@@ -41,9 +41,9 @@ export default {
 
   computed: {
     computedOptions() {
-      return this.apiOptions || this.options
+      return this.apiOptions || (this.options && this.options.length && this.options)
         || (this.schema && this.schema.options)
-        || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions)
+        || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.options)
         || [];
     },
 
