@@ -162,7 +162,62 @@
                       <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
                         {{ $t('AwesomeCrud.labels.view') }} {{ _name }} <b>{{ _editItemTile }}</b>
                       </h3>
-
+                      <div class="btn-group m-0 aw-form-header-actions" v-if="mergedOptions.customAwFormTopActions">
+                        <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
+                          <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
+                            <button
+                                class="btn dropdown-toggle"
+                                :class="action.class"
+                                type="button"
+                                :id="action.name + '-' + index"
+                                data-toggle="dropdown"
+                                arias-haspopup="true"
+                                aria-expanded="false"
+                            >
+                              <i v-if="action.icon" :class="action.icon"></i>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                            </button>
+                            <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
+                              <a
+                                  v-for="(child, index) in action.children"
+                                  :key="child.id || index"
+                                  class="dropdown-item"
+                                  @click="$emit('customAction', {
+                                    action,
+                                    item: selectedItem,
+                                    location: 'top',
+                                    id: action.name + '-' + index,
+                                    child
+                                  });"
+                              >
+                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : ''}}</span>
+                              </a>
+                            </div>
+                          </div>
+                          <div v-else :key="index">
+                            <button
+                                type="button"
+                                :key="index"
+                                class="btn"
+                                :class="action.class"
+                                :id="action.name + '-' + index"
+                                :data-title="action.title || action.label"
+                                :data-tooltip="action.title || action.label"
+                                @click="
+                                $emit('customAction', {
+                                  action,
+                                  item: selectedItem,
+                                  location: 'inline',
+                                  id: action.name + '-' + index
+                                });
+                              "
+                            >
+                              <i v-if="action.icon" :class="action.icon"></i>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
+                            </button>
+                          </div>
+                        </template>
+                      </div>
                       <div
                         v-if="_useCustomLayout && _actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
@@ -579,7 +634,7 @@ const defaultOptions = {
   columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
-  customTopActions: [],
+  customAwFormTopActions: [],
   customTabletopActions: [],
   responseField: 'body',
   useCustomLayout: false
