@@ -1,10 +1,10 @@
 <template>
   <AwesomeBuilderModule :uuid="_uuid" :mode="mode">
     <template v-slot:editor>
-      <input v-model="insideData.text" type="text">
+      <input v-model="insideData" type="text">
     </template>
     <template v-slot:view>
-      {{insideData.text}}
+      {{insideData}}
     </template>
   </AwesomeBuilderModule>
 </template>
