@@ -164,46 +164,47 @@
                       </h3>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="mergedOptions.customAwFormTopActions">
                         <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
-                          <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
-                            <button
-                                class="btn dropdown-toggle"
-                                :class="action.class"
-                                type="button"
-                                :id="action.name + '-' + index"
-                                data-toggle="dropdown"
-                                arias-haspopup="true"
-                                aria-expanded="false"
-                            >
-                              <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
-                            </button>
-                            <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
-                              <a
-                                  v-for="(child, index) in action.children"
-                                  :key="child.id || index"
-                                  class="dropdown-item"
-                                  @click="$emit('customAction', {
+                          <template v-if="!action.canDisplay || action.canDisplay({item: selectedItem}, this)">
+                            <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
+                              <button
+                                  class="btn dropdown-toggle"
+                                  :class="action.class"
+                                  type="button"
+                                  :id="action.name + '-' + index"
+                                  data-toggle="dropdown"
+                                  arias-haspopup="true"
+                                  aria-expanded="false"
+                              >
+                                <i v-if="action.icon" :class="action.icon"></i>
+                                <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                              </button>
+                              <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
+                                <a
+                                    v-for="(child, index) in action.children"
+                                    :key="child.id || index"
+                                    class="dropdown-item"
+                                    @click="$emit('customAction', {
                                     action,
                                     item: selectedItem,
                                     location: 'top',
                                     id: action.name + '-' + index,
                                     child
                                   });"
-                              >
-                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : ''}}</span>
-                              </a>
+                                >
+                                  <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : ''}}</span>
+                                </a>
+                              </div>
                             </div>
-                          </div>
-                          <div v-else :key="index">
-                            <button
-                                type="button"
-                                :key="index"
-                                class="btn"
-                                :class="action.class"
-                                :id="action.name + '-' + index"
-                                :data-title="action.title || action.label"
-                                :data-tooltip="action.title || action.label"
-                                @click="
+                            <div v-else :key="index">
+                              <button
+                                  type="button"
+                                  :key="index"
+                                  class="btn"
+                                  :class="action.class"
+                                  :id="action.name + '-' + index"
+                                  :data-title="action.title || action.label"
+                                  :data-tooltip="action.title || action.label"
+                                  @click="
                                 $emit('customAction', {
                                   action,
                                   item: selectedItem,
@@ -211,11 +212,12 @@
                                   id: action.name + '-' + index
                                 });
                               "
-                            >
-                              <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
-                            </button>
-                          </div>
+                              >
+                                <i v-if="action.icon" :class="action.icon"></i>
+                                <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
+                              </button>
+                            </div>
+                          </template>
                         </template>
                       </div>
                       <div
