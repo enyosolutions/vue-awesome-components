@@ -1,10 +1,10 @@
 <template>
   <div class="awesome-builder-content">
-    <AwesomeBuilderNoContent v-if="!content.length"/>
+    <AwesomeBuilderNoContent v-if="!children.length"/>
     <Draggable
         group="module"
         animation="200"
-        :list="content"
+        :list="children"
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
@@ -12,7 +12,7 @@
         handle=".draggable"
     >
       <component
-          v-for="(module, index) in content" :key="index"
+          v-for="(module, index) in children" :key="index"
           v-bind:is="module.name"
           :uuid.sync="module.uuid"
           @update:insideData="module.insideData = $event"
@@ -32,12 +32,8 @@ export default {
     Draggable,
     AwesomeBuilderNoContent
   },
-  props: {
-    content: {
-      type: Array
-    }
-  },
   data: () => ({
+    children: [],
     dragging: false,
   }),
   methods: {

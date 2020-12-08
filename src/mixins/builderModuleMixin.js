@@ -19,11 +19,7 @@ export default {
   }),
   mounted() {
     if (this.data) {
-      if (typeof this.data === 'string') {
-        this.insideData = this.data
-      } else {
-        this.insideData = Object.assign(this.insideData, this.data);
-      }
+      this.insideData = Object.assign(this.insideData, this.data);
     }
   },
   methods: {

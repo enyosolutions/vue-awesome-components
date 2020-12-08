@@ -4,7 +4,7 @@
       <input v-model="insideData.text" type="text">
     </template>
     <template v-slot:view>
-      {{insideData.text}}
+      {{data.text}}
     </template>
   </AwesomeBuilderModule>
 </template>

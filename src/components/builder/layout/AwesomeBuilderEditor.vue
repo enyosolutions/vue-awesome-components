@@ -6,7 +6,7 @@
       </nav>
     </div>
     <div class="awesome-builder-body">
-      <AwesomeBuilderContent :content.sync="content"/>
+      <AwesomeBuilderContent ref="awesome-builder-content"/>
       <div class="awesome-builder-modules">
         <div class="card">
           <div class="card-body">
@@ -50,7 +50,6 @@ export default {
     AwesomeBuilderContent,
   },
   data: () => ({
-    content: [],
     modulesList: modules,
     dragging: false,
     search: '',
@@ -62,29 +61,29 @@ export default {
       return cloneMe;
     },
     saveContent() {
-      localStorage.setItem('awesome-builder-view-test', JSON.stringify(this.content));
+      localStorage.setItem('awesome-builder-view-test', JSON.stringify(this.$refs['awesome-builder-content'].$data.children));
     },
-    removeDeep(array, uuid) {
-      array.forEach((module, index) => {
-        if (module.uuid === uuid) {
-          array.splice(index, 1);
-        } else {
-          if (array[index].insideData) {
-            Object.keys(array[index].insideData).forEach((key) => {
-              this.removeDeep(array[index].insideData[key], uuid);
-            })
-          }
-        }
-      })
-      return array;
-    },
+    // removeDeep(array, uuid) {
+    //   array.forEach((module, index) => {
+    //     if (module.uuid === uuid) {
+    //       array.splice(index, 1);
+    //     } else {
+    //       if (array[index].insideData) {
+    //         Object.keys(array[index].insideData).forEach((key) => {
+    //           this.removeDeep(array[index].insideData[key], uuid);
+    //         })
+    //       }
+    //     }
+    //   })
+    //   return array;
+    // },
   },
   mounted() {
-    this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
-      const copy = JSON.parse(JSON.stringify(this.content));
-      const array = this.removeDeep(copy, uuid);
-      this.content = array;
-    })
+    // this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
+      // const copy = JSON.parse(JSON.stringify(this.children));
+      // const array = this.removeDeep(copy, uuid);
+      // this.children = array;
+    // })
   },
   computed: {
     _moduleSearched() {
