@@ -23,7 +23,7 @@ module.exports = {
           default: 'horizontal-tabs',
           description: 'How the awesomeform is layed out in regards to nested components'
         },
-        'nestedSchemas': {
+        'nestedModels': {
           type: 'array',
           items: {
             type: 'object',

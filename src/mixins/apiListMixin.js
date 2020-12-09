@@ -77,7 +77,9 @@ export default {
     mode: {
       default: 'local',
       type: String
-    }
+    },
+    savePaginationState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (page, filters, sort etc' },
+    saveColumnsState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (page, filters, sort etc' },
   },
   data() {
     return {
@@ -97,6 +99,7 @@ export default {
       parsedAdvancedFilters: {},
       data: [],
       showSkeleton: false,
+      routeQueryParams: {}
     };
   },
   computed: {
@@ -117,6 +120,10 @@ export default {
         translatedParams[newKey] = serverParams[field];
       });
       return translatedParams;
+    },
+
+    isSaveStateEnabledCpt() {
+      return this.saveColumnsState || this.savePaginationState;
     }
   },
 
@@ -153,6 +160,7 @@ export default {
   },
 
   mounted() {
+    this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
   },
@@ -250,7 +258,7 @@ export default {
       this.$emit('itemClicked', item);
     },
 
-    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined }) {
+    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined, columns: undefined }) {
       const columnFilters = newProps.columnFilters && Object.keys(newProps.columnFilters).length ? Object.assign({}, newProps.columnFilters) : {};
 
 
@@ -265,6 +273,10 @@ export default {
           }
         });
         delete newProps.columnFilters;
+      }
+      // store new advanced filter values
+      if (newProps.columns) {
+        this.columnsState = newProps.columns;
       }
       // store new advanced filter values
       if (newProps.advancedFilters) {
@@ -335,34 +347,58 @@ export default {
 
     pushChangesToRouter(options) {
       // disable url update for now
-      return;
-      /*
       //@todo replace by a push state function
+      if (options && options.query) {
+        this.routeQueryParams = _.merge(this.routeQueryParams, options.query);
+      }
+      this.saveComponentState();
+
       if (!this.useRouterMode) {
         return;
       }
-      this.$router.push(options).catch(err => {
-        // Ignore the vueRouter err regarding  navigating to the page they are already on.
-        if (
-          err.name !== 'NavigationDuplicated' &&
-          !err.message.includes('Avoided redundant navigation to current location')
-        ) {
-          // But print any other errors to the console
-          console.warn(err);
-        }
-      })
-      */
+
+      window.history.pushState({}, null, '?' + qs.stringify(this.routeQueryParams));
+
+      // this.$router.replace(options).catch(err => {
+      //   // Ignore the vueRouter err regarding  navigating to the page they are already on.
+      //   if (
+      //     err.name !== 'NavigationDuplicated' &&
+      //     !err.message.includes('Avoided redundant navigation to current location')
+      //   ) {
+      //     // But print any other errors to the console
+      //     console.warn(err);
+      //   }
+      // })
     },
 
     connectRouteToPagination(to) {
       if (this.useRouterMode) {
         //        console.warn("to.query", to.query);
-        this.updateParams({
-          page: to.query.page, search: to.query.search,
-          perPage: to.query.perPage,
-          //   sort: to.query.sort,
-          filters: to.query.filters,
-        });
+        if (Object.keys(to.query).length) {
+          this.updateParams({
+            page: to.query.page,
+            search: to.query.search,
+            perPage: to.query.perPage,
+            //   sort: to.query.sort,
+            filters: to.query.filters,
+            columns: to.query.columns,
+          });
+          this.routeQueryParams = {
+            page: to.query.page, search: to.query.search,
+            perPage: to.query.perPage,
+            //   sort: to.query.sort,
+            filters: to.query.filters,
+            columns: to.query.columns,
+          }
+          return;
+        }
+
+        if (Object.keys(this.routeQueryParams).length) {
+          this.updateParams({ ...this.routeQueryParams, columns: undefined });
+          this.pushChangesToRouter();
+          return;
+        }
+
       }
     },
 
@@ -387,6 +423,51 @@ export default {
       x.setAttribute('download', `${this.entity || this.$options.name}.csv`);
       document.body.appendChild(x);
       x.click();
-    }
+    },
+
+    saveComponentState() {
+      if (this.isSaveStateEnabledCpt && this.uuid) {
+        try {
+          sessionStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
+            routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
+            columnsState: this.saveColumnsState ? this.columnsState : undefined,
+          }));
+        }
+        catch (err) {
+          console.warn(err.message);
+        }
+      }
+    },
+
+    restoreComponentState() {
+      if (this.isSaveStateEnabledCpt && this.uuid) {
+        try {
+          const data = sessionStorage.getItem(`${this.uuid}-${this.$options.name}-state`);
+          if (data) {
+            const parsedState = JSON.parse(data);
+            if (this.savePaginationState) {
+              this.routeQueryParams = parsedState.routeQueryParams;
+            }
+            if (parsedState.columnsState && this.saveColumnsState) {
+              this.columnsState = parsedState.columnsState;
+            }
+            this.pushChangesToRouter();
+          }
+        }
+        catch (err) {
+          console.warn(err.message);
+        }
+      }
+    },
+
+    clearComponentState() {
+      try {
+        sessionStorage.removeItem(`${this.uuid}-${this.$options.name}-state`);
+      }
+      catch (err) {
+        console.warn(err);
+      }
+    },
+
   }
 };

@@ -59,7 +59,8 @@
       "view": "Voir",
       "cancel": "Annuler",
       "close": "Fermer",
-      "columnsFilters": "Activer/Désactiver les filtres de colonnes"
+      "columnsFilters": "Activer/Désactiver les filtres de colonnes",
+      "clear-state": "Réinitialiser le configuration du tableau"
     },
     "next": "Suivant",
     "prev": "Précédent",
