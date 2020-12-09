@@ -405,7 +405,7 @@
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <template v-if="nestedLayoutMode === 'list'">
                               <h3 class="nested-model-title text-primary font-italic" data-toggle="collapse">
-                                {{ getNestedTabsTitle({ identity, title }) }}
+                                {{ getNestedTabsTitle({ identity, title }) }} <b>{{ _editItemTile }}</b>
                               </h3>
                               <hr class="mb-1" />
                             </template>
