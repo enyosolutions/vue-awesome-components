@@ -19,9 +19,15 @@
           notes
         </th>
       </tr>
-      <tr v-for="(propinfo, propname) in merged.props" :key="propname" class="proprow">
+      <tr
+        v-for="(propinfo, propname) in merged.props"
+        :key="propname"
+        class="proprow"
+        :id="'comp-prop-' + propinfo.name"
+      >
         <slot name="prop-row" v-bind:prop="propinfo">
           <td class="propcol name" :class="{ required: propinfo.required }">
+            <a :href="'#comp-prop-' + propinfo.name" class="prop-anchor"><i class="fa fa-link"></i></a>
             <slot name="prop-col-name" v-bind:prop="propinfo">
               <span>{{ propinfo.name }}</span>
             </slot>
@@ -82,7 +88,16 @@ export default {
       default: false
     }
   },
-  mounted() {},
+  mounted() {
+    setTimeout(() => {
+      const hash = document.location.hash;
+      const target = document.querySelector(hash);
+      console.log('target', target);
+      if (hash.indexOf('#comp-prop-') === 0 && target) {
+        target.scrollIntoView();
+      }
+    }, 500);
+  },
   data() {
     return {
       _component: {},
@@ -93,7 +108,6 @@ export default {
   getDoc(component, documentation, ignoreMixins) {
     return this.methods.process(component, documentation, ignoreMixins);
   },
-  mounted() {},
   methods: {
     process(component, documentation, ignoreMixins) {
       //  let VueAwesomeComponents = {};
@@ -215,6 +229,10 @@ function getTypeString(variable) {
 </script>
 
 <style>
+html {
+  scroll-behavior: smooth;
+}
+
 .badge {
   display: inline-block;
   font-size: 14px;
@@ -253,5 +271,21 @@ pre {
 
 .theme-default-content .aw-propdoc code {
   display: block;
+}
+
+.proprow,
+.propcol {
+  position: relative;
+}
+.prop-anchor {
+  position: absolute;
+  left: 0px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms linear;
+}
+.proprow:hover .prop-anchor {
+  visibility: visible;
+  opacity: 1;
 }
 </style>

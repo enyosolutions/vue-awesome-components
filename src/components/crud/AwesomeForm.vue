@@ -210,7 +210,7 @@
                                   item: selectedItem,
                                   location: 'inline',
                                   id: action.name + '-' + index
-                                });
+                                })
                               "
                               >
                                 <i v-if="action.icon" :class="action.icon"></i>
@@ -919,6 +919,9 @@ export default {
 
     _selectedItemUrl() {
       let url;
+      if (!this.selectedItem || !this.selectedItem[this.primaryKey]) {
+        return undefined;
+      }
       if (this._url.indexOf('?') > -1) {
         url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
         url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
@@ -1065,11 +1068,14 @@ export default {
     }
   },
   mounted() {
+    this.openModalDebounced = _.debounce(this.openModal, 300, { leading: true });
+    // @deprecated
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
 
     // allow old property names to still work
+    // @deprecated
     if (this.modelName) {
       this.identity = this.modelName;
     }
@@ -1077,7 +1083,6 @@ export default {
     if (this.item) {
       this.selectedItem = this.item;
     }
-
     this.loadModel();
     if (this.mode === 'create') {
       this.selectedItem = createDefaultObject(this.formSchema);
@@ -1249,9 +1254,10 @@ export default {
     },
 
     loadModel() {
+      console.warn('Load Model');
       this.mergeOptions();
       setTimeout(() => {
-        this.openModal();
+        this.openModalDebounced();
       }, 100);
       // now a computed property...
       // this.mergedOptions.url =
@@ -1281,10 +1287,9 @@ export default {
       } else {
         this.selectedItem = this.item;
       }
-      if (!this._url) {
+      if (!this._selectedItemUrl) {
         return;
       }
-
       // todo call only if
       if (this.item && this.item[this.primaryKey]) {
         this.$http
@@ -1328,7 +1333,7 @@ export default {
         _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
-
+    openModalDebounced: () => {},
     openModal() {
       switch (this.displayMode) {
         case 'modal':
@@ -1345,16 +1350,6 @@ export default {
       }
       this.show = true;
       this.showBackdrop = true;
-
-      /*
-      if (this.displayMode !== 'page' && this.$modal.modal) {
-        this.$modal.modal('show');
-      } else if (this.displayMode == 'slide') {
-        this.$modal.addClass('show');
-      } else {
-        this.$modal.addClass('show');
-      }
-      */
     },
 
     closeModal() {
@@ -1559,6 +1554,9 @@ export default {
           parentIdentity: this.parentIdentity,
           parent: this.parent
         });
+      if (!this._selectedItemUrl) {
+        return;
+      }
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
@@ -1603,7 +1601,7 @@ export default {
 
     nestedViewFunction(item) {
       this.$emit('nestedView', item);
-      this.openModal();
+      this.openModalDebounced();
     },
 
     deleteFunction(item) {
@@ -1616,6 +1614,9 @@ export default {
 
     getNestedItem() {
       this.mode = 'view';
+      if (!this._selectedItemUrl) {
+        return;
+      }
       this.$http
         .get(`${this._selectedItemUrl}`)
         .then((res) => {
