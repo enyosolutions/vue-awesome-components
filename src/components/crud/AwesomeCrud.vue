@@ -338,8 +338,7 @@ const defaultOptions = {
   customInlineActions: [],
   customBulkActions: [],
   customAwFormTopActions: [],
-  customTabletopActions: [],
-  tableRowClickAction: 'view'
+  customTabletopActions: []
 };
 
 const listOptions = {
@@ -592,6 +591,12 @@ export default {
       type: Boolean,
       default: true,
       description: 'Whether we should save the state of the navigation (page, filters, sort etc'
+    },
+    tableRowClickAction: {
+      type: String,
+      default: 'view',
+      values: ['view', 'edit', 'none', 'delete'],
+      description: 'The action to execute when the user clicks on a row'
     }
   },
   data() {
@@ -1325,17 +1330,7 @@ export default {
 
     onCardClicked(item) {
       this.$emit('on-kanban-item-clicked', item);
-      switch (this.mergedOptions.tableRowClickAction) {
-        case 'edit':
-          this.goToEditPage(item);
-          break;
-        case 'view':
-          this.goToViewPage(item);
-          break;
-        case 'default':
-          this.goToViewPage(item);
-          break;
-      }
+      this.listItemClickedHandler(item);
     },
 
     /**
@@ -1421,19 +1416,7 @@ export default {
       }
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-table-row-clicked', row);
-      switch (this.mergedOptions.tableRowClickAction) {
-        case 'edit':
-          this.goToEditPage(row);
-          break;
-        case 'view':
-          this.goToViewPage(row);
-          break;
-        case 'default':
-          this.goToViewPage(row);
-          break;
-        case 'none':
-          break;
-      }
+      this.listItemClickedHandler(row);
     },
 
     updateAutoRefresh(value) {
@@ -1443,17 +1426,7 @@ export default {
     onListItemClicked(item) {
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-list-item-clicked', item);
-      switch (this.mergedOptions.tableRowClickAction) {
-        case 'edit':
-          this.goToEditPage(item);
-          break;
-        case 'view':
-          this.goToViewPage(item);
-          break;
-        case 'default':
-          this.goToViewPage(item);
-          break;
-      }
+      this.listItemClickedHandler(item);
     },
 
     confirm(message) {
@@ -1513,6 +1486,26 @@ export default {
 
     forwardEvent(...args) {
       this.$emit(...args);
+    },
+
+    listItemClickedHandler(row) {
+      switch (this.tableRowClickAction) {
+        case 'edit':
+          if (this._actions && !this._actions.edit) {
+            return;
+          }
+          this.goToEditPage(row);
+          break;
+        case 'view':
+          if (this._actions && !this._actions.view) {
+            return;
+          }
+          this.goToViewPage(row);
+          break;
+        case 'none':
+        default:
+          break;
+      }
     }
   }
 };

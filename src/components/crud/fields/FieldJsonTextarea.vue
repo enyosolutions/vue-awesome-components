@@ -13,7 +13,6 @@
 </template>
 <script>
 import VueFormGenerator from '../../form/form-generator';
-// import moment from 'moment';
 import _ from 'lodash';
 
 // You need a specific loader for CSS files
