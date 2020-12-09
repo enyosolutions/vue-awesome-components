@@ -16,7 +16,7 @@ export default {
   data: () => ({
     children: [],
   }),
-  mounted() {
+  created() {
     this.children = JSON.parse(localStorage.getItem('awesome-builder-view-test'));
   }
 }

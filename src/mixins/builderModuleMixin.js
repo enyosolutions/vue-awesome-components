@@ -17,10 +17,12 @@ export default {
   data: () => ({
     insideData: {},
   }),
-  mounted() {
+  created() {
     if (this.data) {
       this.insideData = Object.assign(this.insideData, this.data);
     }
+  },
+  mounted() {
     this.$on('aw-builder-module-removed', (uuid) => {
       this.$parent.$emit('aw-builder-module-removed', uuid);
     })

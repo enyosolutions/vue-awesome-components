@@ -16,6 +16,20 @@
         </div>
       </div>
     </template>
+    <template v-slot:view>
+      <div class="container">
+        <div class="row">
+          <div class="col-6" v-for="(list, index) in insideData" :key="index">
+            <div v-for="(module, index) in list" :key="index">
+              <component v-bind:is="module.name"
+                         mode="view"
+                         :data="module.insideData"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </AwesomeBuilderModule>
 </template>
 
