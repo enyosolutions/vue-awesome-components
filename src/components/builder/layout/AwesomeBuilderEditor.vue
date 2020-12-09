@@ -6,7 +6,7 @@
       </nav>
     </div>
     <div class="awesome-builder-body">
-      <AwesomeBuilderContent ref="awesome-builder-content"/>
+      <AwesomeBuilderContent ref="awesome-builder-content" :children.sync="children" @aw-builder-module-removed="removeModule"/>
       <div class="awesome-builder-modules">
         <div class="card">
           <div class="card-body">
@@ -50,6 +50,7 @@ export default {
     AwesomeBuilderContent,
   },
   data: () => ({
+    children: [],
     modulesList: modules,
     dragging: false,
     search: '',
@@ -61,29 +62,13 @@ export default {
       return cloneMe;
     },
     saveContent() {
-      localStorage.setItem('awesome-builder-view-test', JSON.stringify(this.$refs['awesome-builder-content'].$data.children));
+      localStorage.setItem('awesome-builder-view-test', JSON.stringify(this.children));
     },
-    // removeDeep(array, uuid) {
-    //   array.forEach((module, index) => {
-    //     if (module.uuid === uuid) {
-    //       array.splice(index, 1);
-    //     } else {
-    //       if (array[index].insideData) {
-    //         Object.keys(array[index].insideData).forEach((key) => {
-    //           this.removeDeep(array[index].insideData[key], uuid);
-    //         })
-    //       }
-    //     }
-    //   })
-    //   return array;
-    // },
-  },
-  mounted() {
-    // this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
-      // const copy = JSON.parse(JSON.stringify(this.children));
-      // const array = this.removeDeep(copy, uuid);
-      // this.children = array;
-    // })
+    removeModule(uuid) {
+      this.children = _.filter(this.children, (item) => {
+        return item.uuid !== uuid;
+      })
+    },
   },
   computed: {
     _moduleSearched() {

@@ -1,6 +1,6 @@
 <template>
   <div class="awesome-builder-view">
-    <div v-for="(module, index) in content" :key="index">
+    <div v-for="(module, index) in children" :key="index">
       <component v-bind:is="module.name"
                  mode="view"
                  :data="module.insideData"
@@ -14,10 +14,10 @@
 export default {
   name: 'AwesomeBuilderView',
   data: () => ({
-    content: [],
+    children: [],
   }),
   mounted() {
-    this.content = JSON.parse(localStorage.getItem('awesome-builder-view-test'));
+    this.children = JSON.parse(localStorage.getItem('awesome-builder-view-test'));
   }
 }
 </script>

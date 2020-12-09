@@ -21,6 +21,9 @@ export default {
     if (this.data) {
       this.insideData = Object.assign(this.insideData, this.data);
     }
+    this.$on('aw-builder-module-removed', (uuid) => {
+      this.$parent.$emit('aw-builder-module-removed', uuid);
+    })
   },
   methods: {
     insideDataUpdated() {

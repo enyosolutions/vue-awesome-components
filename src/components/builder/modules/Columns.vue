@@ -3,10 +3,16 @@
     <template v-slot:editor>
       <div class="module-columns">
         <div class="column">
-          <AwesomeBuilderContent :content.sync="insideData.list1"></AwesomeBuilderContent>
+          <AwesomeBuilderContent
+              @aw-builder-module-removed="removeModule('0', $event)"
+              :children.sync="insideData.list1"
+          />
         </div>
         <div class="column">
-          <AwesomeBuilderContent :content.sync="insideData.list2"></AwesomeBuilderContent>
+          <AwesomeBuilderContent
+              @aw-builder-module-removed="removeModule('1', $event)"
+              :children.sync="insideData.list2"
+          />
         </div>
       </div>
     </template>
@@ -30,17 +36,22 @@ export default {
       icon: 'fa-columns'
     },
   }),
+  methods: {
+    removeModule(list, uuid) {
+      if (list === '0') {
+        this.insideData.list1 = _.filter(this.insideData.list1, (item) => {
+          return item.uuid !== uuid;
+        })
+      } else if (list === '1') {
+        this.insideData.list2 = _.filter(this.insideData.list2, (item) => {
+          return item.uuid !== uuid;
+        })
+      }
+    }
+  },
   mounted() {
-    this.insideData.list1 = [];
-    this.insideData.list2 = [];
-    // this.$awEventBus.$on('aw-builder-module-removed', (uuid) => {
-    //   this.insideData.list1 = _.filter(this.insideData.list1, (item) => {
-    //     return item.uuid !== uuid;
-    //   });
-    //   this.insideData.list2 = _.filter(this.insideData.list2, (item) => {
-    //     return item.uuid !== uuid;
-    //   });
-    // })
+    this.$set(this.insideData, 'list1', []);
+    this.$set(this.insideData, 'list2', []);
   }
 }
 </script>

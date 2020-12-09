@@ -23,7 +23,6 @@
     <hr v-if="mode === 'edit' && _extended"/>
     <div v-if="mode === 'edit' && _extended" class="awesome-builder-module-content">
       <slot name="editor"></slot>
-      <button @click="doneEditing" class="btn btn-primary validate-button">Done Editing</button>
     </div>
     <div v-if="mode === 'view'" class="awesome-builder-mode-view">
       <slot v-if="mode === 'view'" name="view"></slot>
@@ -69,13 +68,8 @@ export default {
     },
 
     removeElement() {
-      this.$awEventBus && this.$awEventBus.$emit('aw-builder-module-removed', this.uuid)
+      this.$parent.$emit('aw-builder-module-removed', this.uuid);
     },
-
-    doneEditing() {
-      // TODO : Fetch data from component
-      this.expendElement();
-    }
   },
 
   computed: {

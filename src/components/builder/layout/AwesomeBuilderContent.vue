@@ -8,7 +8,6 @@
         class="awesome-builder-content-list"
         @start="dragging = true"
         @end="dragging = false"
-        @change="onChange"
         handle=".draggable"
     >
       <component
@@ -16,6 +15,7 @@
           v-bind:is="module.name"
           :uuid.sync="module.uuid"
           @update:insideData="module.insideData = $event"
+          @aw-builder-module-removed="$emit('aw-builder-module-removed', $event)"
           mode="edit"
       />
     </Draggable>
@@ -32,15 +32,15 @@ export default {
     Draggable,
     AwesomeBuilderNoContent
   },
+  props: {
+    children: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
-    children: [],
     dragging: false,
   }),
-  methods: {
-    onChange() {
-      this.$forceUpdate();
-    }
-  },
 }
 </script>
 
@@ -62,6 +62,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    padding: 0 10px;
   }
 }
 </style>
