@@ -3,7 +3,7 @@
  */
 
 import qs from 'qs';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
 import awEmitMixin from './awEmitMixin';
@@ -156,7 +156,7 @@ export default {
     const userLang = window.navigator
       ? navigator.language || navigator.userLanguage
       : 'en';
-    moment.locale(userLang);
+    dayjs().locale(userLang);
   },
 
   mounted() {

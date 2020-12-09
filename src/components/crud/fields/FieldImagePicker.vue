@@ -23,7 +23,6 @@
 <script>
 import VueFormGenerator from '../../form/form-generator';
 // import { defaults } from "lodash";
-// import moment from "moment";
 
 // You need a specific loader for CSS files
 import Base64Upload from '../../form/Base64Upload';
