@@ -30,7 +30,7 @@
           notes
         </div>
       </div>
-      <div v-for="(propinfo, propname) in merged.props" :key="propname" class="proprow">
+      <div v-for="(propinfo, propname) in merged.props" :key="propname" class="proprow" :id="'prop-' + propname">
         <div class="propcol name" :class="{ required: propinfo.required }">
           <span>{{ propname }}</span>
         </div>

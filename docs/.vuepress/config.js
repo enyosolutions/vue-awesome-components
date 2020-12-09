@@ -63,6 +63,7 @@ module.exports = {
         children: [
           { title: "Presentation", path: "/guide/awesometable/" },
           { title: "Props", path: "/guide/awesometable/props.md" },
+          { title: "Saving state", path: "/guide/awesometable/saving-config-state.md" },
           {
             title: "Events",
             path: "/guide/awesometable/events.md"
