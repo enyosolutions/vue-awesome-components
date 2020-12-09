@@ -221,6 +221,7 @@
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
             v-bind="$props"
+            :uuid="'awtable-' + identity"
             :columns="tableColumnsComputed"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :entity="identity"
@@ -239,7 +240,8 @@
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :export-url="mergedOptions.exportUrl"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            name="ajax-table"
+            :savePaginationState="savePaginationState"
+            :saveColumnsState="saveColumnsState"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
@@ -303,6 +305,7 @@ import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
+import uuidMixin from '../../mixins/uuidMixin';
 // import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
@@ -440,6 +443,7 @@ export default {
     AwesomeKanban
   },
   mixins: [
+    uuidMixin,
     i18nMixin,
     apiErrorsMixin,
     apiConfigMixin,
@@ -504,7 +508,7 @@ export default {
       type: Array,
       required: false,
       default: () => [],
-      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
+      note: '@deprecated, use `nestedModels`'
     },
     nestedModels: {
       type: Array,
@@ -577,6 +581,17 @@ export default {
       type: Object,
       default: () => defaultActions,
       note: 'actions active in this instance'
+    },
+
+    savePaginationState: {
+      type: Boolean,
+      default: true,
+      description: 'Whether we should save the state of the navigation (page, filters, sort etc'
+    },
+    saveColumnsState: {
+      type: Boolean,
+      default: true,
+      description: 'Whether we should save the state of the navigation (page, filters, sort etc'
     }
   },
   data() {
@@ -1153,12 +1168,16 @@ export default {
     },
 
     goToViewPage(item) {
-      if (item && this.mergedOptions.viewPath && item[this.primaryKey]) {
-        console.warn('item[this.primaryKey]', item, item[this.primaryKey]);
-        alert(item[this.primaryKey]);
-        return this.$router.push(
-          this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
-        );
+      if (!item) {
+        return;
+      }
+      if (this.mergedOptions.viewPath) {
+        if (item && item[this.primaryKey]) {
+          return this.$router.push(
+            this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+          );
+        }
+        return this.$router.push(this.mergedOptions.viewPath);
       }
       if (this.useRouterMode) {
         window.history.replaceState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
@@ -1411,6 +1430,8 @@ export default {
           break;
         case 'default':
           this.goToViewPage(row);
+          break;
+        case 'none':
           break;
       }
     },

@@ -166,50 +166,52 @@
                         <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
                           <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
                             <button
-                                class="btn dropdown-toggle"
-                                :class="action.class"
-                                type="button"
-                                :id="action.name + '-' + index"
-                                data-toggle="dropdown"
-                                arias-haspopup="true"
-                                aria-expanded="false"
+                              class="btn dropdown-toggle"
+                              :class="action.class"
+                              type="button"
+                              :id="action.name + '-' + index"
+                              data-toggle="dropdown"
+                              arias-haspopup="true"
+                              aria-expanded="false"
                             >
                               <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : ''}}</span>
+                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
                             </button>
                             <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
                               <a
-                                  v-for="(child, index) in action.children"
-                                  :key="child.id || index"
-                                  class="dropdown-item"
-                                  @click="$emit('customAction', {
+                                v-for="(child, index) in action.children"
+                                :key="child.id || index"
+                                class="dropdown-item"
+                                @click="
+                                  $emit('customAction', {
                                     action,
                                     item: selectedItem,
                                     location: 'top',
                                     id: action.name + '-' + index,
                                     child
-                                  });"
+                                  })
+                                "
                               >
-                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : ''}}</span>
+                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : '' }}</span>
                               </a>
                             </div>
                           </div>
                           <div v-else :key="index">
                             <button
-                                type="button"
-                                :key="index"
-                                class="btn"
-                                :class="action.class"
-                                :id="action.name + '-' + index"
-                                :data-title="action.title || action.label"
-                                :data-tooltip="action.title || action.label"
-                                @click="
+                              type="button"
+                              :key="index"
+                              class="btn"
+                              :class="action.class"
+                              :id="action.name + '-' + index"
+                              :data-title="action.title || action.label"
+                              :data-tooltip="action.title || action.label"
+                              @click="
                                 $emit('customAction', {
                                   action,
                                   item: selectedItem,
                                   location: 'inline',
                                   id: action.name + '-' + index
-                                });
+                                })
                               "
                             >
                               <i v-if="action.icon" :class="action.icon"></i>
@@ -917,6 +919,9 @@ export default {
 
     _selectedItemUrl() {
       let url;
+      if (!this.selectedItem || !this.selectedItem[this.primaryKey]) {
+        return undefined;
+      }
       if (this._url.indexOf('?') > -1) {
         url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
         url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
@@ -1063,11 +1068,14 @@ export default {
     }
   },
   mounted() {
+    this.openModalDebounced = _.debounce(this.openModal, 300, { leading: true });
+    // @deprecated
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
 
     // allow old property names to still work
+    // @deprecated
     if (this.modelName) {
       this.identity = this.modelName;
     }
@@ -1075,7 +1083,6 @@ export default {
     if (this.item) {
       this.selectedItem = this.item;
     }
-
     this.loadModel();
     if (this.mode === 'create') {
       this.selectedItem = createDefaultObject(this.formSchema);
@@ -1247,9 +1254,10 @@ export default {
     },
 
     loadModel() {
+      console.warn('Load Model');
       this.mergeOptions();
       setTimeout(() => {
-        this.openModal();
+        this.openModalDebounced();
       }, 100);
       // now a computed property...
       // this.mergedOptions.url =
@@ -1279,10 +1287,9 @@ export default {
       } else {
         this.selectedItem = this.item;
       }
-      if (!this._url) {
+      if (!this._selectedItemUrl) {
         return;
       }
-
       // todo call only if
       if (this.item && this.item[this.primaryKey]) {
         this.$http
@@ -1326,7 +1333,7 @@ export default {
         _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
-
+    openModalDebounced: () => {},
     openModal() {
       switch (this.displayMode) {
         case 'modal':
@@ -1343,16 +1350,6 @@ export default {
       }
       this.show = true;
       this.showBackdrop = true;
-
-      /*
-      if (this.displayMode !== 'page' && this.$modal.modal) {
-        this.$modal.modal('show');
-      } else if (this.displayMode == 'slide') {
-        this.$modal.addClass('show');
-      } else {
-        this.$modal.addClass('show');
-      }
-      */
     },
 
     closeModal() {
@@ -1557,6 +1554,9 @@ export default {
           parentIdentity: this.parentIdentity,
           parent: this.parent
         });
+      if (!this._selectedItemUrl) {
+        return;
+      }
       this.$http
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
@@ -1601,7 +1601,7 @@ export default {
 
     nestedViewFunction(item) {
       this.$emit('nestedView', item);
-      this.openModal();
+      this.openModalDebounced();
     },
 
     deleteFunction(item) {
@@ -1614,6 +1614,9 @@ export default {
 
     getNestedItem() {
       this.mode = 'view';
+      if (!this._selectedItemUrl) {
+        return;
+      }
       this.$http
         .get(`${this._selectedItemUrl}`)
         .then((res) => {

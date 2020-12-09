@@ -154,6 +154,15 @@
                 <i class="fa fa-file-excel" />
                 {{ $t('AwesomeTable.buttons.excel-currentpage') }}
               </button>
+              <button
+                v-if="isSaveStateEnabledCpt"
+                type="button"
+                class="btn btn-simple text-info btn-main-style btn-block"
+                @click="clearComponentState"
+              >
+                <i class="fa fa-trash" />
+                {{ $t('AwesomeTable.buttons.clear-state') }}
+              </button>
             </div>
           </div>
         </div>
@@ -396,6 +405,7 @@ import apiErrors from '../../mixins/apiErrorsMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
+import uuidMixin from '../../mixins/uuidMixin';
 
 import { defaultActions } from '../../mixins/defaultProps';
 
@@ -423,7 +433,7 @@ export default {
     popper: Popper,
     Skeleton
   },
-  mixins: [i18nMixin, apiErrors, apiListMixin, awEmitMixin],
+  mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {
     columns: {
       type: Array,
@@ -444,6 +454,7 @@ export default {
     title: { type: String, default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
+
     translations: {
       type: Object,
       default: () => ({
@@ -789,6 +800,7 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
+
     if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
       const tempFilters = [];
       Object.keys(this.apiQueryParams.filters).forEach((field) => {
@@ -905,6 +917,7 @@ export default {
 
     toggleColumn(colName) {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
+      this.pushChangesToRouter();
     },
 
     onColumnFilter(params) {

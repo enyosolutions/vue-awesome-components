@@ -11,11 +11,23 @@ export default {
     },
 
     templateParseText(text, data) {
-      return this.templateParser(text, data);
+      try {
+        return this.templateParser(text, data);
+      }
+      catch (err) {
+        console.warn('[templateParser]', err.message);
+        return text;
+      }
     },
 
     templateParseUrl(text, data) {
-      return this.templateParser(text, data);
+      try {
+        return this.templateParser(text, data);
+      }
+      catch (err) {
+        console.warn('[templateParser]', err.message);
+        return text;
+      }
     },
   }
 }

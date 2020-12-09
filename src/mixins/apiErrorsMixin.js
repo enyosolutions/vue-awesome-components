@@ -11,15 +11,18 @@ export default {
         return;
       }
 
-      let message;
-      if (this.$te(`aw.messages.${this.parseErrorResponse(err.response || err.data || err)}`)) {
-        message = this.$t(`aw.messages.${this.parseErrorResponse(err.response)}`);
+      let messageOriginal = err.response || err.data || err;
+      let message = this.parseErrorResponse(message);
+      if (this.$te(`aw.messages.${message}`)) {
+        message = this.$t(`aw.messages.${message}`);
       } else {
-        message = this.parseErrorResponse(err.response || err.data || err);
+        if (this.$te(message)) {
+          message = this.$t(message);
+        }
       }
       const errorBody = (err.response && err.response.data) || err.data || err;
       const subErrors = errorBody && errorBody.errors;
-      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).map(e => `</li>${this.$te(e) ? this.$t(e) : e}</li>`).join('') : '';
+      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `</li>${this.$te(e) ? this.$t(e) : e}</li>`).join('') : '';
       this.$awNotify({
         title: message,
         html: '<ul>' + subErrorsHtml + '</ul>',

@@ -59,7 +59,8 @@
       "view": "view",
       "cancel": "cancel",
       "close": "close",
-      "columnsFilters": "Toggle columns filters"
+      "columnsFilters": "Toggle columns filters",
+      "clear-state": "Reset table configuration"
     },
     "next": "next",
     "prev": "prev",
