@@ -18,6 +18,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
+            :display-header="awFormDisplayHeader"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -56,6 +57,7 @@
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
+            :display-header="awFormDisplayHeader"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -597,6 +599,11 @@ export default {
       default: 'view',
       values: ['view', 'edit', 'none', 'delete'],
       description: 'The action to execute when the user clicks on a row'
+    },
+    awFormDisplayHeader: {
+      type: Boolean,
+      default: true,
+      description: 'Whether we should display the header (title) of awesomeform or not'
     }
   },
   data() {

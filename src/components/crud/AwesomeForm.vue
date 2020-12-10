@@ -7,13 +7,14 @@
             <!-- START OF MODAL -->
             <div
               :id="identity + 'FormModal'"
-              class="AwesomeForm aw-form"
+              class="AwesomeForm"
               :class="{
                 modal: _shouldHaveModalClasses,
                 slide: _shouldHaveSlideClasses,
                 fade: displayMode === 'fade' || displayMode === 'modal' || displayMode === 'fullscreen',
                 'page  fade': displayMode === 'page',
-                show: this.show
+                show: this.show,
+                ['display-mode-' + displayMode]: true
               }"
               tabindex="-1"
               role="dialog"
@@ -143,18 +144,12 @@
                   </form>
                 </div>
                 <!--  EDITS -->
-                <div
-                  v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView"
-                  class='modal-content'
-                >
+                <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
-                    <div class="modal-header bg-primary text-white">
-                      <h3 v-if="mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t('AwesomeCrud.labels.edit') }} {{ _name }}
+                    <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
+                      <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
+                        {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
-                      </h3>
-                      <h3 v-if="mode === 'view'" class="text-left modal-title mt-0">
-                        {{ $t('AwesomeCrud.labels.view') }} {{ _name }} <b>{{ _editItemTile }}</b>
                       </h3>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="mergedOptions.customAwFormTopActions">
                         <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
@@ -395,6 +390,11 @@
                             </template>-->
                           </div>
 
+                          <!--
+                  -
+                  EDIT WITH TABS or LIST
+                  -
+                  -->
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <template v-if="nestedLayoutMode === 'list'">
                               <h3 class="nested-model-title text-primary font-italic" data-toggle="collapse">
@@ -529,6 +529,11 @@
                     </div>
                   </form>
                 </div>
+                <!--
+                  -
+                  BULK EDIT
+                  -
+                  -->
                 <div v-if="mode === 'bulkEdit'" class="modal-content">
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
@@ -580,7 +585,7 @@
             :id="identity + 'Backdrop'"
             v-if="_shouldShowBackdrop"
             class="modal-backdrop backdrop-custom show"
-            :class="displayMode"
+            :class="'display-mode-' + displayMode"
             style="background: #111;"
           ></div>
         </div>
@@ -822,6 +827,11 @@ export default {
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
       note:
         'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+    },
+    displayHeader: {
+      type: Boolean,
+      default: true,
+      node: 'Controls if the the header of the modal or the page should be displayed'
     }
   },
   data() {
@@ -1015,7 +1025,10 @@ export default {
     },
 
     _shouldHaveModalClasses() {
-      return ['fade', 'modal', 'fullscreen', 'sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
+      return (
+        ['fade', 'modal', 'fullscreen', 'sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) >
+        -1
+      );
     },
     _shouldHaveSlideClasses() {
       return ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
@@ -1034,6 +1047,10 @@ export default {
         }
       });
       return fieldsList;
+    },
+
+    shouldDisplayHeaderCpt() {
+      return !['page', 'sidebar'].includes(this.displayMode) || this.displayHeader;
     }
   },
   watch: {
@@ -1841,6 +1858,8 @@ body.modal-open .bootstrap-datetimepicker-widget {
 
     .aw-form {
       .modal-nested {
+        margin-left: 15px;
+        margin-right: 15px;
         .modal-header {
           position: static;
           text-align: left;
