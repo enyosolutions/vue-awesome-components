@@ -1,3 +1,7 @@
+---
+pageClass: fullwidth-page
+---
+
  ## Properties
 
 

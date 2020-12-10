@@ -30,6 +30,7 @@
             <a :href="'#comp-prop-' + propinfo.name" class="prop-anchor"><i class="fa fa-link"></i></a>
             <slot name="prop-col-name" v-bind:prop="propinfo">
               <span>{{ propinfo.name }}</span>
+              <span v-if="propinfo.required" style="color:red; font-weight:bold">*</span>
             </slot>
           </td>
           <td class="propcol type">
@@ -86,6 +87,9 @@ export default {
     ignoreMixins: {
       type: Boolean,
       default: false
+    },
+    properties: {
+      type: Array
     }
   },
   mounted() {
@@ -125,7 +129,16 @@ export default {
       if (!(ignoreMixins || this.ignoreMixins)) {
         if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
       }
-      if (m.props) m.props = this.processProps(m.props);
+      if (m.props) {
+        m.props = this.processProps(m.props);
+      }
+      if (this.properties && this.properties.length) {
+        Object.keys(m.props).forEach((p) => {
+          if (!this.properties.includes(p)) {
+            delete m.props[p];
+          }
+        });
+      }
 
       return m;
     },

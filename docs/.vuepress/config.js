@@ -27,16 +27,20 @@ module.exports = {
   ],
   themeConfig: {
     logo: "https://www.enyosolutions.com/theme/images/rocket.svg",
+    repo: 'enyosolutions-team/vue-awesome-components',
+    // if your docs are not at the root of the repo:
+    docsDir: 'docs',
+    // if your docs are in a specific branch (defaults to 'master'):
+    docsBranch: 'develop',
+    // defaults to false, set to true to enable
+    editLinks: true,
+    smoothScroll: true,
     nav: [
       { text: "Home", link: "/" },
       { text: "Getting started", link: "/guide/" },
       { text: "Components", link: "/guide/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
       { text: "AwesomeTable", link: "/guide/awesometable/" },
-      {
-        text: "Github",
-        link: "https://github.com/enyosolutions-team/vue-awesome-components/"
-      }
     ],
     sidebar: [
       {
@@ -93,7 +97,7 @@ module.exports = {
             title: "Configuration Options",
             path: "/guide/awesomecrud/configuration-options.md"
           },
-
+          { title: "Saving state", path: "/guide/awesomecrud/saving-config-state.md" },
           {
             title: "Actions",
             path: "/guide/awesomecrud/actions.md"

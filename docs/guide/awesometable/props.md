@@ -1,3 +1,7 @@
+---
+pageClass: fullwidth-page
+---
+
 # Properties
 
 
@@ -20,7 +24,7 @@
   </code>
   <ul>
   <li>- See <a href="https://xaksis.github.io/vue-good-table/guide/configuration/column-options.html">Vue good table documentation</a> for more detail on row configuration.</li>
-  <li>- See <a href="#columns-types"> Colum types</a> for more info on suppoerted column types.</li>
+  <li>- See <a href="#columns-types"> Column types</a> for more info on suppoerted column types.</li>
   </ul>
 </template>
 </template>
@@ -46,6 +50,7 @@ The table can display various type of data. By default the value used it the str
 | object        | Date time field (exact format will depend on your browser)                      |
 | list-of-value | The value is used to find the value in a vuex store                             |
 | list-of-data  | The value is used to find the value in a vuex store                             |
+
 
 
 ## Styling classes :

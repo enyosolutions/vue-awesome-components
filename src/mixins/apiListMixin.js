@@ -13,7 +13,7 @@ export default {
   mixins: [apiConfigMixin, awEmitMixin],
   props: {
     rows: { type: Array, default: () => [] },
-    primaryKey: { type: String, default: 'id' },
+    primaryKey: { type: String, default: 'id', description: 'Which field to use a primary key. By default it\'s `id` but it can be `_id`  or anything that you want' },
     url: { type: String, default: '' },
     apiRequestConfig: {
       type: Object,
@@ -78,8 +78,8 @@ export default {
       default: 'local',
       type: String
     },
-    savePaginationState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (page, filters, sort etc' },
-    saveColumnsState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (page, filters, sort etc' },
+    savePaginationState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation page, perPage' },
+    saveColumnsState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (columns, sort etc' },
   },
   data() {
     return {

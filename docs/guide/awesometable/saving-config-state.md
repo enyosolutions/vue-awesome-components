@@ -20,11 +20,8 @@ if for some reason the state saved is not working or does not suits you, you can
 
 ## props
 
-see AwesomeTable props
+The following props are `false` by default.
 
-<a href="http://localhost:8081/vue-awesome-components/guide/awesometable/props.html#comp-prop-savePaginationState">`saveColumnsState`</a>
-
-
-<a href="http://localhost:8081/vue-awesome-components/guide/awesometable/props.html#comp-prop-saveColumnsState">
-`saveColumnsState`
-</a>
+<ClientOnly>
+<ComponentDoc :component="'AwesomeTable'" :properties="['saveColumnsState', 'savePaginationState']"/>
+</ClientOnly>
