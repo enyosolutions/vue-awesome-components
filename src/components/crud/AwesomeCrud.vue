@@ -160,10 +160,13 @@
             :url="_url"
             :perPage="10"
             :identity="identity"
+            v-bind="listOptions"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :columns="listFieldsComputed"
             :displayFields="listOptions.displayFields"
             :imageField="listOptions.imageField"
+            :imageClasses="listOptions.imageClasses"
+            :imageStyles="listOptions.imageStyles"
             :titleField="listOptions.titleField"
             :subtitleField="listOptions.subtitleField"
             :descriptionField="listOptions.descriptionField"
@@ -331,7 +334,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: 'table', // table | list | kanban
+  initialDisplayMode: 'list', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -863,6 +866,7 @@ export default {
       .replace('/edit', '')
       .replace('/:id', '');
     this.displayMode = this.mergedOptions.initialDisplayMode;
+    this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
       this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');

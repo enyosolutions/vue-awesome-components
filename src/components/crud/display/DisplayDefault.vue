@@ -9,7 +9,7 @@
     :is="tag"
     @click="$emit('clicked', $props)"
   >
-    {{ valueDisplay }}
+    {{ prefix || '' }}{{ valueDisplay }}{{ suffix || '' }}
   </div>
 </template>
 <script>

@@ -63,9 +63,8 @@
                 href="#"
                 :class="{
                   'text-light bg-primary': columnsState[col.field],
-                  'bg-info': col.field === '__ACTIONS'
+                  'd-none': col.field === '__ACTIONS'
                 }"
-                :disabled="col.field === '__ACTIONS'"
                 @click="toggleColumn(col.field)"
               >
                 {{ col.label }}
@@ -501,8 +500,7 @@ export default {
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         customBulkActions: [],
-        filterInitiallyOn: false,
-        saveSearchDatas: false
+        filterInitiallyOn: false
       })
     },
     actions: {
@@ -951,6 +949,7 @@ export default {
       if (this.mode !== 'remote') {
         return;
       }
+      this.pushChangesToRouter({ query: { sort } });
       this.updateParams({ sort });
       this.getItems({ useSkeleton: true });
     },

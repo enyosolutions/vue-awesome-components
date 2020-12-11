@@ -127,6 +127,20 @@ module.exports = {
               example: 'username',
             },
 
+            prefix: {
+              type: 'string',
+              title: 'Text displayed before the value',
+              description: 'example : £',
+              example: 'username',
+            },
+
+            suffix: {
+              type: 'string',
+              title: 'Text displayed before the value',
+              description: 'example : cm | €',
+              example: 'username',
+            },
+
             displayContextActions: {
               type: 'boolean',
               title: 'Should we display the add/edit button?',
@@ -158,6 +172,19 @@ module.exports = {
         hidden: {
           type: 'string',
           title: 'If the form field is displayed',
+        },
+        prefix: {
+          type: 'string',
+          title: 'Text displayed before the value',
+          description: 'example : £',
+          example: 'username',
+        },
+
+        suffix: {
+          type: 'string',
+          title: 'Text displayed before the value',
+          description: 'example : cm | €',
+          example: 'username',
         },
       },
     },

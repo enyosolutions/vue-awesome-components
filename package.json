@@ -17,6 +17,7 @@
   "main": "src/index.js",
   "module": "src/index.js",
   "dependencies": {
+    "localforage": "^1.9.0",
     "uuid": "^8.3.0"
   },
   "files": [

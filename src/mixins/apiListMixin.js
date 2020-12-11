@@ -7,7 +7,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
 import awEmitMixin from './awEmitMixin';
-
+import * as localforage from 'localforage';
 
 export default {
   mixins: [apiConfigMixin, awEmitMixin],
@@ -258,7 +258,7 @@ export default {
       this.$emit('itemClicked', item);
     },
 
-    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined, columns: undefined }) {
+    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined, columns: undefined, sort: undefined }) {
       const columnFilters = newProps.columnFilters && Object.keys(newProps.columnFilters).length ? Object.assign({}, newProps.columnFilters) : {};
 
 
@@ -277,6 +277,11 @@ export default {
       // store new advanced filter values
       if (newProps.columns) {
         this.columnsState = newProps.columns;
+      }
+
+      // store new advanced filter values
+      if (newProps.sort) {
+        this.serverParams.sort = newProps.columns;
       }
       // store new advanced filter values
       if (newProps.advancedFilters) {
@@ -349,8 +354,12 @@ export default {
       // disable url update for now
       //@todo replace by a push state function
       if (options && options.query) {
+        if (options.query.sort) {
+          this.routeQueryParams.sort = options.query.sort;
+        }
         this.routeQueryParams = _.merge(this.routeQueryParams, options.query);
       }
+      console.warn('pushChangesToRouger', options)
       this.saveComponentState();
 
       if (!this.useRouterMode) {
@@ -382,6 +391,7 @@ export default {
             //   sort: to.query.sort,
             filters: to.query.filters,
             columns: to.query.columns,
+            sort: to.query.sort,
           });
           this.routeQueryParams = {
             page: to.query.page, search: to.query.search,
@@ -389,6 +399,7 @@ export default {
             //   sort: to.query.sort,
             filters: to.query.filters,
             columns: to.query.columns,
+            sort: to.query.sort,
           }
           return;
         }
@@ -428,10 +439,12 @@ export default {
     saveComponentState() {
       if (this.isSaveStateEnabledCpt && this.uuid) {
         try {
-          sessionStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
+          localforage.setItem(`${this.uuid}-${this.$options.name}-state`, {
             routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
             columnsState: this.saveColumnsState ? this.columnsState : undefined,
-          }));
+            columnFilters: this.saveColumnsState ? this.columnFilters : undefined,
+            advancedFilters: this.saveColumnsState ? this.advancedFilters : undefined,
+          });
         }
         catch (err) {
           console.warn(err.message);
@@ -439,12 +452,11 @@ export default {
       }
     },
 
-    restoreComponentState() {
+    async restoreComponentState() {
       if (this.isSaveStateEnabledCpt && this.uuid) {
         try {
-          const data = sessionStorage.getItem(`${this.uuid}-${this.$options.name}-state`);
-          if (data) {
-            const parsedState = JSON.parse(data);
+          const parsedState = await localforage.getItem(`${this.uuid}-${this.$options.name}-state`);
+          if (parsedState) {
             if (this.savePaginationState) {
               this.routeQueryParams = parsedState.routeQueryParams;
             }
@@ -462,7 +474,7 @@ export default {
 
     clearComponentState() {
       try {
-        sessionStorage.removeItem(`${this.uuid}-${this.$options.name}-state`);
+        localforage.removeItem(`${this.uuid}-${this.$options.name}-state`);
       }
       catch (err) {
         console.warn(err);

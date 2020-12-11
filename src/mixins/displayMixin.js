@@ -10,6 +10,8 @@ export default {
         'url',
         'html',
         'object',
+        'date',
+        'relation',
         'checkbox',]
     },
     src: String,
@@ -30,6 +32,8 @@ export default {
     displayLabelCache: { type: Object, default: () => ({}) },
     onClickUrl: [String, Function],
     tag: { type: [String, Object], default: 'div' },
+    prefix: String,
+    suffix: String,
   },
   data() {
     return {

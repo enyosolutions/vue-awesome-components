@@ -27,6 +27,41 @@
             </button>
 
 
+          <popper
+            trigger="clickToOpen"
+            :options="{
+              placement: 'bottom',
+              modifiers: { offset: { offset: '0,10px' } }
+            }"
+            ref="filterPopover"
+            v-if="actions.filter && actions.advancedFiltering"
+          >
+            <button
+              slot="reference"
+              type="button"
+              class="btn btn-simple dropdown-toggle"
+              :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
+              aria-haspopup="true"
+              aria-expanded="false"
+              id="advancedFilterButton"
+            >
+              <i class="fa fa-filter" />
+              {{ $t('AwesomeTable.buttons.filters') }}
+              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+            </button>
+
+            <div class="popper card mt-0" style="z-index: 1;">
+              <awesome-filter
+                class="card-body"
+                :displayFilters="false"
+                id="advancedFilterComponentDisplay"
+                :fields="columns"
+                @update-filter="advancedFiltering"
+                :advanced-filters="advancedFilters"
+              />
+            </div>
+          </popper>
+
 
             <template v-if="actions && actions.itemsPerRow">
              <button class="btn " @click="setListMode()"
@@ -91,9 +126,9 @@
       </p>
     </div>
 
-      <div class="list-responsive card-deck" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+      <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
         <div
-          class="pointer"
+          class="pointer d-flex"
           v-for="(item, index) in _paginatedItems"
           :key="index"
           :class="itemWrapperClasses"
@@ -101,7 +136,7 @@
         >
           <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow">
             <div
-              class="card mb-3 awesome-list-item"
+              class="card mb-3 aw-list-item flex-fill"
               :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
              'height': _itemHeight
           }"
@@ -111,11 +146,13 @@
                 v-if="imageField"
                 :src="item[imageField]"
                 :alt="item[titleField]"
+                :class="imageClasses"
+                :style="imageStyles"
               />
               <div class="card-body">
-                  <h5 class="card-title aw-list-title" v-if="item[titleField]">{{ item[titleField] }}</h5>
-                  <h6 class="card-title aw-list-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
-                <p class="card-text aw-list-description" v-if="item[descriptionField]">{{ item[descriptionField] }}</p>
+                  <h4 class="card-title aw-list-item-title" style="" v-if="item[titleField]">{{ item[titleField] }}</h4>
+                  <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
+                <p class="card-text aw-list-item-description" v-if="item[descriptionField]">{{ item[descriptionField] }}</p>
                 <template v-if="columns && columns.length">
                   <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
                       {{ key }} :
@@ -166,19 +203,25 @@
   </div>
 </template>
 <script>
+
+import Popper from 'vue-popperjs';
+import Paginate from 'vuejs-paginate';
+import _ from 'lodash';
 import apiErrors from '../../mixins/apiErrorsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
-import Paginate from 'vuejs-paginate';
-import _ from 'lodash';
+import AwesomeFilter from '../misc/AwesomeFilter';
+
 
 export default {
   name: 'AwesomeList',
   token: `
 
   `,
-  components: { Paginate, AwesomeDisplay },
+  components: { Paginate, AwesomeDisplay, AwesomeFilter,
+      popper: Popper,
+  },
   mixins: [i18nMixin, apiErrors, apiListMixin],
   props: {
     columns: {
@@ -219,6 +262,14 @@ export default {
       type: Object,
       default: () => ({})
     },
+    imageClasses: {
+      type: [Object, String],
+      default: ''
+    },
+    imageStyles: {
+      type: [Object, String],
+      default: ''
+    },
     actions: {
       type: Object,
       default: () => ({
@@ -235,7 +286,6 @@ export default {
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
         customBulkActions: [],
-        saveSearchDatas: false,
       })
     },
   },
@@ -244,6 +294,7 @@ export default {
       itemsPerRow: 3,
       page: 0,
       data: [],
+      advancedFilters: [],
     };
   },
   computed: {
@@ -325,11 +376,19 @@ export default {
     },
 
     _useClassicLayout() {
-      return this.imageField &&
-      this.titleField &&
-      this.subtitleField &&
+      return this.imageField ||
+      this.titleField ||
+      this.subtitleField ||
       this.descriptionField;
-    }
+    },
+
+    advancedFiltersCount() {
+      return (this.advancedFilters && this.advancedFilters.length) || 0;
+    },
+
+    advancedFiltersFormated() {
+      return AwesomeFilter.methods.parseFilter(this.advancedFilters, { dispatch: false });
+    },
   },
   watch: {
     'perRow': 'resetItemsPerRow',
@@ -401,12 +460,49 @@ export default {
         return;
       }
       this.getItems();
-    }
+    },
+
+    advancedFiltering(parsedFilters, filters) {
+      this.$refs['filterPopover'].doClose();
+      this.updateParams({
+        advancedFilters: _.cloneDeep(filters),
+        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+        page: 0
+      });
+      this.getItems({ useSkeleton: true });
+    },
+
+    toggleFilter() {
+      this.filterable = !this.filterable;
+
+      if (!this.filterable) {
+        this.serverParams.range = {};
+        this.serverParams.filters = {};
+        this.getItems({ useSkeleton: true });
+      }
+      this.columns = this.columns.map((col) => {
+        if (col.filterOptions) {
+          col.filterOptions.enabled = this.filterable;
+        }
+        return col;
+      });
+    },
   }
 };
 </script>
 <style lang="scss">
 .awesome-list-component {
+.aw-list-item {
+.aw-list {
+  &-item {
+    &-title {
+      color: var(--primary);
+      font-weight: bold;
+    }
+  }
+  }
+}
+
   .list-responsive {
     width: 100%;
   }
@@ -414,13 +510,13 @@ export default {
     justify-content: center;
   }
 
-  .awesome-list-item {
+  .aw-list-item {
     position: relative;
     overflow: hidden;
     cursor: pointer;
   }
   .col-12 {
-    .awesome-list-item {
+    .aw-list-item {
       .card-img-top {
         height: 100%;
         width: 30%;
@@ -444,7 +540,7 @@ export default {
   .col-3,
   .col-4,
   .col-6 {
-    .awesome-list-item {
+    .aw-list-item {
       .card-img-top {
         height: 60%;
       }
@@ -514,4 +610,6 @@ export default {
 .font-awesome {
   color: #6c757d;
 }
+
+
 </style>
