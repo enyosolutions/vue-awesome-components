@@ -5,7 +5,7 @@
         <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'view'"
+            v-if="displayMode === 'view' && identity"
             :mode="displayMode"
             :model="_model"
             :schema="schemaComputed"
@@ -43,7 +43,7 @@
 
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit'"
+            v-if="(displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit') && identity"
             :mode="displayMode"
             :model="_model"
             :schema="schemaComputed"
@@ -334,7 +334,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  initialDisplayMode: 'list', // table | list | kanban
+  initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 8,
@@ -1115,6 +1115,7 @@ export default {
         this.selectedItem = item;
         this.selectedItems = [];
       }
+      //  console.warn('setDisplayMode', mode);
       this.displayMode = mode;
       if (['table', 'list', 'kanban'].indexOf(mode) > -1) {
         this.tableNeedsRefresh = options.refresh;

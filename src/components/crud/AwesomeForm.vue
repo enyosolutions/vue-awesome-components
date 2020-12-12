@@ -454,9 +454,8 @@
                                   </h3>
                                   <hr class="mt-0" />
                                 </template>
-                                <div
+                                <AwesomeCrud
                                   :id="'list-collapse-' + ns.identity"
-                                  :is="AwesomeCrud"
                                   v-bind="ns"
                                   :parent="selectedItem"
                                   :parentIdentity="model.identity || identity"
@@ -469,7 +468,7 @@
                                   class="aw-crud-nested-model collapse show"
                                 >
                                   <div slot="crud-title" />
-                                </div>
+                                </AwesomeCrud>
                               </div>
                             </template>
                           </template>
@@ -646,7 +645,7 @@ export default {
   name: 'AwesomeForm',
   introduction: 'A component to quickly create a table UI with edit capabilities',
   components: {
-    'awesome-crud': AwesomeCrud,
+    AwesomeCrud: AwesomeCrud,
     /* Column,
     Tabs,
     Row,

@@ -1,6 +1,8 @@
 import _ from 'lodash';
+import templatingMixin from './templatingMixin';
 
 export default {
+  mxixins: [templatingMixin],
   methods: {
 
     getFormtype(property) {
@@ -107,8 +109,28 @@ export default {
       }
     },
 
+    transformStateBooleans(field) {
+      ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
+
+        if (_.isString(field[prop])) {
+          field[prop] = this.templateParseBoolean(field[prop]);
+        }
+      });
+    },
+
+    transformStateFunctions(field) {
+      ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
+
+        if (_.isFunction(field[prop])) {
+          field[prop] = this.templateParseFunc(field[prop]);
+        }
+      });
+    },
 
     parseSchema(schema, prefix = '') {
+      // eslint-disable-next-line
+      console.log('parseSchema called');
+
       if (!schema.properties) {
         return [];
       }
@@ -121,37 +143,43 @@ export default {
       Object.keys(schema.properties).forEach((key) => {
         if ([this.primaryKey].indexOf(key) === -1) {
           const prop = schema.properties[key];
-          if (prop.field && prop.field.hidden) {
+          if (!prop.field) {
+            prop.field = {};
+          }
+          if (prop.field.hidden) {
+            console.warn('hidden is @deprecated, please use visible: false');
             return;
           }
-          if (prop.type === 'object' && !(prop.field && prop.field.type)) {
+          if (prop.field.visible == false || prop.field.visible == 0) {
+            return;
+          }
+          if (prop.type === 'object' && !(prop.field.type)) {
             const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
             subSchema.legend = prop.title || _.startCase(key);
             subSchema.type = 'group';
-            subSchema.styleClasses = `subgroup  ${(prop.field && prop.field.styleClasses) || 'card'}`;
+            subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || 'card'}`;
             fields.push(subSchema);
           } else {
             const relationUrl = this.getRelationUrl(prop);
             const relationKey = this.getRelationKey(prop);
             const relationLabel = this.getRelationLabel(prop);
-            if (prop.field && prop.relation && prop.field.fieldOptions) {
+            if (prop.relation && prop.field.fieldOptions) {
               prop.field.fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
               prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
               prop.field.fieldOptions.searchable = true;
             }
             const field = {
-              type: (prop.field && prop.field.type) || this.getFormtype(prop),
+              type: (prop.field.type) || this.getFormtype(prop),
               label: prop.title || prop.description || _.startCase(key),
               placeholder: prop.placeholder,
-              default: prop.default,
-              fieldOptions: (prop.field && prop.field.fieldOptions) || {
+              fieldOptions: (prop.field.fieldOptions) || {
                 url: relationUrl || prop.relationUrl || prop.relation,
                 trackBy: relationKey || prop.foreignKey || 'id',
                 label: relationLabel || 'label', // key label for enyo select >
                 name: relationLabel || 'label', // key label for native select
-                step: prop.field && prop.field.step,
-                readonly: this.displayMode === 'view' || (prop.field && prop.field.readonly),
-                disabled: this.displayMode === 'view' || (prop.field && prop.field.readonly),
+                step: prop.field.step,
+                readonly: this.displayMode === 'view' || (prop.field.readonly),
+                disabled: this.displayMode === 'view' || (prop.field.disabled),
                 relation: prop.relation,
                 foreignKey: relationKey,
                 relationKey,
@@ -159,31 +187,29 @@ export default {
                 relationUrl
               },
               values:
-                (prop.field &&
+                (
                   prop.field.fieldOptions &&
                   (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum))) ||
                 prop.enum ||
                 (prop.items && prop.items.enum) ||
                 [],
-              required: prop.field && prop.field.required,
               hint: prop.description,
               model: prefix + key,
-              validator: prop.field && prop.field.validator,
               min: prop.min,
               max: prop.max,
               multi: prop.type === 'array',
-              readonly: this.displayMode === 'view' || (prop.field && prop.field.readonly),
-              disabled: this.displayMode === 'view' || (prop.field && prop.field.readonly),
-              styleClasses: (prop.field && (prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
+              styleClasses: ((prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
               relation: prop.relation,
               foreignKey: relationKey || prop.foreignKey,
               relationKey,
               relationLabel,
-              group: prop.field ? prop.field.group : undefined
+              ...prop.field,
+              readonly: this.displayMode === 'view' || (prop.field.readonly),
+              disabled: this.displayMode === 'view' || (prop.field.disabled),
             };
             if (!field.fieldOptions.inputType) {
               field.fieldOptions.inputType =
-                (prop.field && prop.field.inputType) || this.getFormInputType(prop) || 'text';
+                (prop.field.inputType) || this.getFormInputType(prop) || 'text';
             }
             if (
               prop.type === 'boolean' &&
@@ -211,20 +237,33 @@ export default {
               field.options = field.values;
             }
 
+            this.transformStateBooleans(field);
+            this.transformStateFunctions(field);
+
             if (field.required) {
+
               if (!field.validator) {
                 field.validator = [];
               }
+              // always put validators in arrays
               if (typeof (field.validator) === 'string') {
                 field.validator = [field.validator];
               }
-              field.validator.push('required');
+
+              // in case the template parser transformed the result
+              if (field.required) {
+                field.validator.push('required');
+              }
+
             }
+
+
+
             if (field.viewOptions && !field.displayOptions) {
               console.warn('@deprecated, please rename field.viewOptions into field.displayOptions');
               field.viewOptions = field.displayOptions;
             }
-            field.displayOptions = prop.field && prop.field.displayOptions || {
+            field.displayOptions = prop.field.displayOptions || {
               ...prop.column,
               type: this.getColumnType(prop),
               classes: (prop.column && prop.column.classes),
@@ -243,6 +282,7 @@ export default {
 
       return { fields };
     },
+
 
     parseColumns(properties) {
       const newcolumns = [];

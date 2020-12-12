@@ -359,7 +359,7 @@ export default {
         }
         this.routeQueryParams = _.merge(this.routeQueryParams, options.query);
       }
-      console.warn('pushChangesToRouger', options)
+      console.warn('pushChangesToRouter', options)
       this.saveComponentState();
 
       if (!this.useRouterMode) {

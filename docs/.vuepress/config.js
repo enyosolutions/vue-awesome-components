@@ -103,6 +103,10 @@ module.exports = {
             path: "/guide/awesomecrud/actions.md"
           },
           {
+            title: "Template parsing system (wip)",
+            path: "/guide/awesomecrud/template-parsing-system.md"
+          },
+          {
             title: "Events (wip)",
             path: "/guide/awesomecrud/events.md"
           },
