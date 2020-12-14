@@ -997,6 +997,10 @@ export default {
   max-height: 50px;
 }
 
+.aw-table .aw-display-image-img {
+  max-height: 200px;
+}
+
 .aw-table-checkbox {
   height: 18px;
   width: 18px;

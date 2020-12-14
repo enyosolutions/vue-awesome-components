@@ -11,10 +11,10 @@
       @change="onChangeImage"
     />
     <div class="image-picker-actions" v-if="value">
-      <button @click.prevent="openImageInTab" type="button" class="btn btn-simple btn-alt-style btn-sm p-2">
+      <button @click.prevent="openImageInTab" type="button" class="btn btn-alt-style btn-sm p-2">
         <i class="fa fa-external-link"></i>
       </button>
-      <button @click.prevent="removeImage" type="button" class="btn btn-simple btn-alt-style btn-sm p-2">
+      <button @click.prevent="removeImage" type="button" class="btn btn-alt-style btn-sm p-2">
         <i class="fa fa-trash"></i>
       </button>
     </div>
@@ -91,6 +91,11 @@ export default {
     justify-content: flex-end;
     align-items: flex-start;
     padding: 5px;
+    button {
+      color: #fff;
+      background: var(--primary, #fff);
+      border-color: var(--primary, #fff) !important;
+    }
   }
 }
 </style>

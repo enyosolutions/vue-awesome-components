@@ -26,41 +26,36 @@ pageClass: fullwidth-page
 </ClientOnly>
 displayMode
 
-## columns types
+## field types
 
-| Type          | description                                                                     |
-|---------------|---------------------------------------------------------------------------------|
-| string        | Basic string stype                                                              |
-| number        | Number based field                                                              |
-| booelan       | Shows a green tick(✔) or a red cross(❌) depending on the value                  |
-| url           | In app or external url                                                          |
-| image         | Image column (displays the actual image)                                        |
-| date          | Date field ("DD-MM-YYYY")                                                       |
-| datetime      | Date time field (exact format will depend on your browser)                      |
-| checkbox      | Checkox                                                                         |
-| relation      | Date time field (exact format will depend on your browser) <Badge text="beta"/> |
-| object        | Date time field (exact format will depend on your browser)                      |
-| list-of-value | The value is used to find the value in a vuex store                             |
-| list-of-data  | The value is used to find the value in a vuex store                             |
+| Type         | description                                                    |
+|--------------|----------------------------------------------------------------|
+| string       | Basic string stype                                             |
+| integer      | Number based field                                             |
+| number       | Number based field                                             |
+| input        | Number based field                                             |
+| booelan      | Shows a green tick(✔) or a red cross(❌) depending on the value |
+| image        | Image column (displays the actual image)                       |
+| date         | Date field ("DD-MM-YYYY")                                      |
+| datetime     | Date time field (exact format will depend on your browser)     |
+| EnyoSelect   | @deprecated use VSelect                                        |
+| textArea     | textArea                                                       |
+| JsonTextarea | textArea that presents json data                               |
+| VSelect      | Select  using VSelect mode                                     |
+| fileInput    | fileInput  using base64 picker                                 |
+| ImagePicker  | Image Picker using base64 picker                               |
+| time         | time picker                                                    |
 
 
 
 ## events
 
-| Type          | description                                                                     |
-|---------------|---------------------------------------------------------------------------------|
-| create        | Basic string stype                                                              |
-| edit          | Number based field                                                              |
-| bulkEdit      | Shows a green tick(✔) or a red cross(❌) depending on the value                  |
-| url           | In app or external url                                                          |
-| image         | Image column (displays the actual image)                                        |
-| date          | Date field ("DD-MM-YYYY")                                                       |
-| datetime      | Date time field (exact format will depend on your browser)                      |
-| checkbox      | Checkox                                                                         |
-| relation      | Date time field (exact format will depend on your browser) <Badge text="beta"/> |
-| object        | Date time field (exact format will depend on your browser)                      |
-| list-of-value | The value is used to find the value in a vuex store                             |
-| list-of-data  | The value is used to find the value in a vuex store                             |
+| Type     | description |
+|----------|-------------|
+| create   |             |
+| edit     |             |
+| bulkEdit |             |
+
 
 
 
