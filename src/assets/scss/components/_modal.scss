@@ -10,6 +10,9 @@
   &.fade.show {
     opacity: 1;
     visibility: visible;
+    .modal-dialog {
+      transform: none !important;
+    }
     /*
     .modal-dialog {
      -webkit-transform: translate(0, 30%);
