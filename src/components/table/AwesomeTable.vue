@@ -242,8 +242,9 @@
                     $emit('customBulkAction', {
                       action,
                       items: selectedRows,
+                      parent,
                       location: 'bulk',
-                      id: action.name + '-' + index
+                      id: action.name + '-' + index,
                     })
                   "
                 >
@@ -253,7 +254,7 @@
               </template>
             </template>
             <button
-              v-if="_actions.bulkDelete"
+              v-if="_actions.bulkDelete && _actions.delete"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkDelete', selectedRows)"
               type="button"
@@ -262,7 +263,7 @@
               {{ $t('AwesomeTable.bulk.delete') }}
             </button>
             <button
-              v-if="_actions.bulkEdit"
+              v-if="_actions.bulkEdit && _actions.edit"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkEdit', selectedRows)"
               type="button"
@@ -443,6 +444,12 @@ export default {
     columnsDisplayed: {
       type: Number,
       default: 8
+    },
+    parent: {
+      type: Object,
+      default: () => {},
+      note:
+        'In case of nested, pass parent to retrieve it in custom bulk actions'
     },
     rows: { type: Array, default: () => [] },
     url: { type: String, default: '' },
