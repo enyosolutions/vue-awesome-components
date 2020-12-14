@@ -242,8 +242,9 @@
                     $emit('customBulkAction', {
                       action,
                       items: selectedRows,
+                      parent,
                       location: 'bulk',
-                      id: action.name + '-' + index
+                      id: action.name + '-' + index,
                     })
                   "
                 >
@@ -253,7 +254,7 @@
               </template>
             </template>
             <button
-              v-if="_actions.bulkDelete"
+              v-if="_actions.bulkDelete && _actions.delete"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkDelete', selectedRows)"
               type="button"
@@ -262,7 +263,7 @@
               {{ $t('AwesomeTable.bulk.delete') }}
             </button>
             <button
-              v-if="_actions.bulkEdit"
+              v-if="_actions.bulkEdit && _actions.edit"
               class="btn btn-primary btn-simple"
               @click="$emit('bulkEdit', selectedRows)"
               type="button"
@@ -396,7 +397,9 @@
 <script>
 import DateRangePicker from 'vue2-daterange-picker';
 import { VueGoodTable } from 'vue-good-table';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import localeData from 'dayjs/plugin/localeData';
+dayjs.extend(localeData);
 import Popper from 'vue-popperjs';
 import { Skeleton } from 'vue-loading-skeleton';
 
@@ -441,6 +444,12 @@ export default {
     columnsDisplayed: {
       type: Number,
       default: 8
+    },
+    parent: {
+      type: Object,
+      default: () => {},
+      note:
+        'In case of nested, pass parent to retrieve it in custom bulk actions'
     },
     rows: { type: Array, default: () => [] },
     url: { type: String, default: '' },
@@ -521,10 +530,10 @@ export default {
       filterable: this.options.filterInitiallyOn,
       isRefreshing: false,
       columnsState: {},
-      defaultStartDate: moment()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
-      defaultEndDate: moment().format('YYYY-MM-DD'),
+      defaultStartDate: dayjs()
+          .subtract(7, 'days')
+          .format('YYYY-MM-DD'),
+      defaultEndDate: dayjs().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
         filters: {},
@@ -546,9 +555,9 @@ export default {
           cancelLabel: 'Annuler',
           weekLabel: 'W',
           customRangeLabel: 'Custom Range',
-          daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
-          monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
-          firstDay: 1 // ISO first day of week - see moment documenations for details
+          daysOfWeek: dayjs.weekdaysMin(),
+          monthNames: dayjs.monthsShort(),
+          firstDay: 1
         }
       },
       selectedRows: [],
@@ -612,7 +621,6 @@ export default {
               return value;
             }
             return value;
-            //   return moment(value).format("lll");
           };
         }
 
@@ -623,7 +631,6 @@ export default {
               return value;
             }
             return value;
-            // return moment(value).format("DD-MM-YYYY");
           };
         }
 
@@ -790,7 +797,7 @@ export default {
   },
   beforeMount() {
     const userLang = window.navigator ? navigator.language || navigator.userLanguage : 'en';
-    moment.locale(userLang);
+    dayjs().locale(userLang);
   },
   mounted() {
     this.filterable = this.options && this.options.filterInitiallyOn;

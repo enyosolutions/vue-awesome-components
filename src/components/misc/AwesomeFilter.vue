@@ -236,7 +236,9 @@ import _ from 'lodash';
 import { Datetime } from 'vue-datetime';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import localeData from 'dayjs/plugin/localeData';
+dayjs.extend(localeData);
 import i18nMixin from '../../mixins/i18nMixin';
 
 export default {
@@ -322,8 +324,8 @@ export default {
     currentFilter: {},
     selectedFilters: [],
     dateRangePicker: {
-      startDate: moment(),
-      endDate: moment().add(7, 'days'),
+      startDate: dayjs(),
+      endDate: dayjs().add(7, 'days'),
       locale: {
         direction: 'ltr', // direction of text
         format: 'DD-MM-YYYY', // fomart of the dates displayed
@@ -332,9 +334,9 @@ export default {
         cancelLabel: '',
         weekLabel: '',
         customRangeLabel: '',
-        daysOfWeek: moment.weekdaysMin(), // array of days - see moment documenations for details
-        monthNames: moment.monthsShort(), // array of month names - see moment documenations for details
-        firstDay: 1 // ISO first day of week - see moment documenations for details
+        daysOfWeek: dayjs.weekdaysMin(),
+        monthNames: dayjs.monthsShort(),
+        firstDay: 1
       }
     }
   }),

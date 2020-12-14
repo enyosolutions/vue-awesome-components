@@ -43,6 +43,7 @@
     "chartist-plugin-tooltips": "^0.0.17",
     "core-js": "2",
     "crip-vue-loading": "^1.2.5",
+    "dayjs": "^1.9.7",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
     "fecha": "^4.2.0",

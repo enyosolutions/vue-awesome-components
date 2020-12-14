@@ -44,7 +44,6 @@ module.exports = {
   chainWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       // config.externals = {
-      //   'moment': 'moment',
       //   'vue-multiselect': 'vue-multiselect',
       //   'sweetalert2': 'sweetalert2',
       //   'sweetalert2/dist': 'sweetalert2/dist',
