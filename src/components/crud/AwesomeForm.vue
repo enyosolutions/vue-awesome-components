@@ -292,7 +292,11 @@
                             :class="{ active: activeNestedTab === 'general' }"
                             @click="activeNestedTab = 'general'"
                           >
-                            {{ $te('app.labels.' + identity) ? $te('app.labels.' + identity) : startCase(identity) }}
+                            {{
+                              $te('app.labels.' + identity)
+                                ? $te('app.labels.' + identity)
+                                : startCase(namePlural || title || identity)
+                            }}
                           </a>
                         </li>
                         <template v-for="(ns, index) in nestedModels">
