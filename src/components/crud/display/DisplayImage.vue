@@ -15,4 +15,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.aw-display-image-img {
+  width: 100%;
+}
+</style>
