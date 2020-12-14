@@ -458,7 +458,8 @@
                                   </h3>
                                   <hr class="mt-0" />
                                 </template>
-                                <AwesomeCrud
+                                <div
+                                  :is="AwesomeCrud"
                                   :id="'list-collapse-' + ns.identity"
                                   v-bind="ns"
                                   :parent="selectedItem"
@@ -472,7 +473,7 @@
                                   class="aw-crud-nested-model collapse show"
                                 >
                                   <div slot="crud-title" />
-                                </AwesomeCrud>
+                                </div>
                               </div>
                             </template>
                           </template>
