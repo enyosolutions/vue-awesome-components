@@ -10,7 +10,9 @@
 
 <script>
 import VueFormGenerator from '../../form/form-generator';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import $ from 'jquery';
 
 const inputFormat = 'YYYY-MM-DDTHH:mm:ssZ';
@@ -37,11 +39,11 @@ export default {
       if (value != null) {
         let dt;
         if (typeof this.fieldOptions.format !== 'undefined') {
-          dt = moment(value, this.fieldOptions.format).toDate();
+          dt = dayjs(value, this.fieldOptions.format).toDate();
         } else {
           dt = new Date(value);
         }
-        return moment(dt).format(this.getDateFormat());
+        return dayjs(dt).format(this.getDateFormat());
       }
 
       return value;
@@ -49,7 +51,7 @@ export default {
 
     formatValueToModel(value) {
       if (value != null) {
-        const m = moment(value, this.getDateFormat());
+        const m = dayjs(value, this.getDateFormat());
         value = m.format(this.getDateFormat());
       }
       return value;

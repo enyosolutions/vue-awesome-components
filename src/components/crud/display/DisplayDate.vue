@@ -5,7 +5,9 @@
 </template>
 
 <script>
-import moment from 'moment';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
 export default {
@@ -34,11 +36,11 @@ export default {
       }
       let dt;
       if (typeof this.inputFormat !== 'undefined') {
-        dt = moment(this.value, this.inputFormat).toDate();
+        dt = dayjs(this.value, this.inputFormat).toDate();
       } else {
         dt = new Date(this.value);
       }
-      return moment(dt).format(this.computedFormat);
+      return dayjs(dt).format(this.computedFormat);
     }
   }
 };
