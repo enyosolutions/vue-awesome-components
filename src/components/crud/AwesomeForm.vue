@@ -1858,8 +1858,6 @@ body.modal-open .bootstrap-datetimepicker-widget {
 
     .aw-form {
       .modal-nested {
-        margin-left: 15px;
-        margin-right: 15px;
         .modal-header {
           position: static;
           text-align: left;
