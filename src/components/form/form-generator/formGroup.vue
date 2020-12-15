@@ -106,6 +106,7 @@ export default {
       validationClass: {}
     };
   },
+  watch: {},
   computed: {
     groupLegend() {
       if (this.group && this.group.legend) {

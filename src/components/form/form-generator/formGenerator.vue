@@ -137,9 +137,7 @@ export default {
     fields() {
       if (this.schema && this.schema.fields) {
         if (this.schema.mode) {
-          this.schema.fields.forEach((field) => {
-            field.mode = this.schema.mode;
-          });
+          this.injectFieldMode(this.schema.fields);
         }
         return this.schema.fields;
       }
@@ -273,6 +271,19 @@ export default {
     clearValidationErrors() {
       this.errors.splice(0);
       this.eventBus.$emit('clear-validation-errors', this.clearValidationErrors);
+    },
+
+    injectFieldMode(fields) {
+      if (!this.schema.mode) {
+        return;
+      }
+      fields.forEach((field) => {
+        field.mode = this.schema.mode;
+        if (field.fields) {
+          this.injectFieldMode(field.fields);
+        }
+      });
+      return;
     }
   },
 

@@ -128,11 +128,8 @@ export default {
     },
 
     parseSchema(schema, prefix = '') {
-      // eslint-disable-next-line
-      console.log('parseSchema called');
-
       if (!schema.properties) {
-        return [];
+        return { title: schema.title, default: {} };
       }
       if (prefix && schema.$schema) {
         // console.warn("possible recursive parseSchema call", schema);
@@ -157,6 +154,8 @@ export default {
             const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
             subSchema.legend = prop.title || _.startCase(key);
             subSchema.type = 'group';
+            subSchema.default = {};
+            subSchema.id = key;
             subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || 'card'}`;
             fields.push(subSchema);
           } else {
@@ -330,12 +329,13 @@ export default {
             fields: [],
             ...group,
             legend: this.$t(group.title),
+            id: group.id,
             type: 'group'
           });
         }
       });
       if (groups.length < 1) {
-        groups = [{ legend: '', fields: schema.fields }];
+        groups = [{ legend: '', fields: schema.fields, }];
       }
       return groups;
     },

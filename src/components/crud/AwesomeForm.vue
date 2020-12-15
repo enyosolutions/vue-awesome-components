@@ -1264,7 +1264,10 @@ export default {
     },
 
     loadModel() {
-      console.warn('Load Model');
+      if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line
+        console.count('Load Model: ' + this.identity);
+      }
       this.mergeOptions();
       setTimeout(() => {
         this.openModalDebounced();
@@ -1367,7 +1370,7 @@ export default {
         return;
       }
       if (this.parentPath && this.updateRouter) {
-        window.history.replaceState({}, null, `${this.parentPath}`);
+        window.history.pushState({}, null, `${this.parentPath}`);
       }
       this.selectedItem = {};
       setTimeout(() => {
@@ -1391,7 +1394,7 @@ export default {
     goToEditPage(item) {
       if (!this.mergedOptions.editPath) {
         if (this.updateRouter) {
-          window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+          window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
         }
         this.editFunction(item);
         return;
@@ -1404,7 +1407,7 @@ export default {
     goToViewPage(item) {
       if (!this.mergedOptions.viewPath) {
         if (this.updateRouter) {
-          window.history.replaceState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+          window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         }
         this.activeNestedTab = 'general';
         this.viewFunction(item);

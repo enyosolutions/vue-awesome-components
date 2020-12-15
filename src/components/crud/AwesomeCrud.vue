@@ -1144,7 +1144,7 @@ export default {
       }
       this.setDisplayMode('create', this.selectedItem);
       if (this.useRouterMode) {
-        window.history.replaceState({}, null, `${this.parentPath}/new`);
+        window.history.pushState({}, null, `${this.parentPath}/new`);
       }
 
       return;
@@ -1197,7 +1197,7 @@ export default {
         return this.$router.push(this.mergedOptions.viewPath);
       }
       if (this.useRouterMode) {
-        window.history.replaceState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
+        window.history.pushState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
       }
       this.setDisplayMode('view', item);
     },

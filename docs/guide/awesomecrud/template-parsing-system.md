@@ -16,7 +16,7 @@ Simply put Templated strings are strings with variable inside them, formatted li
 
 
 ```
-my best friend is {{ currentUser.firstName }}
+my best friend is `{{ currentUser.firstName }}`
 ```
 
 Usiing that templating, you'll be able to :

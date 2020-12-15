@@ -77,13 +77,14 @@ export default {
 
       set(newValue) {
         this.touch();
-
+        console.warn('abstract set newValue', newValue)
         let oldValue = this.value;
         newValue = this.formatValueToModel(newValue);
-
+        // eslint-disable-next-line
         if (isFunction(newValue)) {
           newValue(newValue, oldValue);
         } else {
+          // eslint-disable-next-line
           this.updateModelValue(newValue, oldValue);
         }
       }
@@ -227,7 +228,6 @@ export default {
         this.setModelValueByPath(this.schema.model, newValue);
         changed = true;
       }
-
       if (changed) {
         this.eventBus.$emit('model-updated', newValue, this.schema.model);
 
@@ -249,9 +249,9 @@ export default {
     },
 
     setModelValueByPath(path, value) {
+
       // convert array indexes to properties
       let s = path.replace(/\[(\w+)\]/g, '.$1');
-
       // strip a leading dot
       s = s.replace(/^\./, '');
 
@@ -262,7 +262,7 @@ export default {
       while (i < n) {
         let k = a[i];
         if (i < n - 1)
-          if (o[k] !== undefined) {
+          if (o && (o[k] !== undefined && o[k] !== null)) {
             // Found parent property. Step in
             o = o[k];
           } else {
