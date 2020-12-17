@@ -77,7 +77,6 @@ export default {
 
       set(newValue) {
         this.touch();
-        console.warn('abstract set newValue', newValue)
         let oldValue = this.value;
         newValue = this.formatValueToModel(newValue);
         // eslint-disable-next-line

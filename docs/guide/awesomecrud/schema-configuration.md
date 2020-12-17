@@ -123,8 +123,7 @@ The awesome crud configuration schema.
               title: 'The field to use as the Label in the select',
               example: 'username',
             },
-          },
-          displayOptions: {
+            displayOptions: {
             title: 'Options to be used on custom forms fields like view mode',
              properties: {
             type: {
@@ -134,6 +133,8 @@ The awesome crud configuration schema.
               enum: ['date', 'datetime'],
             }
           }
+          },
+
 
           }
         },
