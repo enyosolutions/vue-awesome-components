@@ -51,9 +51,9 @@ export default {
 
     formatValueToModel(value) {
       if (value != null) {
-        const m = dayjs(value, this.getDateFormat());
-        value = m.format(this.getDateFormat());
+        value = dayjs(value).format(this.getDateFormat());
       }
+      console.log(value);
       return value;
     }
   },

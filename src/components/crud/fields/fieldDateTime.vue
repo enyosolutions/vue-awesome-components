@@ -1,5 +1,6 @@
 <template>
   <div class="input-group">
+    {{value}}
     <datetime
       v-bind="schema"
       class="field-date-fw"
@@ -75,8 +76,7 @@ export default {
 
     formatValueToModel(value) {
       if (value != null) {
-        const m = dayjs(value, this.getDateFormat());
-        value = m.format(this.getDateFormat());
+        value = dayjs(value).format(this.getDateFormat());
       }
       return value;
     }
