@@ -39,7 +39,7 @@
       "lesser-than": "Est plus petit que (<)",
       "lesser-or-equals": "Est égal ou petit que (<=)",
       "between": "Entre",
-      "not-between": "N'est pads entre'",
+      "not-between": "N'est pas entre'",
       "contains": "Contient",
       "not-contains": "Ne contient pas",
       "starts-with": "Commence par",
