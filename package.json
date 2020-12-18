@@ -18,7 +18,9 @@
   "module": "src/index.js",
   "dependencies": {
     "localforage": "^1.9.0",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "qs": "^6.6.0",
+    "dayjs": "^1.9.7"
   },
   "files": [
     "src"
@@ -43,7 +45,6 @@
     "chartist-plugin-tooltips": "^0.0.17",
     "core-js": "2",
     "crip-vue-loading": "^1.2.5",
-    "dayjs": "^1.9.7",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
     "fecha": "^4.2.0",
@@ -94,8 +95,6 @@
     "fecha": "^4.2.0",
     "lodash": "^4.17.13",
     "luxon": "^1.24.1",
-    "moment": "^2.24.0",
-    "qs": "^6.6.0",
     "sweetalert2": "^8.2.6",
     "vue-base64-file-upload": "^1.0.4",
     "vue-chartist": "2.2.1",
