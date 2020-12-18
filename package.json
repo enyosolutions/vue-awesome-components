@@ -17,10 +17,10 @@
   "main": "src/index.js",
   "module": "src/index.js",
   "dependencies": {
+    "dayjs": "^1.9.7",
     "localforage": "^1.9.0",
-    "uuid": "^8.3.0",
     "qs": "^6.6.0",
-    "dayjs": "^1.9.7"
+    "uuid": "^8.3.0"
   },
   "files": [
     "src"

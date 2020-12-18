@@ -18,7 +18,8 @@
       />
     </pre>
 
-    <AwesomeCrud
+    <div
+      :is="AwesomeCrud"
       model-name="ticket"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
@@ -44,14 +45,15 @@
         }
       ]"
       :options="{ detailPageMode: 'modal', actions: { create: true } }"
-    />
+    ></div>
 
     <br />
     <br />
     <br />
     <h3>Table with details opening in slide mode</h3>
 
-    <AwesomeCrud
+    <div
+      :is="AwesomeCrud"
       model-name="ticket2"
       :schema="ticketModel"
       :columns="['col1', 'col2', 'col3']"
@@ -76,22 +78,26 @@
         }
       ]"
       :options="{ detailPageMode: 'slide', actions: { create: true } }"
-    />
+    ></div>
   </div>
 </template>
 
 <script>
-import AwesomeCrud from '../../../src/components/crud/AwesomeCrud.vue';
 import ticketModel from '../../../examples/fixtures/ticket.js';
 
 export default {
   name: 'AwesomeCrudDemo',
-  components: { AwesomeCrud },
+  components: {},
   props: {},
-  mounted() {},
+  mounted() {
+    import('../../../src/components/crud/AwesomeCrud.vue').then((awCrud) => {
+      thiw.AwesomeCrud = awCrud;
+    });
+  },
   data() {
     return {
-      ticketModel
+      ticketModel,
+      AwesomeCrud: ''
     };
   }
 };

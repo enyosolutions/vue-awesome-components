@@ -11,7 +11,6 @@ pageClass: fullwidth-page
 
 
 
-
 ## Options prop fields
 
 The options property is an option object that controls various behaviors of the awesomecrud component.
