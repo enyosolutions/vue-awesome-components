@@ -12,7 +12,7 @@
 | afterRefresh      | after the local refresh of the table (no api)                           |
 
 
-## Awesome bus events
+## Events sent via awesomeBus
 
 
 | Type               | description                                                              |

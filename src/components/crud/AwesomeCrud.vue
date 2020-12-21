@@ -1441,24 +1441,10 @@ export default {
       this.listItemClickedHandler(item);
     },
 
+    // @deprecated use directly $awConfirm
     confirm(message) {
-      return new Promise((resolve, reject) => {
-        Swal.fire({
-          title: this.$t('common.messages.are_you_sure'),
-          text: message,
-          type: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: this.$t('common.buttons.yes'),
-          cancelButtonText: this.$t('common.buttons.cancel'),
-          reverseButtons: true
-        })
-          .then((result) => {
-            resolve(result.value);
-          })
-          .catch(reject);
-      });
+      console.warn('@deprecated use directly');
+      return this.$awConfirm(message);
     },
 
     onLayoutUpdated(items) {

@@ -302,6 +302,7 @@ export default {
             newCol.relationUrl = this.getRelationUrl(prop);
             newCol.relationLabel = this.getRelationLabel(prop);
           }
+
           newcolumns.push(newCol);
         }
       });

@@ -244,7 +244,7 @@
                       items: selectedRows,
                       parent,
                       location: 'bulk',
-                      id: action.name + '-' + index,
+                      id: action.name + '-' + index
                     })
                   "
                 >
@@ -448,8 +448,7 @@ export default {
     parent: {
       type: Object,
       default: () => {},
-      note:
-        'In case of nested, pass parent to retrieve it in custom bulk actions'
+      note: 'In case of nested, pass parent to retrieve it in custom bulk actions'
     },
     rows: { type: Array, default: () => [] },
     url: { type: String, default: '' },
@@ -531,8 +530,8 @@ export default {
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: dayjs()
-          .subtract(7, 'days')
-          .format('YYYY-MM-DD'),
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
       defaultEndDate: dayjs().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -615,7 +614,7 @@ export default {
         }
 
         if (col.type && col.type === 'datetime') {
-          col.format = 'lll';
+          col.format = 'D MMM YYYY - hh:mm';
           col.formatFn = function(value) {
             if (!value) {
               return value;

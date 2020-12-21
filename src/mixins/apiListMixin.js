@@ -237,8 +237,9 @@ export default {
           this.$emit('crud-list-updated', this.data); // @deprecated
           this.$awEmit('table-refreshed', { component: 'aw-table', url: this.url, data: this.data })
           this.$emit('dataChanged', this.data); // @deprecated
-          this.$emit('data-changed', this.data);
+          this.$awEmit('data-changed', { component: 'aw-table', url: this.url, data: this.data })
         })
+
         .catch(err => {
           // eslint-disable-next-line
           console.warn(err);
