@@ -1,6 +1,6 @@
 {
   "name": "vue-aw-components",
-  "version": "1.2.6-beta-3",
+  "version": "1.2.6-beta-4",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
