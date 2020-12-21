@@ -590,7 +590,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        (this.optionsComputed && this.optionsComputed.actions) || this.actions // old location kept for BC
+        this.actions || (this.optionsComputed && this.optionsComputed.actions) // old location kept for BC
       );
     },
 
