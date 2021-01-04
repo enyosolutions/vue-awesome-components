@@ -10,7 +10,7 @@
     "docs:build": "vuepress build docs"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "chartist": "^0.11.0",
     "chartist-plugin-pointlabels": "^0.0.6",
     "chartist-plugin-tooltips": "^0.0.17",
