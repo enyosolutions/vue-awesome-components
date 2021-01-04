@@ -17,6 +17,7 @@ export const defaultActions = {
   bulkEdit: true,
   itemsPerRow: true,
   editLayout: true,
+  paginationPreviousNext: true,
 };
 
 export const defaultKanbanOptions = {

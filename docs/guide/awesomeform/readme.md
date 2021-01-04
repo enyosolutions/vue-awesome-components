@@ -50,12 +50,13 @@ displayMode
 
 ## events
 
-| Type     | description |
-|----------|-------------|
-| create   |             |
-| edit     |             |
-| bulkEdit |             |
-
+| Type                    | description |
+|-------------------------|-------------|
+| create                  |             |
+| edit                    |             |
+| bulkEdit                |             |
+| aw-select-previous-item |             |
+| aw-select-next-item     |             |
 
 
 
