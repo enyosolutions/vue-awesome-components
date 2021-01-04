@@ -1,25 +1,26 @@
 <template>
-	<div 
-class="radio-list" 
-:disabled="disabled" v-attributes="'wrapper'">
-		<label
-			v-for="item in items"
-			:key="getItemValue(item)"
-			:class="{ 'is-checked': isItemChecked(item) }"
-			v-attributes="'label'">
-			<input
-				:id="fieldID"
-				type="radio"
-				:disabled="disabled"
-				:name="id"
-				@click="onSelection(item)"
-				:value="getItemValue(item)"
-				:checked="isItemChecked(item)"
-				:class="fieldClasses"
-				:required="required"
-				v-attributes="'input'"/>{{ getItemName(item) }}
-		</label>
-	</div>
+  <div class="radio-list" :disabled="disabled" v-attributes="'wrapper'">
+    <label
+      v-for="item in items"
+      :key="getItemValue(item)"
+      :class="{ 'is-checked': isItemChecked(item) }"
+      v-attributes="'label'"
+    >
+      <input
+        :checked="isItemChecked(item)"
+        :class="fieldClasses"
+        :disabled="disabled"
+        :id="fieldID"
+        :name="id"
+        :readonly="readonly"
+        :required="required"
+        :value="getItemValue(item)"
+        @click="onSelection(item)"
+        type="radio"
+        v-attributes="'input'"
+      />{{ getItemName(item) }}
+    </label>
+  </div>
 </template>
 
 <script>
@@ -91,7 +92,7 @@ export default {
   .radio-list {
     label {
       display: block;
-      input[type="radio"] {
+      input[type='radio'] {
         margin-right: 5px;
       }
     }

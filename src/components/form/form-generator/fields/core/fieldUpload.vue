@@ -1,19 +1,20 @@
 <template>
-	<div class="wrapper" v-attributes="'wrapper'">
-		<input
-			class="form-control"
-			:id="fieldID"
-			type="file"
-			:name="inputName"
-			@change="onChange"
-			:accept="fieldOptions.accept"
-			:multiple="fieldOptions.multiple"
-			:placeholder="placeholder"
-			:readonly="readonly"
-			:required="schema.required"
-			:disabled="disabled"
-			v-attributes="'input'"/>
-	</div>
+  <div class="wrapper" v-attributes="'wrapper'">
+    <input
+      class="form-control"
+      :accept="fieldOptions.accept"
+      :disabled="disabled"
+      :id="fieldID"
+      :multiple="fieldOptions.multiple"
+      :name="inputName"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      :required="schema.required"
+      @change="onChange"
+      type="file"
+      v-attributes="'input'"
+    />
+  </div>
 </template>
 
 <script>

@@ -247,6 +247,7 @@
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :savePaginationState="savePaginationState"
             :saveColumnsState="saveColumnsState"
+            :collapsible="false"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"

@@ -31,7 +31,7 @@
             v-if="_actions && _actions.refresh"
             type="button"
             class="btn btn-simple btn-alt-style btn-sm p-2"
-            @click="getItems({ useSkeleton: true })"
+            @click.prevent="getItems({ useSkeleton: true })"
           >
             <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
           </button>
@@ -169,8 +169,21 @@
       <p class="card-category">
         <slot name="table-subtitle" />
       </p>
+      <button
+        v-if="collapsible"
+        class="btn btn-i"
+        data-toggle="collapse"
+        :data-target="'#awTable-' + this._uid || this.uuid"
+        style="position: absolute; top: 0; right: 0; padding: 0;"
+      >
+        <i class="fa fa-minus"></i>
+      </button>
     </div>
-    <div class="card-body aw-table-card-body">
+    <div
+      class="card-body aw-table-card-body collapse show"
+      :class="collapsible ? 'collapse show' : ''"
+      :id="'awTable-' + this._uid || this.uuid"
+    >
       <awesome-filter
         :editFilters="false"
         id="advancedFilterComponent"
@@ -387,7 +400,7 @@
             </template>
           </template>
           <div slot="emptystate">
-            {{ $t('AwesomeTable.empty') }}
+            <slot name="table-empty-state"> {{ $t('AwesomeTable.empty') }} 2 </slot>
           </div>
         </vue-good-table>
       </div>
@@ -521,6 +534,11 @@ export default {
       default: 'local',
       type: String,
       values: ['local', 'remote']
+    },
+    collapsible: {
+      default: true,
+      type: Boolean,
+      description: 'Wether the table can be collapsed using the minus button at the topRight corner.'
     }
   },
   data() {

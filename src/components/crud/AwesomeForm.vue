@@ -283,7 +283,7 @@
                             {{
                               $te('app.labels.' + identity)
                                 ? $te('app.labels.' + identity)
-                                : startCase(namePlural || title || identity)
+                                : startCase(name || title || identity)
                             }}
                           </a>
                         </li>
