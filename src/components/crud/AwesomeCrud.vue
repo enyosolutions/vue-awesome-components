@@ -1398,7 +1398,7 @@ export default {
 
     onItemEdited(...args) {
       // eslint-disable-next-line
-      this.$awEventBus && this.$awEventBus.$emit('aw-table-needs-refresh');
+      this.$awEmit('aw-table-needs-refresh');
       console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
@@ -1507,6 +1507,9 @@ export default {
           break;
       }
     }
+  },
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
   }
 };
 </script>
