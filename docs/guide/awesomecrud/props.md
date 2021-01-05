@@ -6,7 +6,6 @@ pageClass: fullwidth-page
 
 
 <ClientOnly>
-<p>rer</p>
 <ComponentDoc :component="'AwesomeCrud'" />
 </ClientOnly>
 

@@ -496,8 +496,12 @@ export default {
         'AwesomeTable.empty': 'empty'
       })
     },
-    autoRefresh: { type: Boolean, default: false },
-    autoRefreshInterval: { type: Number, default: 20 },
+    autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },
+    autoRefreshInterval: {
+      type: Number,
+      default: 20,
+      description: 'Interval in seconds that should be used to refresh the page'
+    },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
@@ -880,7 +884,7 @@ export default {
 
         this.numberOfRefreshCalls += 1;
         this.getItems({ source: 'awTable_refreshHandle' });
-      }, this.autoRefreshInterval * 2000);
+      }, this.autoRefreshInterval * 1000);
     },
 
     advancedFiltering(parsedFilters, filters) {

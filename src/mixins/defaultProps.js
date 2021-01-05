@@ -10,7 +10,7 @@ export const defaultActions = {
   import: false,
   dateFilter: true,
   refresh: true,
-  automaticRefresh: false,
+  autoRefresh: true,
   advancedFiltering: true,
   columnsFilters: true,
   bulkDelete: true,

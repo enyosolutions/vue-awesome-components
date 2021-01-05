@@ -338,6 +338,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
+  autoRefreshInterval: 20, // in seconds
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
