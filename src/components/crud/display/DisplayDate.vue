@@ -47,7 +47,6 @@ export default {
 </script>
 
 <style>
-
 .aw-display-date.badge {
   display: block;
 }

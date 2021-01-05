@@ -73,7 +73,6 @@
 </template>
 <script>
 import marked from 'marked';
-import VueAwesomeComponents from '../../../src';
 export default {
   name: 'ComponentDoc',
   props: {
@@ -93,14 +92,7 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      const hash = document.location.hash;
-      const target = document.querySelector(hash);
-      console.log('target', target);
-      if (hash.indexOf('#comp-prop-') === 0 && target) {
-        target.scrollIntoView();
-      }
-    }, 500);
+    this.scrollToHash();
   },
   data() {
     return {
@@ -113,8 +105,8 @@ export default {
     return this.methods.process(component, documentation, ignoreMixins);
   },
   methods: {
-    process(component, documentation, ignoreMixins) {
-      //  let VueAwesomeComponents = {};
+    async process(component, documentation, ignoreMixins) {
+      let VueAwesomeComponents = await import('../../../src');
       let _component;
       if (typeof component === 'string' && VueAwesomeComponents[component]) {
         _component = VueAwesomeComponents[component];
@@ -122,7 +114,11 @@ export default {
         _component = component;
       }
 
-      console.log('m =>', component);
+      console.log('m =>', _component, component);
+      if (!_component) {
+        console.warn('Component', component, 'not found');
+        return;
+      }
       const m = this.merge(_component, documentation);
       if (m.token) m.token = this.sanitize(m.token);
       if (m.description) m.description = marked(m.description);
@@ -229,6 +225,20 @@ export default {
     },
     hasMixins(component) {
       return typeof component.mixins !== 'undefined';
+    },
+
+    scrollToHash() {
+      setTimeout(() => {
+        try {
+          const hash = window.document.location.hash;
+          const target = window.document.querySelector(hash);
+          if (hash.indexOf('#comp-prop-') === 0 && target) {
+            target.scrollIntoView();
+          }
+        } catch (err) {
+          console.warn(err.message);
+        }
+      }, 500);
     }
   }
 };

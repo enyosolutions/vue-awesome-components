@@ -222,13 +222,28 @@ export default {
               ];
             }
             // datetime picker icons
-            if (field.type === 'dateTime') {
+            if (field.type === 'dateTime' || field.type === 'date') {
               field.fieldOptions.icons = {
                 time: 'fa fa-clock-o',
                 date: 'fa fa-calendar',
                 up: 'fa fa-arrow-up',
                 down: 'fa fa-arrow-down'
               };
+            }
+
+
+            if (field.type === 'date') {
+              field.type = 'dateTime';
+              if (!field.fieldOptions.type) {
+                field.fieldOptions.type = 'date';
+              }
+            }
+
+            if (field.type === 'time') {
+              field.type = 'dateTime';
+              if (!field.fieldOptions.type) {
+                field.fieldOptions.type = 'time';
+              }
             }
 
             // default items for selects
@@ -302,6 +317,7 @@ export default {
             newCol.relationUrl = this.getRelationUrl(prop);
             newCol.relationLabel = this.getRelationLabel(prop);
           }
+
           newcolumns.push(newCol);
         }
       });

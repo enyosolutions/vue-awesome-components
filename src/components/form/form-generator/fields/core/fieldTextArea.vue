@@ -1,18 +1,19 @@
 <template>
-	<textarea
-		class="form-control"
-		v-model="value"
-		:id="fieldID"
-		:class="fieldClasses"
-		:disabled="disabled"
-		:maxlength="fieldOptions.max"
-		:minlength="fieldOptions.min"
-		:placeholder="placeholder"
-		:required="required"
-		:readonly="readonly"
-		:rows="fieldOptions.rows || 2"
-		:name="inputName"
-		v-attributes="'input'"></textarea>
+  <textarea
+    class="form-control"
+    :class="fieldClasses"
+    :disabled="disabled"
+    :id="fieldID"
+    :maxlength="fieldOptions.max"
+    :minlength="fieldOptions.min"
+    :name="inputName"
+    :placeholder="placeholder"
+    :readonly="readonly"
+    :required="required"
+    :rows="fieldOptions.rows || 2"
+    v-attributes="'input'"
+    v-model="value"
+  ></textarea>
 </template>
 
 <script>

@@ -2,25 +2,21 @@
   <div class="wrapper" v-attributes="'wrapper'">
     <input
       class="form-control"
-      :id="fieldID"
-      :type="inputType"
-      :value="value"
-      @input="onInput"
-      @blur="onBlur"
-      :class="fieldClasses"
-      @change="schema.onChange || null"
-      :disabled="disabled"
       :accept="fieldOptions.accept"
       :alt="fieldOptions.alt"
       :autocomplete="fieldOptions.autocomplete"
       :checked="fieldOptions.checked"
+      :class="fieldClasses"
       :dirname="fieldOptions.dirname"
+      :disabled="disabled"
+      :files="fieldOptions.files"
       :formaction="fieldOptions.formaction"
       :formenctype="fieldOptions.formenctype"
       :formmethod="fieldOptions.formmethod"
       :formnovalidate="fieldOptions.formnovalidate"
       :formtarget="fieldOptions.formtarget"
       :height="fieldOptions.height"
+      :id="fieldID"
       :list="fieldOptions.list"
       :max="fieldOptions.max"
       :maxlength="fieldOptions.maxlength"
@@ -35,8 +31,12 @@
       :size="fieldOptions.size"
       :src="fieldOptions.src"
       :step="fieldOptions.step"
+      :type="inputType"
+      :value="value"
       :width="fieldOptions.width"
-      :files="fieldOptions.files"
+      @blur="onBlur"
+      @change="schema.onChange || null"
+      @input="onInput"
       v-attributes="'input'"
     />
     <span class="helper" v-if="inputType === 'color' || inputType === 'range'" v-text="value"></span>
@@ -157,7 +157,7 @@ export default {
 
   created() {
     if (this.inputType === 'file') {
-      console.warn('The \'file\' type in input field is deprecated. Use \'file\' field instead.');
+      console.warn('The "file" type in input field is deprecated. Use "file" field instead.');
     }
   }
 };
@@ -168,13 +168,13 @@ export default {
   .wrapper {
     width: 100%;
   }
-  input[type="radio"] {
+  input[type='radio'] {
     width: 100%;
   }
-  input[type="color"] {
+  input[type='color'] {
     width: 60px;
   }
-  input[type="range"] {
+  input[type='range'] {
     padding: 0;
   }
 

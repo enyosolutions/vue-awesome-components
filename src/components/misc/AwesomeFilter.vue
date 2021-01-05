@@ -317,7 +317,7 @@ export default {
         '$isNotDefined'
       ],
       relation: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
-      boolean: ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
+      boolean: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
     },
     currentField: {},
     currentValue: '',

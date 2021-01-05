@@ -1,6 +1,6 @@
 <template>
   <div class="input-group">
-    {{value}}
+    {{ value }}
     <datetime
       v-bind="schema"
       class="field-date-fw"
@@ -102,7 +102,7 @@ export default {
 
 .vdatetime:after {
   font-family: fontAwesome;
-  content: "\f073";
+  content: '\f073';
   position: absolute;
   right: 3px;
   top: 0;
