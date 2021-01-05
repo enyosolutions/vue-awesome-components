@@ -91,13 +91,14 @@ export default {
       type: Array
     }
   },
-  mounted() {
+  async mounted() {
     this.scrollToHash();
+    this.merged = await this.process(this.component, this.documentation);
   },
   data() {
     return {
       _component: {},
-      merged: this.process(this.component, this.documentation),
+      merged: {},
       typesForCodeTag: ['array', 'object', 'function']
     };
   },
@@ -114,7 +115,6 @@ export default {
         _component = component;
       }
 
-      console.log('m =>', _component, component);
       if (!_component) {
         console.warn('Component', component, 'not found');
         return;

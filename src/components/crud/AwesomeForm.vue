@@ -635,7 +635,6 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
   customAwFormTopActions: [],

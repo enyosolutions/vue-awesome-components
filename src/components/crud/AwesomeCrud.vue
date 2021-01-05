@@ -226,28 +226,29 @@
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
             v-bind="$props"
-            :uuid="'awtable-' + identity"
-            :columns="tableColumnsComputed"
-            :columns-displayed="mergedOptions.columnsDisplayed"
-            :entity="identity"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
-            :useRouterMode="useRouterMode"
-            :url="_url"
-            :api-query-params="mergedOptions.queryParams"
+            :actions="_actions"
             :api-query-headers="mergedOptions.headerParams"
+            :api-query-params="mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
             :apiResponseConfig="apiResponseConfig"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :collapsible="false"
+            :columns-displayed="mergedOptions.columnsDisplayed"
+            :columns="tableColumnsComputed"
+            :entity="identity"
+            :export-url="mergedOptions.exportUrl"
+            :limit="awTableLimit"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :actions="_actions"
-            :auto-refresh="mergedOptions.autoRefresh"
-            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
-            :export-url="mergedOptions.exportUrl"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :savePaginationState="savePaginationState"
             :saveColumnsState="saveColumnsState"
-            :collapsible="false"
+            :savePaginationState="savePaginationState"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :url="_url"
+            :useRouterMode="useRouterMode"
+            :uuid="'awtable-' + identity"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
@@ -340,7 +341,7 @@ const defaultOptions = {
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
-  columnsDisplayed: 8,
+  columnsDisplayed: 10,
   customInlineActions: [],
   customBulkActions: [],
   customAwFormTopActions: [],
@@ -608,6 +609,12 @@ export default {
       type: Boolean,
       default: true,
       description: 'Whether we should display the header (title) of awesomeform or not'
+    },
+    awTableLimit: {
+      type: Number,
+      default: 2000,
+      description:
+        'Define the number of items to get from the api for the table. This prevents overloading the table with too much data'
     }
   },
   data() {

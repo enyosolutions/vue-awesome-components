@@ -6,6 +6,7 @@ pageClass: fullwidth-page
 
 
 <ClientOnly>
+<p>rer</p>
 <ComponentDoc :component="'AwesomeCrud'" />
 </ClientOnly>
 
@@ -26,7 +27,7 @@ The options property is an option object that controls various behaviors of the 
 
 Manages the way the form is displayed. This field is relevant mostly when using Awesome form as part of AwesomeCrud.
 
-####  Possbile values :
+####  Possible values :
 
 - modal': Display as a modal
 - fade': (legacy)  Display as a modal

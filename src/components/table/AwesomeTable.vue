@@ -400,7 +400,12 @@
             </template>
           </template>
           <div slot="emptystate">
-            <slot name="table-empty-state"> {{ $t('AwesomeTable.empty') }} 2 </slot>
+            <slot name="table-empty-state">
+              {{ $t('AwesomeTable.empty') }}
+              <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
+                Click here to create your first item
+              </a></slot
+            >
           </div>
         </vue-good-table>
       </div>
@@ -456,7 +461,7 @@ export default {
     },
     columnsDisplayed: {
       type: Number,
-      default: 8
+      default: 10
     },
     parent: {
       type: Object,

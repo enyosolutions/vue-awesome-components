@@ -2,7 +2,7 @@
   <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
     <template v-for="value in _values">
       <div :key="value">
-        <span v-if="value" class="badge badge-info">
+        <span v-if="value" class="badge badge-info pointer" @click="onClick">
           {{ getLabel(value) }}
         </span>
         <router-link
@@ -62,10 +62,23 @@ export default {
   },
   data() {
     return {
-      internalCache: {}
+      internalCache: {},
+      timeoutId: null
     };
   },
   methods: {
+    onClick() {
+      if (!this.timeoutId) {
+        this.timeoutId = setTimeout(() => {
+          // simple click
+          this.timeoutId = null;
+        }, 50); //tolerance in ms
+      } else {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+        this.copy(this.value);
+      }
+    },
     kebabCase: _.kebabCase,
     isFunction: _.isFunction,
     getLabel(value) {
