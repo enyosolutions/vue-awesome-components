@@ -306,6 +306,7 @@
 </template>
 <script>
 import _ from 'lodash';
+import qs from 'qs';
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
@@ -861,6 +862,7 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
+    this.displayMode = this.mergedOptions.initialDisplayMode;
     this.loadModel();
 
     if (this._isNested) {
@@ -881,7 +883,7 @@ export default {
       .replace('/view', '')
       .replace('/edit', '')
       .replace('/:id', '');
-    this.displayMode = this.mergedOptions.initialDisplayMode;
+
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
@@ -1091,26 +1093,39 @@ export default {
       if (!this._url) {
         return;
       }
-      if (this.$route && this.$route.params && this.$route.params.id && this.useRouterMode) {
-        this.$http
-          .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
-          .then((res) => {
-            const matched = this.$route.matched[this.$route.matched.length - 1];
-            const data =
-              this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-                ? _.get(res, this.apiResponseConfig.dataPath)
-                : res.data;
-            if (matched.path.indexOf('/edit') !== -1) {
-              this.setDisplayMode('edit', data);
-            } else {
-              this.setDisplayMode('view', data);
-            }
+
+      if (this.useRouterMode) {
+        if (this.$route && this.$route.params) {
+          // if it's a create url
+
+          if (this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
+            this.setDisplayMode('create');
             this.$forceUpdate();
-          })
-          .catch(this.apiErrorCallback)
-          .finally(() => {
-            this.isRefreshing = false;
-          });
+            return;
+          }
+          // if it's a edit or view url
+          if (this.$route.params.id) {
+            this.$http
+              .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
+              .then((res) => {
+                const matched = this.$route.matched[this.$route.matched.length - 1];
+                const data =
+                  this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
+                    ? _.get(res, this.apiResponseConfig.dataPath)
+                    : res.data;
+                if (matched.path.indexOf('/edit') !== -1) {
+                  this.setDisplayMode('edit', data);
+                } else {
+                  this.setDisplayMode('view', data);
+                }
+                this.$forceUpdate();
+              })
+              .catch(this.apiErrorCallback)
+              .finally(() => {
+                this.isRefreshing = false;
+              });
+          }
+        }
       }
     },
 
@@ -1142,6 +1157,9 @@ export default {
     },
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
+      if (this.displayMode === 'create') {
+        return;
+      }
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.createPath);
       }
@@ -1151,9 +1169,13 @@ export default {
       if (options.editLayoutMode) {
         this.editLayoutMode = options.editLayoutMode;
       }
+
+      if (this.$route.query.item) {
+        this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+      }
       this.setDisplayMode('create', this.selectedItem);
-      if (this.useRouterMode) {
-        window.history.pushState({}, null, `${this.parentPath}/new`);
+      if (this.useRouterMode && !options.reset) {
+        window.history.pushState({}, null, `${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
       }
 
       return;

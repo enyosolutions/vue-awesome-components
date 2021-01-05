@@ -2,7 +2,7 @@ export const defaultActions = {
   noActions: false,
   search: true,
   filter: true,
-  create: true,
+  create: false,
   edit: true,
   view: true,
   delete: true,

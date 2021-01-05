@@ -674,7 +674,13 @@ export default {
     namePlural: { type: [String, Boolean], required: false, default: undefined },
     identity: { type: String, required: true },
     modelName: { type: String, required: false },
-    standalone: { type: Boolean, required: false, default: true },
+    standalone: {
+      type: Boolean,
+      required: false,
+      default: true,
+      description:
+        "Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won't have the same behavior"
+    },
     primaryKey: {
       type: String,
       default: 'id',
@@ -1104,16 +1110,20 @@ export default {
 
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
-      if (this.$route.params.id) {
+
+      if (this.$route.params.id === 'create' || this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
         if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
           delete this.$route.params.id;
-          if (this.$route.query.item) {
-            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
-          }
-          this.$emit('create', this.selectedItem, { reset: false });
-
-          return;
         }
+        if (this.$route.query.item) {
+          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+        }
+        this.$emit('create', this.selectedItem, { reset: false });
+
+        return;
+      }
+
+      if (this.$route.params.id) {
         if (this.$route.params.id === 'bulkEdit') {
           delete this.$route.params.id;
           if (this.$route.query.item) {
@@ -1265,7 +1275,7 @@ export default {
     loadModel() {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line
-        console.count('Load Model: ' + this.identity);
+        console.count('Loaded Model: ' + this.identity);
       }
       this.mergeOptions();
       setTimeout(() => {
@@ -1302,6 +1312,7 @@ export default {
       if (!this._selectedItemUrl) {
         return;
       }
+
       // todo call only if
       if (this.item && this.item[this.primaryKey]) {
         this.$http
