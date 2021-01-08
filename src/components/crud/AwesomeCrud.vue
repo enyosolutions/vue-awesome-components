@@ -233,27 +233,29 @@
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
             v-bind="$props"
-            :uuid="'awtable-' + identity"
-            :columns="tableColumnsComputed"
-            :columns-displayed="mergedOptions.columnsDisplayed"
-            :entity="identity"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
-            :useRouterMode="useRouterMode"
-            :url="_url"
-            :api-query-params="mergedOptions.queryParams"
+            :actions="_actions"
             :api-query-headers="mergedOptions.headerParams"
+            :api-query-params="mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
             :apiResponseConfig="apiResponseConfig"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :collapsible="false"
+            :columns-displayed="mergedOptions.columnsDisplayed"
+            :columns="tableColumnsComputed"
+            :entity="identity"
+            :export-url="mergedOptions.exportUrl"
+            :limit="tableDataLimit"
+            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :actions="_actions"
-            :auto-refresh="mergedOptions.autoRefresh"
-            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
-            :export-url="mergedOptions.exportUrl"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :savePaginationState="savePaginationState"
             :saveColumnsState="saveColumnsState"
+            :savePaginationState="savePaginationState"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :url="_url"
+            :useRouterMode="useRouterMode"
+            :uuid="'awtable-' + identity"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
@@ -265,6 +267,7 @@
             @table-updated="onListUpdated"
             @refresh="onTableRefresh"
             @onRowClicked="onTableRowClicked"
+            @onRowDoubleClicked="onTableRowDoubleClicked"
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
@@ -312,6 +315,7 @@
 </template>
 <script>
 import _ from 'lodash';
+import qs from 'qs';
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
@@ -344,10 +348,11 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
+  autoRefreshInterval: 20, // in seconds
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
-  columnsDisplayed: 8,
+  columnsDisplayed: 10,
   customInlineActions: [],
   customBulkActions: [],
   customAwFormTopActions: [],
@@ -611,10 +616,22 @@ export default {
       values: ['view', 'edit', 'none', 'delete'],
       description: 'The action to execute when the user clicks on a row'
     },
+    tableRowDoubleClickAction: {
+      type: String,
+      default: 'none',
+      values: ['view', 'edit', 'none', 'delete'],
+      description: 'The action to execute when the user double clicks on a row'
+    },
     awFormDisplayHeader: {
       type: Boolean,
       default: true,
       description: 'Whether we should display the header (title) of awesomeform or not'
+    },
+    tableDataLimit: {
+      type: Number,
+      default: 1000,
+      description:
+        'Define the number of items to get from the api for the table. This prevents overloading the table with too much data'
     }
   },
   data() {
@@ -854,7 +871,7 @@ export default {
         // console.warn(err.message);
       }
     }
-    this.loadModel();
+    // this.loadModel();
   },
   mounted() {
     // allow old property names to still work
@@ -864,7 +881,9 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
+
     this.loadModel();
+    this.displayMode = this.mergedOptions.initialDisplayMode;
 
     if (this._isNested) {
       this.displayMode = this.nestedDisplayMode;
@@ -884,7 +903,7 @@ export default {
       .replace('/view', '')
       .replace('/edit', '')
       .replace('/:id', '');
-    this.displayMode = this.mergedOptions.initialDisplayMode;
+
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
     if (this.$route.params.id) {
@@ -1094,26 +1113,39 @@ export default {
       if (!this._url) {
         return;
       }
-      if (this.$route && this.$route.params && this.$route.params.id && this.useRouterMode) {
-        this.$http
-          .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
-          .then((res) => {
-            const matched = this.$route.matched[this.$route.matched.length - 1];
-            const data =
-              this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-                ? _.get(res, this.apiResponseConfig.dataPath)
-                : res.data;
-            if (matched.path.indexOf('/edit') !== -1) {
-              this.setDisplayMode('edit', data);
-            } else {
-              this.setDisplayMode('view', data);
-            }
+
+      if (this.useRouterMode) {
+        if (this.$route && this.$route.params) {
+          // if it's a create url
+
+          if (this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
+            this.setDisplayMode('create');
             this.$forceUpdate();
-          })
-          .catch(this.apiErrorCallback)
-          .finally(() => {
-            this.isRefreshing = false;
-          });
+            return;
+          }
+          // if it's a edit or view url
+          if (this.$route.params.id) {
+            this.$http
+              .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
+              .then((res) => {
+                const matched = this.$route.matched[this.$route.matched.length - 1];
+                const data =
+                  this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
+                    ? _.get(res, this.apiResponseConfig.dataPath)
+                    : res.data;
+                if (matched.path.indexOf('/edit') !== -1) {
+                  this.setDisplayMode('edit', data);
+                } else {
+                  this.setDisplayMode('view', data);
+                }
+                this.$forceUpdate();
+              })
+              .catch(this.apiErrorCallback)
+              .finally(() => {
+                this.isRefreshing = false;
+              });
+          }
+        }
       }
     },
 
@@ -1151,6 +1183,9 @@ export default {
     },
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
+      if (this.displayMode === 'create') {
+        return;
+      }
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.createPath);
       }
@@ -1160,9 +1195,13 @@ export default {
       if (options.editLayoutMode) {
         this.editLayoutMode = options.editLayoutMode;
       }
+
+      if (this.$route.query.item) {
+        this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+      }
       this.setDisplayMode('create', this.selectedItem);
-      if (this.useRouterMode) {
-        window.history.pushState({}, null, `${this.parentPath}/new`);
+      if (this.useRouterMode && !options.reset) {
+        window.history.pushState({}, null, `${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
       }
 
       return;
@@ -1415,6 +1454,7 @@ export default {
 
     onItemEdited(...args) {
       // eslint-disable-next-line
+      this.$awEmit('aw-table-needs-refresh');
       console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
@@ -1447,6 +1487,16 @@ export default {
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-table-row-clicked', row);
       this.listItemClickedHandler(row);
+    },
+
+    onTableRowDoubleClicked(props) {
+      const { column, row } = props; // rowIndex and event are also available
+      if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
+        return;
+      }
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit('on-table-row-double-clicked', row);
+      this.listItemDoubleClickedHandler(row);
     },
 
     onDataChanged(items) {
@@ -1545,6 +1595,29 @@ export default {
           break;
       }
     },
+
+    listItemDoubleClickedHandler(row) {
+      switch (this.tableRowDoubleClickAction) {
+        case 'edit':
+          if (this._actions && !this._actions.edit) {
+            return;
+          }
+          this.goToEditPage(row);
+          break;
+        case 'view':
+          if (this._actions && !this._actions.view) {
+            return;
+          }
+          this.goToViewPage(row);
+          break;
+        case 'none':
+        default:
+          break;
+      }
+    }
+  },
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
   }
 };
 </script>

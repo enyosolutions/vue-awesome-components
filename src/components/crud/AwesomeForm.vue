@@ -309,7 +309,7 @@
                             {{
                               $te('app.labels.' + identity)
                                 ? $te('app.labels.' + identity)
-                                : startCase(namePlural || title || identity)
+                                : startCase(name || title || identity)
                             }}
                           </a>
                         </li>
@@ -539,6 +539,15 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
+                            v-if="_actions.delete && !mergedOptions.noActions"
+                            type="button"
+                            class="btn btn-danger btn-main-style ml-2"
+                            @click.prevent.stop="deleteFunction(selectedItem)"
+                        >
+                          <i class="fa fa-trash"/>
+                          {{ $t('AwesomeCrud.buttons.delete') }}
+                        </button>
+                        <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
@@ -661,7 +670,6 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  columnsDisplayed: 8,
   customInlineActions: [],
   customBulkActions: [],
   customAwFormTopActions: [],
@@ -701,7 +709,13 @@ export default {
     namePlural: { type: [String, Boolean], required: false, default: undefined },
     identity: { type: String, required: true },
     modelName: { type: String, required: false },
-    standalone: { type: Boolean, required: false, default: true },
+    standalone: {
+      type: Boolean,
+      required: false,
+      default: true,
+      description:
+        "Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won't have the same behavior"
+    },
     primaryKey: {
       type: String,
       default: 'id',
@@ -1015,7 +1029,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        (this.mergedOptions && this.mergedOptions.actions) || this.actions // old location kept for BC
+        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
       );
     },
 
@@ -1141,16 +1155,20 @@ export default {
 
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
-      if (this.$route.params.id) {
+
+      if (this.$route.params.id === 'create' || this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
         if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
           delete this.$route.params.id;
-          if (this.$route.query.item) {
-            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
-          }
-          this.$emit('create', this.selectedItem, { reset: false });
-
-          return;
         }
+        if (this.$route.query.item) {
+          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+        }
+        this.$emit('create', this.selectedItem, { reset: false });
+
+        return;
+      }
+
+      if (this.$route.params.id) {
         if (this.$route.params.id === 'bulkEdit') {
           delete this.$route.params.id;
           if (this.$route.query.item) {
@@ -1302,7 +1320,7 @@ export default {
     loadModel() {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line
-        console.count('Load Model: ' + this.identity);
+        console.count('Loaded Model: ' + this.identity);
       }
       this.mergeOptions();
       setTimeout(() => {
@@ -1339,6 +1357,7 @@ export default {
       if (!this._selectedItemUrl) {
         return;
       }
+
       // todo call only if
       if (this.item && this.item[this.primaryKey]) {
         this.$http

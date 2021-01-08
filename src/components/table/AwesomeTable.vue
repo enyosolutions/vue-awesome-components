@@ -31,7 +31,7 @@
             v-if="_actions && _actions.refresh"
             type="button"
             class="btn btn-simple btn-alt-style btn-sm p-2"
-            @click="getItems({ useSkeleton: true })"
+            @click.prevent="getItems({ useSkeleton: true })"
           >
             <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
           </button>
@@ -128,11 +128,15 @@
                 v-if="_actions.columnsFilters"
                 type="button"
                 class="btn btn-simple"
-                :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+                :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
                 @click="toggleFilter()"
               >
                 <i class="fa fa-filter" />
-                {{ $t('AwesomeTable.buttons.columnsFilters') }}
+                {{
+                  !columnsFilterState
+                    ? $t('AwesomeTable.buttons.columnsFilters.activate')
+                    : $t('AwesomeTable.buttons.columnsFilters.deactivate')
+                }}
               </button>
               <button
                 v-if="_actions && _actions.export"
@@ -169,8 +173,21 @@
       <p class="card-category">
         <slot name="table-subtitle" />
       </p>
+      <button
+        v-if="collapsible"
+        class="btn btn-i"
+        data-toggle="collapse"
+        :data-target="'#awTable-' + this._uid || this.uuid"
+        style="position: absolute; top: 0; right: 0; padding: 0;"
+      >
+        <i class="fa fa-minus"></i>
+      </button>
     </div>
-    <div class="card-body aw-table-card-body">
+    <div
+      class="card-body aw-table-card-body collapse show"
+      :class="collapsible ? 'collapse show' : ''"
+      :id="'awTable-' + this._uid || this.uuid"
+    >
       <awesome-filter
         :editFilters="false"
         id="advancedFilterComponent"
@@ -274,7 +291,7 @@
           </div>
           <div slot="table-actions">
             <date-range-picker
-              v-if="_actions.filter && _actions.dateFilter && filterable"
+              v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
               class="form-group vgt-date-range"
               :placeholder="$t('AwesomeTable.daterange.start')"
               :start-date="defaultStartDate"
@@ -387,7 +404,12 @@
             </template>
           </template>
           <div slot="emptystate">
-            {{ $t('AwesomeTable.empty') }}
+            <slot name="table-empty-state">
+              {{ $t('AwesomeTable.empty') }}
+              <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
+                Click here to create your first item
+              </a></slot
+            >
           </div>
         </vue-good-table>
       </div>
@@ -443,7 +465,7 @@ export default {
     },
     columnsDisplayed: {
       type: Number,
-      default: 8
+      default: 10
     },
     parent: {
       type: Object,
@@ -478,8 +500,12 @@ export default {
         'AwesomeTable.empty': 'empty'
       })
     },
-    autoRefresh: { type: Boolean, default: false },
-    autoRefreshInterval: { type: Number, default: 20 },
+    autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },
+    autoRefreshInterval: {
+      type: Number,
+      default: 20,
+      description: 'Interval in seconds that should be used to refresh the page'
+    },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
@@ -521,12 +547,17 @@ export default {
       default: 'local',
       type: String,
       values: ['local', 'remote']
+    },
+    collapsible: {
+      default: true,
+      type: Boolean,
+      description: 'Wether the table can be collapsed using the minus button at the topRight corner.'
     }
   },
   data() {
     return {
       totalCount: 0,
-      filterable: this.options.filterInitiallyOn,
+      columnsFilterState: null,
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: dayjs()
@@ -560,7 +591,8 @@ export default {
         }
       },
       selectedRows: [],
-      displayLabelCache: {}
+      displayLabelCache: {},
+      clickTimeout: null
     };
   },
   computed: {
@@ -605,7 +637,7 @@ export default {
         if (_.isString(col)) {
           newCol.field = col;
           newCol.label = _.startCase(col);
-          newCol.filterOptions = { enabled: this.filterable };
+          newCol.filterOptions = { enabled: this.canFilterByColumnsCpt };
           newCol.sortable = true;
           return newCol;
         }
@@ -693,7 +725,8 @@ export default {
         }
 
         col.filterOptions = {
-          enabled: col.filterable !== undefined ? col.filterable && this.filterable : this.filterable,
+          enabled:
+            col.filterable !== undefined ? col.filterable && this.canFilterByColumnsCpt : this.canFilterByColumnsCpt,
           filterDropdownItems
         };
         return col;
@@ -757,6 +790,14 @@ export default {
 
     perPageComputed() {
       return this.mode === 'remote' ? parseInt(this.serverParams.perPage) : this.perPage;
+    },
+
+    canFilterByColumnsCpt() {
+      return (
+        this._actions.columnsFilters &&
+        this.options &&
+        (this.columnsFilterState !== null ? this.columnsFilterState : this.options.filterInitiallyOn)
+      );
     }
   },
   watch: {
@@ -799,8 +840,6 @@ export default {
     dayjs().locale(userLang);
   },
   mounted() {
-    this.filterable = this.options && this.options.filterInitiallyOn;
-
     if (this.refresh || this.store) {
       return;
     }
@@ -857,7 +896,7 @@ export default {
 
         this.numberOfRefreshCalls += 1;
         this.getItems({ source: 'awTable_refreshHandle' });
-      }, this.autoRefreshInterval * 2000);
+      }, this.autoRefreshInterval * 1000);
     },
 
     advancedFiltering(parsedFilters, filters) {
@@ -871,16 +910,16 @@ export default {
     },
 
     toggleFilter() {
-      this.filterable = !this.filterable;
+      this.columnsFilterState = !this.columnsFilterState;
 
-      if (!this.filterable) {
+      if (!this.columnsFilterState) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
         this.getItems({ useSkeleton: true });
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
-          col.filterOptions.enabled = this.filterable;
+          col.filterOptions.enabled = this.columnsFilterState;
         }
         return col;
       });
@@ -890,7 +929,16 @@ export default {
     // editItem(item) {},
 
     clickOnLine(props, props2) {
-      this.$emit('onRowClicked', props, props2);
+      if (!this.clickTimeout) {
+        this.clickTimeout = setTimeout(() => {
+          this.$emit('onRowClicked', props, props2);
+          this.clickTimeout = null;
+        }, 120);
+        return;
+      }
+      clearTimeout(this.clickTimeout);
+      this.clickTimeout = null;
+      this.$emit('onRowDoubleClicked', props, props2);
     },
 
     getLovValue(item, listName) {

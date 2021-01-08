@@ -2,7 +2,8 @@
   <select
     class="form-control"
     v-model="value"
-    :disabled="disabled"
+    :disabled="disabled || readonly"
+    :readonly="readonly"
     :name="inputName"
     :id="fieldID"
     :class="fieldClasses"
