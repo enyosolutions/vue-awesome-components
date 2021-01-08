@@ -128,11 +128,15 @@
                 v-if="_actions.columnsFilters"
                 type="button"
                 class="btn btn-simple"
-                :class="{ 'btn-primary': filterable, 'btn-default': !filterable }"
+                :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
                 @click="toggleFilter()"
               >
                 <i class="fa fa-filter" />
-                {{ $t('AwesomeTable.buttons.columnsFilters') }}
+                {{
+                  !columnsFilterState
+                    ? $t('AwesomeTable.buttons.columnsFilters.activate')
+                    : $t('AwesomeTable.buttons.columnsFilters.deactivate')
+                }}
               </button>
               <button
                 v-if="_actions && _actions.export"
@@ -287,7 +291,7 @@
           </div>
           <div slot="table-actions">
             <date-range-picker
-              v-if="_actions.filter && _actions.dateFilter && filterable"
+              v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
               class="form-group vgt-date-range"
               :placeholder="$t('AwesomeTable.daterange.start')"
               :start-date="defaultStartDate"
@@ -553,7 +557,7 @@ export default {
   data() {
     return {
       totalCount: 0,
-      filterable: this.options.filterInitiallyOn,
+      columnsFilterState: null,
       isRefreshing: false,
       columnsState: {},
       defaultStartDate: dayjs()
@@ -587,7 +591,8 @@ export default {
         }
       },
       selectedRows: [],
-      displayLabelCache: {}
+      displayLabelCache: {},
+      clickTimeout: null
     };
   },
   computed: {
@@ -632,7 +637,7 @@ export default {
         if (_.isString(col)) {
           newCol.field = col;
           newCol.label = _.startCase(col);
-          newCol.filterOptions = { enabled: this.filterable };
+          newCol.filterOptions = { enabled: this.canFilterByColumnsCpt };
           newCol.sortable = true;
           return newCol;
         }
@@ -720,7 +725,8 @@ export default {
         }
 
         col.filterOptions = {
-          enabled: col.filterable !== undefined ? col.filterable && this.filterable : this.filterable,
+          enabled:
+            col.filterable !== undefined ? col.filterable && this.canFilterByColumnsCpt : this.canFilterByColumnsCpt,
           filterDropdownItems
         };
         return col;
@@ -784,6 +790,14 @@ export default {
 
     perPageComputed() {
       return this.mode === 'remote' ? parseInt(this.serverParams.perPage) : this.perPage;
+    },
+
+    canFilterByColumnsCpt() {
+      return (
+        this._actions.columnsFilters &&
+        this.options &&
+        (this.columnsFilterState !== null ? this.columnsFilterState : this.options.filterInitiallyOn)
+      );
     }
   },
   watch: {
@@ -826,8 +840,6 @@ export default {
     dayjs().locale(userLang);
   },
   mounted() {
-    this.filterable = this.options && this.options.filterInitiallyOn;
-
     if (this.refresh || this.store) {
       return;
     }
@@ -898,16 +910,16 @@ export default {
     },
 
     toggleFilter() {
-      this.filterable = !this.filterable;
+      this.columnsFilterState = !this.columnsFilterState;
 
-      if (!this.filterable) {
+      if (!this.columnsFilterState) {
         this.serverParams.range = {};
         this.serverParams.filters = {};
         this.getItems({ useSkeleton: true });
       }
       this.columns = this.columns.map((col) => {
         if (col.filterOptions) {
-          col.filterOptions.enabled = this.filterable;
+          col.filterOptions.enabled = this.columnsFilterState;
         }
         return col;
       });
@@ -917,7 +929,16 @@ export default {
     // editItem(item) {},
 
     clickOnLine(props, props2) {
-      this.$emit('onRowClicked', props, props2);
+      if (!this.clickTimeout) {
+        this.clickTimeout = setTimeout(() => {
+          this.$emit('onRowClicked', props, props2);
+          this.clickTimeout = null;
+        }, 120);
+        return;
+      }
+      clearTimeout(this.clickTimeout);
+      this.clickTimeout = null;
+      this.$emit('onRowDoubleClicked', props, props2);
     },
 
     getLovValue(item, listName) {

@@ -15,6 +15,7 @@
   - import
   - dateFilter
   - refresh
+  - columnsFilters
 
 
   ### custom actions

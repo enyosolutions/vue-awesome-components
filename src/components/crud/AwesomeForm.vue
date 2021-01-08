@@ -984,7 +984,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        (this.mergedOptions && this.mergedOptions.actions) || this.actions // old location kept for BC
+        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
       );
     },
 

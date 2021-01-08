@@ -92,7 +92,7 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === 'remote' ? this.perPage : this.limit // how many items I'm showing per page
+        perPage: this.perPage// how many items I'm showing per page
       },
       columnFilters: {},
       advancedFilters: [],
@@ -119,6 +119,9 @@ export default {
         const newKey = this.apiRequestConfig[field + 'Field'] || field;
         translatedParams[newKey] = serverParams[field];
       });
+      if (this.mode === 'local') {
+        translatedParams.perPage = this.limit;
+      }
       return translatedParams;
     },
 
@@ -211,7 +214,7 @@ export default {
       }
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line
-        //  console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+        console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
       this.$awEmit('before-api-refresh', { component: 'aw-table', url: this.url })
@@ -352,6 +355,7 @@ export default {
     },
 
     pushChangesToRouter(options) {
+      return;
       // disable url update for now
       //@todo replace by a push state function
       if (options && options.query) {
@@ -360,47 +364,48 @@ export default {
         }
         this.routeQueryParams = _.merge(this.routeQueryParams, options.query);
       }
-      console.warn('pushChangesToRouter', options)
+      console.warn('pushChangesToRouter', this.routeQueryParams)
       this.saveComponentState();
 
       if (!this.useRouterMode) {
         return;
       }
 
-      window.history.pushState({}, null, '?' + qs.stringify(this.routeQueryParams));
+      // window.history.pushState({}, null, '?' + qs.stringify(this.routeQueryParams));
+      console.log('Final push to router', { ...options, query: this.routeQueryParams });
 
-      // this.$router.replace(options).catch(err => {
-      //   // Ignore the vueRouter err regarding  navigating to the page they are already on.
-      //   if (
-      //     err.name !== 'NavigationDuplicated' &&
-      //     !err.message.includes('Avoided redundant navigation to current location')
-      //   ) {
-      //     // But print any other errors to the console
-      //     console.warn(err);
-      //   }
-      // })
+      this.$router.push({ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }).catch(err => {
+        // Ignore the vueRouter err regarding  navigating to the page they are already on.
+        if (
+          err.name !== 'NavigationDuplicated' &&
+          !err.message.includes('Avoided redundant navigation to current location')
+        ) {
+          // But print any other errors to the console
+          console.warn(err);
+        }
+      })
     },
 
     connectRouteToPagination(to) {
+      // @fixme
       if (this.useRouterMode) {
         //        console.warn("to.query", to.query);
         if (Object.keys(to.query).length) {
           this.updateParams({
             page: to.query.page,
-            search: to.query.search,
-            perPage: to.query.perPage,
-            //   sort: to.query.sort,
-            filters: to.query.filters,
-            columns: to.query.columns,
-            sort: to.query.sort,
+            search: to.query.search || '',
+            //      perPage: to.query.perPage || '',
+            //  filters: to.query.filters || '',
+            //  columns: to.query.columns || '',
+            //   sort: to.query.sort || '',
           });
           this.routeQueryParams = {
-            page: to.query.page, search: to.query.search,
-            perPage: to.query.perPage,
-            //   sort: to.query.sort,
-            filters: to.query.filters,
-            columns: to.query.columns,
-            sort: to.query.sort,
+            page: to.query.page || '',
+            search: to.query.search || '',
+            //   perPage: to.query.perPage || '',
+            // filters: to.query.filters || '',
+            // columns: to.query.columns || '',
+            // sort: to.query.sort || '',
           }
           return;
         }
@@ -464,7 +469,8 @@ export default {
             if (parsedState.columnsState && this.saveColumnsState) {
               this.columnsState = parsedState.columnsState;
             }
-            this.pushChangesToRouter();
+            // @fixme
+            // this.pushChangesToRouter();
           }
         }
         catch (err) {
