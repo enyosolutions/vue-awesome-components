@@ -170,7 +170,7 @@
         <slot name="table-subtitle" />
       </p>
       <button
-        v-if="collapsible"
+        v-if="_actions.collapsible"
         class="btn btn-i"
         data-toggle="collapse"
         :data-target="'#awTable-' + this._uid || this.uuid"
@@ -181,7 +181,7 @@
     </div>
     <div
       class="card-body aw-table-card-body collapse show"
-      :class="collapsible ? 'collapse show' : ''"
+      :class="_actions.collapsible ? 'collapse show' : ''"
       :id="'awTable-' + this._uid || this.uuid"
     >
       <awesome-filter
@@ -544,11 +544,6 @@ export default {
       type: String,
       values: ['local', 'remote']
     },
-    collapsible: {
-      default: true,
-      type: Boolean,
-      description: 'Wether the table can be collapsed using the minus button at the topRight corner.'
-    }
   },
   data() {
     return {

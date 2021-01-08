@@ -401,7 +401,7 @@
                   -->
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <template v-if="nestedLayoutMode === 'list'">
-                              <h3 class="nested-model-title text-primary font-italic" data-toggle="collapse">
+                              <h3 class="nested-model-title text-primary font-italic" :data-toggle="_actions.collapsible ? 'collapse' : ''">
                                 {{ getNestedTabsTitle({ identity, title }) }} <b>{{ _editItemTile }}</b>
                               </h3>
                               <hr class="mb-1" />
@@ -444,7 +444,7 @@
                                 <template v-if="nestedLayoutMode === 'list'">
                                   <h3
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
-                                    data-toggle="collapse"
+                                    :data-toggle="ns.actions.collapsible ? 'collapse' : ''"
                                     :data-target="'#list-collapse-' + ns.identity"
                                   >
                                     {{ getNestedTabsTitle(ns) }}
@@ -463,7 +463,8 @@
                                   @input:needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
-                                  class="aw-crud-nested-model collapse show"
+                                  class="aw-crud-nested-model collapse"
+                                  :class="!nestedModelsCollapseState[ns.identity] ? 'show' : ''"
                                 >
                                   <div slot="crud-title" />
                                 </div>
@@ -860,7 +861,8 @@ export default {
         validayeAsync: true,
         validateAfterLoad: false,
         validateAfterChanged: true
-      }
+      },
+      nestedModelsCollapseState: {}
     };
   },
   computed: {
@@ -984,7 +986,7 @@ export default {
       return _.merge(
         {},
         defaultActions,
-        (this.mergedOptions && this.mergedOptions.actions) || this.actions // old location kept for BC
+        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
       );
     },
 
@@ -1094,6 +1096,8 @@ export default {
     if (this.modelName) {
       this.identity = this.modelName;
     }
+
+    this.nestedModels.forEach(nm => this.nestedModelsCollapseState[nm.identity] = nm.collapseInitialState)
 
     if (this.item) {
       this.selectedItem = this.item;
