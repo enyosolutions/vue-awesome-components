@@ -234,6 +234,7 @@
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :auto-refresh="mergedOptions.autoRefresh"
             :columns-displayed="mergedOptions.columnsDisplayed"
+            :collapse="false"
             :columns="tableColumnsComputed"
             :entity="identity"
             :export-url="mergedOptions.exportUrl"

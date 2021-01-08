@@ -444,7 +444,7 @@
                                 <template v-if="nestedLayoutMode === 'list'">
                                   <h3
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
-                                    :data-toggle="ns.actions.collapsible ? 'collapse' : ''"
+                                    :data-toggle="getNestedActions(ns).collapsible ? 'collapse' : ''"
                                     :data-target="'#list-collapse-' + ns.identity"
                                   >
                                     {{ getNestedTabsTitle(ns) }}
@@ -463,9 +463,10 @@
                                   @input:needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
-                                  class="aw-crud-nested-model collapse"
-                                  :class="!nestedModelsCollapseState[ns.identity] ? 'show' : ''"
+                                  class="aw-crud-nested-model"
+                                  :class="getNestedActions(ns).collapsible ? !nestedModelsCollapseState[ns.identity] ? 'collapse show' : 'collapse' : ''"
                                 >
+<!--                                  :class="!nestedModelsCollapseState[ns.identity] ? getNestedActions(ns).collapsible ? 'collapse show' : 'show' : ''"-->
                                   <div slot="crud-title" />
                                 </div>
                               </div>
@@ -1097,7 +1098,7 @@ export default {
       this.identity = this.modelName;
     }
 
-    this.nestedModels.forEach(nm => this.nestedModelsCollapseState[nm.identity] = nm.collapseInitialState)
+    this.nestedModels.forEach(nm => this.nestedModelsCollapseState[nm.identity] = nm.initiallyCollapsed)
 
     if (this.item) {
       this.selectedItem = this.item;
@@ -1733,7 +1734,15 @@ export default {
       return this.$te('awForm.labels.tabs.' + ns.identity)
         ? this.$t('awForm.labels.tabs.' + ns.identity)
         : this.startCase(ns.identity);
-    }
+    },
+
+    getNestedActions(nestedModel) {
+      return _.merge(
+          {},
+          defaultActions,
+          nestedModel.actions
+      );
+    },
   }
 };
 </script>
