@@ -513,6 +513,15 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
+                            v-if="_actions.delete && !mergedOptions.noActions"
+                            type="button"
+                            class="btn btn-danger btn-main-style ml-2"
+                            @click.prevent.stop="deleteFunction(selectedItem)"
+                        >
+                          <i class="fa fa-trash"/>
+                          {{ $t('AwesomeCrud.buttons.delete') }}
+                        </button>
+                        <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
