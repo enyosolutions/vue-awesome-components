@@ -17,7 +17,7 @@ export const defaultActions = {
   bulkEdit: true,
   itemsPerRow: true,
   editLayout: true,
-  collapsible: true,
+  collapse: true,
 };
 
 export const defaultKanbanOptions = {
