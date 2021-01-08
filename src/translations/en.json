@@ -94,6 +94,7 @@
       "close": "Close",
       "edit": "Edit",
       "save": "Save",
+      "delete": "Delete",
       "bulkEdit": "Multiple Edit",
       "openEditLayoutMode": "Edit Layout",
       "closeEditLayoutMode": "Close editor",

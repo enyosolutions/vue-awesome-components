@@ -238,7 +238,7 @@
             :columns="tableColumnsComputed"
             :entity="identity"
             :export-url="mergedOptions.exportUrl"
-            :limit="awTableLimit"
+            :limit="tableDataLimit"
             :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -260,6 +260,7 @@
             @table-updated="onListUpdated"
             @refresh="onTableRefresh"
             @onRowClicked="onTableRowClicked"
+            @onRowDoubleClicked="onTableRowDoubleClicked"
             @updateAutoRefresh="updateAutoRefresh"
           >
             <template slot="table-top-more-actions">
@@ -607,14 +608,20 @@ export default {
       values: ['view', 'edit', 'none', 'delete'],
       description: 'The action to execute when the user clicks on a row'
     },
+    tableRowDoubleClickAction: {
+      type: String,
+      default: 'none',
+      values: ['view', 'edit', 'none', 'delete'],
+      description: 'The action to execute when the user double clicks on a row'
+    },
     awFormDisplayHeader: {
       type: Boolean,
       default: true,
       description: 'Whether we should display the header (title) of awesomeform or not'
     },
-    awTableLimit: {
+    tableDataLimit: {
       type: Number,
-      default: 2000,
+      default: 1000,
       description:
         'Define the number of items to get from the api for the table. This prevents overloading the table with too much data'
     }
@@ -852,7 +859,7 @@ export default {
         // console.warn(err.message);
       }
     }
-    this.loadModel();
+    // this.loadModel();
   },
   mounted() {
     // allow old property names to still work
@@ -862,8 +869,9 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
-    this.displayMode = this.mergedOptions.initialDisplayMode;
+
     this.loadModel();
+    this.displayMode = this.mergedOptions.initialDisplayMode;
 
     if (this._isNested) {
       this.displayMode = this.nestedDisplayMode;
@@ -1428,6 +1436,7 @@ export default {
 
     onItemEdited(...args) {
       // eslint-disable-next-line
+      this.$awEmit('aw-table-needs-refresh');
       console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
@@ -1460,6 +1469,16 @@ export default {
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-table-row-clicked', row);
       this.listItemClickedHandler(row);
+    },
+
+    onTableRowDoubleClicked(props) {
+      const { column, row } = props; // rowIndex and event are also available
+      if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
+        return;
+      }
+      // this._actions && this._actions.view && this.$emit("view", row);
+      this.$emit('on-table-row-double-clicked', row);
+      this.listItemDoubleClickedHandler(row);
     },
 
     updateAutoRefresh(value) {
@@ -1535,7 +1554,30 @@ export default {
         default:
           break;
       }
+    },
+
+    listItemDoubleClickedHandler(row) {
+      switch (this.tableRowDoubleClickAction) {
+        case 'edit':
+          if (this._actions && !this._actions.edit) {
+            return;
+          }
+          this.goToEditPage(row);
+          break;
+        case 'view':
+          if (this._actions && !this._actions.view) {
+            return;
+          }
+          this.goToViewPage(row);
+          break;
+        case 'none':
+        default:
+          break;
+      }
     }
+  },
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
   }
 };
 </script>
