@@ -361,6 +361,7 @@ export default {
       return;
       // disable url update for now
       //@todo replace by a push state function
+      /*
       if (options && options.query) {
         if (options.query.sort) {
           this.routeQueryParams.sort = options.query.sort;
@@ -387,6 +388,7 @@ export default {
           console.warn(err);
         }
       })
+      */
     },
 
     connectRouteToPagination(to) {

@@ -5,22 +5,23 @@ export default {
     value: [String, Boolean, Array, Object, Number],
     type: {
       type: String,
-      values: ['image',
+      values: [
+        'image',
         'boolean',
         'url',
         'html',
         'object',
         'date',
         'relation',
-        'checkbox',]
+        'checkbox',
+      ]
     },
     src: String,
     row: Array,
     format: [String, Function],
     inputFormat: String,
     field: String,
-    styles: String,
-    classes: String,
+
     relation: String,
     relationUrl: String,
     relationLabel: String,
@@ -34,6 +35,10 @@ export default {
     tag: { type: [String, Object], default: 'div' },
     prefix: String,
     suffix: String,
+    styles: String,
+    classes: String,
+    imageClasses: [String, Array, Object],
+    imageStyles: [String, Array, Object],
   },
   data() {
     return {

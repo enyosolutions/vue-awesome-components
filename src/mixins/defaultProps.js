@@ -18,6 +18,7 @@ export const defaultActions = {
   itemsPerRow: true,
   editLayout: true,
   collapse: true,
+  formPagination: true,
 };
 
 export const defaultKanbanOptions = {

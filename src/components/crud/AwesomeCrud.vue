@@ -19,6 +19,8 @@
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
             :display-header="awFormDisplayHeader"
+            :has-previous="hasPrevious"
+            :has-next="hasNext"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -40,8 +42,9 @@
             @layout-fields-updated="onLayoutFieldsUpdated"
             @open-edit-layout-mode="onOpenEditLayoutMode"
             @close-edit-layout-mode="onCloseEditLayoutMode"
+            @aw-select-previous-item="selectPreviousItem"
+            @aw-select-next-item="selectNextItem"
           />
-
           <AwesomeForm
             v-bind="$props"
             v-if="(displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit') && identity"
@@ -58,6 +61,8 @@
             :edit-layout-mode="editLayoutMode"
             :standalone="false"
             :display-header="awFormDisplayHeader"
+            :has-previous="hasPrevious"
+            :has-next="hasNext"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -79,6 +84,8 @@
             @layout-fields-updated="onLayoutFieldsUpdated"
             @open-edit-layout-mode="onOpenEditLayoutMode"
             @close-edit-layout-mode="onCloseEditLayoutMode"
+            @aw-select-previous-item="selectPreviousItem"
+            @aw-select-next-item="selectNextItem"
           />
         </div>
 
@@ -262,6 +269,7 @@
             @onRowClicked="onTableRowClicked"
             @onRowDoubleClicked="onTableRowDoubleClicked"
             @updateAutoRefresh="updateAutoRefresh"
+            @data-changed="onDataChanged"
           >
             <template slot="table-top-more-actions">
               <upload-button
@@ -648,7 +656,11 @@ export default {
         fieldIdPrefix: 'AwesomeCrud'
       },
       supportedDataDisplayModes: ['table', 'list', 'kanban'],
-      editLayoutMode: false
+      editLayoutMode: false,
+      itemList: [],
+      itemIndex: 0,
+      hasPrevious: false,
+      hasNext: true,
     };
   },
   computed: {
@@ -1146,6 +1158,12 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
+      if (['edit', 'view'].indexOf(mode) > -1) {
+        const { vgt_id, originalIndex, ...data } = item;
+        this.itemIndex = _.findIndex(this.itemList, data);
+        this.hasPrevious = this.itemIndex !== 0;
+        this.hasNext = this.itemIndex !== this.itemList.length -1;
+      }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
         this.selectedItem = {};
@@ -1437,7 +1455,6 @@ export default {
     onItemEdited(...args) {
       // eslint-disable-next-line
       this.$awEmit('aw-table-needs-refresh');
-      console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
       // eslint-disable-next-line
@@ -1481,6 +1498,10 @@ export default {
       this.listItemDoubleClickedHandler(row);
     },
 
+    onDataChanged(items) {
+      this.itemList = items.data;
+    },
+
     updateAutoRefresh(value) {
       this.mergedOptions.autoRefresh = value;
     },
@@ -1511,6 +1532,24 @@ export default {
 
     onCloseEditLayoutMode() {
       this.editLayoutMode = false;
+    },
+
+    selectPreviousItem() {
+      this.itemIndex -= 1;
+      if (this.hasPrevious) {
+        this.hasPrevious = this.itemIndex !== 0;
+        this.hasNext = this.itemIndex !== this.itemList.length - 1;
+        this.selectedItem = this.itemList[this.itemIndex];
+      }
+    },
+
+    selectNextItem() {
+      this.itemIndex += 1
+      if (this.hasNext) {
+        this.hasNext = this.itemIndex !== this.itemList.length -1;
+        this.hasPrevious = this.itemIndex !== 0;
+        this.selectedItem = this.itemList[this.itemIndex];
+      }
     },
 
     onCustomAction(body) {

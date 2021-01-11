@@ -1,7 +1,13 @@
 <template>
   <div v-bind="$props" :class="$props.classes" :style="$props.styles">
     <div class="pointer" v-if="$props.src">
-      <img :src="$props.src" alt="image" class="aw-display-image-img" />
+      <img
+        :src="$props.src"
+        alt="image"
+        class="aw-display-image-img"
+        :class="$props.imageClasses"
+        :style="$props.imageStyles"
+      />
       <div class="image-actions" v-if="value">
         <button @click.prevent="openImageInTab($props.src)" type="button" class="btn btn-alt-style btn-sm p-2">
           <i class="fa fa-external-link"></i>
@@ -20,8 +26,7 @@ export default {
   methods: {
     openImageInTab(src) {
       window.open(src, '_blank');
-    },
-
+    }
   }
 };
 </script>

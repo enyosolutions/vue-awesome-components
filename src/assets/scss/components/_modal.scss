@@ -160,10 +160,7 @@
     }
 
     .modal-header {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
+      position: relative;
       height: 50px;
       padding: 10px;
       border: 0;
@@ -181,12 +178,11 @@
     }
 
     .modal-body {
-      position: absolute;
-      top: 50px;
-      bottom: 60px;
+      position: relative;
       width: 100%;
       font-weight: 300;
       overflow: auto;
+      height: calc(100vh - 176px);
     }
 
     .modal-footer {
@@ -218,10 +214,7 @@
     }
 
     .modal-header {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
+      position: relative;
       height: 50px;
       padding: 10px;
       border: 0;
@@ -235,12 +228,11 @@
     }
 
     .modal-body {
-      position: absolute;
-      top: 50px;
-      bottom: 60px;
+      position: relative;
       width: 100%;
       font-weight: 300;
       overflow: auto;
+      height: calc(100vh - 176px);
     }
 
     .modal-footer {

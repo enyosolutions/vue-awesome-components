@@ -146,6 +146,32 @@
                 <!--  EDITS -->
                 <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
+                    <div class="row" v-if="_actions.formPagination && (hasPrevious || hasNext)">
+                      <div class="col-md-12">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <button
+                                @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                                class="btn btn-primary btn-sm"
+                                :disabled="!hasPrevious"
+                              >
+                                <i class="fa fa-chevron-circle-left"></i>
+                              </button>
+                            </div>
+                            <div class="col-md-6 text-right">
+                              <button
+                                @click="!!hasNext && $emit('aw-select-next-item')"
+                                class="btn btn-primary btn-sm"
+                                :disabled="!hasNext"
+                              >
+                                <i class="fa fa-chevron-circle-right"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
@@ -513,12 +539,12 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
-                            v-if="_actions.delete && !mergedOptions.noActions"
-                            type="button"
-                            class="btn btn-danger btn-main-style ml-2"
-                            @click.prevent.stop="deleteFunction(selectedItem)"
+                          v-if="_actions.delete && !mergedOptions.noActions"
+                          type="button"
+                          class="btn btn-danger btn-main-style ml-2"
+                          @click.prevent.stop="deleteFunction(selectedItem)"
                         >
-                          <i class="fa fa-trash"/>
+                          <i class="fa fa-trash" />
                           {{ $t('AwesomeCrud.buttons.delete') }}
                         </button>
                         <button
@@ -688,7 +714,7 @@ export default {
       required: false,
       default: true,
       description:
-        "Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won't have the same behavior"
+        'Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won\'t have the same behavior'
     },
     primaryKey: {
       type: String,
@@ -850,6 +876,16 @@ export default {
       type: Boolean,
       default: true,
       node: 'Controls if the the header of the modal or the page should be displayed'
+    },
+    hasNext: {
+      type: Boolean,
+      default: false,
+      note: 'Controls if the next button should be displayed'
+    },
+    hasPrevious: {
+      type: Boolean,
+      default: false,
+      note: 'Controls if the previous button should be displayed'
     }
   },
   data() {
@@ -1946,10 +1982,7 @@ body.modal-open .bootstrap-datetimepicker-widget {
         }
 
         .modal-header {
-          position: absolute;
-          top: 0;
-          right: 0;
-          left: 0;
+          position: relative;
           height: 50px;
           padding: 10px;
           border: 0;
@@ -1963,9 +1996,7 @@ body.modal-open .bootstrap-datetimepicker-widget {
         }
 
         .modal-body {
-          position: absolute;
-          top: 50px;
-          bottom: 60px;
+          position: relative;
           width: 100%;
           font-weight: 300;
           overflow: auto;
