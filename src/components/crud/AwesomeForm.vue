@@ -146,24 +146,24 @@
                 <!--  EDITS -->
                 <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
-                    <div class="row" v-if="_actions.paginationPreviousNext && (hasPrevious || hasNext)">
+                    <div class="row" v-if="_actions.formPagination && (hasPrevious || hasNext)">
                       <div class="col-md-12">
                         <div class="card-body">
                           <div class="row">
                             <div class="col-md-6">
                               <button
-                                  @click="!!hasPrevious && $emit('aw-select-previous-item')"
-                                  class="btn btn-primary btn-sm"
-                                  :disabled="!hasPrevious"
+                                @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                                class="btn btn-primary btn-sm"
+                                :disabled="!hasPrevious"
                               >
                                 <i class="fa fa-chevron-circle-left"></i>
                               </button>
                             </div>
                             <div class="col-md-6 text-right">
                               <button
-                                  @click="!!hasNext && $emit('aw-select-next-item')"
-                                  class="btn btn-primary btn-sm"
-                                  :disabled="!hasNext"
+                                @click="!!hasNext && $emit('aw-select-next-item')"
+                                class="btn btn-primary btn-sm"
+                                :disabled="!hasNext"
                               >
                                 <i class="fa fa-chevron-circle-right"></i>
                               </button>
@@ -539,12 +539,12 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
-                            v-if="_actions.delete && !mergedOptions.noActions"
-                            type="button"
-                            class="btn btn-danger btn-main-style ml-2"
-                            @click.prevent.stop="deleteFunction(selectedItem)"
+                          v-if="_actions.delete && !mergedOptions.noActions"
+                          type="button"
+                          class="btn btn-danger btn-main-style ml-2"
+                          @click.prevent.stop="deleteFunction(selectedItem)"
                         >
-                          <i class="fa fa-trash"/>
+                          <i class="fa fa-trash" />
                           {{ $t('AwesomeCrud.buttons.delete') }}
                         </button>
                         <button
@@ -886,7 +886,7 @@ export default {
       type: Boolean,
       default: false,
       note: 'Controls if the previous button should be displayed'
-    },
+    }
   },
   data() {
     return {
