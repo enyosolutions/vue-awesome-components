@@ -714,7 +714,7 @@ export default {
       required: false,
       default: true,
       description:
-        "Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won't have the same behavior"
+        'Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won\'t have the same behavior'
     },
     primaryKey: {
       type: String,
