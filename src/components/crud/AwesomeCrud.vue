@@ -1437,7 +1437,6 @@ export default {
     onItemEdited(...args) {
       // eslint-disable-next-line
       this.$awEmit('aw-table-needs-refresh');
-      console.log('EVENT', 'onItemEdited', args);
     },
     onItemDeleted(...args) {
       // eslint-disable-next-line
