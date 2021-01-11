@@ -163,6 +163,9 @@ export default {
   },
 
   mounted() {
+    this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', () => {
+      this.refreshLocalData();
+    });
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
