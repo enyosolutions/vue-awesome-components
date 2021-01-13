@@ -660,7 +660,7 @@ export default {
       itemList: [],
       itemIndex: 0,
       hasPrevious: false,
-      hasNext: true,
+      hasNext: true
     };
   },
   computed: {
@@ -1159,10 +1159,10 @@ export default {
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
       if (['edit', 'view'].indexOf(mode) > -1) {
-        const { vgt_id, originalIndex, ...data } = item;
+        const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
         this.hasPrevious = this.itemIndex !== 0;
-        this.hasNext = this.itemIndex !== this.itemList.length -1;
+        this.hasNext = this.itemIndex !== this.itemList.length - 1;
       }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
@@ -1544,9 +1544,9 @@ export default {
     },
 
     selectNextItem() {
-      this.itemIndex += 1
+      this.itemIndex += 1;
       if (this.hasNext) {
-        this.hasNext = this.itemIndex !== this.itemList.length -1;
+        this.hasNext = this.itemIndex !== this.itemList.length - 1;
         this.hasPrevious = this.itemIndex !== 0;
         this.selectedItem = this.itemList[this.itemIndex];
       }

@@ -1,6 +1,5 @@
 <template>
   <div class="input-group">
-    {{ value }}
     <datetime
       v-bind="schema"
       class="field-date-fw"
@@ -8,7 +7,7 @@
       :input-id="inputId"
       :input-class="' form-control'"
       :type="pickerType"
-      :disabled="schema.disabled"
+      :disabled="schema.disabled || schema.readonly"
       auto
     >
     </datetime>
@@ -61,7 +60,7 @@ export default {
     },
 
     formatValueToField(value) {
-      if (value != null) {
+      if (value) {
         let dt;
         if (typeof this.fieldOptions.format !== 'undefined') {
           dt = dayjs(value, this.fieldOptions.format).toDate();
@@ -75,8 +74,10 @@ export default {
     },
 
     formatValueToModel(value) {
-      if (value != null) {
+      if (value) {
         value = dayjs(value).format(this.getDateFormat());
+      } else {
+        value = undefined;
       }
       return value;
     }
