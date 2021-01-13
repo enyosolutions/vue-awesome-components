@@ -33,6 +33,36 @@
                 }"
                 role="document"
               >
+                <!-- create a subcomponent -->
+                <template v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView">
+                  <div class="row aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
+                    <div class="col-md-12">
+                      <div class="mb-1 mt-1 pr-1 pl-1">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <button
+                              @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                              class="btn btn-primary"
+                              v-f="hasPrevious"
+                            >
+                              <i class="fa fa-chevron-circle-left"></i>
+                            </button>
+                          </div>
+                          <div class="col-md-6 text-right">
+                            <button
+                              @click="!!hasNext && $emit('aw-select-next-item')"
+                              class="btn btn-primary"
+                              v-if="hasNext"
+                            >
+                              <i class="fa fa-chevron-circle-right"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
@@ -146,32 +176,6 @@
                 <!--  EDITS -->
                 <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
-                    <div class="row" v-if="_actions.formPagination && (hasPrevious || hasNext)">
-                      <div class="col-md-12">
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="col-md-6">
-                              <button
-                                @click="!!hasPrevious && $emit('aw-select-previous-item')"
-                                class="btn btn-primary btn-sm"
-                                :disabled="!hasPrevious"
-                              >
-                                <i class="fa fa-chevron-circle-left"></i>
-                              </button>
-                            </div>
-                            <div class="col-md-6 text-right">
-                              <button
-                                @click="!!hasNext && $emit('aw-select-next-item')"
-                                class="btn btn-primary btn-sm"
-                                :disabled="!hasNext"
-                              >
-                                <i class="fa fa-chevron-circle-right"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
@@ -536,10 +540,10 @@
                         </template>
 
                         <button
-                            v-if="_actions.delete && !mergedOptions.noActions"
-                            type="button"
-                            class="btn btn-danger btn-main-style ml-2"
-                            @click.prevent.stop="deleteFunction(selectedItem)"
+                          v-if="_actions.delete && !mergedOptions.noActions"
+                          type="button"
+                          class="btn btn-danger btn-main-style ml-2"
+                          @click.prevent.stop="deleteFunction(selectedItem)"
                         >
                           <i class="fa fa-trash" />
                           {{ $t('AwesomeCrud.buttons.delete') }}
@@ -713,8 +717,8 @@ export default {
       type: Boolean,
       required: false,
       default: true,
-      description:
-        'Defines whether the component is used as paart of another parent component (usually AwesomeCrud) or alone. Some actions won\'t have the same behavior'
+      description: `Defines whether the component is used as paart of another parent component
+        (usually AwesomeCrud) or alone. Some actions won't have the same behavior`
     },
     primaryKey: {
       type: String,
@@ -1952,51 +1956,54 @@ body.modal-open .bootstrap-datetimepicker-widget {
       }
     }
 
-    .modal-dialog.modal-full,
-    .modal-dialog.modal-fullscreen {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      max-width: 100vw;
-      max-height: 100vh;
-      transform: none;
-
-      .modal-content {
+    .modal-dialog {
+      &.modal-full,
+      &.modal-fullscreen {
+        width: 100%;
         height: 100%;
+        margin: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+        transform: none;
 
-        form {
-          margin: 0;
-        }
+        .modal-content {
+          height: 100%;
 
-        .modal-header {
-          position: relative;
-          height: 50px;
-          padding: 10px;
-          border: 0;
-        }
+          form {
+            margin: 0;
+          }
 
-        .modal-title {
-          font-weight: 300;
-          font-size: 1.2em;
-          color: #fff;
-          line-height: 30px;
-        }
+          .modal-header {
+            position: relative;
+            height: 50px;
+            padding: 10px;
+            border: 0;
+          }
 
-        .modal-body {
-          position: relative;
-          width: 100%;
-          font-weight: 300;
-          overflow: auto;
-        }
+          .modal-title {
+            font-weight: 300;
+            font-size: 1.2em;
+            color: #fff;
+            line-height: 30px;
+          }
 
-        .modal-footer {
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          height: 60px;
-          padding: 10px;
-          background: #f1f3f5;
+          .modal-body {
+            position: relative;
+            width: 100%;
+            font-weight: 300;
+            overflow: auto;
+            background: #fff;
+          }
+
+          .modal-footer {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 60px;
+            padding: 10px;
+            background: #f1f3f5;
+          }
         }
       }
     }

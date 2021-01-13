@@ -117,7 +117,8 @@
             />
           </div>
         </div>
-        <div class="col-12"
+        <div
+          class="col-12"
           v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1) && mergedOptions.detailPageMode === 'page'"
         >
           <div class="text-right">
@@ -1163,8 +1164,8 @@ export default {
       if (['edit', 'view'].indexOf(mode) > -1) {
         const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
-        this.hasPrevious = this.itemIndex !== 0;
-        this.hasNext = this.itemIndex !== this.itemList.length - 1;
+        this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
+        this.hasNext = this.itemIndex < this.itemList.length - 1;
       }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
