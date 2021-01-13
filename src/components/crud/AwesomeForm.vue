@@ -431,13 +431,12 @@
                   -->
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <template v-if="nestedLayoutMode === 'list'">
-                              <h3 class="nested-model-title text-primary font-italic" data-toggle="collapse">
+                              <h3 class="nested-model-title text-primary font-italic">
                                 {{ getNestedTabsTitle({ identity, title }) }} <b>{{ _editItemTile }}</b>
                               </h3>
                               <hr class="mb-1" />
                             </template>
                             <div
-                              :id="'list-collapse-' + identity"
                               class="tab-pane nested-tab fade"
                               :class="{
                                 'active show':
@@ -474,10 +473,10 @@
                                 <template v-if="nestedLayoutMode === 'list'">
                                   <h3
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
-                                    data-toggle="collapse"
-                                    :data-target="'#list-collapse-' + ns.identity"
+                                    @click="getNestedActions(ns).collapse ? nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[ns.identity] : ''"
                                   >
                                     {{ getNestedTabsTitle(ns) }}
+                                    <i class="fa" :class="nestedModelsCollapseState[ns.identity] ? 'fa-caret-right' : 'fa-caret-down'"></i>
                                   </h3>
                                   <hr class="mt-0" />
                                 </template>
@@ -493,7 +492,8 @@
                                   @input:needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
-                                  class="aw-crud-nested-model collapse show"
+                                  class="aw-crud-nested-model"
+                                  :class="getNestedActions(ns).collapse ? !nestedModelsCollapseState[ns.identity] ? 'collapse show' : 'collapse' : ''"
                                 >
                                   <div slot="crud-title" />
                                 </div>
@@ -909,7 +909,8 @@ export default {
         validayeAsync: true,
         validateAfterLoad: false,
         validateAfterChanged: true
-      }
+      },
+      nestedModelsCollapseState: {}
     };
   },
   computed: {
@@ -1143,6 +1144,10 @@ export default {
     if (this.modelName) {
       this.identity = this.modelName;
     }
+
+    this.nestedModels.forEach(nm => {
+      this.$set(this.nestedModelsCollapseState, nm.identity, !!nm.initiallyCollapsed);
+    });
 
     if (this.item) {
       this.selectedItem = this.item;
@@ -1778,7 +1783,15 @@ export default {
       return this.$te('awForm.labels.tabs.' + ns.identity)
         ? this.$t('awForm.labels.tabs.' + ns.identity)
         : this.startCase(ns.identity);
-    }
+    },
+
+    getNestedActions(nestedModel) {
+      return _.merge(
+          {},
+          defaultActions,
+          nestedModel.actions
+      );
+    },
   }
 };
 </script>
