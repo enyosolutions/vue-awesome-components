@@ -240,7 +240,7 @@
             :apiResponseConfig="apiResponseConfig"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :auto-refresh="mergedOptions.autoRefresh"
-            :collapse="false"
+            :collapsible="false"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :columns="tableColumnsComputed"
             :entity="identity"
