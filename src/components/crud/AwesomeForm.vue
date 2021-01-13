@@ -1088,6 +1088,7 @@ export default {
     _shouldHaveSlideClasses() {
       return ['sidebar', 'slide', 'sidebar-left', 'sidebar-right'].indexOf(this.displayMode) > -1;
     },
+
     _getFieldsList() {
       const fieldsList = [];
       this.formSchema.fields.forEach((field) => {
