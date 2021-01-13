@@ -117,7 +117,9 @@
             />
           </div>
         </div>
-        <div class="col-12">
+        <div class="col-12"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1) && mergedOptions.detailPageMode === 'page'"
+        >
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="options && options.customTopRightActions">

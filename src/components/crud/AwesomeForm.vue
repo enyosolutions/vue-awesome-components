@@ -535,17 +535,17 @@
                           </template>
                         </template>
 
-                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
-                          {{ $t('AwesomeCrud.buttons.save') }}
-                        </button>
                         <button
-                          v-if="_actions.delete && !mergedOptions.noActions"
-                          type="button"
-                          class="btn btn-danger btn-main-style ml-2"
-                          @click.prevent.stop="deleteFunction(selectedItem)"
+                            v-if="_actions.delete && !mergedOptions.noActions"
+                            type="button"
+                            class="btn btn-danger btn-main-style ml-2"
+                            @click.prevent.stop="deleteFunction(selectedItem)"
                         >
                           <i class="fa fa-trash" />
                           {{ $t('AwesomeCrud.buttons.delete') }}
+                        </button>
+                        <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
+                          {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
                           v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
