@@ -43,7 +43,7 @@
                             <button
                               @click="!!hasPrevious && $emit('aw-select-previous-item')"
                               class="btn btn-primary"
-                              v-f="hasPrevious"
+                              v-if="hasPrevious"
                             >
                               <i class="fa fa-chevron-circle-left"></i>
                             </button>
