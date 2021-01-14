@@ -121,6 +121,7 @@ module.exports = {
         ]
       },
       { title: "Awesome Form", path: "/guide/awesomeform/" },
+      { title: "Nested models", path: "/guide/nestedmodels/"},
       { title: "Awesome Kanban", path: "/guide/awesomekanban/" },
       { title: "Awesome List", path: "/guide/awesomelist/" },
       { title: "Awesome Layout", path: "/guide/awesomelayout/" },
