@@ -33,36 +33,6 @@
                 }"
                 role="document"
               >
-                <!-- create a subcomponent -->
-                <template v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView">
-                  <div class="row aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
-                    <div class="col-md-12">
-                      <div class="mb-1 mt-1 pr-1 pl-1">
-                        <div class="row">
-                          <div class="col-md-6">
-                            <button
-                              @click="!!hasPrevious && $emit('aw-select-previous-item')"
-                              class="btn btn-primary"
-                              v-if="hasPrevious"
-                            >
-                              <i class="fa fa-chevron-circle-left"></i>
-                            </button>
-                          </div>
-                          <div class="col-md-6 text-right">
-                            <button
-                              @click="!!hasNext && $emit('aw-select-next-item')"
-                              class="btn btn-primary"
-                              v-if="hasNext"
-                            >
-                              <i class="fa fa-chevron-circle-right"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </template>
-
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white">
@@ -281,6 +251,29 @@
                           {{ $t('AwesomeCrud.buttons.closeEditLayoutMode') }}
                         </button>
                       </div>
+
+                      <!-- create a subcomponent -->
+                      <template v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView">
+                        <div class="ml-1 aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
+                          <div class="btn-group">
+                            <button
+                              @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                              class="btn btn-light btn-sm float-left"
+                              v-if="hasPrevious"
+                            >
+                              <i class="fa fa-chevron-circle-left"></i>
+                            </button>
+
+                            <button
+                              @click="!!hasNext && $emit('aw-select-next-item')"
+                              class="btn btn-light btn-sm float-right"
+                              v-if="hasNext"
+                            >
+                              <i class="fa fa-chevron-circle-right"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
 
                       <button
                         v-if="!standalone && !_isEmbedded"
@@ -1254,71 +1247,6 @@ export default {
       if (this.$route && this.$route.query && this.$route.query.filters) {
         this.mergedOptions.queryParams = _.merge(this.mergedOptions.queryParams || this.$route.query.filters);
       }
-    },
-    callbackFunctionForBAse64(e) {
-      // eslint-disable-next-line
-      console.log('Base 64 done', e);
-    },
-
-    importResponse(e) {
-      // swal({title: this.$t('AwesomeDefault.messages.successfullyImported',{title: this.name}), type: 'success'})
-      if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
-        Swal.fire({
-          title: this.$t('AwesomeDefault.messages.no_data_imported', {
-            title: this._name
-          }),
-          type: 'warning'
-        });
-        return;
-      }
-
-      if (e.properData.length > 0) {
-        this.$awNotify({
-          title: this.$t('AwesomeDefault.messages.successfullyImported', {
-            title: this._name
-          }),
-          type: 'success'
-        });
-      }
-
-      if (e.improperData.length > 0) {
-        let message = '';
-        e.improperData.forEach((element) => {
-          message += ` - ${Object.values(element).join(' | ')}, `;
-        });
-        message = message.substring(0, message.length - 2);
-        setTimeout(() => {
-          this.$awNotify({
-            title: `${e.improperData.length} ${this.$t('AwesomeDefault.messages.not_imported', {
-              title: this._name
-            })}`,
-            message,
-            type: 'warning',
-            timeout: 30000
-          });
-        }, 0);
-      }
-      this.nestedElementsNeedRefresh = true;
-      this.$forceUpdate();
-    },
-
-    exportTemplateCallBack() {
-      if (!this.mergedOptions.importUrl) {
-        this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
-        return;
-      }
-      this.$http
-        .get(this.mergedOptions.importUrl + '-template', {})
-        .then((res) => {
-          if (res.data.url) {
-            const link = document.createElement('a');
-            link.download = `${this.entity}_export`;
-            link.href = res.data.url;
-            link.click();
-            link.remove();
-          }
-        })
-        .catch(this.apiErrorCallback);
     },
 
     loadModel() {

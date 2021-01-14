@@ -5,7 +5,7 @@
         <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'view' && identity"
+            v-if="showViewFormComputed"
             :mode="displayMode"
             :model="_model"
             :schema="schemaComputed"
@@ -47,7 +47,7 @@
           />
           <AwesomeForm
             v-bind="$props"
-            v-if="(displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit') && identity"
+            v-if="showEditFormComputed"
             :mode="displayMode"
             :model="_model"
             :schema="schemaComputed"
@@ -91,9 +91,10 @@
 
         <div
           class="col-12"
-          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 || mergedOptions.detailPageMode === 'page')"
         >
           <!--
+            SEGMENTS
           <ul class="nav nav-tabs nav-justified nav-fill">
             <li class="nav-item bg-primary">
               <a class="nav-link active " href="#">Active</a>
@@ -117,10 +118,7 @@
             />
           </div>
         </div>
-        <div
-          class="col-12"
-          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1) && mergedOptions.detailPageMode === 'page'"
-        >
+        <div class="col-12" v-show="showItemsListSectionComputed">
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="options && options.customTopRightActions">
@@ -853,6 +851,23 @@ export default {
         this._actions.create &&
         !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this.mergedOptions.detailPageMode === 'page')
       );
+    },
+
+    showEditFormComputed() {
+      return (
+        this.identity &&
+        (this.displayMode === 'edit' || this.displayMode === 'create' || this.displayMode === 'bulkEdit')
+      );
+    },
+
+    showViewFormComputed() {
+      return this.identity && this.displayMode === 'view';
+    },
+
+    showItemsListSectionComputed() {
+      return (
+        this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this.mergedOptions.detailPageMode !== 'page'
+      );
     }
   },
   watch: {
@@ -874,7 +889,6 @@ export default {
         // console.warn(err.message);
       }
     }
-    // this.loadModel();
   },
   mounted() {
     // allow old property names to still work
@@ -944,7 +958,6 @@ export default {
       if (!newVal || newVal === false) {
         return;
       }
-      // console.log("refresh component watcher");
       if (this.identity) {
         this.loadModel();
       }
@@ -988,10 +1001,7 @@ export default {
         );
       }
     },
-    callbackFunctionForBAse64(e) {
-      // eslint-disable-next-line
-      console.log('Base 64 done', e);
-    },
+    callbackFunctionForBAse64(e) {},
 
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
@@ -1388,17 +1398,11 @@ export default {
       return action && action.action && action.action(body, this);
     },
 
-    onRemoveList(body) {
-      // console.log("TODO: REMOVE LIST", body);
-    },
+    onRemoveList(body) {},
 
-    onListChanged(item) {
-      // console.log(item);
-    },
+    onListChanged(item) {},
 
-    onCardChanged(item, listTitle) {
-      // console.log(item, listTitle);
-    },
+    onCardChanged(item, listTitle) {},
 
     onCardClicked(item) {
       this.$emit('on-kanban-item-clicked', item);
@@ -1447,8 +1451,6 @@ export default {
 
     onItemCreated(item) {
       this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
-      // eslint-disable-next-line
-      console.log('EVENT', 'onItemCreated', item);
     },
 
     onItemsBulkEdited(item) {
@@ -1461,19 +1463,15 @@ export default {
     },
     onItemDeleted(...args) {
       // eslint-disable-next-line
-      console.log('EVENT', 'onItemDeleted', args);
     },
     onItemViewed(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemViewed', args);
     },
     onItemValidated(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemValidated', args);
     },
     onItemValidationFailed(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemValidationFailed', args);
     },
 
     onListUpdated(datas) {
