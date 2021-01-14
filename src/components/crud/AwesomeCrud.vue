@@ -1162,6 +1162,7 @@ export default {
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
       if (['edit', 'view'].indexOf(mode) > -1) {
+        this.$awEmit('aw-form-open');
         const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
         this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
