@@ -127,9 +127,9 @@
         <div class="col-12" v-show="showItemsListSectionComputed">
           <div class="text-right">
             <slot name="top-right-buttons">
-              <template v-if="options && options.customTopRightActions">
+              <template v-if="_customTopRightActions">
                 <button
-                  v-for="(action, index) in options.customTopRightActions"
+                  v-for="(action, index) in _customTopRightActions"
                   :key="index"
                   class="btn btn-simple btn-main-style"
                   :class="action.class"
@@ -605,6 +605,11 @@ export default {
       default: () => defaultActions,
       note: 'actions active in this instance'
     },
+    customTopRightActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action in top right of awCrud'
+    },
     customInlineActions: {
       type: Array,
       default: () => [],
@@ -860,6 +865,12 @@ export default {
     _customInlineActions() {
       return _.merge([],
       this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+      )
+    },
+
+    _customTopRightActions() {
+      return _.merge([],
+          this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
       )
     },
 
