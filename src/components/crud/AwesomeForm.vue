@@ -253,13 +253,15 @@
                       </div>
 
                       <!-- create a subcomponent -->
-                      <template v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView">
+                      <template v-if="!editLayoutMode && (mode === 'edit' || mode === 'view' || _isANestedDetailView)">
                         <div class="ml-1 aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
                           <div class="btn-group">
                             <button
                               @click="!!hasPrevious && $emit('aw-select-previous-item')"
                               class="btn btn-light btn-sm float-left"
-                              v-if="hasPrevious"
+                              :disabled="!hasPrevious"
+                              :class="!hasPrevious ? 'op-50' : ''"
+                              type="button"
                             >
                               <i class="fa fa-chevron-circle-left"></i>
                             </button>
@@ -267,7 +269,9 @@
                             <button
                               @click="!!hasNext && $emit('aw-select-next-item')"
                               class="btn btn-light btn-sm float-right"
-                              v-if="hasNext"
+                              :disabled="!hasNext"
+                              :class="!hasPrevious ? 'op-50' : ''"
+                              type="button"
                             >
                               <i class="fa fa-chevron-circle-right"></i>
                             </button>
@@ -466,10 +470,21 @@
                                 <template v-if="nestedLayoutMode === 'list'">
                                   <h3
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
-                                    @click="getNestedActions(ns).collapse ? nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[ns.identity] : ''"
+                                    @click="
+                                      getNestedActions(ns).collapse
+                                        ? (nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[
+                                            ns.identity
+                                          ])
+                                        : ''
+                                    "
                                   >
                                     {{ getNestedTabsTitle(ns) }}
-                                    <i class="fa" :class="nestedModelsCollapseState[ns.identity] ? 'fa-caret-right' : 'fa-caret-down'"></i>
+                                    <i
+                                      class="fa"
+                                      :class="
+                                        nestedModelsCollapseState[ns.identity] ? 'fa-caret-right' : 'fa-caret-down'
+                                      "
+                                    ></i>
                                   </h3>
                                   <hr class="mt-0" />
                                 </template>
@@ -486,7 +501,13 @@
                                   @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
                                   class="aw-crud-nested-model"
-                                  :class="getNestedActions(ns).collapse ? !nestedModelsCollapseState[ns.identity] ? 'collapse show' : 'collapse' : ''"
+                                  :class="
+                                    getNestedActions(ns).collapse
+                                      ? !nestedModelsCollapseState[ns.identity]
+                                        ? 'collapse show'
+                                        : 'collapse'
+                                      : ''
+                                  "
                                 >
                                   <div slot="crud-title" />
                                 </div>
@@ -1138,7 +1159,7 @@ export default {
       this.identity = this.modelName;
     }
 
-    this.nestedModels.forEach(nm => {
+    this.nestedModels.forEach((nm) => {
       this.$set(this.nestedModelsCollapseState, nm.identity, !!nm.initiallyCollapsed);
     });
 
@@ -1528,7 +1549,7 @@ export default {
       }
       if (!this.selectedItem[this.primaryKey]) {
         // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No primary key on this them', this.selectedItem, this.primaryKey);
+        console.warn('AWESOMECRUD ERROR:: No primary key on this item', this.selectedItem, this.primaryKey);
         return false;
       }
       if (this.$refs.form) {
@@ -1714,12 +1735,8 @@ export default {
     },
 
     getNestedActions(nestedModel) {
-      return _.merge(
-          {},
-          defaultActions,
-          nestedModel.actions
-      );
-    },
+      return _.merge({}, defaultActions, nestedModel.actions);
+    }
   }
 };
 </script>
@@ -1949,5 +1966,9 @@ body.modal-open .bootstrap-datetimepicker-widget {
       }
     }
   }
+}
+
+.btn:disabled {
+  opacity: 0.5 !important;
 }
 </style>

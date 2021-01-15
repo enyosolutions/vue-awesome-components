@@ -323,7 +323,6 @@ export default {
     },
 
     onPageChange(params) {
-      window.App = { vue: this };
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== 'remote') {
         return;

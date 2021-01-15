@@ -188,7 +188,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :actions="_actions"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode || mode"
+            :mode="dataPaginationModeComputed"
             :useRouterMode="useRouterMode"
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
@@ -247,7 +247,7 @@
             :entity="identity"
             :export-url="mergedOptions.exportUrl"
             :limit="tableDataLimit"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
@@ -658,10 +658,7 @@ export default {
       },
       supportedDataDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
-      itemList: [],
-      itemIndex: 0,
-      hasPrevious: false,
-      hasNext: true
+      itemsList: []
     };
   },
   computed: {
@@ -868,6 +865,26 @@ export default {
       return (
         this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this.mergedOptions.detailPageMode !== 'page'
       );
+    },
+
+    currentItemIndex() {
+      return (
+        this.itemsList &&
+        this.selectedItem &&
+        _.findIndex(this.itemsList, (data) => data[this.primaryKey] == this.selectedItem[this.primaryKey])
+      );
+    },
+
+    hasPrevious() {
+      return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex - 1];
+    },
+
+    hasNext() {
+      return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex + 1];
+    },
+
+    dataPaginationModeComputed() {
+      return this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
     }
   },
   watch: {
@@ -877,7 +894,8 @@ export default {
     'parent.id': 'loadModel',
     options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
-    needsRefresh: 'refreshComponent'
+    needsRefresh: 'refreshComponent',
+    '$route.params.id': 'onRouteIdChanged'
   },
   created() {
     window._vue = this;
@@ -923,22 +941,7 @@ export default {
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
-    if (this.$route.params.id) {
-      this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
-      if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
-        delete this.$route.params.id;
-        if (this.$route.query.item) {
-          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
-        }
-        this.goToCreatePage({ reset: false });
-
-        // this.parentPath = matched.path;
-        this.parentPath = this.parentPath
-          .replace('/edit', '')
-          .replace(`/${this.$route.params.id}`, '')
-          .replace('/:id', '');
-      }
-    }
+    this.initializeSelectedItem();
   },
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
@@ -1171,12 +1174,6 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
-      if (['edit', 'view'].indexOf(mode) > -1) {
-        const { ...data } = item;
-        this.itemIndex = _.findIndex(this.itemList, data);
-        this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
-        this.hasNext = this.itemIndex < this.itemList.length - 1;
-      }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
         this.selectedItem = {};
@@ -1500,7 +1497,7 @@ export default {
     },
 
     onDataChanged(items) {
-      this.itemList = items.data;
+      this.itemsList = items.data;
     },
 
     updateAutoRefresh(value) {
@@ -1536,20 +1533,20 @@ export default {
     },
 
     selectPreviousItem() {
-      this.itemIndex -= 1;
-      if (this.hasPrevious) {
-        this.hasPrevious = this.itemIndex !== 0;
-        this.hasNext = this.itemIndex !== this.itemList.length - 1;
-        this.selectedItem = this.itemList[this.itemIndex];
+      if (this.hasPrevious && this.itemsList[this.currentItemIndex - 1]) {
+        this.selectedItem = this.itemsList[this.currentItemIndex - 1];
+        if (this.useRouterMode) {
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+        }
       }
     },
 
     selectNextItem() {
-      this.itemIndex += 1;
-      if (this.hasNext) {
-        this.hasNext = this.itemIndex !== this.itemList.length - 1;
-        this.hasPrevious = this.itemIndex !== 0;
-        this.selectedItem = this.itemList[this.itemIndex];
+      if (this.hasNext && this.itemsList[this.currentItemIndex + 1]) {
+        this.selectedItem = this.itemsList[this.currentItemIndex + 1];
+        if (this.useRouterMode) {
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+        }
       }
     },
 
@@ -1613,6 +1610,36 @@ export default {
         case 'none':
         default:
           break;
+      }
+    },
+
+    onRouteIdChanged(newVal, previousVal) {
+      if (this.useRouterMode && newVal && previousVal && previousVal !== newVal) {
+        this.setDisplayMode(this.displayMode, { [this.primaryKey]: this.$route.params.id });
+      }
+    },
+
+    initializeSelectedItem() {
+      if (this.$route.params.id) {
+        this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
+        if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
+          delete this.$route.params.id;
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+          this.goToCreatePage({ reset: false });
+
+          // this.parentPath = matched.path;
+          this.parentPath = this.parentPath
+            .replace('/edit', '')
+            .replace(`/${this.$route.params.id}`, '')
+            .replace('/:id', '');
+        } else {
+          this.selectedItem = { [this.primaryKey]: this.$route.params.id };
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+        }
       }
     }
   },
