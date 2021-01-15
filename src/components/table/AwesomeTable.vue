@@ -245,8 +245,8 @@
           @on-selected-rows-change="onSelectionChanged"
         >
           <div slot="selected-row-actions">
-            <template v-if="optionsComputed && optionsComputed.customBulkActions">
-              <template v-for="(action, index) in optionsComputed.customBulkActions">
+            <template v-if="customBulkActions">
+              <template v-for="(action, index) in customBulkActions">
                 <button
                   :key="index"
                   class="btn btn-primary btn-simple"
@@ -300,9 +300,9 @@
               :opens="'left'"
               @update="onDateFilter"
             />
-
-            <template v-if="optionsComputed && optionsComputed.customTableTopActions">
-              <template v-for="(action, index) in optionsComputed.customTableTopActions">
+            {{customTabletopActions}}
+            <template v-if="customTableTopActions">
+              <template v-for="(action, index) in customTableTopActions">
                 <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
                   <button
                     :key="index"
@@ -338,8 +338,8 @@
 
               <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
                 <slot name="table-row-actions" :item="props.row">
-                  <template v-if="optionsComputed && optionsComputed.customInlineActions">
-                    <template v-for="(action, index) in optionsComputed.customInlineActions">
+                  <template v-if="customInlineActions">
+                    <template v-for="(action, index) in customInlineActions">
                       <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
                         <button
                           :key="index"
@@ -532,8 +532,6 @@ export default {
         fixedHeader: false,
         maxHeight: '',
         pagination: true,
-        customInlineActions: [], // {key, label, action: function(item, context{}}
-        customBulkActions: [],
         filterInitiallyOn: false
       })
     },
@@ -542,7 +540,21 @@ export default {
       default: () => defaultActions,
       note: 'actions active in this instance'
     },
-
+    customInlineActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom inline action in row'
+    },
+    customTableTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom table top actions'
+    },
+    customBulkActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom bulk action'
+    },
     mode: {
       default: '',
       type: String,

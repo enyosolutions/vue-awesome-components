@@ -41,7 +41,7 @@
                       </h3>
 
                       <div
-                        v-if="_useCustomLayout && _actions.editLayout"
+                        v-if="_useCustomLayout && actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
                         style="flex:auto"
                       >
@@ -151,8 +151,8 @@
                         {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
                       </h3>
-                      <div class="btn-group m-0 aw-form-header-actions" v-if="mergedOptions.customAwFormTopActions">
-                        <template v-for="(action, index) in mergedOptions.customAwFormTopActions">
+                      <div class="btn-group m-0 aw-form-header-actions" v-if="customAwFormTopActions">
+                        <template v-for="(action, index) in customAwFormTopActions">
                           <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
                             <button
                               class="btn dropdown-toggle"
@@ -210,7 +210,7 @@
                         </template>
                       </div>
                       <div
-                        v-if="_useCustomLayout && _actions.editLayout"
+                        v-if="_useCustomLayout && actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
                         style="flex:auto"
                       >
@@ -254,7 +254,7 @@
 
                       <!-- create a subcomponent -->
                       <template v-if="!editLayoutMode && (mode === 'edit' || mode === 'view' || _isANestedDetailView)">
-                        <div class="ml-1 aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
+                        <div class="ml-1 aw-form-pagination" v-if="actions.formPagination && (hasPrevious || hasNext)">
                           <div class="btn-group">
                             <button
                               @click="!!hasPrevious && $emit('aw-select-previous-item')"
@@ -527,8 +527,8 @@
                         >
                           {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
-                        <template v-if="mergedOptions.customInlineActions">
-                          <template v-for="(action, index) in mergedOptions.customInlineActions">
+                        <template v-if="customInlineActions">
+                          <template v-for="(action, index) in customInlineActions">
                             <button
                               type="button"
                               :key="index"
@@ -554,7 +554,7 @@
                         </template>
 
                         <button
-                          v-if="_actions.delete && !mergedOptions.noActions"
+                          v-if="actions.delete && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-danger btn-main-style ml-2"
                           @click.prevent.stop="deleteFunction(selectedItem)"
@@ -566,7 +566,7 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
-                          v-if="mode === 'view' && _actions.edit && !mergedOptions.noActions"
+                          v-if="mode === 'view' && actions.edit && !mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
                           @click.prevent.stop="editFunction(selectedItem)"
@@ -688,10 +688,6 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  customInlineActions: [],
-  customBulkActions: [],
-  customAwFormTopActions: [],
-  customTabletopActions: [],
   responseField: 'body',
   useCustomLayout: false
 };
@@ -867,6 +863,16 @@ export default {
       type: Object,
       default: () => defaultActions,
       note: 'actions active in this instance'
+    },
+    customInlineActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action in footer and in awTable row'
+    },
+    customAwFormTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom top actions'
     },
     layout: {
       type: [Array, Object],
@@ -1260,13 +1266,13 @@ export default {
     },
     mergeOptions() {
       /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
-      if (this.options && this.options.deletePermitted && this._actions.delete) {
+      if (this.options && this.options.deletePermitted && this.actions.delete) {
         if (
           this.$store &&
           this.$store.state &&
           !this.options.deletePermitted.some((v) => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0)
         ) {
-          this._actions.delete = false;
+          this.actions.delete = false;
         }
       }
       this.mergedOptions = _.merge({}, defaultOptions, this.mergedOptions, this.options);

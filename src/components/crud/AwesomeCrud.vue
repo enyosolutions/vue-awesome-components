@@ -21,6 +21,9 @@
             :display-header="awFormDisplayHeader"
             :has-previous="hasPrevious"
             :has-next="hasNext"
+            :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-aw-form-top-actions="_customAwFormTopActions"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -63,6 +66,9 @@
             :display-header="awFormDisplayHeader"
             :has-previous="hasPrevious"
             :has-next="hasNext"
+            :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-aw-form-top-actions="_customAwFormTopActions"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -235,6 +241,9 @@
             "
             v-bind="$props"
             :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-table-top-actions="_customTableTopActions"
+            :custom-bulk-actions="_customBulkActions"
             :api-query-headers="mergedOptions.headerParams"
             :api-query-params="mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
@@ -354,10 +363,6 @@ const defaultOptions = {
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
   columnsDisplayed: 10,
-  customInlineActions: [],
-  customBulkActions: [],
-  customAwFormTopActions: [],
-  customTabletopActions: []
 };
 
 const listOptions = {
@@ -600,6 +605,26 @@ export default {
       default: () => defaultActions,
       note: 'actions active in this instance'
     },
+    customInlineActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action in footer and in awTable row'
+    },
+    customBulkActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action for bulk'
+    },
+    customTableTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom table top actions'
+    },
+    customAwFormTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom top action for awForm'
+    },
 
     savePaginationState: {
       type: Boolean,
@@ -824,6 +849,30 @@ export default {
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
       );
+    },
+
+    _customAwFormTopActions() {
+      return _.merge({},
+          this.customAwFormTopActions || (this.mergedOptions && this.mergedOptions.customAwFormTopActions) // old location kept
+      )
+    },
+
+    _customInlineActions() {
+      return _.merge({},
+      this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+      )
+    },
+
+    _customTableTopActions() {
+      return _.merge({},
+          this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+      )
+    },
+
+    _customBulkActions() {
+      return _.merge({},
+          this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
+      )
     },
 
     _displayModeHasPartialDisplay() {
