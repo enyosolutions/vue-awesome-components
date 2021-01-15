@@ -852,25 +852,25 @@ export default {
     },
 
     _customAwFormTopActions() {
-      return _.merge({},
+      return _.merge([],
           this.customAwFormTopActions || (this.mergedOptions && this.mergedOptions.customAwFormTopActions) // old location kept
       )
     },
 
     _customInlineActions() {
-      return _.merge({},
+      return _.merge([],
       this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
       )
     },
 
     _customTableTopActions() {
-      return _.merge({},
+      return _.merge([],
           this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
       )
     },
 
     _customBulkActions() {
-      return _.merge({},
+      return _.merge([],
           this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
       )
     },
