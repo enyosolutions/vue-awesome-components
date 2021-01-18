@@ -541,7 +541,7 @@ export default {
     },
 
     parseFilter(selectedFilters, options = { dispatch: true }) {
-      const advancedFilters = {};
+      let advancedFilters = {};
       selectedFilters.forEach((filter) => {
         const parsedFilter = { [filter.field.field]: { [filter.filter.value]: filter.value } };
         if (!this.permanentFilter && _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)) {
@@ -549,6 +549,8 @@ export default {
             advancedFilters[filter.field.field][filter.filter.value],
             filter.value
           ]);
+        } else if (_.has(advancedFilters, `${filter.field.field}`)) {
+          advancedFilters = parsedFilter;
         } else {
           _.merge(advancedFilters, parsedFilter);
         }
@@ -610,6 +612,9 @@ export default {
           from: '',
           to: ''
         };
+      }
+      if (this.permanentFilter) {
+        this.addFilter();
       }
     },
 

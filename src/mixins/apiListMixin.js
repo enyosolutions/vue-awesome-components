@@ -304,6 +304,9 @@ export default {
         delete this.serverParams.filters;
       } else {
         Object.keys(this.parsedAdvancedFilters).forEach((filter) => {
+          if (this.serverParams.filters[filter]) {
+            delete this.serverParams.filters[filter];
+          }
           Object.keys(this.parsedAdvancedFilters[filter]).forEach((item) => {
             if (!this.parsedAdvancedFilters[filter][item]) {
               delete this.serverParams.filters[filter];
