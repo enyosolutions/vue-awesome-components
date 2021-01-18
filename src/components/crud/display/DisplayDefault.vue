@@ -21,7 +21,7 @@ export default {
   mixins: [awesomeDisplayMixin],
   computed: {
     valueDisplay() {
-      return this.value !== undefined ? this.value : '...';
+      return this.value !== undefined && this.value !== null ? this.value : '...';
     },
     valueClass() {
       return this.$props.value && this.$props.value && isString(this.$props.value)

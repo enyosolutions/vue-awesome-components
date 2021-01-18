@@ -161,7 +161,7 @@
                   </p>
                 <template v-if="columns && columns.length && !_useClassicLayout">
                   <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                      {{ key }} :
+                      <small class="aw-list-item-field-label text-info">{{ key }}</small><br/>
                       <AwesomeDisplay
                         v-bind="getField(descriptionField)"
                         :value="itemData"
