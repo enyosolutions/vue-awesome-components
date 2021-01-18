@@ -50,21 +50,8 @@ module.exports = {
     providerCode: {
       type: 'string',
       default: '',
-      relation: 'provider',
-      relationUrl: 'provider',
-      foreignKey: 'code',
-      field: {
-        type: 'VSelect',
-        fieldOptions: {
-          enum: 'providers',
-          trackBy: 'code',
-          label: 'label',
-        },
-      },
       column: {
-        trackBy: 'code',
         label: 'label',
-        type: 'relation',
       },
     },
     roles: {
