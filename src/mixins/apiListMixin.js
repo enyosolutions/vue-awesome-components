@@ -52,6 +52,12 @@ export default {
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
+    identity: {
+      type: String, required: true,
+      note:
+        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
+    },
+
     title: { type: String, default: '' },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },

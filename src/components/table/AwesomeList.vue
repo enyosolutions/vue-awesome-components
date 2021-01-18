@@ -152,6 +152,9 @@
               <div class="card-body">
                   <h4 class="card-title aw-list-item-title" style="" v-if="item[titleField]">{{ item[titleField] }}</h4>
                   <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
+
+                  <h3 class="card-title aw-list-item-title" style="" v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">{{ item[_modelDisplayField] }}</h3>
+
                 <p class="card-text aw-list-item-description" v-if="item[descriptionField]">
                   <AwesomeDisplay
                         v-bind="getField(descriptionField)"
@@ -215,6 +218,8 @@ import _ from 'lodash';
 import apiErrors from '../../mixins/apiErrorsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
+import relationMixin from '../../mixins/relationMixin';
+import awEmitMixin from '../../mixins/awEmitMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
 
@@ -227,7 +232,7 @@ export default {
   components: { Paginate, AwesomeDisplay, AwesomeFilter,
       popper: Popper,
   },
-  mixins: [i18nMixin, apiErrors, apiListMixin],
+  mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin],
   props: {
     columns: {
       type: Array,
@@ -292,6 +297,13 @@ export default {
         customInlineActions: [], // {key, label, action: function(item, context{}}
         customBulkActions: [],
       })
+    },
+    model: {
+      type: Object,
+      required: false,
+      default: undefined,
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
   },
   data() {
@@ -393,6 +405,21 @@ export default {
 
     advancedFiltersFormated() {
       return AwesomeFilter.methods.parseFilter(this.advancedFilters, { dispatch: false });
+    },
+
+    _modelDisplayField() {
+      if (this._model && this._model.displayField) {
+        return this._model.displayField;
+      }
+
+      if (this.primaryKey) {
+        return this.primaryKey;
+      }
+      return '';
+    },
+
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
     },
   },
   watch: {
