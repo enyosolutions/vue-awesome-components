@@ -154,12 +154,8 @@
                   <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
                 <p class="card-text aw-list-item-description" v-if="item[descriptionField]">
                   <AwesomeDisplay
-                        :type="getField(descriptionField).type"
+                        v-bind="getField(descriptionField)"
                         :value="item[descriptionField]"
-                        :relation="getField(descriptionField).relation"
-                        :relation-label="getField(descriptionField).relationLabel"
-                        :relation-url="getField(descriptionField).relationUrl"
-                        :relation-key="getField(descriptionField).relationKey"
                       >
                       </AwesomeDisplay>
                   </p>
@@ -167,12 +163,8 @@
                   <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
                       {{ key }} :
                       <AwesomeDisplay
-                        :type="getField(key).type"
+                        v-bind="getField(descriptionField)"
                         :value="itemData"
-                        :relation="getField(key).relation"
-                        :relation-label="getField(key).relationLabel"
-                        :relation-url="getField(key).relationUrl"
-                        :relation-key="getField(key).relationKey"
                       >
                       </AwesomeDisplay>
                   </div>
