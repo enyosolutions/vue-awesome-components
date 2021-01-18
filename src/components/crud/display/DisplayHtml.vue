@@ -1,7 +1,16 @@
 <template>
-  <!-- <div v-bind="$props" class="pointer" :class="$props.classes" :style="$props.styles" v-html="$props.value"></div> -->
+  <!--  -->
   <div>
+    <div
+      v-if="isSafe"
+      v-bind="$props"
+      class="pointer"
+      :class="$props.classes"
+      :style="$props.styles"
+      v-html="$props.value"
+    ></div>
     <iframe
+      v-if="!isSafe"
       v-bind="$props"
       value=""
       class="aw-display-iframe"

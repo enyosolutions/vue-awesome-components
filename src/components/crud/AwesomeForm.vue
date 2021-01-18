@@ -1052,20 +1052,6 @@ export default {
       );
     },
 
-    _url() {
-      const url =
-        this.url || (this.options && this.options.url) || (this._model && this._model.url) || `/${this.identity}`;
-
-      if (typeof url === 'function') {
-        return url({
-          parent: this.parent,
-          context: this,
-          currentItem: this.selectedItem
-        });
-      }
-      return url;
-    },
-
     _formSchemaGrouped() {
       return { groups: [{ ...this.formSchema, legend: 'home' }] };
     },

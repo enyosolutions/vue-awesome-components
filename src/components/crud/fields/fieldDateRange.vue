@@ -53,7 +53,6 @@ export default {
       if (value != null) {
         value = dayjs(value).format(this.getDateFormat());
       }
-      console.log(value);
       return value;
     }
   },

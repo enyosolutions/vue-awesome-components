@@ -39,6 +39,7 @@ export default {
     classes: String,
     imageClasses: [String, Array, Object],
     imageStyles: [String, Array, Object],
+    isSafe: { type: Boolean, default: false }
   },
   data() {
     return {
