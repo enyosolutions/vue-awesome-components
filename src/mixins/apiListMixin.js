@@ -265,7 +265,7 @@ export default {
       this.$emit('itemClicked', item);
     },
 
-    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined, columns: undefined, sort: undefined }) {
+    updateParams(newProps = { page: undefined, search: undefined, perPage: undefined, columnFilters: undefined, advancedFilters: undefined, parsedAdvancedFilters: undefined, filters: undefined, columns: undefined, sort: undefined, permanent: false }) {
       const columnFilters = newProps.columnFilters && Object.keys(newProps.columnFilters).length ? Object.assign({}, newProps.columnFilters) : {};
 
 
@@ -293,13 +293,26 @@ export default {
       // store new advanced filter values
       if (newProps.advancedFilters) {
         this.advancedFilters = newProps.advancedFilters;
-        this.parsedAdvancedFilters = newProps.parsedAdvancedFilters;
         delete newProps.advancedFilters;
+      }
+      if (newProps.parsedAdvancedFilters) {
+        this.parsedAdvancedFilters = newProps.parsedAdvancedFilters;
         delete newProps.parsedAdvancedFilters;
-
       }
       // delete old values
-      delete this.serverParams.filters;
+      if (!newProps.permanent) {
+        delete this.serverParams.filters;
+      } else {
+        Object.keys(this.parsedAdvancedFilters).forEach((filter) => {
+          Object.keys(this.parsedAdvancedFilters[filter]).forEach((item) => {
+            if (!this.parsedAdvancedFilters[filter][item]) {
+              delete this.serverParams.filters[filter];
+              delete this.parsedAdvancedFilters[filter];
+            }
+          })
+        })
+      }
+
       this.serverParams = _.merge(
         {},
         this.serverParams,

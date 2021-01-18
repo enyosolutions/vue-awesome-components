@@ -37,7 +37,6 @@ module.exports = {
     smoothScroll: true,
     nav: [
       { text: "Home", link: "/" },
-      { text: "Getting started", link: "/guide/" },
       { text: "Components", link: "/guide/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
       { text: "AwesomeTable", link: "/guide/awesometable/" },
@@ -49,8 +48,7 @@ module.exports = {
         collapsable: false, // optional, defaults to true
         sidebarDepth: 1, // optional, defaults to 1
         children: [
-          { title: "Home", path: "/" },
-          { title: "Getting started", path: "/guide/" }
+          { title: "Home", path: "/" }
         ]
       },
       {

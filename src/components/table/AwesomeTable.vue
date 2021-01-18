@@ -98,7 +98,7 @@
             <div class="popper card mt-0" style="z-index: 1;">
               <awesome-filter
                 class="card-body"
-                :displayFilters="false"
+                edit-filters
                 id="advancedFilterComponentDisplay"
                 :fields="columns"
                 @update-filter="advancedFiltering"
@@ -189,7 +189,7 @@
       :id="'awTable-' + this._uid || this.uuid"
     >
       <awesome-filter
-        :editFilters="false"
+        display-filters
         id="advancedFilterComponent"
         v-if="_actions.filter && _actions.advancedFiltering"
         :fields="columns"
@@ -247,27 +247,15 @@
           <div slot="selected-row-actions">
             <template v-if="customBulkActions">
               <template v-for="(action, index) in customBulkActions">
-                <button
-                  :key="index"
-                  class="btn btn-primary btn-simple"
-                  :class="action.class"
-                  :id="action.name + '-' + index"
-                  :data-title="action.title || action.label"
-                  :data-tooltip="action.title || action.label"
-                  type="button"
-                  @click="
-                    $emit('customBulkAction', {
-                      action,
-                      items: selectedRows,
-                      parent,
-                      location: 'bulk',
-                      id: action.name + '-' + index
-                    })
-                  "
-                >
-                  <i v-if="action.icon" :class="action.icon" />
-                  <span v-html="action.label ? $t(action.label) : ''"></span>
-                </button>
+                <AwesomeAction
+                    v-bind="action"
+                    :key="index"
+                    :index="index"
+                    :items="selectedRows"
+                    :columns="columns"
+                    location="bulk"
+                    @customAction="$emit('customAction', $event)"
+                />
               </template>
             </template>
             <button
@@ -300,24 +288,18 @@
               :opens="'left'"
               @update="onDateFilter"
             />
-            {{customTabletopActions}}
             <template v-if="customTableTopActions">
               <template v-for="(action, index) in customTableTopActions">
                 <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
-                  <button
-                    :key="index"
-                    class="btn btn-xs btn-main-style"
-                    :class="action.class"
-                    type="button"
-                    :data-title="action.title || action.label"
-                    :tooltip="action.title || action.label"
-                    :data-tooltip="action.title || action.label"
-                    @click="$emit('customAction', { action, location: 'tabletop' })"
-                  >
-                    <i v-if="action.icon" :class="action.icon" /><span
-                      v-html="action.label ? $t(action.label) : ''"
-                    ></span>
-                  </button>
+                  <AwesomeAction
+                      v-bind="action"
+                      :key="index"
+                      :index="index"
+                      :columns="columns"
+                      location="tabletop"
+                      @permanent-filtering="permanentFiltering"
+                      @customAction="$emit('customAction', $event)"
+                  />
                 </template>
               </template>
             </template>
@@ -341,28 +323,14 @@
                   <template v-if="customInlineActions">
                     <template v-for="(action, index) in customInlineActions">
                       <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
-                        <button
-                          :key="index"
-                          class="btn btn-xs btn-alt-style"
-                          :class="action.class"
-                          type="button"
-                          :id="action.name + '-' + props.index"
-                          :data-title="action.title || action.label"
-                          :data-tooltip="action.title || action.label"
-                          @click="
-                            $emit('customAction', {
-                              action,
-                              item: props.row,
-                              location: 'inline',
-                              props,
-                              id: action.name + '-' + props.index
-                            })
-                          "
-                        >
-                          <i v-if="action.icon" :class="action.icon" /><span
-                            v-html="action.label ? $t(action.label) : ''"
-                          ></span>
-                        </button>
+                        <AwesomeAction
+                            v-bind="action"
+                            :key="index"
+                            :index="index"
+                            :items="props.row"
+                            location="inline"
+                            @customAction="$emit('customAction', $event)"
+                        />
                       </template>
                     </template>
                   </template>
@@ -436,6 +404,7 @@ import { defaultActions } from '../../mixins/defaultProps';
 import _ from 'lodash';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
+import AwesomeAction from '../misc/AwesomeAction';
 
 export default {
   name: 'AwesomeTable',
@@ -455,7 +424,8 @@ export default {
     VueGoodTable,
     AwesomeFilter,
     popper: Popper,
-    Skeleton
+    Skeleton,
+    AwesomeAction
   },
   mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {
@@ -908,6 +878,15 @@ export default {
         this.numberOfRefreshCalls += 1;
         this.getItems({ source: 'awTable_refreshHandle' });
       }, this.autoRefreshInterval * 1000);
+    },
+
+    permanentFiltering(parsedFilters) {
+      this.updateParams({
+        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+        page: 0,
+        permanent: true,
+      });
+      this.getItems({ useSkeleton: true });
     },
 
     advancedFiltering(parsedFilters, filters) {

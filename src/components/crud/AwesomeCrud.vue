@@ -128,27 +128,15 @@
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="_customTopRightActions">
-                <button
-                  v-for="(action, index) in _customTopRightActions"
-                  :key="index"
-                  class="btn btn-simple btn-main-style"
-                  :class="action.class"
-                  :id="action.name"
-                  :data-title="action.title || action.label"
-                  :tooltip="action.title || action.label"
-                  :data-tooltip="action.title || action.label"
-                  type="button"
-                  @click="
-                    onCustomAction({
-                      action,
-                      location: 'topright',
-                      id: action.name
-                    })
-                  "
-                >
-                  <i v-if="action.icon" :class="action.icon" />
-                  <span v-html="action.label ? $t(action.label) : ''"></span>
-                </button>
+                <template v-for="(action, index) in _customTopRightActions">
+                  <AwesomeAction
+                    v-bind="action"
+                    :key="index"
+                    :index="index"
+                    location="topright"
+                    @customAction="onCustomAction"
+                  />
+                </template>
               </template>
               <button
                 v-if="
@@ -342,6 +330,7 @@ import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
+import AwesomeAction from '../../components/misc/AwesomeAction';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -463,7 +452,8 @@ export default {
     EnyoCrudStatsSection,
     AwesomeForm,
     AwesomeList,
-    AwesomeKanban
+    AwesomeKanban,
+    AwesomeAction
   },
   mixins: [
     uuidMixin,

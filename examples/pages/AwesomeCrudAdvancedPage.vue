@@ -413,6 +413,10 @@ export default {
     onLayoutUpdated(items, event) {
       localStorage.setItem("onLayoutUpdated", JSON.stringify(items));
       this.editedLayout = items;
+    },
+
+    test(arg){
+      console.log('here', arg)
     }
   }
 };
