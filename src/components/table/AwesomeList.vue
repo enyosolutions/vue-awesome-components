@@ -161,15 +161,18 @@
                   </p>
                 <template v-if="columns && columns.length && !_useClassicLayout">
                   <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                      <small class="aw-list-item-field-label text-info">{{ key }}</small><br/>
+                      <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
                       <AwesomeDisplay
-                        v-bind="getField(descriptionField)"
+                        v-bind="getField(key)"
                         :value="itemData"
+:relation="getField(key).relation"
+                        :relation-label="getField(key).relationLabel"
+                        :relation-url="getField(key).relationUrl"
+                        :relation-key="getField(key).relationKey"
                       >
                       </AwesomeDisplay>
                   </div>
                 </template>
-                <p v-if="!_useClassicLayout" class="card-text">{{ $t('AwesomeList.labels.noData')}}</p>
                 <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
                   <button
                     @click="handleItemButtonClick($event, item)"
