@@ -201,9 +201,11 @@
         </button>
       </div>
     </div>
-    <div v-if="permanentFilter">
+    <div v-if="permanentFilter || permanentInput">
       <div class="chip-groups">
-        <div class="chip chip-primary bg-primary dark chip-permanent">
+        <div class="chip chip-primary dark chip-permanent"
+          :class="permanentInput ? 'bg-info' : 'bg-primary'"
+        >
           <div class="chip-content">
             <span>{{ field }}</span>
             <div class="dropdown column">
@@ -213,7 +215,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                  :disabled="!(currentField && currentField.field)"
+                  :disabled="!(currentField && currentField.field) || permanentInput"
               >
                 {{ Object.keys(currentFilter).length ? currentFilter.text : $t('AwesomeFilter.labels.filters') }}
               </button>
@@ -235,7 +237,7 @@
                 v-if="!['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(currentFilter.value)"
                 class="column"
             >
-              <div v-if="Object.keys(currentField).length">
+              <div v-if="Object.keys(currentField).length || permanentInput">
                 <!-- TYPE NUMBER -->
                 <input
                     v-if="
@@ -251,8 +253,8 @@
                 <!-- TYPE STRING/TEXT -->
                 <input
                     v-if="
-                (currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
-                  !currentField.enum
+                ((currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
+                  !currentField.enum) || permanentInput
               "
                     v-model="currentValue"
                     type="text"
@@ -415,7 +417,7 @@ export default {
   mixins: [i18nMixin],
   components: {
     Datetime,
-    DateRangePicker
+    DateRangePicker,
   },
   props: {
     advancedFilters: {
@@ -432,7 +434,8 @@ export default {
     },
     displayFilters: { type: Boolean, default: false },
     editFilters: { type: Boolean, default: false },
-    permanentFilter: { type: Boolean, default: false }
+    permanentFilter: { type: Boolean, default: false },
+    permanentInput: { type: Boolean, default: false },
   },
   data: () => ({
     filters: [],
@@ -527,7 +530,7 @@ export default {
           filter: this.currentFilter
         };
         this.selectedFilters.push(filter);
-        if (!this.permanentFilter) {
+        if (!this.permanentFilter && !this.permanentInput) {
           this.currentField = {};
           this.currentValue = '';
           this.currentFilter = { text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
@@ -544,15 +547,24 @@ export default {
       let advancedFilters = {};
       selectedFilters.forEach((filter) => {
         const parsedFilter = { [filter.field.field]: { [filter.filter.value]: filter.value } };
-        if (!this.permanentFilter && _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)) {
+        if (!this.permanentFilter && !this.permanentInput && _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)) {
           advancedFilters[filter.field.field][filter.filter.value] = _.flattenDeep([
             advancedFilters[filter.field.field][filter.filter.value],
             filter.value
           ]);
-        } else if (_.has(advancedFilters, `${filter.field.field}`)) {
+        } else if (_.has(advancedFilters, `${filter.field.field}`) || _.has(advancedFilters, '$relation')) {
           advancedFilters = parsedFilter;
         } else {
           _.merge(advancedFilters, parsedFilter);
+        }
+        if (this.permanentInput) {
+          if (filter.field.field.split('.').length > 1) {
+            advancedFilters = {
+              $relation: _.cloneDeep(advancedFilters)
+            };
+          } else {
+            _.merge(advancedFilters, parsedFilter);
+          }
         }
       });
       if (options.dispatch) {
@@ -613,13 +625,13 @@ export default {
           to: ''
         };
       }
-      if (this.permanentFilter) {
+      if (this.permanentFilter || this.permanentInput) {
         this.addFilter();
       }
     },
 
     currentValue() {
-      if (this.permanentFilter) {
+      if (this.permanentFilter || this.permanentInput) {
         this.addFilter();
       }
     }
@@ -651,14 +663,22 @@ export default {
     this.dateRangePicker.locale.cancelLabel = this.$t('dateRangePicker.cancelLabel');
     this.dateRangePicker.locale.weekLabel = this.$t('dateRangePicker.weekLabel');
     this.dateRangePicker.locale.customRangeLabel = this.$t('dateRangePicker.customRangeLabel');
-    if (this.permanentFilter) {
-      this.currentField = this.fields.filter((item) => item.field === this.field)[0]
+    if (this.permanentFilter || this.permanentInput) {
+      if (this.fields && this.fields.length) {
+        this.currentField = this.fields.filter((item) => item.field === this.field)[0]
+      } else {
+        this.currentField = {
+          field: this.field,
+          label: this.field,
+          type: 'string'
+        };
+      }
     }
   }
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .awesome-filter {
   text-align: left;
   min-width: 350px;
@@ -692,118 +712,6 @@ export default {
     font-weight: bold;
   }
 
-  .chip-groups {
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: row;
-    flex-wrap: wrap;
-    height: auto;
-
-    .chip {
-      display: inline-flex;
-      background-color: #e0e0e0;
-      border-color: #e0e0e0;
-      font-size: 14px;
-      height: 32px;
-      align-items: center;
-      line-height: 20px;
-      max-width: 100%;
-      outline: none;
-      padding: 0 12px;
-      position: relative;
-      text-decoration: none;
-      vertical-align: middle;
-      white-space: nowrap;
-      color: black;
-      margin: 4px;
-
-      .chip-content {
-        align-items: center;
-        display: inline-flex;
-        height: 100%;
-        max-width: 100%;
-        text-align: center;
-
-        input {
-          margin: 0 2px;
-          height: calc(100% - 4px);
-
-          &::placeholder {
-            color: white;
-          }
-        }
-
-        span {
-          display: inline-block;
-          padding: 2px 4px;
-          margin: 0 2px;
-          background-color: rgba(#000000, 0.2);
-        }
-
-        button {
-          margin-right: -4px;
-          appearance: none;
-          -moz-appearance: none;
-          outline: none;
-          border: none;
-          background-color: transparent;
-          line-height: 18px;
-          height: 18px;
-
-          i {
-            color: black;
-            font-size: 18px;
-            transition: color 0.3s ease-in-out;
-          }
-
-          &:hover {
-            i {
-              color: #7f7f7f;
-              transition: color 0.3s ease-in-out;
-            }
-          }
-        }
-      }
-
-      &.dark {
-        color: white;
-
-        .chip-content {
-          button {
-            i {
-              color: white;
-            }
-
-            &:hover {
-              i {
-                color: #7f7f7f;
-                transition: color 0.3s ease-in-out;
-              }
-            }
-          }
-        }
-      }
-
-      &.chip-primary {
-        .chip-content {
-          button:hover {
-            i {
-              color: var(--primary);
-              transition: 0.3s ease-in-out;
-            }
-          }
-        }
-      }
-      &.chip-permanent {
-        width: 100%;
-      }
-    }
-
-    &.permanent {
-      flex-direction: column;
-    }
-  }
-
   &.card-body {
     padding: 10px;
 
@@ -819,6 +727,117 @@ export default {
         }
       }
     }
+  }
+}
+.chip-groups {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: auto;
+
+  .chip {
+    display: inline-flex;
+    background-color: #e0e0e0;
+    border-color: #e0e0e0;
+    font-size: 14px;
+    height: 32px;
+    align-items: center;
+    line-height: 20px;
+    max-width: 100%;
+    outline: none;
+    padding: 0 12px;
+    position: relative;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    color: black;
+    margin: 4px;
+
+    .chip-content {
+      align-items: center;
+      display: inline-flex;
+      height: 100%;
+      max-width: 100%;
+      text-align: center;
+
+      input {
+        margin: 0 2px;
+        height: calc(100% - 4px);
+
+        &::placeholder {
+          color: white;
+        }
+      }
+
+      span {
+        display: inline-block;
+        padding: 2px 4px;
+        margin: 0 2px;
+        background-color: rgba(#000000, 0.2);
+      }
+
+      button {
+        margin-right: -4px;
+        appearance: none;
+        -moz-appearance: none;
+        outline: none;
+        border: none;
+        background-color: transparent;
+        line-height: 18px;
+        height: 18px;
+
+        i {
+          color: black;
+          font-size: 18px;
+          transition: color 0.3s ease-in-out;
+        }
+
+        &:hover {
+          i {
+            color: #7f7f7f;
+            transition: color 0.3s ease-in-out;
+          }
+        }
+      }
+    }
+
+    &.dark {
+      color: white;
+
+      .chip-content {
+        button {
+          i {
+            color: white;
+          }
+
+          &:hover {
+            i {
+              color: #7f7f7f;
+              transition: color 0.3s ease-in-out;
+            }
+          }
+        }
+      }
+    }
+
+    &.chip-primary {
+      .chip-content {
+        button:hover {
+          i {
+            color: var(--primary);
+            transition: 0.3s ease-in-out;
+          }
+        }
+      }
+    }
+    &.chip-permanent {
+      width: 100%;
+    }
+  }
+
+  &.permanent {
+    flex-direction: column;
   }
 }
 </style>

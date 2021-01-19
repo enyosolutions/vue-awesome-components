@@ -3,16 +3,16 @@
     <!--  TYPE DROPDOWN  -->
     <div v-if="type === 'dropdown' && children.length" class="dropdown">
       <button
-        class="btn dropdown-toggle"
-        :class="classes"
-        type="button"
-        :id="`${name}-${index}`"
-        data-toggle="dropdown"
-        arias-haspopup="true"
-        aria-expanded="false"
+          class="btn dropdown-toggle"
+          :class="classes"
+          type="button"
+          :id="`${name}-${index}`"
+          data-toggle="dropdown"
+          arias-haspopup="true"
+          aria-expanded="false"
       >
         <i v-if="icon" :class="icon"></i>
-        <span>{{ title ? $t(title) : ''}}</span>
+        <span>{{ title ? $t(title) : '' }}</span>
       </button>
       <div class="dropdown-menu" :aria-labelledby="`${name}-${index}`">
         <a
@@ -35,25 +35,33 @@
     </div>
     <!--  TYPE FILTER  -->
     <div v-if="type === 'filter'">
-        <AwesomeFilter
-            :key="index"
-            permanent-filter
-            :field="field"
-            :fields="columns"
-            @update-filter="permanentFiltering"
-        />
+      <AwesomeFilter
+          :key="index"
+          permanent-filter
+          :field="field"
+          :fields="columns"
+          @update-filter="permanentFiltering"
+      />
+    </div>
+    <div v-if="type === 'input'">
+      <AwesomeFilter
+          :key="index"
+          permanent-input
+          :field="field"
+          @update-filter="permanentFiltering"
+      />
     </div>
     <!--  TYPE BUTTON  -->
     <div v-if="!type || type === 'button'">
       <button
-        type="button"
-        :key="index"
-        class="btn"
-        :class="classes"
-        :id="`${name}-${index}`"
-        :data-title="title"
-        :data-tooltip="title"
-        @click="
+          type="button"
+          :key="index"
+          class="btn"
+          :class="classes"
+          :id="`${name}-${index}`"
+          :data-title="title"
+          :data-tooltip="title"
+          @click="
           $emit('customAction', {
             action: $props,
             items,
@@ -73,6 +81,7 @@
 <script>
 import i18nMixin from '../../mixins/i18nMixin';
 import AwesomeFilter from '../../components/misc/AwesomeFilter';
+
 export default {
   name: 'AwesomeAction',
   mixins: [i18nMixin],
@@ -143,6 +152,13 @@ export default {
   methods: {
     permanentFiltering(parsedFilters, filters) {
       this.$emit('permanent-filtering', parsedFilters, filters);
+    },
+
+    permanentSearching(parsedFilters) {
+      this.$emit('permanent-searching', parsedFilters);
+    },
+    permanentSearch(parsedFilters, filters) {
+      console.log(parsedFilters, filters);
     }
   },
   mounted() {

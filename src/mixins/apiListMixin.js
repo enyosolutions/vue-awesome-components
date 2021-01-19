@@ -305,10 +305,18 @@ export default {
       } else {
         Object.keys(this.parsedAdvancedFilters).forEach((filter) => {
           if (this.serverParams.filters[filter]) {
-            delete this.serverParams.filters[filter];
+            if (filter !== '$relation') {
+              delete this.serverParams.filters[filter];
+            }
           }
           Object.keys(this.parsedAdvancedFilters[filter]).forEach((item) => {
-            if (!this.parsedAdvancedFilters[filter][item]) {
+            if (filter === '$relation') {
+              Object.keys(this.parsedAdvancedFilters[filter][item]).forEach((el) => {
+                if (!this.parsedAdvancedFilters[filter][item][el]) {
+                  delete this.parsedAdvancedFilters[filter][item];
+                }
+              })
+            } else if (!this.parsedAdvancedFilters[filter][item]) {
               delete this.serverParams.filters[filter];
               delete this.parsedAdvancedFilters[filter];
             }
