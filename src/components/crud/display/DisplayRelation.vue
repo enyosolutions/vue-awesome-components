@@ -1,32 +1,39 @@
 <template>
   <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
-    <template v-for="value in _values">
-      <div :key="value">
-        <span v-if="value" class="badge badge-info pointer" @click="onClick">
-          {{ getLabel(value) }}
-        </span>
-        <router-link
-          v-if="value && !onClickUrl"
-          :to="'/app/' + kebabCase(relation) + '/' + value"
-          class="external-link"
-        >
-          &nbsp; <i class="fa fa-external-link text-info"></i>
-        </router-link>
+    <template v-if="_values && _values.length">
+      <template v-for="value in _values">
+        <div :key="value">
+          <span v-if="value" class="badge badge-info pointer" @click="onClick">
+            {{ getLabel(value) }}
+          </span>
+          <router-link
+            v-if="value && !onClickUrl"
+            :to="'/app/' + kebabCase(relation) + '/' + value"
+            class="external-link"
+          >
+            &nbsp; <i class="fa fa-external-link text-info"></i>
+          </router-link>
 
-        <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
-          &nbsp; <i class="fa fa-external-link text-info"></i>
+          <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
+            &nbsp; <i class="fa fa-external-link text-info"></i>
+          </div>
+          <router-link
+            v-if="value && onClickUrl && !isFunction(onClickUrl)"
+            :to="onClickUrl + '/' + value"
+            class="external-link"
+          >
+            &nbsp; <i class="fa fa-external-link text-info"></i>
+          </router-link>
+
+          <span v-if="value" class="copy-link" @click="copy(value)">
+            &nbsp; <i class="fa fa-clone text-info"></i>
+          </span>
         </div>
-        <router-link
-          v-if="value && onClickUrl && !isFunction(onClickUrl)"
-          :to="onClickUrl + '/' + value"
-          class="external-link"
-        >
-          &nbsp; <i class="fa fa-external-link text-info"></i>
-        </router-link>
-
-        <span v-if="value" class="copy-link" @click="copy(value)"> &nbsp; <i class="fa fa-clone text-info"></i> </span>
-      </div>
+      </template>
     </template>
+    <div v-else>
+      ...
+    </div>
   </div>
 </template>
 
@@ -57,6 +64,9 @@ export default {
     },
 
     _values() {
+      if (!this.$props.value) {
+        return this.$props.value;
+      }
       return Array.isArray(this.$props.value) ? this.$props.value : [this.$props.value];
     }
   },

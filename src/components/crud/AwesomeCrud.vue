@@ -6,17 +6,20 @@
           <AwesomeForm
             v-bind="$props"
             v-if="showViewFormComputed"
+            :display-header="awFormDisplayHeader"
+            :displayMode="mergedOptions.detailPageMode"
+            :edit-layout-mode="editLayoutMode"
+            :has-next="hasNext"
+            :has-previous="hasPrevious"
+            :identity="identity"
+            :item="selectedItem"
+            :layout="viewPageLayoutComputed"
             :mode="displayMode"
             :model="_model"
-            :schema="schemaComputed"
-            :identity="identity"
-            :displayMode="mergedOptions.detailPageMode"
-            :layout="viewPageLayoutComputed"
-            :parent="parent"
-            :item="selectedItem"
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :edit-layout-mode="editLayoutMode"
+            :parent="parent"
+            :schema="schemaComputed"
             :standalone="false"
             :display-header="awFormDisplayHeader"
             :has-previous="hasPrevious"
@@ -24,6 +27,7 @@
             :actions="_actions"
             :custom-inline-actions="_customInlineActions"
             :custom-top-actions="_customFormTopActions"
+            :url="_url"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -787,14 +791,15 @@ export default {
     listFieldsComputed() {
       const allColumns = this.parseColumns(this.schemaComputed.properties);
       let columns = [];
-      if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
-        return [];
+      if (this.listOptions && Array.isArray(this.listOptions.fields)) {
+        this.listOptions.fields.forEach((field) => {
+          columns.push(_.filter(allColumns, ['field', field]));
+        });
+        columns = _.flatten(columns);
+        return columns;
       }
-      this.listOptions.fields.forEach((field) => {
-        columns.push(_.filter(allColumns, ['field', field]));
-      });
-      columns = _.flatten(columns);
-      return columns;
+
+      return allColumns;
     },
 
     kanbanFieldsComputed() {
@@ -1238,6 +1243,13 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
+      if (['edit', 'view'].indexOf(mode) > -1) {
+        this.$awEmit('aw-form-open');
+        const { ...data } = item;
+        this.itemIndex = _.findIndex(this.itemList, data);
+        this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
+        this.hasNext = this.itemIndex < this.itemList.length - 1;
+      }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
         this.selectedItem = {};
@@ -1257,9 +1269,6 @@ export default {
     },
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
-      if (this.displayMode === 'create') {
-        return;
-      }
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.createPath);
       }
@@ -1275,7 +1284,7 @@ export default {
       }
       this.setDisplayMode('create', this.selectedItem);
       if (this.useRouterMode && !options.reset) {
-        window.history.pushState({}, null, `${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
+        this.$router.push(`${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
       }
 
       return;
