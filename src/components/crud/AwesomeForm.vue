@@ -151,8 +151,8 @@
                         {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
                       </h3>
-                      <div class="btn-group m-0 aw-form-header-actions" v-if="customAwFormTopActions">
-                        <template v-for="(action, index) in customAwFormTopActions">
+                      <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
+                        <template v-for="(action, index) in customTopActions">
                           <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
                             <button
                               class="btn dropdown-toggle"
@@ -869,7 +869,7 @@ export default {
       default: () => [],
       note: 'custom action in footer and in awTable row'
     },
-    customAwFormTopActions: {
+    customTopActions: {
       type: Array,
       default: () => [],
       note: 'custom top actions'

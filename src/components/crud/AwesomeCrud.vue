@@ -23,7 +23,7 @@
             :has-next="hasNext"
             :actions="_actions"
             :custom-inline-actions="_customInlineActions"
-            :custom-aw-form-top-actions="_customAwFormTopActions"
+            :custom-top-actions="_customFormTopActions"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -68,7 +68,7 @@
             :has-next="hasNext"
             :actions="_actions"
             :custom-inline-actions="_customInlineActions"
-            :custom-aw-form-top-actions="_customAwFormTopActions"
+            :custom-top-actions="_customFormTopActions"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -362,7 +362,7 @@ const defaultOptions = {
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
-  columnsDisplayed: 10,
+  columnsDisplayed: 10
 };
 
 const listOptions = {
@@ -625,12 +625,11 @@ export default {
       default: () => [],
       note: 'custom table top actions'
     },
-    customAwFormTopActions: {
+    customFormTopActions: {
       type: Array,
       default: () => [],
-      note: 'custom top action for awForm'
+      note: 'custom top action to display inside view and edit forms'
     },
-
     savePaginationState: {
       type: Boolean,
       default: true,
@@ -856,34 +855,39 @@ export default {
       );
     },
 
-    _customAwFormTopActions() {
-      return _.merge([],
-          this.customAwFormTopActions || (this.mergedOptions && this.mergedOptions.customAwFormTopActions) // old location kept
-      )
+    _customFormTopActions() {
+      return _.merge(
+        [],
+        this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
+      );
     },
 
     _customInlineActions() {
-      return _.merge([],
-      this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
-      )
+      return _.merge(
+        [],
+        this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+      );
     },
 
     _customTopRightActions() {
-      return _.merge([],
-          this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
-      )
+      return _.merge(
+        [],
+        this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
+      );
     },
 
     _customTableTopActions() {
-      return _.merge([],
-          this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
-      )
+      return _.merge(
+        [],
+        this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+      );
     },
 
     _customBulkActions() {
-      return _.merge([],
-          this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
-      )
+      return _.merge(
+        [],
+        this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
+      );
     },
 
     _displayModeHasPartialDisplay() {
