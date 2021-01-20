@@ -21,6 +21,12 @@
             :parent="parent"
             :schema="schemaComputed"
             :standalone="false"
+            :display-header="awFormDisplayHeader"
+            :has-previous="hasPrevious"
+            :has-next="hasNext"
+            :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-top-actions="_customFormTopActions"
             :url="_url"
             @create="goToCreatePage"
             @view="goToViewPage"
@@ -64,6 +70,9 @@
             :display-header="awFormDisplayHeader"
             :has-previous="hasPrevious"
             :has-next="hasNext"
+            :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-top-actions="_customFormTopActions"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -122,9 +131,9 @@
         <div class="col-12" v-show="showItemsListSectionComputed">
           <div class="text-right">
             <slot name="top-right-buttons">
-              <template v-if="options && options.customTopRightActions">
+              <template v-if="_customTopRightActions">
                 <button
-                  v-for="(action, index) in options.customTopRightActions"
+                  v-for="(action, index) in _customTopRightActions"
                   :key="index"
                   class="btn btn-simple btn-main-style"
                   :class="action.class"
@@ -236,6 +245,9 @@
             "
             v-bind="$props"
             :actions="_actions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-table-top-actions="_customTableTopActions"
+            :custom-bulk-actions="_customBulkActions"
             :api-query-headers="mergedOptions.headerParams"
             :api-query-params="mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
@@ -354,11 +366,7 @@ const defaultOptions = {
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
   detailPageLayout: null, // fade | slide | full
-  columnsDisplayed: 10,
-  customInlineActions: [],
-  customBulkActions: [],
-  customAwFormTopActions: [],
-  customTabletopActions: []
+  columnsDisplayed: 10
 };
 
 const listOptions = {
@@ -601,7 +609,31 @@ export default {
       default: () => defaultActions,
       note: 'actions active in this instance'
     },
-
+    customTopRightActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action in top right of awCrud'
+    },
+    customInlineActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action in footer and in awTable row'
+    },
+    customBulkActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom action for bulk'
+    },
+    customTableTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom table top actions'
+    },
+    customFormTopActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom top action to display inside view and edit forms'
+    },
     savePaginationState: {
       type: Boolean,
       default: true,
@@ -825,6 +857,41 @@ export default {
         {},
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+      );
+    },
+
+    _customFormTopActions() {
+      return _.merge(
+        [],
+        this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
+      );
+    },
+
+    _customInlineActions() {
+      return _.merge(
+        [],
+        this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+      );
+    },
+
+    _customTopRightActions() {
+      return _.merge(
+        [],
+        this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
+      );
+    },
+
+    _customTableTopActions() {
+      return _.merge(
+        [],
+        this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+      );
+    },
+
+    _customBulkActions() {
+      return _.merge(
+        [],
+        this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
       );
     },
 
