@@ -151,8 +151,8 @@
                         {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
                       </h3>
-                      <div class="btn-group m-0 aw-form-header-actions" v-if="customAwFormTopActions">
-                        <template v-for="(action, index) in customAwFormTopActions">
+                      <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
+                        <template v-for="(action, index) in customTopActions">
                           <AwesomeAction
                               v-bind="action"
                               :key="index"
@@ -812,7 +812,7 @@ export default {
       default: () => [],
       note: 'custom action in footer and in awTable row'
     },
-    customAwFormTopActions: {
+    customTopActions: {
       type: Array,
       default: () => [],
       note: 'custom top actions'
@@ -999,20 +999,6 @@ export default {
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
       );
-    },
-
-    _url() {
-      const url =
-        this.url || (this.options && this.options.url) || (this._model && this._model.url) || `/${this.identity}`;
-
-      if (typeof url === 'function') {
-        return url({
-          parent: this.parent,
-          context: this,
-          currentItem: this.selectedItem
-        });
-      }
-      return url;
     },
 
     _formSchemaGrouped() {

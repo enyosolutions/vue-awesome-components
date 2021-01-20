@@ -84,11 +84,12 @@ export default {
     _url() {
       const url =
         this.url ||
+        (this.mergedOptions && this.mergedOptions.url) ||
         (this.options && this.options.url) ||
         (this._model && this._model.url) ||
         (this.field && this.field.url) ||
         (this.field && this.field.fieldoptions.url) ||
-        (this.mergedOptions && this.mergedOptions.url) ||
+
         `/${this.identity}`;
       if (typeof url === 'function') {
         return url({

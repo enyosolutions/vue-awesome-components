@@ -52,6 +52,12 @@ export default {
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
+    identity: {
+      type: String, required: true,
+      note:
+        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
+    },
+
     title: { type: String, default: '' },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
@@ -381,6 +387,7 @@ export default {
     },
 
     pushChangesToRouter(options) {
+      this.saveComponentState();
       return;
       // disable url update for now
       //@todo replace by a push state function
@@ -422,16 +429,16 @@ export default {
           this.updateParams({
             page: to.query.page,
             search: to.query.search || '',
-            //      perPage: to.query.perPage || '',
-            //  filters: to.query.filters || '',
+            perPage: to.query.perPage || '',
+            filters: to.query.filters || '',
             //  columns: to.query.columns || '',
             //   sort: to.query.sort || '',
           });
           this.routeQueryParams = {
             page: to.query.page || '',
             search: to.query.search || '',
-            //   perPage: to.query.perPage || '',
-            // filters: to.query.filters || '',
+            perPage: to.query.perPage || '',
+            filters: to.query.filters || '',
             // columns: to.query.columns || '',
             // sort: to.query.sort || '',
           }

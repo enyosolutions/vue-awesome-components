@@ -28,7 +28,7 @@
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
-      :disabled="disabled"
+      :disabled="disabled || schema.disabled || schema.readonly"
       :required="required"
       @search="onSearch"
       :value="model[schema.model]"

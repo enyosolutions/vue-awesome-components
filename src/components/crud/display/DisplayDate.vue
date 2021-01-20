@@ -1,7 +1,5 @@
 <template>
-  <div v-bind="$props" :class="$props.classes" class="aw-display-date pointer">
-    {{ computedDate }}
-  </div>
+  <div v-bind="$props" :class="$props.classes" class="aw-display-date pointer" v-html="computedDate"></div>
 </template>
 
 <script>
@@ -20,7 +18,7 @@ export default {
       }
       switch (this.type) {
         case 'datetime':
-          return 'DD/MM/YYYY - HH:MM';
+          return 'DD/MM/YYYY <br/> HH:MM';
         case 'date':
           return 'DD/MM/YYYY';
 
@@ -40,7 +38,8 @@ export default {
       } else {
         dt = new Date(this.value);
       }
-      return dayjs(dt).format(this.computedFormat);
+      let df = dayjs(dt).format(this.computedFormat);
+      return df.replace(/<(?!br\s*\/?)[^>]+>/g, '');
     }
   }
 };

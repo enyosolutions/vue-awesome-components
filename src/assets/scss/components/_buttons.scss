@@ -25,3 +25,8 @@
 .btn:disabled {
   opacity: 0.5 !important;
 }
+
+button.btn.aw-button-add {
+  background-color: $primary-color !important;
+  color: #fff !important;
+}
