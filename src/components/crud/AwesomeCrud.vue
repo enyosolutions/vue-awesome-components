@@ -1176,6 +1176,13 @@ export default {
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
       // console.warn('setDisplayMode', mode, item);
+      if (['edit', 'view'].indexOf(mode) > -1) {
+        this.$awEmit('aw-form-open');
+        const { ...data } = item;
+        this.itemIndex = _.findIndex(this.itemList, data);
+        this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
+        this.hasNext = this.itemIndex < this.itemList.length - 1;
+      }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
         this.selectedItem = {};
