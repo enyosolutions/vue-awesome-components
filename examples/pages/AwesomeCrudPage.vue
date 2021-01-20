@@ -25,15 +25,15 @@
   </div>
 </template>
 <script>
-import AutoProps from "vue-aw-components/components/misc/AutoProps.vue";
-import ticketSchema from "../fixtures/ticket";
-import ticketModel from "../fixtures/ticketModel";
-import userSchema from "../fixtures/user";
-import AwesomeCrud from "vue-aw-components/components/crud/AwesomeCrud.vue";
-import LiveEdit from "vue-aw-components/components/form/LiveEdit.vue";
+import AutoProps from 'vue-aw-components/components/misc/AutoProps.vue';
+import ticketSchema from '../fixtures/ticket';
+import ticketModel from '../fixtures/ticketModel';
+import userSchema from '../fixtures/user';
+import AwesomeCrud from 'vue-aw-components/components/crud/AwesomeCrud.vue';
+import LiveEdit from 'vue-aw-components/components/form/LiveEdit.vue';
 
 export default {
-  name: "AwesomeCrudPage",
+  name: 'AwesomeCrudPage',
   components: {
     AwesomeCrud,
     AutoProps
@@ -46,59 +46,62 @@ export default {
       ticketModel,
       userSchema,
       showAwesomeForm: false,
-      modalDisplayModeSelect: "page",
+      modalDisplayModeSelect: 'page',
       asList: [
         {
-          picture: "https://picsum.photos/200?1",
-          name: "my title",
-          description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: "https://mozilla.org",
+          picture: 'https://picsum.photos/200?1',
+          name: 'my title',
+          description:
+            "Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. ",
+          url: 'https://mozilla.org',
           myboolean: false,
-          notDisplayedColumn: "ghosted",
-          object: { foo: "bar", john: "doe", a: { b: 1 } },
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
           date: new Date(),
           dateTime: new Date(),
           checkbox: true,
-          html: ""
+          html: ''
         },
         {
-          picture: "https://picsum.photos/200?2",
-          name: "my title",
-          description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: "https://bing.com",
+          picture: 'https://picsum.photos/200?2',
+          name: 'my title',
+          description:
+            "Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. ",
+          url: 'https://bing.com',
           myboolean: true,
-          notDisplayedColumn: "ghosted",
-          object: { foo: "bar", john: "doe", a: { b: 1 } },
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
           date: new Date(),
           dateTime: new Date(),
           checkbox: false
         },
         {
-          picture: "https://picsum.photos/200?3",
-          name: "my title",
-          description: `Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. `,
-          url: "https://google.com",
+          picture: 'https://picsum.photos/200?3',
+          name: 'my title',
+          description:
+            "Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte. ",
+          url: 'https://google.com',
           myboolean: undefined,
-          notDisplayedColumn: "ghosted",
-          object: { foo: "bar", john: "doe", a: { b: 1 } },
+          notDisplayedColumn: 'ghosted',
+          object: { foo: 'bar', john: 'doe', a: { b: 1 } },
           date: new Date(),
           dateTime: new Date()
         }
       ],
       options: {
         queryParams: {},
-        mode: "local",
+        mode: 'local',
         stats: false,
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
-        initialDisplayMode: "table",
+        initialDisplayMode: 'table',
         customInlineActions: [
           {
-            name: "validate-ride-comment",
-            label: "",
-            class: "btn-success btn-icon",
-            title: "Valider le commentaire",
-            icon: "fa fa-check",
+            name: 'validate-ride-comment',
+            label: '',
+            class: 'btn-success btn-icon',
+            title: 'Valider le commentaire',
+            icon: 'fa fa-check',
             action: function({ item }, context) {
               item.isProviderCommentValid = true;
               context.editItem(item);
@@ -107,16 +110,15 @@ export default {
         ],
         customBulkActions: [
           {
-            name: "validate-multiple-rides-comment",
-            label: "Validate",
-            class: "btn-success",
-            title: "Valider le commentaire",
-            icon: "fa fa-play mr-1",
+            name: 'validate-multiple-rides-comment',
+            label: 'Validate',
+            class: 'btn-success',
+            title: 'Valider le commentaire',
+            icon: 'fa fa-play mr-1',
             action: function({ items }, context) {
-              console.log(context);
               context.$notify({
                 title: `${items.length} to treat as a custom action`,
-                type: items.length > 10 ? "success" : "error"
+                type: items.length > 10 ? 'success' : 'error'
               });
             }
           }
@@ -124,25 +126,25 @@ export default {
       },
       nestedSchemas: [
         {
-          name: "user-view#tickets",
-          label: "",
-          class: "",
-          title: "Voir les tickets",
-          icon: "fa fa-car",
-          modelName: "ticket",
+          name: 'user-view#tickets',
+          label: '',
+          class: '',
+          title: 'Voir les tickets',
+          icon: 'fa fa-car',
+          modelName: 'ticket',
           schema: ticketSchema,
           options: {
             url: function(item) {
-              return item && item._id ? `/user/${item._id}/ride` : "";
+              return item && item._id ? `/user/${item._id}/ride` : '';
             },
-            mode: "local",
+            mode: 'local',
             noActions: true,
             noHeaders: false,
             actions: {}
           }
         }
       ],
-      editField1: "john doe",
+      editField1: 'john doe',
       editField2: `Eric Ries.
       Mark Hunt.
       `,
@@ -161,9 +163,9 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "../../src/main.scss";
+@import '../../src/main.scss';
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

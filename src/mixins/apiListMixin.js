@@ -323,7 +323,6 @@ export default {
     },
 
     onPageChange(params) {
-      window.App = { vue: this };
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== 'remote') {
         return;
@@ -358,6 +357,7 @@ export default {
     },
 
     pushChangesToRouter(options) {
+      this.saveComponentState();
       return;
       // disable url update for now
       //@todo replace by a push state function
@@ -399,16 +399,16 @@ export default {
           this.updateParams({
             page: to.query.page,
             search: to.query.search || '',
-            //      perPage: to.query.perPage || '',
-            //  filters: to.query.filters || '',
+            perPage: to.query.perPage || '',
+            filters: to.query.filters || '',
             //  columns: to.query.columns || '',
             //   sort: to.query.sort || '',
           });
           this.routeQueryParams = {
             page: to.query.page || '',
             search: to.query.search || '',
-            //   perPage: to.query.perPage || '',
-            // filters: to.query.filters || '',
+            perPage: to.query.perPage || '',
+            filters: to.query.filters || '',
             // columns: to.query.columns || '',
             // sort: to.query.sort || '',
           }

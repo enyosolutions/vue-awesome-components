@@ -28,7 +28,7 @@
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
-      :disabled="disabled"
+      :disabled="disabled || schema.disabled || schema.readonly"
       :required="required"
       @search="onSearch"
       :value="model[schema.model]"
@@ -313,7 +313,6 @@ export default {
         })
         .then((res) => {
           vm.apiOptions = vm.getData(res);
-          console.log(this.apiOptions, this.apiResponseConfig);
         })
         .finally(() => {
           loading(false);

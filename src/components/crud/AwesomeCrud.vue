@@ -5,22 +5,23 @@
         <div class="col-12 awesomecrud-detail-section">
           <AwesomeForm
             v-bind="$props"
-            v-if="displayMode === 'view' && identity"
+            v-if="showViewFormComputed"
+            :display-header="awFormDisplayHeader"
+            :displayMode="mergedOptions.detailPageMode"
+            :edit-layout-mode="editLayoutMode"
+            :has-next="hasNext"
+            :has-previous="hasPrevious"
+            :identity="identity"
+            :item="selectedItem"
+            :layout="viewPageLayoutComputed"
             :mode="displayMode"
             :model="_model"
-            :schema="schemaComputed"
-            :identity="identity"
-            :displayMode="mergedOptions.detailPageMode"
-            :layout="viewPageLayoutComputed"
-            :parent="parent"
-            :item="selectedItem"
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :edit-layout-mode="editLayoutMode"
+            :parent="parent"
+            :schema="schemaComputed"
             :standalone="false"
-            :display-header="awFormDisplayHeader"
-            :has-previous="hasPrevious"
-            :has-next="hasNext"
+            :url="_url"
             @create="goToCreatePage"
             @view="goToViewPage"
             @nestedView="nestedViewFunction"
@@ -47,7 +48,7 @@
           />
           <AwesomeForm
             v-bind="$props"
-            v-if="(displayMode === 'edit' || displayMode === 'create' || displayMode === 'bulkEdit') && identity"
+            v-if="showEditFormComputed"
             :mode="displayMode"
             :model="_model"
             :schema="schemaComputed"
@@ -91,9 +92,10 @@
 
         <div
           class="col-12"
-          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 && mergedOptions.detailPageMode === 'page')"
+          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 || mergedOptions.detailPageMode === 'page')"
         >
           <!--
+            SEGMENTS
           <ul class="nav nav-tabs nav-justified nav-fill">
             <li class="nav-item bg-primary">
               <a class="nav-link active " href="#">Active</a>
@@ -117,10 +119,7 @@
             />
           </div>
         </div>
-        <div
-          class="col-12"
-          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1) && mergedOptions.detailPageMode === 'page'"
-        >
+        <div class="col-12" v-show="showItemsListSectionComputed">
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="options && options.customTopRightActions">
@@ -190,7 +189,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :actions="_actions"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode || mode"
+            :mode="dataPaginationModeComputed"
             :useRouterMode="useRouterMode"
             :auto-refresh="mergedOptions.autoRefresh"
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
@@ -249,7 +248,7 @@
             :entity="identity"
             :export-url="mergedOptions.exportUrl"
             :limit="tableDataLimit"
-            :mode="mergedOptions.dataPaginationMode || mergedOptions.mode"
+            :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
@@ -660,10 +659,7 @@ export default {
       },
       supportedDataDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
-      itemList: [],
-      itemIndex: 0,
-      hasPrevious: false,
-      hasNext: true
+      itemsList: []
     };
   },
   computed: {
@@ -763,14 +759,15 @@ export default {
     listFieldsComputed() {
       const allColumns = this.parseColumns(this.schemaComputed.properties);
       let columns = [];
-      if (this.listOptions && !Array.isArray(this.listOptions.fields)) {
-        return [];
+      if (this.listOptions && Array.isArray(this.listOptions.fields)) {
+        this.listOptions.fields.forEach((field) => {
+          columns.push(_.filter(allColumns, ['field', field]));
+        });
+        columns = _.flatten(columns);
+        return columns;
       }
-      this.listOptions.fields.forEach((field) => {
-        columns.push(_.filter(allColumns, ['field', field]));
-      });
-      columns = _.flatten(columns);
-      return columns;
+
+      return allColumns;
     },
 
     kanbanFieldsComputed() {
@@ -853,6 +850,43 @@ export default {
         this._actions.create &&
         !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this.mergedOptions.detailPageMode === 'page')
       );
+    },
+
+    showEditFormComputed() {
+      return (
+        this.identity &&
+        (this.displayMode === 'edit' || this.displayMode === 'create' || this.displayMode === 'bulkEdit')
+      );
+    },
+
+    showViewFormComputed() {
+      return this.identity && this.displayMode === 'view';
+    },
+
+    showItemsListSectionComputed() {
+      return (
+        this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this.mergedOptions.detailPageMode !== 'page'
+      );
+    },
+
+    currentItemIndex() {
+      return (
+        this.itemsList &&
+        this.selectedItem &&
+        _.findIndex(this.itemsList, (data) => data[this.primaryKey] == this.selectedItem[this.primaryKey])
+      );
+    },
+
+    hasPrevious() {
+      return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex - 1];
+    },
+
+    hasNext() {
+      return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex + 1];
+    },
+
+    dataPaginationModeComputed() {
+      return this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
     }
   },
   watch: {
@@ -862,7 +896,8 @@ export default {
     'parent.id': 'loadModel',
     options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
-    needsRefresh: 'refreshComponent'
+    needsRefresh: 'refreshComponent',
+    '$route.params.id': 'onRouteIdChanged'
   },
   created() {
     window._vue = this;
@@ -874,7 +909,6 @@ export default {
         // console.warn(err.message);
       }
     }
-    // this.loadModel();
   },
   mounted() {
     // allow old property names to still work
@@ -909,22 +943,7 @@ export default {
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
-    if (this.$route.params.id) {
-      this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
-      if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
-        delete this.$route.params.id;
-        if (this.$route.query.item) {
-          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
-        }
-        this.goToCreatePage({ reset: false });
-
-        // this.parentPath = matched.path;
-        this.parentPath = this.parentPath
-          .replace('/edit', '')
-          .replace(`/${this.$route.params.id}`, '')
-          .replace('/:id', '');
-      }
-    }
+    this.initializeSelectedItem();
   },
   beforeRouteEnter(to, from, next) {
     // eslint-disable-next-line
@@ -944,7 +963,6 @@ export default {
       if (!newVal || newVal === false) {
         return;
       }
-      // console.log("refresh component watcher");
       if (this.identity) {
         this.loadModel();
       }
@@ -988,10 +1006,7 @@ export default {
         );
       }
     },
-    callbackFunctionForBAse64(e) {
-      // eslint-disable-next-line
-      console.log('Base 64 done', e);
-    },
+    callbackFunctionForBAse64(e) {},
 
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
@@ -1187,9 +1202,6 @@ export default {
     },
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
-      if (this.displayMode === 'create') {
-        return;
-      }
       if (this.mergedOptions.createPath) {
         return this.$router.push(this.mergedOptions.createPath);
       }
@@ -1205,7 +1217,7 @@ export default {
       }
       this.setDisplayMode('create', this.selectedItem);
       if (this.useRouterMode && !options.reset) {
-        window.history.pushState({}, null, `${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
+        this.$router.push(`${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
       }
 
       return;
@@ -1389,17 +1401,11 @@ export default {
       return action && action.action && action.action(body, this);
     },
 
-    onRemoveList(body) {
-      // console.log("TODO: REMOVE LIST", body);
-    },
+    onRemoveList(body) {},
 
-    onListChanged(item) {
-      // console.log(item);
-    },
+    onListChanged(item) {},
 
-    onCardChanged(item, listTitle) {
-      // console.log(item, listTitle);
-    },
+    onCardChanged(item, listTitle) {},
 
     onCardClicked(item) {
       this.$emit('on-kanban-item-clicked', item);
@@ -1448,8 +1454,6 @@ export default {
 
     onItemCreated(item) {
       this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
-      // eslint-disable-next-line
-      console.log('EVENT', 'onItemCreated', item);
     },
 
     onItemsBulkEdited(item) {
@@ -1462,19 +1466,15 @@ export default {
     },
     onItemDeleted(...args) {
       // eslint-disable-next-line
-      console.log('EVENT', 'onItemDeleted', args);
     },
     onItemViewed(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemViewed', args);
     },
     onItemValidated(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemValidated', args);
     },
     onItemValidationFailed(...args) {
       // eslint-disable-next-line
-      console.warn('EVENT', 'onItemValidationFailed', args);
     },
 
     onListUpdated(datas) {
@@ -1503,7 +1503,7 @@ export default {
     },
 
     onDataChanged(items) {
-      this.itemList = items.data;
+      this.itemsList = items.data;
     },
 
     updateAutoRefresh(value) {
@@ -1539,20 +1539,20 @@ export default {
     },
 
     selectPreviousItem() {
-      this.itemIndex -= 1;
-      if (this.hasPrevious) {
-        this.hasPrevious = this.itemIndex !== 0;
-        this.hasNext = this.itemIndex !== this.itemList.length - 1;
-        this.selectedItem = this.itemList[this.itemIndex];
+      if (this.hasPrevious && this.itemsList[this.currentItemIndex - 1]) {
+        this.selectedItem = this.itemsList[this.currentItemIndex - 1];
+        if (this.useRouterMode) {
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+        }
       }
     },
 
     selectNextItem() {
-      this.itemIndex += 1;
-      if (this.hasNext) {
-        this.hasNext = this.itemIndex !== this.itemList.length - 1;
-        this.hasPrevious = this.itemIndex !== 0;
-        this.selectedItem = this.itemList[this.itemIndex];
+      if (this.hasNext && this.itemsList[this.currentItemIndex + 1]) {
+        this.selectedItem = this.itemsList[this.currentItemIndex + 1];
+        if (this.useRouterMode) {
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+        }
       }
     },
 
@@ -1616,6 +1616,36 @@ export default {
         case 'none':
         default:
           break;
+      }
+    },
+
+    onRouteIdChanged(newVal, previousVal) {
+      if (this.useRouterMode && newVal && previousVal && previousVal !== newVal) {
+        this.setDisplayMode(this.displayMode, { [this.primaryKey]: this.$route.params.id });
+      }
+    },
+
+    initializeSelectedItem() {
+      if (this.$route.params.id) {
+        this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
+        if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
+          delete this.$route.params.id;
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+          this.goToCreatePage({ reset: false });
+
+          // this.parentPath = matched.path;
+          this.parentPath = this.parentPath
+            .replace('/edit', '')
+            .replace(`/${this.$route.params.id}`, '')
+            .replace('/:id', '');
+        } else {
+          this.selectedItem = { [this.primaryKey]: this.$route.params.id };
+          if (this.$route.query.item) {
+            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          }
+        }
       }
     }
   },

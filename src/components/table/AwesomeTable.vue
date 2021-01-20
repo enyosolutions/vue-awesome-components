@@ -544,8 +544,9 @@ export default {
     },
 
     mode: {
-      default: 'local',
+      default: '',
       type: String,
+      required: true,
       values: ['local', 'remote']
     },
     collapsible: {
@@ -571,7 +572,7 @@ export default {
         sort: {},
 
         page: 0, // what page I want to show
-        perPage: this.mode === 'remote' ? this.perPage : this.limit // how many items I'm showing per page
+        perPage: this.mode === 'local' ? this.limit : this.perPage // how many items I'm showing per page
       },
       data: [],
       refreshHandle: null,
@@ -646,7 +647,7 @@ export default {
         }
 
         if (col.type && col.type === 'datetime') {
-          col.format = 'D MMM YYYY - hh:mm';
+          col.format = 'D MMM YYYY <br/> hh:mm';
           col.formatFn = function(value) {
             if (!value) {
               return value;
@@ -843,7 +844,6 @@ export default {
     if (this.refresh || this.store) {
       return;
     }
-
     if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
       const tempFilters = [];
       Object.keys(this.apiQueryParams.filters).forEach((field) => {
@@ -866,7 +866,6 @@ export default {
       });
     }
     // this.refreshLocalData();
-
     if (this.autoRefresh) {
       this.activateAutoRefresh();
     }
@@ -929,16 +928,18 @@ export default {
     // editItem(item) {},
 
     clickOnLine(props, props2) {
-      if (!this.clickTimeout) {
-        this.clickTimeout = setTimeout(() => {
-          this.$emit('onRowClicked', props, props2);
-          this.clickTimeout = null;
-        }, 120);
-        return;
-      }
-      clearTimeout(this.clickTimeout);
-      this.clickTimeout = null;
-      this.$emit('onRowDoubleClicked', props, props2);
+      this.$nextTick(() => {
+        if (!this.clickTimeout) {
+          this.clickTimeout = setTimeout(() => {
+            this.$emit('onRowClicked', props, props2);
+            this.clickTimeout = null;
+          }, 300);
+          return;
+        }
+        clearTimeout(this.clickTimeout);
+        this.clickTimeout = null;
+        this.$emit('onRowDoubleClicked', props, props2);
+      });
     },
 
     getLovValue(item, listName) {
