@@ -23,6 +23,7 @@
             $emit('customAction', {
               action: $props,
               items,
+              item,
               location,
               parent,
               id: `${name}-${index}`,
@@ -65,6 +66,7 @@
           $emit('customAction', {
             action: $props,
             items,
+            item,
             location,
             parent,
             id: `${name}-${index}`
@@ -79,8 +81,8 @@
 </template>
 
 <script>
-import i18nMixin from '../../mixins/i18nMixin';
-import AwesomeFilter from '../../components/misc/AwesomeFilter';
+import i18nMixin from '../../../mixins/i18nMixin';
+import AwesomeFilter from '../AwesomeFilter';
 
 export default {
   name: 'AwesomeAction',
@@ -125,8 +127,12 @@ export default {
       note: 'The index of the element (use in id)'
     },
     items: {
-      type: [Object, Array],
-      note: 'The selected item(s)'
+      type: Array,
+      note: 'The selected items'
+    },
+    item: {
+      type: Object,
+      note: 'The selected item'
     },
     location: {
       type: String,

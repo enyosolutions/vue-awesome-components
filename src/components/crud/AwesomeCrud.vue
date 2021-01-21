@@ -129,15 +129,11 @@
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="_customTopRightActions">
-                <template v-for="(action, index) in _customTopRightActions">
-                  <AwesomeAction
-                    v-bind="action"
-                    :key="index"
-                    :index="index"
-                    location="topright"
-                    @customAction="onCustomAction"
-                  />
-                </template>
+                <AwesomeActionList
+                  :actions="_customTopRightActions"
+                  location="topright"
+                  @customAction="onCustomAction"
+                />
               </template>
               <button
                 v-if="
@@ -331,7 +327,7 @@ import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
-import AwesomeAction from '../../components/misc/AwesomeAction';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -454,7 +450,7 @@ export default {
     AwesomeForm,
     AwesomeList,
     AwesomeKanban,
-    AwesomeAction
+    AwesomeActionList
   },
   mixins: [
     uuidMixin,

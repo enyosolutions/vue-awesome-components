@@ -152,16 +152,13 @@
                         <b>{{ _editItemTile }}</b>
                       </h3>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
-                        <template v-for="(action, index) in customTopActions">
-                          <AwesomeAction
-                              v-bind="action"
-                              :key="index"
-                              :index="index"
-                              :items="selectedItem"
-                              location="top"
-                              @customAction="$emit('customAction', $event)"
-                          />
-                        </template>
+                        <AwesomeActionList
+                          :actions="customTopActions"
+                          :item="selectedItem"
+                          :parent="parent"
+                          location="top"
+                          @customAction="$emit('customAction', $event)"
+                        />
                       </div>
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
@@ -482,16 +479,12 @@
                           {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
                         <template v-if="customInlineActions">
-                          <template v-for="(action, index) in customInlineActions">
-                            <AwesomeAction
-                              v-bind="action"
-                              :key="index"
-                              :index="index"
-                              :items="selectedItem"
+                          <AwesomeActionList
+                              :actions="customInlineActions"
+                              :item="selectedItem"
                               location="inline"
                               @customAction="$emit('customAction', $event)"
-                            />
-                          </template>
+                          />
                         </template>
 
                         <button
@@ -616,7 +609,7 @@ import GroupedForm from "./layout/GroupedForm.vue";
 import 'vue-good-table/dist/vue-good-table.css';
 import AwesomeCrud from './AwesomeCrud';
 import AwesomeLayout from './layout/AwesomeLayout';
-import AwesomeAction from '../misc/AwesomeAction';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 const defaultOptions = {
@@ -645,7 +638,7 @@ export default {
     GroupedForm,
     */
     AwesomeLayout,
-    AwesomeAction
+    AwesomeActionList
   },
   mixins: [
     i18nMixin,

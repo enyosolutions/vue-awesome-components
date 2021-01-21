@@ -25,14 +25,20 @@ The crud compoenent allows to define which actions are enabled on a component. T
 - formPagination
 
 
-## Custom actions
+## Custom actions List
 
 In addition to the default actions on a awesome crud it's also possible to create custom actions.
 
 ### Props
 <ClientOnly>
-<ComponentDoc component="AwesomeAction" />
+<ComponentDoc component="AwesomeActionList" />
 </ClientOnly>
 
+## Custom action
+
+### Props
+<ClientOnly>
+<ComponentDoc component="AwesomeAction" />
+</ClientOnly>
 
 

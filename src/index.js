@@ -23,7 +23,8 @@ import { abstractField } from './components/form/form-generator';
 import apiErrorsMixin from './mixins/apiErrorsMixin';
 import notificationsMixin from './mixins/notificationsMixin';
 import rolesMixin from './mixins/rolesMixin';
-import AwesomeAction from './components/misc/AwesomeAction';
+import AwesomeActionList from './components/misc/AwesomeAction/AwesomeActionList';
+import AwesomeAction from './components/misc/AwesomeAction/AwesomeAction';
 
 
 
@@ -80,6 +81,7 @@ export {
   VueAwesomeComponents,
   FormGenerator,
   notificationsMixin,
+  AwesomeActionList,
   AwesomeAction
 }
 

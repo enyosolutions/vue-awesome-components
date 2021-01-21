@@ -246,17 +246,14 @@
         >
           <div slot="selected-row-actions">
             <template v-if="customBulkActions">
-              <template v-for="(action, index) in customBulkActions">
-                <AwesomeAction
-                    v-bind="action"
-                    :key="index"
-                    :index="index"
-                    :items="selectedRows"
-                    :columns="columns"
-                    location="bulk"
-                    @customAction="$emit('customAction', $event)"
-                />
-              </template>
+              <AwesomeActionList
+                :actions="customBulkActions"
+                :items="selectedRows"
+                :columns="columns"
+                :parent="parent"
+                location="bulk"
+                @customAction="$emit('customAction', $event)"
+              />
             </template>
             <button
               v-if="_actions.bulkDelete && _actions.delete"
@@ -289,19 +286,13 @@
               @update="onDateFilter"
             />
             <template v-if="customTableTopActions">
-              <template v-for="(action, index) in customTableTopActions">
-                <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
-                  <AwesomeAction
-                      v-bind="action"
-                      :key="index"
-                      :index="index"
-                      :columns="columns"
-                      location="tabletop"
-                      @permanent-filtering="permanentFiltering"
-                      @customAction="$emit('customAction', $event)"
-                  />
-                </template>
-              </template>
+              <AwesomeActionList
+                  :actions="customTableTopActions"
+                  :columns="columns"
+                  location="tabletop"
+                  @customAction="$emit('customAction', $event)"
+                  @permanent-filtering="permanentFiltering"
+              />
             </template>
           </div>
           <template slot="table-row" slot-scope="props">
@@ -321,18 +312,13 @@
               <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
                 <slot name="table-row-actions" :item="props.row">
                   <template v-if="customInlineActions">
-                    <template v-for="(action, index) in customInlineActions">
-                      <template v-if="!action.canDisplay || action.canDisplay({ item: props.row }, this)">
-                        <AwesomeAction
-                            v-bind="action"
-                            :key="index"
-                            :index="index"
-                            :items="props.row"
-                            location="inline"
-                            @customAction="$emit('customAction', $event)"
-                        />
-                      </template>
-                    </template>
+                    <AwesomeActionList
+                        :actions="customInlineActions"
+                        :item="props.row"
+                        :parent="parent"
+                        location="inline"
+                        @customAction="$emit('customAciton', $event)"
+                    />
                   </template>
                 </slot>
                 <button
@@ -404,7 +390,7 @@ import { defaultActions } from '../../mixins/defaultProps';
 import _ from 'lodash';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
-import AwesomeAction from '../misc/AwesomeAction';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 
 export default {
   name: 'AwesomeTable',
@@ -425,7 +411,7 @@ export default {
     AwesomeFilter,
     popper: Popper,
     Skeleton,
-    AwesomeAction
+    AwesomeActionList,
   },
   mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {

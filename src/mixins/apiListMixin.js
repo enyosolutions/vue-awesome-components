@@ -320,6 +320,9 @@ export default {
               Object.keys(this.parsedAdvancedFilters[filter][item]).forEach((el) => {
                 if (!this.parsedAdvancedFilters[filter][item][el]) {
                   delete this.parsedAdvancedFilters[filter][item];
+                  if (this.serverParams.filters[filter] && this.serverParams.filters[filter][item]) {
+                    delete this.serverParams.filters[filter][item];
+                  }
                 }
               })
             } else if (!this.parsedAdvancedFilters[filter][item]) {
