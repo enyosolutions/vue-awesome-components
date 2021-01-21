@@ -1020,6 +1020,14 @@ export default {
       }
     });
   },
+  beforeRouteUpdate(to, from, next) {
+    next((vm) => {
+      // if we are on the same component and coming from a detail list
+      if (vm && vm.closeModal && from.params.id && !to.params.id) {
+        vm.closeModal();
+      }
+    });
+  },
 
   methods: {
     $alert: Swal,
