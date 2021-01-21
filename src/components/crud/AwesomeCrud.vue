@@ -850,35 +850,35 @@ export default {
     _customFormTopActions() {
       return _.merge(
         [],
-        this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
+          this.customFormTopActions.length && this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
       );
     },
 
     _customInlineActions() {
       return _.merge(
         [],
-        this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+        this.customInlineActions.length && this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
       );
     },
 
     _customTopRightActions() {
       return _.merge(
         [],
-        this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
+        this.customTopRightActions.length && this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
       );
     },
 
     _customTableTopActions() {
       return _.merge(
         [],
-        this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+        this.customTableTopActions.length && this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
       );
     },
 
     _customBulkActions() {
       return _.merge(
         [],
-        this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
+        this.customBulkActions.length && this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
       );
     },
 

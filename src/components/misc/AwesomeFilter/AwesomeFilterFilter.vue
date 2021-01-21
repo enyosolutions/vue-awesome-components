@@ -32,7 +32,7 @@ import _ from 'lodash';
 import i18nMixin from '../../../mixins/i18nMixin';
 
 export default {
-  name: 'awFilter',
+  name: 'AwesomeFilterFilter',
   mixins: [i18nMixin],
   props: {
     currentField: {

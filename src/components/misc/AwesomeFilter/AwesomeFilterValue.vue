@@ -144,7 +144,7 @@ import localeData from 'dayjs/plugin/localeData';
 
 dayjs.extend(localeData);
 export default {
-  name: 'awValue',
+  name: 'AwesomeFilterValue',
   components: {
     Datetime,
     DateRangePicker

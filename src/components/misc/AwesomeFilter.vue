@@ -28,12 +28,12 @@
             </a>
           </div>
         </div>
-        <aw-filter
+        <awesome-filter-filter
             :current-field="currentField"
             :current-filter.sync="currentFilter"
             in-popper
         />
-        <aw-value
+        <awesome-filter-value
           :current-field="currentField"
           :current-filter="currentFilter"
           :current-value.sync="currentValue"
@@ -58,12 +58,12 @@
         >
           <div class="chip-content">
             <span>{{ field }}</span>
-            <aw-filter
+            <awesome-filter-filter
               :current-field="currentField"
               :current-filter.sync="currentFilter"
               :permanent-input="permanentInput"
             />
-            <aw-value
+            <awesome-filter-value
                 :current-field="currentField"
                 :current-filter="currentFilter"
                 :current-value.sync="currentValue"
@@ -99,16 +99,16 @@
 
 <script>
 import _ from 'lodash';
-import awFilter from './AwesomeFilter/awFilter';
-import awValue from './AwesomeFilter/awValue';
+import AwesomeFilterFilter from './AwesomeFilter/AwesomeFilterFilter';
+import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue';
 import i18nMixin from '../../mixins/i18nMixin';
 
 export default {
   name: 'AwesomeFilter',
   mixins: [i18nMixin],
   components: {
-    awFilter,
-    awValue
+    AwesomeFilterFilter,
+    AwesomeFilterValue
   },
   props: {
     advancedFilters: {
