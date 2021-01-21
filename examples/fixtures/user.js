@@ -55,9 +55,9 @@ module.exports = {
       },
     },
     roles: {
-      type: 'array',
+      type: 'string',
       default: ['USER'],
-
+      enum: ['USER', 'MANAGER', 'ADMIN'],
       items: {
         type: 'string',
         enum: ['USER', 'MANAGER', 'ADMIN'],

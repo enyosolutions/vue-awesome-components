@@ -53,7 +53,7 @@
             <div class="popper card mt-0" style="z-index: 1;">
               <awesome-filter
                 class="card-body"
-                :displayFilters="false"
+                edit-filters
                 id="advancedFilterComponentDisplay"
                 :fields="columns"
                 @update-filter="advancedFiltering"

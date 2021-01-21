@@ -129,27 +129,11 @@
           <div class="text-right">
             <slot name="top-right-buttons">
               <template v-if="_customTopRightActions">
-                <button
-                  v-for="(action, index) in _customTopRightActions"
-                  :key="index"
-                  class="btn btn-simple btn-main-style"
-                  :class="action.class"
-                  :id="action.name"
-                  :data-title="action.title || action.label"
-                  :tooltip="action.title || action.label"
-                  :data-tooltip="action.title || action.label"
-                  type="button"
-                  @click="
-                    onCustomAction({
-                      action,
-                      location: 'topright',
-                      id: action.name
-                    })
-                  "
-                >
-                  <i v-if="action.icon" :class="action.icon" />
-                  <span v-html="action.label ? $t(action.label) : ''"></span>
-                </button>
+                <AwesomeActionList
+                  :actions="_customTopRightActions"
+                  location="topright"
+                  @customAction="onCustomAction"
+                />
               </template>
               <button
                 v-if="
@@ -343,6 +327,7 @@ import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -464,7 +449,8 @@ export default {
     EnyoCrudStatsSection,
     AwesomeForm,
     AwesomeList,
-    AwesomeKanban
+    AwesomeKanban,
+    AwesomeActionList
   },
   mixins: [
     uuidMixin,
@@ -860,35 +846,35 @@ export default {
     _customFormTopActions() {
       return _.merge(
         [],
-        this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
+          this.customFormTopActions.length && this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
       );
     },
 
     _customInlineActions() {
       return _.merge(
         [],
-        this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+        this.customInlineActions.length && this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
       );
     },
 
     _customTopRightActions() {
       return _.merge(
         [],
-        this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
+        this.customTopRightActions.length && this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
       );
     },
 
     _customTableTopActions() {
       return _.merge(
         [],
-        this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+        this.customTableTopActions.length && this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
       );
     },
 
     _customBulkActions() {
       return _.merge(
         [],
-        this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
+        this.customBulkActions.length && this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
       );
     },
 
@@ -1252,8 +1238,6 @@ export default {
         this.$awEmit('aw-form-open');
         const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
-        this.hasPrevious = this.itemIndex !== -1 && this.itemIndex !== 0;
-        this.hasNext = this.itemIndex < this.itemList.length - 1;
       }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
       if (mode === 'bulkEdit') {
