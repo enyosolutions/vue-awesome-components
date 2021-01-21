@@ -152,62 +152,13 @@
                         <b>{{ _editItemTile }}</b>
                       </h3>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
-                        <template v-for="(action, index) in customTopActions">
-                          <div v-if="action.type === 'dropdown' && action.children" class="dropdown" :key="index">
-                            <button
-                              class="btn dropdown-toggle"
-                              :class="action.class"
-                              type="button"
-                              :id="action.name + '-' + index"
-                              data-toggle="dropdown"
-                              arias-haspopup="true"
-                              aria-expanded="false"
-                            >
-                              <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
-                            </button>
-                            <div class="dropdown-menu" :aria-labelledby="action.name + '-' + index">
-                              <a
-                                v-for="(child, index) in action.children"
-                                :key="child.id || index"
-                                class="dropdown-item"
-                                @click="
-                                  $emit('customAction', {
-                                    action,
-                                    item: selectedItem,
-                                    location: 'top',
-                                    id: action.name + '-' + index,
-                                    child
-                                  })
-                                "
-                              >
-                                <span>{{ child.label ? $t(child.label) : child.title ? $t(child.title) : '' }}</span>
-                              </a>
-                            </div>
-                          </div>
-                          <div v-else :key="index">
-                            <button
-                              type="button"
-                              :key="index"
-                              class="btn"
-                              :class="action.class"
-                              :id="action.name + '-' + index"
-                              :data-title="action.title || action.label"
-                              :data-tooltip="action.title || action.label"
-                              @click="
-                                $emit('customAction', {
-                                  action,
-                                  item: selectedItem,
-                                  location: 'inline',
-                                  id: action.name + '-' + index
-                                })
-                              "
-                            >
-                              <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
-                            </button>
-                          </div>
-                        </template>
+                        <AwesomeActionList
+                          :actions="customTopActions"
+                          :item="selectedItem"
+                          :parent="parent"
+                          location="top"
+                          @customAction="$emit('customAction', $event)"
+                        />
                       </div>
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
@@ -528,29 +479,12 @@
                           {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
                         <template v-if="customInlineActions">
-                          <template v-for="(action, index) in customInlineActions">
-                            <button
-                              type="button"
-                              :key="index"
-                              class="btn btn-primary btn-alt-style"
-                              :class="action.class"
-                              :id="action.name + '-' + index"
-                              :data-title="action.title || action.label"
-                              :data-tooltip="action.title || action.label"
-                              @click="
-                                $emit('customAction', {
-                                  action,
-                                  item: selectedItem,
-                                  location: 'inline',
-                                  id: action.name + '-' + index
-                                });
-                                closeModal();
-                              "
-                            >
-                              <i v-if="action.icon" :class="action.icon"></i>
-                              <span>{{ action.label ? $t(action.label) : action.title ? $t(action.title) : '' }}</span>
-                            </button>
-                          </template>
+                          <AwesomeActionList
+                              :actions="customInlineActions"
+                              :item="selectedItem"
+                              location="inline"
+                              @customAction="$emit('customAction', $event)"
+                          />
                         </template>
 
                         <button
@@ -675,6 +609,7 @@ import GroupedForm from "./layout/GroupedForm.vue";
 import 'vue-good-table/dist/vue-good-table.css';
 import AwesomeCrud from './AwesomeCrud';
 import AwesomeLayout from './layout/AwesomeLayout';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 const defaultOptions = {
@@ -702,7 +637,8 @@ export default {
     Row,
     GroupedForm,
     */
-    AwesomeLayout
+    AwesomeLayout,
+    AwesomeActionList
   },
   mixins: [
     i18nMixin,
