@@ -209,7 +209,7 @@ export default {
   computed: {
     _filterableFields() {
       return this.fields.filter((field) => {
-        return field.filterOptions.enabled;
+        return !(field.filterOptions && !field.filterOptions.enabled);
       });
     }
   },
