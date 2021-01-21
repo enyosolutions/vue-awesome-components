@@ -2,6 +2,7 @@
     <div class="container-fluid" id="awesome-kanban-page">
       <h1>Awesome Kanban</h1>
       <AwesomeKanban
+          identity="test"
         :lists="lists"
         :kanban-options="options"
       ></AwesomeKanban>
@@ -24,9 +25,9 @@
     sortField: 'id',
     sortOrder : 'DESC'
   };
-  import AwesomeKanban from "../../src/components/table/AwesomeKanban";
+  import AwesomeKanban from '../../src/components/table/AwesomeKanban';
   export default {
-    name: "AwesomeKanbanPage",
+    name: 'AwesomeKanbanPage',
     components: {
       AwesomeKanban
     },

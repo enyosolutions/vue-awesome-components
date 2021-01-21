@@ -201,7 +201,7 @@
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :columns="kanbanFieldsComputed"
             :fields="_kanbanOptions.fields"
-            :entity="identity"
+            :identity="identity"
             :url="_url"
             :api-query-params="mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"

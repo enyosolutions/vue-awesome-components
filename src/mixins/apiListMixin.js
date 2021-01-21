@@ -526,5 +526,23 @@ export default {
       }
     },
 
+    exportCallBack() {
+      if (!this.exportUrl) {
+        this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
+        return;
+      }
+      this.$http
+        .get(this.exportUrl, {})
+        .then((res) => {
+          if (res.data.url) {
+            const link = document.createElement('a');
+            link.download = `${this.entity || ''}_export`;
+            link.href = res.data.url;
+            link.click();
+            link.remove();
+          }
+        })
+        .catch(this.apiErrorCallback);
+    }
   }
 };
