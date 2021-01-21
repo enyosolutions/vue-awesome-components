@@ -140,11 +140,13 @@ import { Datetime } from 'vue-datetime';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css';
 import dayjs from 'dayjs';
+import i18nMixin from '../../../mixins/i18nMixin';
 import localeData from 'dayjs/plugin/localeData';
 
 dayjs.extend(localeData);
 export default {
   name: 'AwesomeFilterValue',
+  mixins: [i18nMixin],
   components: {
     Datetime,
     DateRangePicker
