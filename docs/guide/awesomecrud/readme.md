@@ -1,10 +1,4 @@
----
-  "title": "Awesome Crud"
-  "lang": "en-US"
----
-
-
-# Vue Awesome Crud
+# Introduction
 
 
 The Awesome Crud is one of the most powerful components of the package. It allows you to quickly build and CRUD capable interface in vue, with a table list, and forms for creating / editing items.

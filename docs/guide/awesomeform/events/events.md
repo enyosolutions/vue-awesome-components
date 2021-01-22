@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-# Events of AwesomeTable
+# Events
 
 The AwesomeTable component features some events to create some interaction.
 

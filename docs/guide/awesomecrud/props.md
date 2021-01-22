@@ -2,7 +2,7 @@
 pageClass: fullwidth-page
 ---
 
- ## Properties
+# Props
 
 
 <ClientOnly>

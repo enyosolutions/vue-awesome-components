@@ -91,7 +91,7 @@ export default {
   props: {},
   mounted() {
     import('../../../src/components/crud/AwesomeCrud.vue').then((awCrud) => {
-      thiw.AwesomeCrud = awCrud;
+      this.AwesomeCrud = awCrud;
     });
   },
   data() {
