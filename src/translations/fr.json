@@ -7,7 +7,8 @@
       "successfullyModified": "Modifié avec succès.",
       "successfullyImported": "Importé avec succès",
       "no_data_imported": "Pas de données importées",
-      "not_imported": "Non importé"
+      "not_imported": "Non importé",
+      "all": "Tous"
     }
   },
   "AwesomeKanban": {

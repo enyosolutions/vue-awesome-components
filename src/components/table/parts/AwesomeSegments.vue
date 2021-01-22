@@ -7,7 +7,7 @@
           href="#"
           :class="!selectedSegment || selectedSegment === '' || selectedSegment === 'ALL' ? 'active' : ''"
           @click="onClickOnSegment('ALL')"
-          >{{ $t('AwSegment.all') }}</a
+          >{{ $t('AwesomeDefault.messages.all') }}</a
         >
       </li>
       <li class="nav-item" v-for="(segment, idx) in _segments" :key="idx">
@@ -147,12 +147,10 @@ export default {
     onClickOnSegment(segment) {
       this.selectedSegment = this.getSegmentKey(segment);
       this.$emit('aw-segment-changed', this.selectedSegment, segment);
-      this.$emit(
-        'change',
-        this.field.field || this.field.model,
-        this.getSegmentKey(segment),
-        this.getSegmentLabel(segment)
-      );
+      this.$emit('change', {
+        segmentField: this.field.field || this.field.model,
+        segmentValue: this.getSegmentKey(segment)
+      });
     }
   }
 };

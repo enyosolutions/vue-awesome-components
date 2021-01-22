@@ -90,6 +90,7 @@ export default {
       data: [],
       showSkeleton: false,
       routeQueryParams: {},
+      segmentQueryField: '',
       segmentValue: ''
     };
   },
@@ -107,6 +108,7 @@ export default {
       const translatedParams = {};
       const serverParams = _.merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
 
+      this.injectSegmentFilter(this.segmentQueryField, this.segmentValue)
       Object.keys(serverParams).forEach(field => {
         const newKey = this.apiRequestConfig[field + 'Field'] || field;
         translatedParams[newKey] = serverParams[field];
@@ -565,9 +567,8 @@ export default {
         .catch(this.apiErrorCallback);
     },
 
-    onSegmentChange(segmentField, segmentValue) {
-      this.segmentValue = segmentValue;
-      if (this.segmentValue === 'ALL') {
+    injectSegmentFilter(segmentField, segmentValue) {
+      if (segmentValue === 'ALL') {
         delete this.serverParams[segmentField];
         const filtersField = this.apiRequestConfig.filtersField;
         if (this.serverParams[filtersField] && this.serverParams[filtersField][segmentField]) {
@@ -583,18 +584,23 @@ export default {
           this.serverParams[segmentField] = this.segmentValue;
         }
         else {
-          if (!this.serverParams.filters[segmentField]) {
-            this.serverParams.filters[segmentField] = {};
+          if (!this.serverParams[this.apiRequestConfig.filtersField][segmentField]) {
+            this.serverParams[this.apiRequestConfig.filtersField][segmentField] = {};
           }
           if (this.apiRequestConfig.filtersOperator) {
 
-            this.serverParams.filters[segmentField][this.apiRequestConfig.filtersOperator] = this.segmentValue;
+            this.serverParams[this.apiRequestConfig.filtersField][segmentField][this.apiRequestConfig.filtersOperator] = this.segmentValue;
           }
           else {
-            this.serverParams.filters[segmentField] = this.segmentValue;
+            this.serverParams[this.apiRequestConfig.filtersField][segmentField] = this.segmentValue;
           }
         }
       }
+    },
+    onSegmentChange({ segmentField, segmentValue }) {
+      this.segmentValue = segmentValue;
+      this.segmentQueryField = segmentField;
+      this.injectSegmentFilter(segmentField, segmentValue);
       this.getItems({ useSkeleton: true, source: '[apiListMixin] segmentChanged' });
     }
   }
