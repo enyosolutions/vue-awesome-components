@@ -24,7 +24,7 @@
               v-for="(field, index) in fields"
               :key="index"
             >
-              {{ field }}
+              {{ field.label }}
             </a>
           </div>
         </div>
@@ -80,6 +80,7 @@
                 {{ value }}
               </span>
             </div>
+            <div v-else>{{ filter.value }}</div>
             <button type="button" @click.prevent="removeFilter(filter)">
               <i class="fa fa-times-circle"></i>
             </button>
