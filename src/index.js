@@ -14,7 +14,7 @@ import LiveEdit from './components/form/LiveEdit.vue';
 import EnyoCard from './components/card/EnyoCard.vue';
 import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 
-import AwesomeTable from './components/table/AwesomeTable.vue';
+import AwesomeTable from './components/table/AwesomeTable/AwesomeTable.vue';
 import AwesomeKanban from './components/table/AwesomeKanban.vue';
 
 import FormGenerator from './components/form/form-generator';

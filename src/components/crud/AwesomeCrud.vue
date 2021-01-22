@@ -97,26 +97,9 @@
         </div>
 
         <div
-          class="col-12"
+          class="col-12 awesomecrud-stats-section"
           v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 || mergedOptions.detailPageMode === 'page')"
         >
-          <!--
-            SEGMENTS
-          <ul class="nav nav-tabs nav-justified nav-fill">
-            <li class="nav-item bg-primary">
-              <a class="nav-link active " href="#">Active</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Longer nav link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-          </ul>
-          -->
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -125,99 +108,7 @@
             />
           </div>
         </div>
-        <div class="col-12" v-show="showItemsListSectionComputed">
-          <div class="text-right">
-            <slot name="top-right-buttons">
-              <template v-if="_customTopRightActions">
-                <AwesomeActionList
-                  :actions="_customTopRightActions"
-                  location="topright"
-                  @customAction="onCustomAction"
-                />
-              </template>
-              <button
-                v-if="
-                  canShowCreateButton &&
-                    !_isANestedDetailView &&
-                    (displayMode === 'table' ||
-                      (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
-                "
-                :disabled="!canShowCreateButton"
-                class="btn btn-primary btn-simple aw-button-add"
-                @click="goToCreatePage()"
-                type="button"
-              >
-                <i class="fa fa-plus" />
-                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
-              </button>
-            </slot>
-          </div>
-          <AwesomeList
-            v-if="
-              !_isANestedDetailView &&
-                (displayMode === 'list' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
-            "
-            :url="_url"
-            :perPage="10"
-            :identity="identity"
-            v-bind="listOptions"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :columns="listFieldsComputed"
-            :displayFields="listOptions.displayFields"
-            :imageField="listOptions.imageField"
-            :imageClasses="listOptions.imageClasses"
-            :imageStyles="listOptions.imageStyles"
-            :titleField="listOptions.titleField"
-            :subtitleField="listOptions.subtitleField"
-            :descriptionField="listOptions.descriptionField"
-            :api-query-params="mergedOptions.queryParams"
-            :api-query-headers="mergedOptions.headerParams"
-            :apiRequestConfig="apiRequestConfig"
-            :apiResponseConfig="apiResponseConfig"
-            :needs-refresh.sync="tableNeedsRefresh"
-            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :options="mergedOptions"
-            :actions="_actionsBeforeCalculation"
-            :mode="dataPaginationModeComputed"
-            :useRouterMode="useRouterMode"
-            :auto-refresh="mergedOptions.autoRefresh"
-            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
-            :export-url="mergedOptions.exportUrl"
-            :styles="{
-              listWrapperClasses: 'row',
-              itemWrapperClasses: 'col-3'
-            }"
-            @itemClicked="onListItemClicked"
-          >
-          </AwesomeList>
-          <AwesomeKanban
-            v-if="
-              !_isANestedDetailView &&
-                (displayMode === 'kanban' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
-            "
-            v-bind="_kanbanOptions"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :columns="kanbanFieldsComputed"
-            :fields="_kanbanOptions.fields"
-            :identity="identity"
-            :url="_url"
-            :api-query-params="mergedOptions.queryParams"
-            :api-query-headers="mergedOptions.headerParams"
-            :apiRequestConfig="apiRequestConfig"
-            :apiResponseConfig="apiResponseConfig"
-            :needs-refresh.sync="tableNeedsRefresh"
-            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :useRouterMode="useRouterMode"
-            :options="_kanbanOptions.options"
-            @customListAction="onCustomListAction"
-            @removeList="onRemoveList"
-            @listChanged="onListChanged"
-            @cardChanged="onCardChanged"
-            @cardClicked="onCardClicked"
-          >
-          </AwesomeKanban>
+        <div class="col-12 awesomecrud-list-table-section" v-show="showItemsListSectionComputed">
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
@@ -226,9 +117,6 @@
             "
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
-            :custom-inline-actions="_customInlineActions"
-            :custom-table-top-actions="_customTableTopActions"
-            :custom-bulk-actions="_customBulkActions"
             :api-query-headers="mergedOptions.headerParams"
             :api-query-params="mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
@@ -238,6 +126,9 @@
             :collapsible="false"
             :columns-displayed="mergedOptions.columnsDisplayed"
             :columns="tableColumnsComputed"
+            :custom-bulk-actions="_customBulkActions"
+            :custom-inline-actions="_customInlineActions"
+            :custom-table-top-actions="_customTableTopActions"
             :entity="identity"
             :export-url="mergedOptions.exportUrl"
             :limit="tableDataLimit"
@@ -247,6 +138,8 @@
             :options="mergedOptions"
             :saveColumnsState="saveColumnsState"
             :savePaginationState="savePaginationState"
+            :segment="segment"
+            :segmentField="segmentField"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
             :url="_url"
             :useRouterMode="useRouterMode"
@@ -266,6 +159,34 @@
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
+            <template slot="table-header-right">
+              <div class="text-right">
+                <slot name="top-right-buttons">
+                  <template v-if="_customTopRightActions">
+                    <AwesomeActionList
+                      :actions="_customTopRightActions"
+                      location="topright"
+                      @customAction="onCustomAction"
+                    />
+                  </template>
+                  <button
+                    v-if="
+                      canShowCreateButton &&
+                        !_isANestedDetailView &&
+                        (displayMode === 'table' ||
+                          (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
+                    "
+                    :disabled="!canShowCreateButton"
+                    class="btn btn-primary btn-simple aw-button-add"
+                    @click.prevent="goToCreatePage()"
+                    type="button"
+                  >
+                    <i class="fa fa-plus" />
+                    {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                  </button>
+                </slot>
+              </div>
+            </template>
             <template slot="table-top-more-actions">
               <upload-button
                 v-if="_actions.import"
@@ -303,6 +224,76 @@
 
             <!-- END OF ARRAY -->
           </AwesomeTable>
+          <AwesomeList
+            v-if="
+              !_isANestedDetailView &&
+                (displayMode === 'list' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+            "
+            :actions="_actionsBeforeCalculation"
+            :api-query-headers="mergedOptions.headerParams"
+            :api-query-params="mergedOptions.queryParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :auto-refresh-interval="mergedOptions.autoRefreshInterval"
+            :auto-refresh="mergedOptions.autoRefresh"
+            :columns="listFieldsComputed"
+            :descriptionField="listOptions.descriptionField"
+            :displayFields="listOptions.displayFields"
+            :export-url="mergedOptions.exportUrl"
+            :identity="identity"
+            :imageClasses="listOptions.imageClasses"
+            :imageField="listOptions.imageField"
+            :imageStyles="listOptions.imageStyles"
+            :mode="dataPaginationModeComputed"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :options="mergedOptions"
+            :perPage="10"
+            :segment="segment"
+            :segmentField="segmentField"
+            :styles="{
+              listWrapperClasses: 'row',
+              itemWrapperClasses: 'col-3'
+            }"
+            :subtitleField="listOptions.subtitleField"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :titleField="listOptions.titleField"
+            :url="_url"
+            :useRouterMode="useRouterMode"
+            v-bind="listOptions"
+            @itemClicked="onListItemClicked"
+          >
+          </AwesomeList>
+          <AwesomeKanban
+            v-if="
+              !_isANestedDetailView &&
+                (displayMode === 'kanban' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+            "
+            v-bind="_kanbanOptions"
+            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :columns="kanbanFieldsComputed"
+            :fields="_kanbanOptions.fields"
+            :identity="identity"
+            :url="_url"
+            :api-query-params="mergedOptions.queryParams"
+            :api-query-headers="mergedOptions.headerParams"
+            :apiRequestConfig="apiRequestConfig"
+            :apiResponseConfig="apiResponseConfig"
+            :needs-refresh.sync="tableNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :useRouterMode="useRouterMode"
+            :options="_kanbanOptions.options"
+            :segment="segment"
+            :segmentField="segmentField"
+            @customListAction="onCustomListAction"
+            @removeList="onRemoveList"
+            @listChanged="onListChanged"
+            @cardChanged="onCardChanged"
+            @cardClicked="onCardClicked"
+          >
+          </AwesomeKanban>
         </div>
       </div>
     </div>
@@ -322,7 +313,7 @@ import uuidMixin from '../../mixins/uuidMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import AwesomeTable from '../table/AwesomeTable.vue';
+import AwesomeTable from '../table/AwesomeTable/AwesomeTable.vue';
 import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
@@ -649,6 +640,16 @@ export default {
       default: 1000,
       description:
         'Define the number of items to get from the api for the table. This prevents overloading the table with too much data'
+    },
+    segmentField: {
+      type: String,
+      title: 'The field to use for segmenting the lists',
+      description: 'This field is used for segmenting the top section'
+    },
+    segment: {
+      type: [Object, String],
+      title: 'The field to use for segmenting the lists',
+      description: 'This field is used for segmenting the top section'
     }
   },
   data() {
@@ -953,6 +954,23 @@ export default {
 
     dataPaginationModeComputed() {
       return this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
+    },
+
+    segmentFieldDefinitionComputed() {
+      let field;
+      if (this.formSchema && this.formSchema.fields) {
+        field = this.formSchema.fields.find((f) => f.model === this.segmentField);
+        if (field) {
+          return field;
+        }
+      }
+      if (this.tableColumnsComputed) {
+        field = this.tableColumnsComputed.find((f) => f.field === this.segmentField);
+        if (field) {
+          return field;
+        }
+      }
+      return '';
     }
   },
   watch: {
@@ -1719,7 +1737,9 @@ export default {
           }
         }
       }
-    }
+    },
+
+    onSegmentChange() {}
   },
   beforeDestroy() {
     this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
@@ -1727,66 +1747,68 @@ export default {
 };
 </script>
 <style lang="scss">
-.vdatetime.form-group {
-  margin-bottom: 0;
-  width: 100%;
-}
-
-.field-EnyoSelect div {
-  width: 100%;
-}
-
-.glyphicon.glyphicon-calendar {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.glyphicon-calendar:before {
-  content: '\f073';
-}
-
-.view-mode {
-  input,
-  textarea,
-  .multiselect__tags,
-  .field-wrap {
-    // border: none !important;
-    background: transparent !important;
-    font-size: 110% !important;
-    color: #78849e !important;
+.aw-crud {
+  .vdatetime.form-group {
+    margin-bottom: 0;
+    width: 100%;
   }
 
-  .subgroup {
-    legend {
-      padding-right: 15px;
-      font-size: 80%;
+  .field-EnyoSelect div {
+    width: 100%;
+  }
+
+  .glyphicon.glyphicon-calendar {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .glyphicon-calendar:before {
+    content: '\f073';
+  }
+
+  .view-mode {
+    input,
+    textarea,
+    .multiselect__tags,
+    .field-wrap {
+      // border: none !important;
+      background: transparent !important;
+      font-size: 110% !important;
+      color: #78849e !important;
+    }
+
+    .subgroup {
+      legend {
+        padding-right: 15px;
+        font-size: 80%;
+      }
     }
   }
-}
 
-.input-group {
-  z-index: inherit !important;
-}
+  .input-group {
+    z-index: inherit !important;
+  }
 
-.multiselect__content-wrapper {
-  z-index: 16 !important;
-}
+  .multiselect__content-wrapper {
+    z-index: 16 !important;
+  }
 
-.multiselect__select:before {
-  z-index: 15;
-  position: absolute;
-  top: 15px !important;
-  right: 12px;
-}
+  .multiselect__select:before {
+    z-index: 15;
+    position: absolute;
+    top: 15px !important;
+    right: 12px;
+  }
 
-.nested-tab {
-  .container-fluid {
-    padding-left: 0;
-    padding-right: 0;
+  .nested-tab {
+    .container-fluid {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
 </style>

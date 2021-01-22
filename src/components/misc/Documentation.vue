@@ -11,11 +11,7 @@
         <li class="list-group-item dark">
           Components
         </li>
-        <li
-          v-for="(component, index) in components"
-          :key="index"
-          class="list-group-item"
-        >
+        <li v-for="(component, index) in components" :key="index" class="list-group-item">
           <a :href="'#' + component.name">{{ component.name }}</a>
         </li>
       </ul>
@@ -35,7 +31,7 @@
 <script>
 import TableAndChartsCard from '@/components/card/TableAndChartsCard.vue';
 
-import AwesomeTable from '@/components/table/AwesomeTable.vue';
+import AwesomeTable from '@/components/table/AwesomeTable/AwesomeTable.vue';
 import LiveEdit from '@/components/form/LiveEdit.vue';
 
 import EnyoCard from '@/components/card/EnyoCard.vue';
@@ -48,24 +44,17 @@ import PropDoc from '@/components/misc/PropDoc.vue';
 export default {
   components: {
     PropDoc,
-    EnyoCard,
+    EnyoCard
   },
   props: {
-    title: String,
+    title: String
   },
   data() {
     return {
-      components: [
-        AwesomeCrud,
-        AwesomeTable,
-        TableAndChartsCard,
-        EnyoChartCard,
-        EnyoStatsCard,
-        LiveEdit,
-      ],
+      components: [AwesomeCrud, AwesomeTable, TableAndChartsCard, EnyoChartCard, EnyoStatsCard, LiveEdit]
       // components: [AwesomeCrud, AwesomeTable, Card, Stats, ChartCard, StatsCard, TableAndChartsCard,]
     };
-  },
+  }
 };
 </script>
 <style lang="scss">

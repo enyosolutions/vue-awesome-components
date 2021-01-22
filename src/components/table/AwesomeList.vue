@@ -1,4 +1,15 @@
 <template>
+  <div class="aw-list">
+    <div class="float-left col-6 pl-0">
+      <slot name="table-header-left">
+        <div class="card aw-segment-table-wrapper" v-if="segment">
+          <awesome-segments :field="segment" @change="onSegmentChange" />
+        </div>
+      </slot>
+    </div>
+    <div class="float-right text-right col-6 pr-0">
+      <slot name="table-header-right"></slot>
+    </div>
   <div class="aw-list-card aw-list-component awesome-list">
     <div
         :class="
@@ -122,14 +133,15 @@
       <div class="card-body">
         <div class="row">
           <div class="col-sm-6">
+
+          </div>
+          <div class="col-sm-6">
             <awesome-filter
                 display-filters
                 :fields="columns"
                 @update-filter="advancedFiltering"
                 :advanced-filters="advancedFilters"
             />
-          </div>
-          <div class="col-sm-6">
             <input type="text" v-model="search" placeholder="Rechercher" class="form-control">
           </div>
         </div>
@@ -220,6 +232,7 @@
       ></paginate>
     </nav>
   </div>
+  </div>
 </template>
 <script>
 
@@ -233,7 +246,7 @@ import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
-
+import AwesomeSegments from './parts/AwesomeSegments.vue';
 
 export default {
   name: 'AwesomeList',
@@ -243,6 +256,7 @@ export default {
   components: {
     Paginate, AwesomeDisplay, AwesomeFilter,
     popper: Popper,
+    AwesomeSegments,
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin],
   props: {

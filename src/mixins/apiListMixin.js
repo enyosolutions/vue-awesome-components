@@ -15,33 +15,7 @@ export default {
     rows: { type: Array, default: () => [] },
     primaryKey: { type: String, default: 'id', description: 'Which field to use a primary key. By default it\'s `id` but it can be `_id`  or anything that you want' },
     url: { type: String, default: '' },
-    apiRequestConfig: {
-      type: Object,
-      note: 'This object define the configuration for talking to the api : filters, sort, pagination, etc',
-      default: () => ({
-        dataPath: '',
-        perPageField: 'perPage',
-        pageField: 'page',
-        filtersField: 'filters',
-        sortField: 'sort',
-        searchField: 'search'
-      })
-    },
-    apiResponseConfig: {
-      type: Object,
-      note: 'This object define the configuration for processing data coming from the api : count, data path',
-      default: () => ({
-        dataPath: 'data.body',
-        totalCountPath: 'data.totalCount'
-      })
-    },
-    apiQueryParams: {
-      type: Object,
-      default: () => ({}),
-      note:
-        'A params object containing parameters that will be passed as query params to the api request.\n It\'s up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back.'
-    },
-    apiRequestHeaders: { type: Object, default: () => ({}) },
+
     useRouterMode: {
       type: Boolean,
       default: false,
@@ -86,6 +60,16 @@ export default {
     },
     savePaginationState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation page, perPage' },
     saveColumnsState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (columns, sort etc' },
+    segmentField: {
+      type: String,
+      title: 'The field to use for segmenting the lists',
+      description: 'This field is used for segmenting the top section'
+    },
+    segment: {
+      type: [Object, String],
+      title: 'The field to use for segmenting the lists',
+      description: 'This field is used for segmenting the top section'
+    }
   },
   data() {
     return {
@@ -105,7 +89,8 @@ export default {
       parsedAdvancedFilters: {},
       data: [],
       showSkeleton: false,
-      routeQueryParams: {}
+      routeQueryParams: {},
+      segmentValue: ''
     };
   },
   computed: {
@@ -121,6 +106,7 @@ export default {
     _translatedServerParams() {
       const translatedParams = {};
       const serverParams = _.merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
+
       Object.keys(serverParams).forEach(field => {
         const newKey = this.apiRequestConfig[field + 'Field'] || field;
         translatedParams[newKey] = serverParams[field];
@@ -156,6 +142,18 @@ export default {
         || (this.options && this.options.actions)
       );
     },
+
+    segmentFieldDefinitionComputed() {
+      let field;
+      if (this.columns) {
+        field = this.columns.find((f) => f.field === this.segmentField);
+        if (field) {
+          return field;
+        }
+      }
+      return '';
+    },
+
   },
 
   watch: {
@@ -245,7 +243,7 @@ export default {
       }
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line
-        console.info("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
+        console.debug("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
       this.$awEmit('before-api-refresh', { component: 'aw-table', url: this.url })
@@ -565,6 +563,39 @@ export default {
           }
         })
         .catch(this.apiErrorCallback);
+    },
+
+    onSegmentChange(segmentField, segmentValue) {
+      this.segmentValue = segmentValue;
+      if (this.segmentValue === 'ALL') {
+        delete this.serverParams[segmentField];
+        const filtersField = this.apiRequestConfig.filtersField;
+        if (this.serverParams[filtersField] && this.serverParams[filtersField][segmentField]) {
+          delete this.serverParams[filtersField][segmentField];
+        }
+        this.segmentValue = '';
+      }
+      else {
+        if (!this.serverParams.filters) {
+          this.serverParams.filters = {};
+        }
+        if (!this.apiRequestConfig.filtersField) {
+          this.serverParams[segmentField] = this.segmentValue;
+        }
+        else {
+          if (!this.serverParams.filters[segmentField]) {
+            this.serverParams.filters[segmentField] = {};
+          }
+          if (this.apiRequestConfig.filtersOperator) {
+
+            this.serverParams.filters[segmentField][this.apiRequestConfig.filtersOperator] = this.segmentValue;
+          }
+          else {
+            this.serverParams.filters[segmentField] = this.segmentValue;
+          }
+        }
+      }
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] segmentChanged' });
     }
   }
 };

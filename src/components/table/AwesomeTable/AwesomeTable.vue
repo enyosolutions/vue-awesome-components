@@ -1,371 +1,391 @@
 <template>
-  <div class="card aw-table-card aw-table">
-    <div
-      class="card-header"
-      :class="
-        'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')
-      "
-    >
-      <div v-if="isRefreshing" style="text-align: center;">
-        <div
-          class="progress"
-          style="height: 5px; border-radius: 0px; position: absolute; top: 0; left: 0; width: 100%;"
-        >
+  <div class="aw-table">
+    <div class="float-left col-6 pl-0">
+      <slot name="table-header-left">
+        <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
+          <awesome-segments :field="segmentFieldDefinitionComputed" @change="onSegmentChange" />
+        </div>
+      </slot>
+    </div>
+    <div class="float-right text-right col-6 pr-0">
+      <slot name="table-header-right"></slot>
+    </div>
+    <div class="card aw-table-card aw-table">
+      <div
+        class="card-header"
+        :class="
+          'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')
+        "
+      >
+        <div v-if="isRefreshing" style="text-align: center;">
           <div
-            class="progress-bar progress-bar-striped progress-bar-animated"
-            role="progressbar"
-            aria-valuenow="100"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            style="width: 5%;"
-          ></div>
-        </div>
-      </div>
-      <h3 class="card-title aw-table-header text-left">
-        <slot name="table-title">
-          {{ _tableTitle }}
-        </slot>
-
-        <div v-if="_actions && _actions.refresh" :class="'automatic-refresh-button ' + (autoRefresh ? ' active' : '')">
-          <button
-            v-if="_actions && _actions.refresh"
-            type="button"
-            class="btn btn-simple btn-alt-style btn-sm p-2"
-            @click.prevent="getItems({ useSkeleton: true })"
+            class="progress"
+            style="height: 5px; border-radius: 0px; position: absolute; top: 0; left: 0; width: 100%;"
           >
-            <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-          </button>
-          <span class="refresh-text">{{ $t('AwesomeTable.automatique-refresh') }}</span>
-          <label class="switch">
-            <input type="checkbox" v-model="autoRefreshInterface" />
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="btn-group btn-group-sm float-right mt-0">
-          <slot name="table-top-actions" />
-          <div v-if="canHideColumns" class="dropdown">
-            <button
-              id="dropdownMenuButton"
-              class="btn btn-default btn-simple dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              {{ $t('AwesomeTable.columns') }}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 100vh; overflow: auto;">
-              <button
-                v-for="(col, index) in formattedColumns"
-                :key="index"
-                type="button"
-                class="dropdown-item"
-                href="#"
-                :class="{
-                  'text-light bg-primary': columnsState[col.field],
-                  'd-none': col.field === '__ACTIONS'
-                }"
-                @click="toggleColumn(col.field)"
-              >
-                {{ col.label }}
-              </button>
-            </div>
+            <div
+              class="progress-bar progress-bar-striped progress-bar-animated"
+              role="progressbar"
+              aria-valuenow="100"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              style="width: 5%;"
+            ></div>
           </div>
-          <popper
-            trigger="clickToOpen"
-            :options="{
-              placement: 'bottom',
-              modifiers: { offset: { offset: '0,10px' } }
-            }"
-            ref="filterPopover"
-            v-if="_actions.filter && _actions.advancedFiltering"
+        </div>
+        <h3 class="card-title aw-table-header text-left">
+          <slot name="table-title">
+            {{ _tableTitle }}
+          </slot>
+
+          <div
+            v-if="_actions && _actions.refresh"
+            :class="'automatic-refresh-button ' + (autoRefresh ? ' active' : '')"
           >
             <button
-              slot="reference"
+              v-if="_actions && _actions.refresh"
               type="button"
-              class="btn btn-simple dropdown-toggle"
-              :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-              aria-haspopup="true"
-              aria-expanded="false"
-              id="advancedFilterButton"
-              @click="toggleAdvancedFilters"
+              class="btn btn-simple btn-alt-style btn-sm p-2"
+              @click.prevent="getItems({ useSkeleton: true })"
             >
-              <i class="fa fa-filter" />
-              {{ $t('AwesomeTable.buttons.filters') }}
-              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
             </button>
-
-            <div class="popper card mt-0" style="z-index: 1;">
-              <awesome-filter
-                class="card-body"
-                edit-filters
-                id="advancedFilterComponentDisplay"
-                :fields="columns"
-                @update-filter="advancedFiltering"
-                :advanced-filters="advancedFilters"
-              />
-            </div>
-          </popper>
-
-          <div class="dropdown">
-            <button
-              v-if="
-                _actions && (_actions.export || _actions.import || _actions.columnsFilters || _actions.dropdownActions)
-              "
-              id="dropdownMenuButton"
-              class="btn dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i class="fa fa-plus" />
-              {{ $t('AwesomeTable.more') }}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <slot name="table-top-more-actions" />
+            <span class="refresh-text">{{ $t('AwesomeTable.automatique-refresh') }}</span>
+            <label class="switch">
+              <input type="checkbox" v-model="autoRefreshInterface" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="btn-group btn-group-sm float-right mt-0">
+            <slot name="table-top-actions" />
+            <div v-if="canHideColumns" class="dropdown">
               <button
-                v-if="_actions.columnsFilters"
+                id="dropdownMenuButton"
+                class="btn btn-default btn-simple dropdown-toggle"
                 type="button"
-                class="btn btn-simple"
-                :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
-                @click="toggleFilter()"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                {{ $t('AwesomeTable.columns') }}
+              </button>
+              <div
+                class="dropdown-menu"
+                aria-labelledby="dropdownMenuButton"
+                style="max-height: 100vh; overflow: auto;"
+              >
+                <button
+                  v-for="(col, index) in formattedColumns"
+                  :key="index"
+                  type="button"
+                  class="dropdown-item"
+                  href="#"
+                  :class="{
+                    'text-light bg-primary': columnsState[col.field],
+                    'd-none': col.field === '__ACTIONS'
+                  }"
+                  @click="toggleColumn(col.field)"
+                >
+                  {{ col.label }}
+                </button>
+              </div>
+            </div>
+            <popper
+              trigger="clickToOpen"
+              :options="{
+                placement: 'bottom',
+                modifiers: { offset: { offset: '0,10px' } }
+              }"
+              ref="filterPopover"
+              v-if="_actions.filter && _actions.advancedFiltering"
+            >
+              <button
+                slot="reference"
+                type="button"
+                class="btn btn-simple dropdown-toggle"
+                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
+                aria-haspopup="true"
+                aria-expanded="false"
+                id="advancedFilterButton"
+                @click="toggleAdvancedFilters"
               >
                 <i class="fa fa-filter" />
-                {{
-                  !columnsFilterState
-                    ? $t('AwesomeTable.buttons.columnsFilters.activate')
-                    : $t('AwesomeTable.buttons.columnsFilters.deactivate')
-                }}
-              </button>
-              <button
-                v-if="_actions && _actions.export"
-                type="button"
-                class="btn btn-simple text-success btn-main-style btn-block"
-                @click="exportCallBack"
-              >
-                <i class="fa fa-file-excel" />
-                {{ $t('AwesomeTable.buttons.excel') }}
+                {{ $t('AwesomeTable.buttons.filters') }}
+                {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
               </button>
 
+              <div class="popper card mt-0" style="z-index: 1;">
+                <awesome-filter
+                  class="card-body"
+                  edit-filters
+                  id="advancedFilterComponentDisplay"
+                  :fields="columns"
+                  @update-filter="advancedFiltering"
+                  :advanced-filters="advancedFilters"
+                />
+              </div>
+            </popper>
+
+            <div class="dropdown">
               <button
-                v-if="_actions && _actions.export"
+                v-if="
+                  _actions &&
+                    (_actions.export || _actions.import || _actions.columnsFilters || _actions.dropdownActions)
+                "
+                id="dropdownMenuButton"
+                class="btn dropdown-toggle"
                 type="button"
-                class="btn btn-simple text-success btn-main-style btn-block"
-                @click="exportCurrentArrayToExcel"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
               >
-                <i class="fa fa-file-excel" />
-                {{ $t('AwesomeTable.buttons.excel-currentpage') }}
+                <i class="fa fa-plus" />
+                {{ $t('AwesomeTable.more') }}
               </button>
-              <button
-                v-if="isSaveStateEnabledCpt"
-                type="button"
-                class="btn btn-simple text-info btn-main-style btn-block"
-                @click="clearComponentState"
-              >
-                <i class="fa fa-trash" />
-                {{ $t('AwesomeTable.buttons.clear-state') }}
-              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <slot name="table-top-more-actions" />
+                <button
+                  v-if="_actions.columnsFilters"
+                  type="button"
+                  class="btn btn-simple"
+                  :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
+                  @click="toggleFilter()"
+                >
+                  <i class="fa fa-filter" />
+                  {{
+                    !columnsFilterState
+                      ? $t('AwesomeTable.buttons.columnsFilters.activate')
+                      : $t('AwesomeTable.buttons.columnsFilters.deactivate')
+                  }}
+                </button>
+                <button
+                  v-if="_actions && _actions.export"
+                  type="button"
+                  class="btn btn-simple text-success btn-main-style btn-block"
+                  @click="exportCallBack"
+                >
+                  <i class="fa fa-file-excel" />
+                  {{ $t('AwesomeTable.buttons.excel') }}
+                </button>
+
+                <button
+                  v-if="_actions && _actions.export"
+                  type="button"
+                  class="btn btn-simple text-success btn-main-style btn-block"
+                  @click="exportCurrentArrayToExcel"
+                >
+                  <i class="fa fa-file-excel" />
+                  {{ $t('AwesomeTable.buttons.excel-currentpage') }}
+                </button>
+                <button
+                  v-if="isSaveStateEnabledCpt"
+                  type="button"
+                  class="btn btn-simple text-info btn-main-style btn-block"
+                  @click="clearComponentState"
+                >
+                  <i class="fa fa-trash" />
+                  {{ $t('AwesomeTable.buttons.clear-state') }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </h3>
-      <p class="card-category">
-        <slot name="table-subtitle" />
-      </p>
-      <button
-        v-if="collapsible"
-        class="btn btn-i"
-        data-toggle="collapse"
-        :data-target="'#awTable-' + this._uid || this.uuid"
-        style="position: absolute; top: 0; right: 0; padding: 0;"
-      >
-        <i class="fa fa-minus"></i>
-      </button>
-    </div>
-    <div
-      class="card-body aw-table-card-body collapse show"
-      :class="collapsible ? 'collapse show' : ''"
-      :id="'awTable-' + this._uid || this.uuid"
-    >
-      <awesome-filter
-        display-filters
-        id="advancedFilterComponent"
-        v-if="_actions.filter && _actions.advancedFiltering"
-        :fields="columns"
-        @update-filter="advancedFiltering"
-        :advanced-filters="advancedFilters"
-      />
-      <div class="table-responsive">
-        <vue-good-table
-          :ref="'table-' + entity"
-          :mode="mode"
-          :total-rows="totalCount"
-          style-class="vgt-table table striped"
-          :columns="displayedColumns"
-          :fixed-header="optionsComputed && optionsComputed.fixedHeader"
-          :max-height="optionsComputed.maxHeight"
-          :rows="data || []"
-          :filter-options="{
-            enabled: _actions.filter
-          }"
-          :sort-options="{
-            initialSortBy: initialSortBy
-          }"
-          :search-options="{
-            enabled: _actions.search,
-            placeholder: this.$t('AwesomeTable.searchInput')
-          }"
-          :pagination-options="{
-            enabled: optionsComputed && optionsComputed.pagination,
-            nextLabel: this.$t('AwesomeTable.next'),
-            prevLabel: this.$t('AwesomeTable.prev'),
-            rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
-            ofLabel: this.$t('AwesomeTable.of'),
-            pageLabel: this.$t('AwesomeTable.page'),
-            allLabel: this.$t('AwesomeTable.all'),
-            perPage: perPageComputed,
-            setCurrentPage: parseInt(serverParams.page) || undefined
-          }"
-          :select-options="{
-            enabled: true,
-            selectOnCheckboxOnly: true,
-            selectionInfoClass: 'awesome-table-selection',
-            selectionText: this.$t('AwesomeTable.bulk.row-select'),
-            clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
-            disableSelectInfo: false,
-            selectAllByGroup: true
-          }"
-          @on-page-change="onPageChange"
-          @on-sort-change="onSortChange"
-          @on-column-filter="onColumnFilter"
-          @on-per-page-change="onPerPageChange"
-          @on-search="onSearch"
-          @on-cell-click="clickOnLine"
-          @on-selected-rows-change="onSelectionChanged"
+        </h3>
+        <p class="card-category">
+          <slot name="table-subtitle" />
+        </p>
+        <button
+          v-if="collapsible"
+          class="btn btn-i"
+          data-toggle="collapse"
+          :data-target="'#awTable-' + this._uid || this.uuid"
+          style="position: absolute; top: 0; right: 0; padding: 0;"
         >
-          <div slot="selected-row-actions">
-            <template v-if="customBulkActions">
-              <AwesomeActionList
-                :actions="customBulkActions"
-                :items="selectedRows"
-                :columns="columns"
-                :parent="parent"
-                location="bulk"
-                @customAction="$emit('customAction', $event)"
-              />
-            </template>
-            <button
-              v-if="_actions.bulkDelete && _actions.delete"
-              class="btn btn-primary btn-simple"
-              @click="$emit('bulkDelete', selectedRows)"
-              type="button"
-            >
-              <i class="fa fa-trash" />
-              {{ $t('AwesomeTable.bulk.delete') }}
-            </button>
-            <button
-              v-if="_actions.bulkEdit && _actions.edit"
-              class="btn btn-primary btn-simple"
-              @click="$emit('bulkEdit', selectedRows)"
-              type="button"
-            >
-              <i class="fa fa-pencil"></i>
-              {{ $t('AwesomeTable.bulk.edit') }}
-            </button>
-          </div>
-          <div slot="table-actions">
-            <date-range-picker
-              v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
-              class="form-group vgt-date-range"
-              :placeholder="$t('AwesomeTable.daterange.start')"
-              :start-date="defaultStartDate"
-              :end-date="defaultEndDate"
-              :locale-data="datePicker.locale"
-              :opens="'left'"
-              @update="onDateFilter"
-            />
-            <template v-if="customTableTopActions">
-              <AwesomeActionList
-                :actions="customTableTopActions"
-                :columns="columns"
-                location="tabletop"
-                @customAction="$emit('customAction', $event)"
-                @permanent-filtering="permanentFiltering"
-              />
-            </template>
-          </div>
-          <template slot="table-row" slot-scope="props">
-            <Skeleton v-if="showSkeleton" :count="1" :loading="true"></Skeleton>
-            <template v-else>
-              <awesome-display
-                v-if="props.column.field !== '__ACTIONS'"
-                v-bind="props.column"
-                :apiResponseConfig="apiResponseConfig"
-                :apiRequestHeaders="apiRequestHeaders"
-                :value="props.formattedRow[props.column.field]"
-                :display-label-cache="displayLabelCache"
-                class="pointer text-avoid-overflow"
+          <i class="fa fa-minus"></i>
+        </button>
+      </div>
+      <div
+        class="card-body aw-table-card-body collapse show"
+        :class="collapsible ? 'collapse show' : ''"
+        :id="'awTable-' + this._uid || this.uuid"
+      >
+        <awesome-filter
+          display-filters
+          id="advancedFilterComponent"
+          v-if="_actions.filter && _actions.advancedFiltering"
+          :fields="columns"
+          @update-filter="advancedFiltering"
+          :advanced-filters="advancedFilters"
+        />
+        <div class="table-responsive">
+          <vue-good-table
+            :ref="'table-' + entity"
+            :mode="mode"
+            :total-rows="totalCount"
+            style-class="vgt-table table striped"
+            :columns="displayedColumns"
+            :fixed-header="optionsComputed && optionsComputed.fixedHeader"
+            :max-height="optionsComputed.maxHeight"
+            :rows="data || []"
+            :filter-options="{
+              enabled: _actions.filter
+            }"
+            :sort-options="{
+              initialSortBy: initialSortBy
+            }"
+            :search-options="{
+              enabled: _actions.search,
+              placeholder: this.$t('AwesomeTable.searchInput')
+            }"
+            :pagination-options="{
+              enabled: optionsComputed && optionsComputed.pagination,
+              nextLabel: this.$t('AwesomeTable.next'),
+              prevLabel: this.$t('AwesomeTable.prev'),
+              rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
+              ofLabel: this.$t('AwesomeTable.of'),
+              pageLabel: this.$t('AwesomeTable.page'),
+              allLabel: this.$t('AwesomeTable.all'),
+              perPage: perPageComputed,
+              setCurrentPage: parseInt(serverParams.page) || undefined
+            }"
+            :select-options="{
+              enabled: true,
+              selectOnCheckboxOnly: true,
+              selectionInfoClass: 'awesome-table-selection',
+              selectionText: this.$t('AwesomeTable.bulk.row-select'),
+              clearSelectionText: this.$t('AwesomeTable.bulk.clear'),
+              disableSelectInfo: false,
+              selectAllByGroup: true
+            }"
+            @on-page-change="onPageChange"
+            @on-sort-change="onSortChange"
+            @on-column-filter="onColumnFilter"
+            @on-per-page-change="onPerPageChange"
+            @on-search="onSearch"
+            @on-cell-click="clickOnLine"
+            @on-selected-rows-change="onSelectionChanged"
+          >
+            <div slot="selected-row-actions">
+              <template v-if="customBulkActions">
+                <AwesomeActionList
+                  :actions="customBulkActions"
+                  :items="selectedRows"
+                  :columns="columns"
+                  :parent="parent"
+                  location="bulk"
+                  @customAction="$emit('customAction', $event)"
+                />
+              </template>
+              <button
+                v-if="_actions.bulkDelete && _actions.delete"
+                class="btn btn-primary btn-simple"
+                @click="$emit('bulkDelete', selectedRows)"
+                type="button"
               >
-              </awesome-display>
+                <i class="fa fa-trash" />
+                {{ $t('AwesomeTable.bulk.delete') }}
+              </button>
+              <button
+                v-if="_actions.bulkEdit && _actions.edit"
+                class="btn btn-primary btn-simple"
+                @click="$emit('bulkEdit', selectedRows)"
+                type="button"
+              >
+                <i class="fa fa-pencil"></i>
+                {{ $t('AwesomeTable.bulk.edit') }}
+              </button>
+            </div>
+            <div slot="table-actions">
+              <date-range-picker
+                v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
+                class="form-group vgt-date-range"
+                :placeholder="$t('AwesomeTable.daterange.start')"
+                :start-date="defaultStartDate"
+                :end-date="defaultEndDate"
+                :locale-data="datePicker.locale"
+                :opens="'left'"
+                @update="onDateFilter"
+              />
+              <template v-if="customTableTopActions">
+                <AwesomeActionList
+                  :actions="customTableTopActions"
+                  :columns="columns"
+                  location="tabletop"
+                  @customAction="$emit('customAction', $event)"
+                  @permanent-filtering="permanentFiltering"
+                />
+              </template>
+            </div>
+            <template slot="table-row" slot-scope="props">
+              <Skeleton v-if="showSkeleton" :count="1" :loading="true"></Skeleton>
+              <template v-else>
+                <awesome-display
+                  v-if="props.column.field !== '__ACTIONS'"
+                  v-bind="props.column"
+                  :apiResponseConfig="apiResponseConfig"
+                  :apiRequestHeaders="apiRequestHeaders"
+                  :value="props.formattedRow[props.column.field]"
+                  :display-label-cache="displayLabelCache"
+                  class="pointer text-avoid-overflow"
+                >
+                </awesome-display>
 
-              <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
-                <slot name="table-row-actions" :item="props.row">
-                  <template v-if="customInlineActions">
-                    <AwesomeActionList
-                      :actions="customInlineActions"
-                      :item="props.row"
-                      :parent="parent"
-                      location="inline"
-                      @customAction="$emit('customAction', $event)"
-                    />
-                  </template>
-                </slot>
-                <button
-                  v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
-                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                  @click="$emit('view', props.row)"
-                  type="button"
+                <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
+                  <slot name="table-row-actions" :item="props.row">
+                    <template v-if="customInlineActions">
+                      <AwesomeActionList
+                        :actions="customInlineActions"
+                        :item="props.row"
+                        :parent="parent"
+                        location="inline"
+                        @customAction="$emit('customAction', $event)"
+                      />
+                    </template>
+                  </slot>
+                  <button
+                    v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
+                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    @click="$emit('view', props.row)"
+                    type="button"
+                  >
+                    <i class="fa fa-eye text-info" />
+                  </button>
+                  <button
+                    v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
+                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    @click="$emit('edit', props.row)"
+                    type="button"
+                  >
+                    <i class="fa fa-pencil fa fa-pencil text-primary" />
+                  </button>
+                  <button
+                    v-if="templateParseConditionalField(_actionsBeforeCalculation.delete, { currentItem: props.row })"
+                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    @click="$emit('delete', props.row)"
+                    type="button"
+                  >
+                    <i class="fa fa-trash text-danger" />
+                  </button>
+                </span>
+                <span
+                  v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
+                  class="pointer"
+                  @click="clickOnLine(props)"
+                  >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
                 >
-                  <i class="fa fa-eye text-info" />
-                </button>
-                <button
-                  v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
-                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                  @click="$emit('edit', props.row)"
-                  type="button"
-                >
-                  <i class="fa fa-pencil fa fa-pencil text-primary" />
-                </button>
-                <button
-                  v-if="templateParseConditionalField(_actionsBeforeCalculation.delete, { currentItem: props.row })"
-                  class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
-                  @click="$emit('delete', props.row)"
-                  type="button"
-                >
-                  <i class="fa fa-trash text-danger" />
-                </button>
-              </span>
-              <span
-                v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
-                class="pointer"
-                @click="clickOnLine(props)"
-                >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
-              >
-              <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
-                getDataValue(props.formattedRow[props.column.field], props.column.listName)
-              }}</span>
+                <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
+                  getDataValue(props.formattedRow[props.column.field], props.column.listName)
+                }}</span>
+              </template>
             </template>
-          </template>
-          <div slot="emptystate">
-            <slot name="table-empty-state">
-              {{ $t('AwesomeTable.empty') }}
-              <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
-                Click here to create your first item
-              </a></slot
-            >
-          </div>
-        </vue-good-table>
+            <div slot="emptystate">
+              <slot name="table-empty-state">
+                {{ $t('AwesomeTable.empty') }}
+                <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
+                  Click here to create your first item
+                </a></slot
+              >
+            </div>
+          </vue-good-table>
+        </div>
       </div>
     </div>
   </div>
@@ -379,18 +399,19 @@ dayjs.extend(localeData);
 import Popper from 'vue-popperjs';
 import { Skeleton } from 'vue-loading-skeleton';
 
-import apiErrors from '../../mixins/apiErrorsMixin';
-import apiListMixin from '../../mixins/apiListMixin';
-import i18nMixin from '../../mixins/i18nMixin';
-import awEmitMixin from '../../mixins/awEmitMixin';
-import uuidMixin from '../../mixins/uuidMixin';
+import apiErrors from '../../../mixins/apiErrorsMixin';
+import apiListMixin from '../../../mixins/apiListMixin';
+import i18nMixin from '../../../mixins/i18nMixin';
+import awEmitMixin from '../../../mixins/awEmitMixin';
+import uuidMixin from '../../../mixins/uuidMixin';
 
-import { defaultActions } from '../../mixins/defaultProps';
+import { defaultActions } from '../../../mixins/defaultProps';
 
 import _ from 'lodash';
-import AwesomeDisplay from '../crud/display/AwesomeDisplay';
-import AwesomeFilter from '../misc/AwesomeFilter';
-import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
+import AwesomeDisplay from '../../crud/display/AwesomeDisplay';
+import AwesomeFilter from '../../misc/AwesomeFilter';
+import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList';
+import AwesomeSegments from '../parts/AwesomeSegments.vue';
 
 export default {
   name: 'AwesomeTable',
@@ -411,7 +432,8 @@ export default {
     AwesomeFilter,
     popper: Popper,
     Skeleton,
-    AwesomeActionList
+    AwesomeActionList,
+    AwesomeSegments
   },
   mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {
@@ -679,10 +701,25 @@ export default {
 
         if (col.enum) {
           filterDropdownItems = col.enum;
-          filterDropdownItems = filterDropdownItems.map((e) => ({
-            value: e,
-            text: _.startCase(e)
-          }));
+          filterDropdownItems = filterDropdownItems.map((e) => {
+            if (typeof e === 'string') {
+              if (e.includes('|')) {
+                const splitted = e.split('|');
+                return {
+                  value: splitted[0],
+                  text: splitted[1]
+                };
+              }
+              return { value: e, text: _.startCase(e) };
+            }
+            if (typeof e === 'object') {
+              return e;
+            }
+            return {
+              value: e,
+              text: _.startCase(e)
+            };
+          });
         }
 
         col.filterOptions = {
@@ -993,7 +1030,7 @@ export default {
 
     itemValue(item, column) {
       return item[column.toLowerCase()];
-    },
+    }
   }
 };
 </script>
@@ -1111,6 +1148,13 @@ export default {
 
 .aw-table-actions-field {
   white-space: nowrap;
+}
+
+.aw-segment-table-wrapper {
+  width: auto;
+  margin-top: inherit;
+  padding: 7px;
+  float: left;
 }
 
 .automatic-refresh-button {

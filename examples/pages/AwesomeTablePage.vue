@@ -25,20 +25,20 @@
           col1: 'qq',
           col2: 'some data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq2',
           col2: 'some moore data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
+          notDisplayedColumn: 'ghosted'
         },
         {
           col1: 'qq3',
           col2: 'a third data',
           col3: 'oopsie',
-          notDisplayedColumn: 'ghosted',
-        },
+          notDisplayedColumn: 'ghosted'
+        }
       ]"
       :options="{ actions: { noActions: true } }"
     />
@@ -74,7 +74,7 @@
         { type: 'url', field: 'url' },
         { type: 'boolean', field: 'myboolean' },
         { type: 'date', field: 'date' },
-        { type: 'datetime', field: 'dateTime' },
+        { type: 'datetime', field: 'dateTime' }
       ]"
       :rows="[
         {
@@ -86,7 +86,7 @@
           date: new Date(),
           dateTime: new Date(),
           checkbox: true,
-          html: '',
+          html: ''
         },
         {
           picture: 'https://picsum.photos/200?2',
@@ -96,7 +96,7 @@
           object: { foo: 'bar', john: 'doe', a: { b: 1 } },
           date: new Date(),
           dateTime: new Date(),
-          checkbox: false,
+          checkbox: false
         },
         {
           picture: 'https://picsum.photos/200?3',
@@ -105,8 +105,8 @@
           notDisplayedColumn: 'ghosted',
           object: { foo: 'bar', john: 'doe', a: { b: 1 } },
           date: new Date(),
-          dateTime: new Date(),
-        },
+          dateTime: new Date()
+        }
       ]"
       :options="{ actions: { noActions: true } }"
     />
@@ -136,7 +136,7 @@
         { type: 'image', field: 'picture' },
         { type: 'object', field: 'object' },
         { type: 'checkbox', field: 'checkbox' },
-        { type: 'html', field: 'html' },
+        { type: 'html', field: 'html' }
       ]"
       :rows="[
         {
@@ -148,7 +148,7 @@
           date: new Date(),
           dateTime: new Date(),
           checkbox: true,
-          html: '<b>bold</b> <hr/> <u>underlined</u>',
+          html: '<b>bold</b> <hr/> <u>underlined</u>'
         },
         {
           picture: 'https://picsum.photos/200?2',
@@ -160,13 +160,13 @@
             john: 'doe',
             a: { b: 1, foo: 'bar', john: 'doe' },
             b: { b: 1, foo: 'bar', john: 'doe' },
-            c: { b: 1, foo: 'bar', john: 'doe' },
+            c: { b: 1, foo: 'bar', john: 'doe' }
           },
           date: new Date(),
           dateTime: new Date(),
           checkbox: false,
-          html: `<iframe width='100%' height='315' src='https://www.youtube.com/embed/wZZ7oFKsKzY' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>`,
-        },
+          html: `<iframe width='100%' height='315' src='https://www.youtube.com/embed/wZZ7oFKsKzY' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>`
+        }
       ]"
       :options="{ actions: { noActions: true } }"
     />
@@ -208,7 +208,7 @@
           relationUrl: 'https://jsonplaceholder.typicode.com/users',
           relationKey: 'id',
           relationLabel: 'username',
-          onClickUrl: '/app/users',
+          onClickUrl: '/app/users'
         },
         { type: 'number', field: 'id' },
         { type: 'boolean', field: 'completed' },
@@ -219,24 +219,24 @@
           relationLabel: 'name',
           store: [
             { id: true, name: 'completed' },
-            { id: false, name: 'Not completed' },
-          ],
+            { id: false, name: 'Not completed' }
+          ]
         },
-        { type: 'string', field: 'title' },
+        { type: 'string', field: 'title' }
       ]"
       url="https://jsonplaceholder.typicode.com/todos"
       :apiResponseConfig="{ dataPath: '' }"
       :options="{
         fixedHeader: true,
         maxHeight: '50vh',
-        actions: { search: true, filter: true },
+        actions: { search: true, filter: true }
       }"
     />
   </div>
 </template>
 
 <script>
-import AwesomeTable from '../../src/components/table/AwesomeTable.vue';
+import AwesomeTable from '../../src/components/table/AwesomeTable/AwesomeTable.vue';
 import AwesomeDisplay from '../../src/components/crud/display/AwesomeDisplay.vue';
 import AutoProps from '../../src/components/misc/AutoProps.vue';
 
@@ -247,7 +247,7 @@ export default {
   mounted() {},
   data() {
     return { AwesomeDisplay };
-  },
+  }
 };
 </script>
 

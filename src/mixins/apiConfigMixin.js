@@ -18,6 +18,7 @@ export default {
         perPageField: 'perPage',
         pageField: 'page',
         filtersField: 'filters',
+        filtersOperator: '',
         sortField: 'sort',
         searchField: 'search'
       })

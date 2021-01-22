@@ -111,6 +111,18 @@
           >Conditionnal Actions</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="segments-tab"
+          data-toggle="tab"
+          href="#segments"
+          role="tab"
+          aria-controls="one-per-row"
+          aria-selected="false"
+          >Segments</a
+        >
+      </li>
     </ul>
     <hr />
     <div class="tab-content" id="myTabContent">
@@ -249,6 +261,7 @@
             initialDisplayMode: 'list'
           }"
           :listOptions="{ fields: { image: 'download_url', title: 'author', description: 'url' } }"
+          :segment="{ label: 'Age', field: 'age', enum: ['10|mineur', '18| Majeur', '21|Majeur aux USA'] }"
         />
       </div>
       <div class="tab-pane fade" id="kanban" role="tabpanel" aria-labelledby="kanban-tab">
@@ -354,6 +367,26 @@
             view: ({ currentItem }) => currentItem && currentItem.id % 2 == 0,
             itemButton: true
           }"
+        />
+      </div>
+
+      <div class="tab-pane fade" id="segments" role="tabpanel" aria-labelledby="photos-tab">
+        <h2>Segments</h2>
+        <AwesomeCrud
+          identity="ticket"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{
+            detailPageMode: 'fullscreen',
+            useCustomLayout: true
+          }"
+          :model="_ticketModel"
+          title="Tickets (Segments demo)"
+          url="http://localhost:3000/tickets"
+          :apiResponseConfig="{ dataPath: false, totalCountPath: 'headers.x-total-count' }"
+          v-bind="userProps"
+          @layout-updated="onLayoutUpdated"
+          :actions="{ create: true }"
+          segmentField="status"
         />
       </div>
     </div>
@@ -493,6 +526,7 @@ export default {
       this.editedLayout = JSON.parse(localStorage.getItem('onLayoutUpdated'));
     }
   },
+
   methods: {
     handleItemClick(item) {
       alert(JSON.stringify(item));

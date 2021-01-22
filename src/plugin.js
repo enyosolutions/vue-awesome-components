@@ -13,7 +13,7 @@ import AwesomeLayout from './components/crud/layout/AwesomeLayout.vue';
 import AwesomeForm from './components/crud/AwesomeForm.vue';
 import AwesomeKanban from './components/table/AwesomeKanban.vue';
 import AwesomeList from './components/table/AwesomeList.vue';
-import AwesomeTable from './components/table/AwesomeTable.vue';
+import AwesomeTable from './components/table/AwesomeTable/AwesomeTable.vue';
 
 import FormGenerator from './components/form/form-generator';
 
