@@ -119,13 +119,22 @@
       <p class="card-category">
         <slot name="list-subtitle"/>
       </p>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+            <awesome-filter
+                display-filters
+                :fields="columns"
+                @update-filter="advancedFiltering"
+                :advanced-filters="advancedFilters"
+            />
+          </div>
+          <div class="col-sm-6">
+            <input type="text" v-model="search" placeholder="Rechercher" class="form-control">
+          </div>
+        </div>
+      </div>
     </div>
-    <awesome-filter
-        display-filters
-        :fields="columns"
-        @update-filter="advancedFiltering"
-        :advanced-filters="advancedFilters"
-    />
     <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
       <div
           class="pointer d-flex"
@@ -315,6 +324,7 @@ export default {
       page: 0,
       data: [],
       advancedFilters: [],
+      search: '',
     };
   },
   computed: {
@@ -427,7 +437,10 @@ export default {
   },
   watch: {
     'perRow': 'resetItemsPerRow',
-    rows: 'refreshLocalData'
+    rows: 'refreshLocalData',
+    search(newVal) {
+      this.onSearch({ searchTerm: newVal });
+    }
   },
   created() {
   },
