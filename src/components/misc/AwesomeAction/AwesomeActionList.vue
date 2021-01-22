@@ -3,16 +3,17 @@
     <template v-for="(action, index) in actions">
       <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
         <AwesomeAction
-            v-bind="action"
-            :key="index"
-            :index="index"
-            :items="items"
-            :item="item"
-            :columns="columns"
-            :location="location"
-            :parent="parent"
-            @customAction="$emit('customAction', $event)"
-            @permanent-filtering="$emit('permanent-filtering', $event)"
+          v-bind="{ ...action, class: undefined }"
+          :classes="action.class || action.classes"
+          :key="index"
+          :index="index"
+          :items="items"
+          :item="item"
+          :columns="columns"
+          :location="location"
+          :parent="parent"
+          @customAction="$emit('customAction', $event)"
+          @permanent-filtering="$emit('permanent-filtering', $event)"
         />
       </template>
     </template>
@@ -42,7 +43,7 @@ export default {
     },
     columns: {
       type: Array,
-      note: 'In case of type: filter || input, the list of the model\'s columns'
+      note: "In case of type: filter || input, the list of the model's columns"
     },
     location: {
       type: String,
@@ -52,10 +53,8 @@ export default {
       type: Object,
       note: 'The parent of the current element (in case of nested)'
     }
-  },
-}
+  }
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

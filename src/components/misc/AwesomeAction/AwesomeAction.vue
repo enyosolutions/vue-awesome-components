@@ -3,23 +3,23 @@
     <!--  TYPE DROPDOWN  -->
     <div v-if="type === 'dropdown' && children.length" class="dropdown">
       <button
-          class="btn dropdown-toggle"
-          :class="classes"
-          type="button"
-          :id="`${name}-${index}`"
-          data-toggle="dropdown"
-          arias-haspopup="true"
-          aria-expanded="false"
+        class="btn dropdown-toggle"
+        :class="classes"
+        type="button"
+        :id="`${name}-${index}`"
+        data-toggle="dropdown"
+        arias-haspopup="true"
+        aria-expanded="false"
       >
         <i v-if="icon" :class="icon"></i>
         <span>{{ title ? $t(title) : '' }}</span>
       </button>
       <div class="dropdown-menu" :aria-labelledby="`${name}-${index}`">
         <a
-            v-for="(child, index) in children"
-            :key="child.id || index"
-            class="dropdown-item"
-            @click="
+          v-for="(child, index) in children"
+          :key="child.id || index"
+          class="dropdown-item"
+          @click="
             $emit('customAction', {
               action: $props,
               items,
@@ -28,7 +28,8 @@
               parent,
               id: `${name}-${index}`,
               child
-            })"
+            })
+          "
         >
           <span>{{ child.title ? $t(child.title) : '' }}</span>
         </a>
@@ -37,32 +38,33 @@
     <!--  TYPE FILTER  -->
     <div v-if="type === 'filter'">
       <AwesomeFilter
-          :key="index"
-          permanent-filter
-          :field="field"
-          :fields="columns"
-          @update-filter="permanentFiltering"
+        :key="index"
+        permanent-filter
+        :field="field"
+        :fields="columns"
+        @update-filter="permanentFiltering"
       />
     </div>
     <div v-if="type === 'input'">
       <AwesomeFilter
-          :key="index"
-          permanent-input
-          :field="field"
-          @update-filter="permanentFiltering"
+        :key="index"
+        permanent-input
+        :field="field"
+        :field-label="label || title"
+        @update-filter="permanentFiltering"
       />
     </div>
     <!--  TYPE BUTTON  -->
     <div v-if="!type || type === 'button'">
       <button
-          type="button"
-          :key="index"
-          class="btn"
-          :class="classes"
-          :id="`${name}-${index}`"
-          :data-title="title"
-          :data-tooltip="title"
-          @click="
+        type="button"
+        :key="index"
+        class="btn"
+        :class="classes"
+        :id="`${name}-${index}`"
+        :data-title="title"
+        :data-tooltip="title"
+        @click="
           $emit('customAction', {
             action: $props,
             items,
@@ -103,7 +105,11 @@ export default {
     },
     title: {
       type: String,
-      note: 'The text of the element'
+      note: 'The text of the element. Usually used as a tooltip'
+    },
+    label: {
+      type: String,
+      note: 'The label of the element'
     },
     classes: {
       type: String,
@@ -149,7 +155,7 @@ export default {
     },
     columns: {
       type: Array,
-      note: 'In case of type: filter || input, the list of the model\'s columns'
+      note: "In case of type: filter || input, the list of the model's columns"
     }
   },
   data: () => ({
@@ -169,12 +175,10 @@ export default {
   },
   mounted() {
     if ((this.type === 'filter' || this.type === 'input') && !this.field) {
-      console.warn('[AwesomeAction]', 'You forget to set `field` for this type:', this.type)
+      console.warn('[AwesomeAction]', 'You forget to set `field` for this type:', this.type);
     }
   }
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
