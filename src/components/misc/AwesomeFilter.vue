@@ -5,34 +5,30 @@
       <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column">
           <button
-              class="btn btn-primary btn-block dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
+            class="btn btn-primary btn-block dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
           >
             {{ Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields') }}
           </button>
           <div class="dropdown-menu" aria-labelledby="field">
             <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{
-                $t('AwesomeFilter.labels.fields')
-              }}</a>
+              $t('AwesomeFilter.labels.fields')
+            }}</a>
             <a
-                href=""
-                @click.prevent="currentField = field"
-                class="dropdown-item"
-                v-for="(field, index) in _filterableFields"
-                :key="index"
+              href=""
+              @click.prevent="currentField = field"
+              class="dropdown-item"
+              v-for="(field, index) in _filterableFields"
+              :key="index"
             >
-              {{ field.label }}
+              {{ field }}
             </a>
           </div>
         </div>
-        <awesome-filter-filter
-            :current-field="currentField"
-            :current-filter.sync="currentFilter"
-            in-popper
-        />
+        <awesome-filter-operator :current-field="currentField" :current-filter.sync="currentFilter" in-popper />
         <awesome-filter-value
           :current-field="currentField"
           :current-filter="currentFilter"
@@ -41,10 +37,10 @@
       </form>
       <div class="awesome-filter-add-block">
         <button
-            :disabled="!Object.keys(currentField).length"
-            @click.prevent="addFilter()"
-            type="button"
-            class="btn btn-primary btn-block"
+          :disabled="!Object.keys(currentField).length"
+          @click.prevent="addFilter()"
+          type="button"
+          class="btn btn-primary btn-block"
         >
           {{ $t('AwesomeFilter.labels.addFilter') }}
         </button>
@@ -52,22 +48,19 @@
     </div>
     <div v-if="permanentFilter || permanentInput">
       <div class="chip-groups">
-        <div
-            class="chip chip-primary dark chip-permanent"
-            :class="permanentInput ? 'bg-info' : 'bg-primary'"
-        >
+        <div class="chip chip-primary dark chip-permanent">
           <div class="chip-content">
-            <span>{{ field }}</span>
-            <awesome-filter-filter
+            <span>{{ fieldLabel || field }}</span>
+            <awesome-filter-operator
               :current-field="currentField"
               :current-filter.sync="currentFilter"
               :permanent-input="permanentInput"
             />
             <awesome-filter-value
-                :current-field="currentField"
-                :current-filter="currentFilter"
-                :current-value.sync="currentValue"
-                :permanent-input="permanentInput"
+              :current-field="currentField"
+              :current-filter="currentFilter"
+              :current-value.sync="currentValue"
+              :permanent-input="permanentInput"
             />
           </div>
         </div>
@@ -99,7 +92,7 @@
 
 <script>
 import _ from 'lodash';
-import AwesomeFilterFilter from './AwesomeFilter/AwesomeFilterFilter';
+import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator';
 import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue';
 import i18nMixin from '../../mixins/i18nMixin';
 
@@ -107,7 +100,7 @@ export default {
   name: 'AwesomeFilter',
   mixins: [i18nMixin],
   components: {
-    AwesomeFilterFilter,
+    AwesomeFilterOperator,
     AwesomeFilterValue
   },
   props: {
@@ -115,14 +108,16 @@ export default {
       type: Array,
       default: () => {
         return [];
-      },
-      note: 'List of all selected filters'
+      }
     },
     field: {
-      type: String,
+      type: String
+    },
+    fieldLabel: {
+      type: String
     },
     fields: {
-      type: Array,
+      type: Array
     },
     displayFilters: {
       type: Boolean,
@@ -149,14 +144,14 @@ export default {
     currentField: {},
     currentValue: '',
     currentFilter: {},
-    selectedFilters: [],
+    selectedFilters: []
   }),
   methods: {
     addFilter() {
       const value =
-          ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentFilter.value) > -1
-              ? true
-              : this.currentValue;
+        ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentFilter.value) > -1
+          ? true
+          : this.currentValue;
       if (Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
@@ -167,7 +162,7 @@ export default {
         if (!this.permanentFilter && !this.permanentInput) {
           this.currentField = {};
           this.currentValue = '';
-          this.currentFilter = { text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
+          this.currentFilter = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
         }
         this.parseFilter(this.selectedFilters);
       }
@@ -176,11 +171,16 @@ export default {
       this.selectedFilters = _.without(this.selectedFilters, item);
       this.parseFilter(this.selectedFilters);
     },
+
     parseFilter(selectedFilters, options = { dispatch: true }) {
       let advancedFilters = {};
       selectedFilters.forEach((filter) => {
         const parsedFilter = { [filter.field.field]: { [filter.filter.value]: filter.value } };
-        if (!this.permanentFilter && !this.permanentInput && _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)) {
+        if (
+          !this.permanentFilter &&
+          !this.permanentInput &&
+          _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)
+        ) {
           advancedFilters[filter.field.field][filter.filter.value] = _.flattenDeep([
             advancedFilters[filter.field.field][filter.filter.value],
             filter.value
@@ -203,7 +203,7 @@ export default {
       if (options.dispatch) {
         this.$emit('update-filter', advancedFilters, selectedFilters);
       }
-    },
+    }
   },
 
   computed: {
@@ -233,12 +233,13 @@ export default {
   },
   mounted() {
     this.currentFilter = {
+      shortText: '=',
       text: this.$t('AwesomeFilter.filters.equals'),
       value: '$eq'
     };
     if (this.permanentFilter || this.permanentInput) {
       if (this.fields && this.fields.length) {
-        this.currentField = this.fields.filter((item) => item.field === this.field)[0]
+        this.currentField = this.fields.filter((item) => item.field === this.field)[0];
       } else {
         this.currentField = {
           field: this.field,
@@ -338,7 +339,7 @@ export default {
         width: 30%;
       }
 
-      .awesome-filter-filter {
+      .awesome-filter-operator {
         width: 20%;
       }
 
@@ -415,6 +416,14 @@ export default {
     }
     &.chip-permanent {
       width: 100%;
+      margin: 0;
+      margin-bottom: 3px;
+      border-radius: 3px;
+
+      .dropdown-toggle {
+        color: var(--default, #444);
+        box-shadow: none;
+      }
     }
   }
 
