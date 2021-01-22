@@ -133,7 +133,29 @@ export default {
 
     isSaveStateEnabledCpt() {
       return this.saveColumnsState || this.savePaginationState;
-    }
+    },
+
+    _actions() {
+      const actions = _.cloneDeep(this._actionsBeforeCalculation);
+
+      Object.entries(actions).forEach(([field, fieldData]) => {
+        if (typeof fieldData !== 'boolean') {
+          actions[field] = this.templateParseConditionalField(fieldData);
+        }
+      });
+      return actions;
+    },
+
+
+    _actionsBeforeCalculation() {
+      return _.merge(
+        {},
+        this.actions
+        || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+        || (this.optionsComputed && this.optionsComputed.actions) // old location kept for BC
+        || (this.options && this.options.actions)
+      );
+    },
   },
 
   watch: {

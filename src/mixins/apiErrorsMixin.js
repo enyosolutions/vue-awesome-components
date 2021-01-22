@@ -1,7 +1,7 @@
 export default {
   methods: {
     apiErrorCallback(err) {
-      if (err && !err.response) {
+      if (err && !err.response && !err.message) {
         // network error
         // console.log(err);
         this.$awNotify({

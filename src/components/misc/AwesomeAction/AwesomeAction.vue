@@ -155,7 +155,7 @@ export default {
     },
     columns: {
       type: Array,
-      note: "In case of type: filter || input, the list of the model's columns"
+      note: 'In case of type: filter || input, the list of the model\'s columns'
     }
   },
   data: () => ({
@@ -168,9 +168,6 @@ export default {
 
     permanentSearching(parsedFilters) {
       this.$emit('permanent-searching', parsedFilters);
-    },
-    permanentSearch(parsedFilters, filters) {
-      console.log(parsedFilters, filters);
     }
   },
   mounted() {

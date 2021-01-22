@@ -6,7 +6,7 @@
           <AwesomeForm
             v-bind="$props"
             v-if="showViewFormComputed"
-            :actions="_actions"
+            :actions="_actionsBeforeCalculation"
             :custom-inline-actions="_customInlineActions"
             :custom-top-actions="_customFormTopActions"
             :display-header="awFormDisplayHeader"
@@ -67,7 +67,7 @@
             :display-header="awFormDisplayHeader"
             :has-previous="hasPrevious"
             :has-next="hasNext"
-            :actions="_actions"
+            :actions="_actionsBeforeCalculation"
             :custom-inline-actions="_customInlineActions"
             :custom-top-actions="_customFormTopActions"
             @create="goToCreatePage"
@@ -178,7 +178,7 @@
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :actions="_actions"
+            :actions="_actionsBeforeCalculation"
             :mode="dataPaginationModeComputed"
             :useRouterMode="useRouterMode"
             :auto-refresh="mergedOptions.autoRefresh"
@@ -225,7 +225,7 @@
                   (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
             "
             v-bind="$props"
-            :actions="_actions"
+            :actions="_actionsBeforeCalculation"
             :custom-inline-actions="_customInlineActions"
             :custom-table-top-actions="_customTableTopActions"
             :custom-bulk-actions="_customBulkActions"
@@ -836,6 +836,17 @@ export default {
     },
 
     _actions() {
+      const actions = _.cloneDeep(this._actionsBeforeCalculation);
+
+      Object.entries(actions).forEach(([field, fieldData]) => {
+        if (typeof fieldData !== 'boolean') {
+          actions[field] = this.templateParseConditionalField(fieldData);
+        }
+      });
+      return actions;
+    },
+
+    _actionsBeforeCalculation() {
       return _.merge(
         {},
         defaultActions,
@@ -846,35 +857,40 @@ export default {
     _customFormTopActions() {
       return _.merge(
         [],
-          this.customFormTopActions.length && this.customFormTopActions || (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
+        (this.customFormTopActions.length && this.customFormTopActions) ||
+          (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
       );
     },
 
     _customInlineActions() {
       return _.merge(
         [],
-        this.customInlineActions.length && this.customInlineActions || (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
+        (this.customInlineActions.length && this.customInlineActions) ||
+          (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
       );
     },
 
     _customTopRightActions() {
       return _.merge(
         [],
-        this.customTopRightActions.length && this.customTopRightActions || (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
+        (this.customTopRightActions.length && this.customTopRightActions) ||
+          (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
       );
     },
 
     _customTableTopActions() {
       return _.merge(
         [],
-        this.customTableTopActions.length && this.customTableTopActions || (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
+        (this.customTableTopActions.length && this.customTableTopActions) ||
+          (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
       );
     },
 
     _customBulkActions() {
       return _.merge(
         [],
-        this.customBulkActions.length && this.customBulkActions || (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
+        (this.customBulkActions.length && this.customBulkActions) ||
+          (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
       );
     },
 

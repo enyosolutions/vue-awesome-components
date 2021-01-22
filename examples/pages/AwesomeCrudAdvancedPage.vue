@@ -87,6 +87,30 @@
           >Standalone mode</a
         >
       </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="custom-actions-tab"
+          data-toggle="tab"
+          href="#custom-actions"
+          role="tab"
+          aria-controls="one-per-row"
+          aria-selected="false"
+          >Custom Actions</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="conditional-actions-tab"
+          data-toggle="tab"
+          href="#conditional-actions"
+          role="tab"
+          aria-controls="one-per-row"
+          aria-selected="false"
+          >Conditionnal Actions</a
+        >
+      </li>
     </ul>
     <hr />
     <div class="tab-content" id="myTabContent">
@@ -296,6 +320,41 @@
             @layout-updated="onLayoutUpdated"
           />
         </AutoProps>
+      </div>
+
+      <div class="tab-pane fade" id="customActions" role="tabpanel">
+        <AwesomeCrud
+          identity="photos"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
+          :actions="{ view: true, itemButton: true }"
+        />
+      </div>
+
+      <div class="tab-pane fade" id="conditional-actions" role="tabpanel" aria-labelledby="photos-tab">
+        <h2>Conditional Actions</h2>
+        <AwesomeCrud
+          identity="photos"
+          :schema="photoSchema"
+          url="http://localhost:3000/photos"
+          :apiResponseConfig="{
+            dataPath: false,
+            totalCountPath: 'headers.x-total-count'
+          }"
+          :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
+          :options="{ detailPageMode: modalDisplayModeSelect, dataPaginationMode: 'remote' }"
+          :actions="{
+            create: '{{ 2 > 1 }}',
+            view: ({ currentItem }) => currentItem && currentItem.id % 2 == 0,
+            itemButton: true
+          }"
+        />
       </div>
     </div>
 

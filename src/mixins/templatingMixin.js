@@ -1,9 +1,20 @@
-import { templateSettings, template } from 'lodash';
+import { templateSettings, template, isString, isFunction, merge } from 'lodash';
 
 export default {
   props: {
   },
   methods: {
+
+    contextDataMerger(data = null) {
+      return merge({
+        parent: this.parent,
+        context: this,
+        currentItem: this.selectedItem,
+        items: this.items,
+        $state: this.$store && this.$store.state
+      }, data);
+    },
+
     templateParser(source, data) {
       templateSettings.interpolate = /{{([\s\S]+?)}}/g;
       const compiled = template(source);
@@ -42,18 +53,15 @@ export default {
         if (!text || text.indexOf('{{') === -1) {
           return text;
         }
-        if (!data) {
-          data = {
-            parent: this.parent,
-            context: this,
-            currentItem: this.selectedItem,
-            items: this.items
-          };
-        }
+        data = this.contextDataMerger(data);
         const bool = this.templateParser(text, data);
         if (bool === '1' || bool === 'true') {
           return true;
         }
+        if (bool === 0 || bool === 'false') {
+          return false;
+        }
+        console.warn('[VAC] boolean templates must revolve to a boolean result', bool, 'returned');
         return false;
       }
       catch (err) {
@@ -67,14 +75,7 @@ export default {
         if (!func || typeof (func) !== 'function') {
           return func;
         }
-        if (!data) {
-          data = {
-            parent: this.parent,
-            context: this,
-            currentItem: this.selectedItem,
-            items: this.items
-          };
-        }
+        data = this.contextDataMerger(data);
         return func(data);
 
       }
@@ -83,5 +84,18 @@ export default {
         return func;
       }
     },
+
+    templateParseConditionalField(fieldData, data = null) {
+      if (typeof (fieldData) == 'boolean') {
+        return fieldData;
+      }
+      if (isString(fieldData)) {
+        return this.templateParseBoolean(fieldData, data);
+      }
+      if (isFunction(fieldData)) {
+        return !!this.templateParseFunc(fieldData, data);
+      }
+      return fieldData;
+    }
   }
 }

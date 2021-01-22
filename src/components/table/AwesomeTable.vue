@@ -317,12 +317,12 @@
                       :item="props.row"
                       :parent="parent"
                       location="inline"
-                      @customAction="$emit('customAciton', $event)"
+                      @customAction="$emit('customAction', $event)"
                     />
                   </template>
                 </slot>
                 <button
-                  v-if="_actions.view"
+                  v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('view', props.row)"
                   type="button"
@@ -330,7 +330,7 @@
                   <i class="fa fa-eye text-info" />
                 </button>
                 <button
-                  v-if="_actions.edit"
+                  v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('edit', props.row)"
                   type="button"
@@ -338,7 +338,7 @@
                   <i class="fa fa-pencil fa fa-pencil text-primary" />
                 </button>
                 <button
-                  v-if="_actions.delete"
+                  v-if="templateParseConditionalField(_actionsBeforeCalculation.delete, { currentItem: props.row })"
                   class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
                   @click="$emit('delete', props.row)"
                   type="button"
@@ -584,14 +584,6 @@ export default {
         (this.$te && this.$te('app.labels.' + this.entity)
           ? this.$t('app.labels.' + this.entity)
           : _.startCase(this.entity))
-      );
-    },
-
-    _actions() {
-      return _.merge(
-        {},
-        defaultActions,
-        this.actions || (this.optionsComputed && this.optionsComputed.actions) // old location kept for BC
       );
     },
 
