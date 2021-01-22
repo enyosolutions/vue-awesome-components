@@ -1,7 +1,7 @@
 <template>
   <div class="aw-list-card aw-list-component awesome-list">
     <div
-      :class="
+        :class="
         'aw-list-header ' +
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
@@ -9,190 +9,192 @@
       <h4 class>
         <slot name="aw-list-title">{{ _listTitle }}</slot>
         <div class="btn-group btn-group-sm float-right aw-list-buttons">
-          <slot name="table-top-actions" class />
+          <slot name="table-top-actions" class/>
           <div v-if="isRefreshing" style="text-align: center">
             <i
-              class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-              style="color:#888;margin-left:10px"
+                class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
+                style="color:#888;margin-left:10px"
             />
           </div>
           <div class="btn-group" role="group">
             <button
-              v-if="actions && actions.refresh"
-              class="btn btn-simple"
-              @click="getItems()"
+                v-if="actions && actions.refresh"
+                class="btn btn-simple"
+                @click="getItems()"
             >
-              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t("awesomelist.buttons.refresh") }}
+              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')"/>
+              {{ $t("AwesomeList.buttons.refresh") }}
             </button>
 
-
-          <popper
-            trigger="clickToOpen"
-            :options="{
+            <popper
+                trigger="clickToOpen"
+                :options="{
               placement: 'bottom',
               modifiers: { offset: { offset: '0,10px' } }
             }"
-            ref="filterPopover"
-            v-if="actions.filter && actions.advancedFiltering"
-          >
-            <button
-              slot="reference"
-              type="button"
-              class="btn btn-simple dropdown-toggle"
-              :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-              aria-haspopup="true"
-              aria-expanded="false"
-              id="advancedFilterButton"
+                ref="filterPopover"
+                v-if="actions.filter && actions.advancedFiltering"
             >
-              <i class="fa fa-filter" />
-              {{ $t('AwesomeTable.buttons.filters') }}
-              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-            </button>
+              <button
+                  slot="reference"
+                  type="button"
+                  class="btn btn-simple dropdown-toggle"
+                  :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
+              >
+                <i class="fa fa-filter"/>
+                {{ $t('AwesomeTable.buttons.filters') }}
+                {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+              </button>
 
-            <div class="popper card mt-0" style="z-index: 1;">
-              <awesome-filter
-                class="card-body"
-                edit-filters
-                id="advancedFilterComponentDisplay"
-                :fields="columns"
-                @update-filter="advancedFiltering"
-                :advanced-filters="advancedFilters"
-              />
-            </div>
-          </popper>
-
+              <div class="popper card mt-0" style="z-index: 1;">
+                <awesome-filter
+                    class="card-body"
+                    edit-filters
+                    id="advancedFilterComponentDisplay"
+                    :fields="columns"
+                    @update-filter="advancedFiltering"
+                    :advanced-filters="advancedFilters"
+                />
+              </div>
+            </popper>
 
             <template v-if="actions && actions.itemsPerRow">
-             <button class="btn " @click="setListMode()"
-              :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
-            >
-              <i :class="'fa fa-list'" />
+              <button class="btn " @click="setListMode()"
+                      :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
+              >
+                <i :class="'fa fa-list'"/>
 
-            </button>
+              </button>
               <button
-              class="btn"
-              :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
-              @click="setMediumGridMode()">
-                <i :class="'fa fa-th-large'" />
+                  class="btn"
+                  :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
+                  @click="setMediumGridMode()">
+                <i :class="'fa fa-th-large'"/>
               </button>
 
               <button
-              class="btn"
-              :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
-              @click="setGridMode()">
-                <i :class="'fa fa-th'" />
+                  class="btn"
+                  :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
+                  @click="setGridMode()">
+                <i :class="'fa fa-th'"/>
               </button>
             </template>
 
-            <button
-              v-if="
-                actions && (actions.export || actions.import)
-              "
-              id="dropdownMenuButton"
-              class="btn btn-secondary btn-simple dropdown-toggle"
-              type="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              <i class="fa fa-plus" />
-              {{ $t("AwesomeTable.more") }}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <slot name="table-top-more-actions" />
+            <div class="btn-group" role="group">
               <button
-                v-if="actions && actions.export"
-                class="btn btn-success btn-simple btn-block"
-                @click="exportCallBack"
+                  v-if="actions && (actions.export || actions.import)"
+                  id="dropdownMenuButton"
+                  class="btn btn-secondary btn-simple dropdown-toggle"
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
               >
-                <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel") }}
+                <i class="fa fa-plus"/>
+                {{ $t("AwesomeTable.more") }}
               </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <slot name="table-top-more-actions"/>
+                <button
+                    v-if="actions && actions.export"
+                    class="btn btn-success btn-simple btn-block"
+                    @click="exportCallBack"
+                >
+                  <i class="fa fa-file-excel"/>
+                  {{ $t("common.buttons.excel") }}
+                </button>
 
-              <button
-                class="btn btn-default btn-simple btn-block"
-                @click="exportCurrentArrayToExcel"
-              >
-                <i class="fa fa-file-excel" />
-                {{ $t("common.buttons.excel-currentpage") }}
-              </button>
+                <button
+                    class="btn btn-default btn-simple btn-block"
+                    @click="exportCurrentArrayToExcel"
+                >
+                  <i class="fa fa-file-excel"/>
+                  {{ $t("common.buttons.excel-currentpage") }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </h4>
       <p class="card-category">
-        <slot name="list-subtitle" />
+        <slot name="list-subtitle"/>
       </p>
     </div>
-
-      <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-        <div
+    <awesome-filter
+        display-filters
+        :fields="columns"
+        @update-filter="advancedFiltering"
+        :advanced-filters="advancedFilters"
+    />
+    <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+      <div
           class="pointer d-flex"
           v-for="(item, index) in _paginatedItems"
           :key="index"
           :class="itemWrapperClasses"
           @click="handleItemClick($event, item)"
-        >
-          <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow">
-            <div
+      >
+        <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow">
+          <div
               class="card mb-3 aw-list-item flex-fill"
               :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
              'height': _itemHeight
           }"
-            >
-              <img
-               class="card-img-top"
+          >
+            <img
+                class="card-img-top"
                 v-if="imageField"
                 :src="item[imageField]"
                 :alt="item[titleField]"
                 :class="imageClasses"
                 :style="imageStyles"
-              />
-              <div class="card-body">
-                  <h4 class="card-title aw-list-item-title" style="" v-if="item[titleField]">{{ item[titleField] }}</h4>
-                  <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
+            />
+            <div class="card-body">
+              <h4 class="card-title aw-list-item-title" style="" v-if="item[titleField]">{{ item[titleField] }}</h4>
+              <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
 
-                  <h3 class="card-title aw-list-item-title" style="" v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">{{ item[_modelDisplayField] }}</h3>
+              <h3 class="card-title aw-list-item-title" style=""
+                  v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
+                {{ item[_modelDisplayField] }}</h3>
 
-                <p class="card-text aw-list-item-description" v-if="item[descriptionField]">
+              <p class="card-text aw-list-item-description" v-if="item[descriptionField]">
+                <AwesomeDisplay
+                    v-bind="getField(descriptionField)"
+                    :value="item[descriptionField]"
+                >
+                </AwesomeDisplay>
+              </p>
+              <template v-if="columns && columns.length && !_useClassicLayout">
+                <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                  <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
                   <AwesomeDisplay
-                        v-bind="getField(descriptionField)"
-                        :value="item[descriptionField]"
-                      >
-                      </AwesomeDisplay>
-                  </p>
-                <template v-if="columns && columns.length && !_useClassicLayout">
-                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                      <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
-                      <AwesomeDisplay
-                        v-bind="getField(key)"
-                        :value="itemData"
-:relation="getField(key).relation"
-                        :relation-label="getField(key).relationLabel"
-                        :relation-url="getField(key).relationUrl"
-                        :relation-key="getField(key).relationKey"
-                      >
-                      </AwesomeDisplay>
-                  </div>
-                </template>
-                <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                  <button
+                      v-bind="getField(key)"
+                      :value="itemData"
+                      :relation="getField(key).relation"
+                      :relation-label="getField(key).relationLabel"
+                      :relation-url="getField(key).relationUrl"
+                      :relation-key="getField(key).relationKey"
+                  >
+                  </AwesomeDisplay>
+                </div>
+              </template>
+              <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
+                <button
                     @click="handleItemButtonClick($event, item)"
                     class="btn btn-primary btn-sm "
                     :class="itemsPerRow > 1 ? 'btn-block': ''"
-                  >
-                  {{ $t("awesomelist.buttons.itemAction") }}
-                  </button>
-                </div>
+                >
+                  {{ $t("AwesomeList.buttons.itemAction") }}
+                </button>
               </div>
             </div>
-          </slot>
-        </div>
+          </div>
+        </slot>
       </div>
-      <hr />
-      <nav class="text-center">
-        <paginate
+    </div>
+    <hr/>
+    <nav class="text-center">
+      <paginate
           v-model="page"
           :page-count="_pageCount"
           :page-range="3"
@@ -206,8 +208,8 @@
           :page-link-class="'page-link'"
           :prev-link-class="'page-link'"
           :next-link-class="'page-link'"
-        ></paginate>
-      </nav>
+      ></paginate>
+    </nav>
   </div>
 </template>
 <script>
@@ -229,8 +231,9 @@ export default {
   token: `
 
   `,
-  components: { Paginate, AwesomeDisplay, AwesomeFilter,
-      popper: Popper,
+  components: {
+    Paginate, AwesomeDisplay, AwesomeFilter,
+    popper: Popper,
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin],
   props: {
@@ -262,10 +265,10 @@ export default {
     translations: {
       type: Object,
       default: () => ({
-        'awesomelist.buttons.increase': 'More items per row',
-        'awesomelist.buttons.decrease': 'Less items per row',
-        'awesomelist.buttons.refresh': 'Refresh',
-        'awesomelist.buttons.itemAction': 'Open',
+        'AwesomeList.buttons.increase': 'More items per row',
+        'AwesomeList.buttons.decrease': 'Less items per row',
+        'AwesomeList.buttons.refresh': 'Refresh',
+        'AwesomeList.buttons.itemAction': 'Open',
       })
     },
     styles: {
@@ -283,10 +286,10 @@ export default {
     actions: {
       type: Object,
       default: () => ({
-          itemButton: true,
-          refresh: true,
-          itemsPerRow: true
-        })
+        itemButton: true,
+        refresh: true,
+        itemsPerRow: true
+      })
     },
     defaultOptions: {
       type: Object,
@@ -303,7 +306,7 @@ export default {
       required: false,
       default: undefined,
       note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+          'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
   },
   data() {
@@ -323,34 +326,34 @@ export default {
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
-          ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
+            ? this.$t(this._model.singularName)
+            : _.startCase(this._model.singularName);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
-          ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+            ? this.$t(`app.labels.${this.identity}`)
+            : _.startCase(this.identity);
       }
       return '';
     },
 
     _itemHeight() {
       const height =
-        this.itemsPerRow === 1
-          ? this.listModeItemHeight
-          : this.gridModeItemHeight;
-          if (!height) {
-            return 'auto';
-          }
+          this.itemsPerRow === 1
+              ? this.listModeItemHeight
+              : this.gridModeItemHeight;
+      if (!height) {
+        return 'auto';
+      }
       return _.isString(height) ? height : height + 'px';
     },
 
     _pageCount() {
       const perPage = parseInt(this.serverParams.perPage) || this.perPage;
       return perPage && this.totalCount
-        ? Math.ceil(this.totalCount / perPage)
-        : 0;
+          ? Math.ceil(this.totalCount / perPage)
+          : 0;
     },
 
     itemWrapperClasses() {
@@ -374,17 +377,17 @@ export default {
     _paginatedItems: {
       get() {
         const currentPage =
-          this.serverParams && this.serverParams.page
-            ? this.serverParams.page
-            : 1;
+            this.serverParams && this.serverParams.page
+                ? this.serverParams.page
+                : 1;
         const perPage = parseInt(this.serverParams.perPage) || this.perPage
         const startIndex = (currentPage - 1) * perPage;
         if (!this.data) {
           return [];
         }
         return this.mode === 'remote'
-          ? this.data
-          : this.data.slice(startIndex, startIndex + perPage);
+            ? this.data
+            : this.data.slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -394,9 +397,9 @@ export default {
 
     _useClassicLayout() {
       return this.imageField ||
-      this.titleField ||
-      this.subtitleField ||
-      this.descriptionField;
+          this.titleField ||
+          this.subtitleField ||
+          this.descriptionField;
     },
 
     advancedFiltersCount() {
@@ -426,15 +429,18 @@ export default {
     'perRow': 'resetItemsPerRow',
     rows: 'refreshLocalData'
   },
-  created() {},
-  beforeMount() {},
+  created() {
+  },
+  beforeMount() {
+  },
   mounted() {
     if (this.perRow) {
       this.resetItemsPerRow();
     }
     this.refreshLocalData();
   },
-  beforeDestroy() {},
+  beforeDestroy() {
+  },
   methods: {
     getAllowedFields(item) {
       let fields = {};
@@ -450,11 +456,11 @@ export default {
 
     getField(key) {
       const field = _.filter(this.columns, ['field', key]);
-      return field[0] ? field[0]: field;
+      return field[0] ? field[0] : field;
     },
     getFieldType(key) {
       const field = _.filter(this.columns, ['field', key]);
-      return field[0] ? field[0]: field;
+      return field[0] ? field[0] : field;
     },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;
@@ -487,7 +493,6 @@ export default {
     handleItemButtonClick($event, item) {
       this.$emit('itemButtonClicked', item);
     },
-
 
 
     onPaginationChange(page) {
@@ -528,20 +533,21 @@ export default {
 </script>
 <style lang="scss">
 .aw-list-component {
-.aw-list-item {
-.aw-list {
-  &-item {
-    &-title {
-      color: var(--primary);
-      font-weight: bold;
+  .aw-list-item {
+    .aw-list {
+      &-item {
+        &-title {
+          color: var(--primary);
+          font-weight: bold;
+        }
+      }
     }
   }
-  }
-}
 
   .list-responsive {
     width: 100%;
   }
+
   .pagination {
     justify-content: center;
   }
@@ -551,10 +557,11 @@ export default {
     overflow: hidden;
     cursor: pointer;
 
-      .card-body {
-        min-height: 50px;
-      }
+    .card-body {
+      min-height: 50px;
+    }
   }
+
   .col-12 {
     .aw-list-item {
       .card-img-top {
@@ -570,12 +577,14 @@ export default {
         padding-bottom: 10px;
         padding-right: 10px;
         text-align: right;
+
         button {
           color: #fff;
         }
       }
     }
   }
+
   .col-2,
   .col-3,
   .col-4,
@@ -602,6 +611,7 @@ export default {
     }
   }
 }
+
 .aw-list-header {
   width: 100%;
   text-align: left;

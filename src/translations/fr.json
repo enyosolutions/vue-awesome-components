@@ -114,6 +114,17 @@
   "AwesomeList": {
     "labels": {
       "noData": "No fields selected"
+    },
+    "buttons": {
+      "filters": "Filtres",
+      "refresh": "Rafraichir",
+      "excel-currentpage": "Exporter la page en cours",
+      "searchInput": "Rechercher",
+      "view": "Voir",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "columnsFilters": "Activer/Désactiver les filtres de colonnes",
+      "clear-state": "Réinitialiser le configuration du tableau"
     }
   },
   "AwesomeLayout": {
