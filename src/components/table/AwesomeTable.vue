@@ -287,11 +287,11 @@
             />
             <template v-if="customTableTopActions">
               <AwesomeActionList
-                  :actions="customTableTopActions"
-                  :columns="columns"
-                  location="tabletop"
-                  @customAction="$emit('customAction', $event)"
-                  @permanent-filtering="permanentFiltering"
+                :actions="customTableTopActions"
+                :columns="columns"
+                location="tabletop"
+                @customAction="$emit('customAction', $event)"
+                @permanent-filtering="permanentFiltering"
               />
             </template>
           </div>
@@ -313,11 +313,11 @@
                 <slot name="table-row-actions" :item="props.row">
                   <template v-if="customInlineActions">
                     <AwesomeActionList
-                        :actions="customInlineActions"
-                        :item="props.row"
-                        :parent="parent"
-                        location="inline"
-                        @customAction="$emit('customAciton', $event)"
+                      :actions="customInlineActions"
+                      :item="props.row"
+                      :parent="parent"
+                      location="inline"
+                      @customAction="$emit('customAciton', $event)"
                     />
                   </template>
                 </slot>
@@ -411,7 +411,7 @@ export default {
     AwesomeFilter,
     popper: Popper,
     Skeleton,
-    AwesomeActionList,
+    AwesomeActionList
   },
   mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {
@@ -870,7 +870,7 @@ export default {
       this.updateParams({
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0,
-        permanent: true,
+        permanent: true
       });
       this.getItems({ useSkeleton: true });
     },
@@ -1038,25 +1038,28 @@ export default {
   opacity: 1;
 }
 
-.aw-table-header.card-header.colored-header {
-  color: white;
-  * {
+.aw-table-header {
+  padding-bottom: 0;
+  &.card-header.colored-header {
     color: white;
-  }
-  .dropdown-menu {
-    a {
-      color: #000;
+    * {
+      color: white;
     }
-    button {
-      color: #000;
-      i {
+    .dropdown-menu {
+      a {
         color: #000;
       }
+      button {
+        color: #000;
+        i {
+          color: #000;
+        }
+      }
     }
-  }
-  .awesome-filter {
-    * {
-      color: #495057;
+    .awesome-filter {
+      * {
+        color: #495057;
+      }
     }
   }
 }
@@ -1077,8 +1080,41 @@ export default {
   font-size: 0.8rem !important;
 }
 
-.aw-table .vgt-global-search__input .input__icon .magnifying-glass {
-  display: none;
+.aw-table {
+  .vgt-global-search {
+    .vgt-global-search__input {
+      margin-bottom: 5px;
+      padding-left: 0;
+      .input__icon .magnifying-glass {
+        display: none;
+      }
+    }
+
+    flex-direction: column;
+    .vgt-global-search__actions {
+      margin-left: 0;
+    }
+
+    @media (min-width: 720px) {
+      .vgt-global-search__input {
+        min-width: 350px;
+        align-self: flex-end;
+        padding-left: 0;
+        margin-bottom: 5px;
+
+        .input__icon .magnifying-glass {
+          display: none;
+        }
+      }
+
+      .vgt-global-search__actions {
+        min-width: 350px;
+        align-self: flex-end;
+        padding-left: 0;
+        margin-bottom: 5px;
+      }
+    }
+  }
 }
 
 .aw-table-actions-field {
