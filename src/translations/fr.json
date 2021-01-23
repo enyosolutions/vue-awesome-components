@@ -72,6 +72,8 @@
     "empty": "pas de résultats",
     "searchInput": "Rechercher",
     "more": "Plus d'actions",
+    "actions": "Actions",
+    "configuration": "Configuration",
     "columns": "Colonnes",
     "automatique-refresh": "Rafraichir périodiquement",
     "bulk": {

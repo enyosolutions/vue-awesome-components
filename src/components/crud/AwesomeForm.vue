@@ -480,10 +480,10 @@
                         </button>
                         <template v-if="customInlineActions">
                           <AwesomeActionList
-                              :actions="customInlineActions"
-                              :item="selectedItem"
-                              location="inline"
-                              @customAction="$emit('customAction', $event)"
+                            :actions="customInlineActions"
+                            :item="selectedItem"
+                            location="inline"
+                            @customAction="$emit('customAction', $event)"
                           />
                         </template>
 
@@ -1311,7 +1311,8 @@ export default {
         return;
       }
       if (this.parentPath && this.updateRouter) {
-        window.history.pushState({}, null, `${this.parentPath}`);
+        // window.history.pushState({}, null, `${this.parentPath}`);
+        this.$router.replace(`${this.parentPath}`);
       }
       this.selectedItem = {};
       setTimeout(() => {
@@ -1335,7 +1336,8 @@ export default {
     goToEditPage(item) {
       if (!this.mergedOptions.editPath) {
         if (this.updateRouter) {
-          window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+          this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
         }
         this.editFunction(item);
         return;
@@ -1348,7 +1350,8 @@ export default {
     goToViewPage(item) {
       if (!this.mergedOptions.viewPath) {
         if (this.updateRouter) {
-          window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+          this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         }
         this.activeNestedTab = 'general';
         this.viewFunction(item);

@@ -71,7 +71,9 @@
     "all": "all",
     "empty": "empty",
     "searchInput": "Search",
-    "more": "More actions",
+    "more": "Plus d'actions",
+    "actions": "Actions",
+    "configuration": "Configuration",
     "automatique-refresh": "Refresh automatically",
     "columns": "Columns",
     "bulk": {

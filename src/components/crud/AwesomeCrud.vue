@@ -166,6 +166,7 @@
                     <AwesomeActionList
                       :actions="_customTopRightActions"
                       location="topright"
+                      :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
                       @customAction="onCustomAction"
                     />
                   </template>
@@ -177,11 +178,11 @@
                           (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
                     "
                     :disabled="!canShowCreateButton"
-                    class="btn btn-primary btn-simple aw-button-add"
+                    class="btn btn-outline-primary aw-button-add"
                     @click.prevent="goToCreatePage()"
                     type="button"
                   >
-                    <i class="fa fa-plus" />
+                    <i class="fa fa-plus text-primary" />
                     {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
                   </button>
                 </slot>
@@ -1041,12 +1042,10 @@ export default {
     });
   },
   beforeRouteUpdate(to, from, next) {
-    next((vm) => {
-      // if we are on the same component and coming from a detail list
-      if (vm && vm.closeModal && from.params.id && !to.params.id) {
-        vm.closeModal();
-      }
-    });
+    // if we are on the same component and coming from a detail list
+    if (this.useRouterMode && from.params.id && !to.params.id) {
+      //this.onViewDisplayCancelled();
+    }
   },
 
   methods: {
@@ -1342,7 +1341,8 @@ export default {
         );
       }
       if (this.useRouterMode) {
-        window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+        this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
+        //window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
       }
       this.setDisplayMode('edit', item);
     },
@@ -1360,7 +1360,7 @@ export default {
         return this.$router.push(this.mergedOptions.viewPath);
       }
       if (this.useRouterMode) {
-        window.history.pushState({}, null, `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
+        this.$router.push(`${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
       }
       this.setDisplayMode('view', item);
     },
@@ -1520,7 +1520,7 @@ export default {
         } else {
           url = `${this.parentPath}/${item ? item[this.primaryKey] : ''}`;
         }
-        window.history.pushState({}, null, url);
+        this.$router.push(url);
       }
 
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
@@ -1532,7 +1532,7 @@ export default {
           .replace('/edit', '')
           .replace('/:id', '')
           .replace(`${item ? item[this.primaryKey] : ''}`, '');
-        window.history.pushState({}, null, url);
+        this.$router.push(url);
       }
       const previousDisplayMode =
         this.previousDisplayMode && this.previousDisplayMode !== 'edit' && this.previousDisplayMode !== this.displayMode
