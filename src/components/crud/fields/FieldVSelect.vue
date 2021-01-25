@@ -206,7 +206,7 @@ export default {
   created() {
     this.apiRequestDebounced = _.debounce((value) => {
       return this.loadRemoteEntities(value);
-    }, 2000);
+    }, 200);
   },
 
   methods: {
