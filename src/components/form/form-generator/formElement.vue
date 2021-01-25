@@ -8,7 +8,7 @@
       <awesome-display
         v-bind="field.displayOptions"
         :type="viewFieldType"
-        :value="model[field.model]"
+        :value="fieldValue"
         :relation="field.displayOptions.relation"
         :relation-url="field.displayOptions.relationUrl"
         :relation-key="field.displayOptions.relationKey"
@@ -161,6 +161,10 @@ export default {
     },
     isViewMode() {
       return this.field.mode === 'view';
+    },
+
+    fieldValue() {
+      return objGet(this.model, this.field.model);
     }
   },
   methods: {

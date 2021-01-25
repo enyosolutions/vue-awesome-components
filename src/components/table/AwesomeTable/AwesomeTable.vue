@@ -322,7 +322,7 @@
                   v-bind="props.column"
                   :apiResponseConfig="apiResponseConfig"
                   :apiRequestHeaders="apiRequestHeaders"
-                  :value="props.formattedRow[props.column.field]"
+                  :value="getItemAtPath(props.row, props.column.field)"
                   :display-label-cache="displayLabelCache"
                   class="pointer text-avoid-overflow"
                 >
@@ -1030,7 +1030,9 @@ export default {
 
     itemValue(item, column) {
       return item[column.toLowerCase()];
-    }
+    },
+
+    getItemAtPath: _.get
   }
 };
 </script>

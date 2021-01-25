@@ -165,23 +165,23 @@
             <img
                 class="card-img-top"
                 v-if="imageField"
-                :src="item[imageField]"
-                :alt="item[titleField]"
+                :src="getItemAtPath(item, imageField)"
+                :alt="getItemAtPath(item, titleField)"
                 :class="imageClasses"
                 :style="imageStyles"
             />
             <div class="card-body">
-              <h4 class="card-title aw-list-item-title" style="" v-if="item[titleField]">{{ item[titleField] }}</h4>
-              <h6 class="card-title aw-list-item-subtitle" v-if="item[subtitleField]">{{ item[subtitleField] }}</h6>
+              <h4 class="card-title aw-list-item-title" style="" v-if="getItemAtPath(item, titleField)">{{ getItemAtPath(item, titleField) }}</h4>
+              <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)">{{ getItemAtPath(item, subtitleField) }}</h6>
 
               <h3 class="card-title aw-list-item-title" style=""
                   v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
                 {{ item[_modelDisplayField] }}</h3>
 
-              <p class="card-text aw-list-item-description" v-if="item[descriptionField]">
+              <p class="card-text aw-list-item-description" v-if="getItemAtPath(item, descriptionField)">
                 <AwesomeDisplay
                     v-bind="getField(descriptionField)"
-                    :value="item[descriptionField]"
+                    :value="getItemAtPath(item, descriptionField)"
                 >
                 </AwesomeDisplay>
               </p>
@@ -555,6 +555,8 @@ export default {
         return col;
       });
     },
+
+    getItemAtPath: _.get
   }
 };
 </script>
