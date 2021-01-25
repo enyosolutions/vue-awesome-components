@@ -171,8 +171,14 @@
                 :style="imageStyles"
             />
             <div class="card-body">
-              <h4 class="card-title aw-list-item-title" style="" v-if="getItemAtPath(item, titleField)">{{ getItemAtPath(item, titleField) }}</h4>
-              <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)">{{ getItemAtPath(item, subtitleField) }}</h6>
+              <h4 class="card-title aw-list-item-title" style=""
+
+              v-if="getItemAtPath(item, titleField)"
+              v-html="getItemAtPath(item, titleField)"
+              ></h4>
+              <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)"
+              v-html="getItemAtPath(item, subtitleField)"
+              ></h6>
 
               <h3 class="card-title aw-list-item-title" style=""
                   v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
@@ -248,6 +254,8 @@ import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
+import templatingMixin from '../../mixins/templatingMixin';
+
 export default {
   name: 'AwesomeList',
   token: `
@@ -258,7 +266,7 @@ export default {
     popper: Popper,
     AwesomeSegments,
   },
-  mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin],
+  mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin, templatingMixin],
   props: {
     columns: {
       type: Array,
@@ -556,7 +564,19 @@ export default {
       });
     },
 
-    getItemAtPath: _.get
+    getItemAtPath(item, path) {
+      if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
+        let result = this.templateParseText(path, {currentItem: item});
+        console.warn('path', result);
+
+        ['p', 'br', 'hr', 'div', 'span', 'img', 'label', 'ul', 'li', 'pre'].forEach (tag => {
+          result = result.replace(new RegExp('<(?!' + tag + '\\s.*>', 'g'), '');
+        })
+console.warn('path escaped', result);
+        return result;
+      }
+      return _.get(item, path);
+    }
   }
 };
 </script>
