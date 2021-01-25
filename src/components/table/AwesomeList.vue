@@ -570,9 +570,8 @@ export default {
         console.warn('path', result);
 
         ['p', 'br', 'hr', 'div', 'span', 'img', 'label', 'ul', 'li', 'pre'].forEach (tag => {
-          result = result.replace(new RegExp('<(?!' + tag + '\\s?).*/?>', 'g'), '');
+       //   result = result.replace(new RegExp('<(?!' + tag + '\\s?).*/?>', 'g'), '');
         })
-console.warn('path escaped', result);
         return result;
       }
       return _.get(item, path);
