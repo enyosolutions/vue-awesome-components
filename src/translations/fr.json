@@ -34,7 +34,7 @@
     },
     "filters": {
       "equals": "Est égal à",
-      "not-equals": "N'est égal à",
+      "not-equals": "N'est pas égal à",
       "greater-than": "Est plus grand que(>)",
       "greater-or-equals": "Est égal ou plus grand que (>=)",
       "lesser-than": "Est plus petit que (<)",

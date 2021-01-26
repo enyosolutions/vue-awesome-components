@@ -96,18 +96,17 @@
           />
         </div>
 
-        <div
-          class="col-12 awesomecrud-stats-section"
-          v-show="!(supportedDataDisplayModes.indexOf(displayMode) === -1 || mergedOptions.detailPageMode === 'page')"
-        >
+        <div class="col-12 awesomecrud-stats-section">
           <div v-if="mergedOptions.stats" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
               :entity="identity"
+              :identity="identity"
               :stats-needs-refresh.sync="statsNeedsRefresh"
             />
           </div>
         </div>
+
         <div class="col-12 awesomecrud-list-table-section" v-show="showItemsListSectionComputed">
           <AwesomeTable
             v-if="
@@ -1608,7 +1607,7 @@ export default {
 
     // @deprecated use directly $awConfirm
     confirm(message) {
-      console.warn('@deprecated use directly');
+      console.warn('confirm method is @deprecated => use $awConfirm');
       return this.$awConfirm(message);
     },
 

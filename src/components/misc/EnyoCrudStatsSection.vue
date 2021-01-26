@@ -3,13 +3,13 @@
     <div class="row">
       <template v-for="(stat, index) in stats">
         <div class="filter-box col-md-3 cl-xs-6" :key="stat.label">
-          <div class="card card-statistics" :class="getColor(index)">
+          <div class="card card-statistics" :class="stat.color || getColor(index)">
             <div class="box text-center">
               <h3 class="font-light text-white mt-1">
                 {{ stat.value }}
               </h3>
               <h6 class="text-white">
-                {{ $t(stat.label) }}
+                {{ stat.label }}
               </h6>
             </div>
           </div>
@@ -20,8 +20,12 @@
 </template>
 <script>
 import _ from 'lodash';
+import apiConfigMixin from '../../mixins/apiConfigMixin';
+import awEmitMixin from '../../mixins/awEmitMixin';
+
 export default {
   name: 'EnyoCrudStatsSection',
+  mixins: [apiConfigMixin, awEmitMixin],
   components: {},
   props: {
     url: { type: String, default: '' },
@@ -63,21 +67,27 @@ export default {
       function() {
         this.$http
           .get(this.url, {})
-          .then(res => {
-            if (res && res.data && res.data.body) {
-              if (!Array.isArray(res.data.body)) {
-                this.stats = Object.keys(res.data.body).forEach(label => {
+          .then((res) => {
+            console.warn('data', res.data);
+            if (res && res.data) {
+              const data =
+                this.apiResponseConfig && this.apiResponseConfig.dataPath
+                  ? _.get(res, this.apiResponseConfig.dataPath)
+                  : res.data;
+              this.stats = data;
+              if (!Array.isArray(data)) {
+                this.stats = Object.entries(data).map(([content, label]) => {
                   return {
                     label,
-                    value: res.data.body[label]
+                    value: content.value || content,
+                    color: content.color,
+                    index: content.index
                   };
                 });
-              } else {
-                this.stats = res.data.body;
               }
             }
           })
-          .catch(err => {
+          .catch((err) => {
             // eslint-disable-next-line
             console.error(err);
           });

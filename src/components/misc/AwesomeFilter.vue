@@ -73,7 +73,7 @@
           <div class="chip-content">
             <span>{{ filter.field ? filter.field.label : '' }}</span>
             <strong class="ml-2 mr-2">
-              {{ filter.filter ? filter.filter.text : '' }}
+              {{ filter.filter ? filter.filter.shortText || filter.filter.text : '' }}
             </strong>
             <div v-if="typeof filter.value === 'object'">
               <span v-for="(value, index) in filter.value" :key="index">

@@ -27,7 +27,7 @@ export default {
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
     identity: {
-      type: String, required: true,
+      type: [String, Number], required: false,
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
@@ -106,9 +106,10 @@ export default {
 
     _translatedServerParams() {
       const translatedParams = {};
+      this.injectSegmentFilter(this.segmentQueryField, this.segmentValue);
       const serverParams = _.merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
 
-      this.injectSegmentFilter(this.segmentQueryField, this.segmentValue)
+
       Object.keys(serverParams).forEach(field => {
         const newKey = this.apiRequestConfig[field + 'Field'] || field;
         translatedParams[newKey] = serverParams[field];
@@ -241,7 +242,7 @@ export default {
         return;
       }
       if (options.useSkeleton) {
-        this.showSkeleton = options.useSkeleton;
+        this.showSkeleton = options.useSkeleton; ''
       }
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line
@@ -257,15 +258,13 @@ export default {
         .then(res => {
           this.data =
             this.apiResponseConfig &&
-              this.apiResponseConfig.dataPath &&
-              this.apiResponseConfig.dataPath != false
+              this.apiResponseConfig.dataPath
               ? _.get(res, this.apiResponseConfig.dataPath)
               : res.data;
 
           this.totalCount =
             this.apiResponseConfig &&
-              this.apiResponseConfig.totalCountPath &&
-              this.apiResponseConfig.totalCountPath != false
+              this.apiResponseConfig.totalCountPath
               ? _.get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
           this.$emit('crud-list-updated', this.data); // @deprecated

@@ -159,6 +159,10 @@ export default {
       // eslint-disable-next-line
       return this.url || this.fieldOptions.url;
     },
+    dataUrl() {
+      // eslint-disable-next-line
+      return this.url || this.fieldOptions.url;
+    },
 
     _trackBy() {
       return (

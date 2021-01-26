@@ -306,6 +306,7 @@
               />
               <template v-if="customTableTopActions">
                 <AwesomeActionList
+                  class="ml-1"
                   :actions="customTableTopActions"
                   :columns="columns"
                   location="tabletop"
@@ -536,7 +537,7 @@ export default {
     mode: {
       default: '',
       type: String,
-      required: true,
+      required: false,
       values: ['local', 'remote']
     },
     collapsible: {
@@ -843,24 +844,29 @@ export default {
     }
     if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
       const tempFilters = [];
-      Object.keys(this.apiQueryParams.filters).forEach((field) => {
-        tempFilters.push({ [field]: this.apiQueryParams.filters[field] });
-      });
-      this.advancedFilters = tempFilters.map((element) => {
+      Object.keys(this.apiQueryParams.filters)
+        .filter((field) => this.apiQueryParams.filters[field])
+        .forEach((field) => {
+          tempFilters.push({ [field]: this.apiQueryParams.filters[field] });
+        });
+      this.advancedFilters = [];
+      tempFilters.forEach((element) => {
         const filter = {};
         const [key, data] = Object.entries(element)[0];
         const [op, value] = typeof data === 'object' ? Object.entries(data)[0] : ['$eq', data];
         const field = this.columns.find((e) => e.field === key);
         if (field) {
           filter.field = field;
-          const operator = AwesomeFilter.data().filters.find((e) => e.value === op);
+          const operator = AwesomeFilter.data().filters && AwesomeFilter.data().filters.find((e) => e.value === op);
+          filter.value = value;
           if (operator) {
             filter.filter = operator;
             filter.value = value;
           }
+          this.advancedFilters.push(filter);
         }
-        return filter;
       });
+      console.warn('api Query params', JSON.stringify(this.advancedFilters));
     }
     // this.refreshLocalData();
     if (this.autoRefresh) {

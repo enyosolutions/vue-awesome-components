@@ -5,7 +5,7 @@
       :class="{
         'btn-block btn-primary': inPopper,
         'btn-default p-0 mr-2 ml-2': !inPopper,
-        'text-primary': _filterSelected
+        'font-weight-bold': _filterSelected
       }"
       type="button"
       data-toggle="dropdown"

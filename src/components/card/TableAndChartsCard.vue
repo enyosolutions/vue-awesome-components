@@ -2,6 +2,7 @@
   <div class="card-table-and-chart" :class="{ 'card-stats-fullscreen': fullscreen, [className]: className }">
     <AwesomeTable
       v-if="currentState === 'table'"
+      :identity="identity"
       :title="title"
       :columns="tableColumns"
       :rows="dataSource"
@@ -33,6 +34,7 @@
     </AwesomeTable>
     <enyo-chart-card
       v-if="currentState === 'bar'"
+      :identity="identity"
       chart-type="Bar"
       :chart-data="{
         labels: selectProp(dataSource, chartColKey),
@@ -70,6 +72,7 @@
     <enyo-chart-card
       v-if="currentState === 'line'"
       chart-type="Line"
+      :identity="identity"
       :chart-data="{
         labels: selectProp(dataSource, chartColKey),
         series: [selectProp(dataSource, chartRowKey)]
@@ -106,6 +109,7 @@
     <enyo-chart-card
       v-if="currentState === 'pie'"
       chart-type="Pie"
+      :identity="identity"
       :chart-data="{
         labels: selectProp(dataSource, chartColKey),
         series: [selectProp(dataSource, chartRowKey)]
@@ -170,6 +174,7 @@ export default {
     tableColumns: { type: Array, required: true },
     title: String,
     initialState: { type: String, default: 'table' },
+    identity: { type: String, default: () => Date.now() },
     chartOptions: {
       type: Object,
       default() {
