@@ -174,7 +174,7 @@ export default {
     tableColumns: { type: Array, required: true },
     title: String,
     initialState: { type: String, default: 'table' },
-    identity: { type: String, default: () => Date.now() },
+    identity: { type: [String, Number], default: () => Date.now() },
     chartOptions: {
       type: Object,
       default() {

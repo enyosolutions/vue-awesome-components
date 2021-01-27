@@ -9,7 +9,7 @@
                 {{ stat.value }}
               </h3>
               <h6 class="text-white">
-                {{ stat.label }}
+                {{ $t(stat.label) }}
               </h6>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default {
                   : res.data;
               this.stats = data;
               if (!Array.isArray(data)) {
-                this.stats = Object.entries(data).map(([content, label]) => {
+                this.stats = Object.entries(data).map(([label, content]) => {
                   return {
                     label,
                     value: content.value || content,

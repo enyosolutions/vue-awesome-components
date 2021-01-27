@@ -1,8 +1,10 @@
 import { templateSettings, template, isString, isFunction, merge } from 'lodash';
+import rolesMixin from './rolesMixin';
 
 export default {
   props: {
   },
+  mixins: [rolesMixin],
   methods: {
 
     contextDataMerger(data = null) {
@@ -11,7 +13,8 @@ export default {
         context: this,
         currentItem: this.selectedItem,
         items: this.items,
-        $state: this.$store && this.$store.state
+        $state: this.$store && this.$store.state,
+        userHasRole: this.userHasRole
       }, data);
     },
 

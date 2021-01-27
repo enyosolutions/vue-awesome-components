@@ -1045,6 +1045,7 @@ export default {
     if (this.useRouterMode && from.params.id && !to.params.id) {
       //this.onViewDisplayCancelled();
     }
+    next();
   },
 
   methods: {
