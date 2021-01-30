@@ -21,7 +21,7 @@
               href=""
               @click.prevent="currentField = field"
               class="dropdown-item"
-              v-for="(field, index) in fields"
+              v-for="(field, index) in _filterableFields"
               :key="index"
             >
               {{ field.label }}
@@ -120,10 +120,26 @@ export default {
     fields: {
       type: Array
     },
-    displayFilters: { type: Boolean, default: false },
-    editFilters: { type: Boolean, default: false },
-    permanentFilter: { type: Boolean, default: false },
-    permanentInput: { type: Boolean, default: false }
+    displayFilters: {
+      type: Boolean,
+      default: false,
+      note: 'State if AwesomeFilter is for displaying active filters'
+    },
+    editFilters: {
+      type: Boolean,
+      default: false,
+      note: 'State if AwesomeFilter is in a PopperJS'
+    },
+    permanentFilter: {
+      type: Boolean,
+      default: false,
+      note: 'State if AwesomeFilter is in custom filter mode (Always display filter)'
+    },
+    permanentInput: {
+      type: Boolean,
+      default: false,
+      note: 'State if AwesomeFilter is in custom input mode (Always display filter) that fire call on API'
+    },
   },
   data: () => ({
     currentField: {},
@@ -188,6 +204,14 @@ export default {
       if (options.dispatch) {
         this.$emit('update-filter', advancedFilters, selectedFilters);
       }
+    }
+  },
+
+  computed: {
+    _filterableFields() {
+      return this.fields.filter((field) => {
+        return !(field.filterOptions && !field.filterOptions.enabled);
+      });
     }
   },
 
