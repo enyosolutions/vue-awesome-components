@@ -453,7 +453,7 @@
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
                                   class="aw-crud-nested-model"
                                   :class="
-                                    getNestedActions(ns).collapse
+                                    getNestedActions(ns).collapse && nestedLayoutMode === 'list'
                                       ? !nestedModelsCollapseState[ns.identity]
                                         ? 'collapse show'
                                         : 'collapse'

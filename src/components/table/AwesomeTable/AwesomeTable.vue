@@ -298,8 +298,10 @@
                 v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
                 class="form-group vgt-date-range"
                 :placeholder="$t('AwesomeTable.daterange.start')"
-                :start-date="defaultStartDate"
-                :end-date="defaultEndDate"
+                :date-range="{
+                  startDate: defaultStartDate,
+                  endDate: defaultEndDate
+                }"
                 :locale-data="datePicker.locale"
                 :opens="'left'"
                 @update="onDateFilter"
@@ -393,6 +395,7 @@
 </template>
 <script>
 import DateRangePicker from 'vue2-daterange-picker';
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { VueGoodTable } from 'vue-good-table';
 import dayjs from 'dayjs';
 import localeData from 'dayjs/plugin/localeData';
@@ -571,7 +574,7 @@ export default {
       datePicker: {
         locale: {
           direction: 'ltr', // direction of text
-          format: 'DD-MM-YYYY', // fomart of the dates displayed
+          format: 'yyyy-mm-dd', // fomart of the dates displayed
           separator: ' - ', // separator between the two ranges
           applyLabel: 'Appliquer',
           cancelLabel: 'Annuler',
