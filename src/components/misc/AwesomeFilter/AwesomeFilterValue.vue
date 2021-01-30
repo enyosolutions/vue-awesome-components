@@ -97,15 +97,19 @@
                   currentFilter.value !== '$between'
               "
       >
-        <datetime
-            type="datetime"
-            v-model="value"
-            :input-class="' form-control'"
-            auto
-            title="Filter value"
-            input-id="date"
-        >
-        </datetime>
+        <date-range-picker
+            class="form-group"
+            :locale-data="dateRangePicker.locale"
+            :date-range="dateRangePicker"
+            :single-date-picker="true"
+            :time-picker="true"
+            :open="'left'"
+            :time-picker-increment="1"
+            :show-week-numbers="false"
+            :show-dropdowns="false"
+            :ranges="false"
+            @update="onDateFilter"
+        />
       </div>
       <!-- TYPE DATETIME/DATE RANGE-->
       <div
@@ -117,9 +121,9 @@
       >
         <date-range-picker
             class="form-group vgt-date-range"
-            :start-date="dateRangePicker.startDate"
-            :end-date="dateRangePicker.endDate"
+            :date-range="dateRangePicker"
             :locale-data="dateRangePicker.locale"
+            :open="'left'"
             @update="onDateFilter"
         />
       </div>
@@ -136,9 +140,8 @@
 </template>
 
 <script>
-import { Datetime } from 'vue-datetime';
 import DateRangePicker from 'vue2-daterange-picker';
-import 'vue2-daterange-picker/dist/lib/vue-daterange-picker.min.css';
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import dayjs from 'dayjs';
 import i18nMixin from '../../../mixins/i18nMixin';
 import localeData from 'dayjs/plugin/localeData';
@@ -148,7 +151,6 @@ export default {
   name: 'AwesomeFilterValue',
   mixins: [i18nMixin],
   components: {
-    Datetime,
     DateRangePicker
   },
   props: {
@@ -175,12 +177,12 @@ export default {
       endDate: dayjs().add(7, 'days'),
       locale: {
         direction: 'ltr', // direction of text
-        format: 'DD-MM-YYYY', // fomart of the dates displayed
+        format: 'yyyy-mm-dd', // fomart of the dates displayed
         separator: ' - ', // separator between the two ranges
-        applyLabel: '',
-        cancelLabel: '',
-        weekLabel: '',
-        customRangeLabel: '',
+        applyLabel: 'Appliquer',
+        cancelLabel: 'Annuler',
+        weekLabel: 'W',
+        customRangeLabel: 'Custom Range',
         daysOfWeek: dayjs.weekdaysMin(),
         monthNames: dayjs.monthsShort(),
         firstDay: 1
@@ -195,10 +197,14 @@ export default {
       if (!value) {
         return;
       }
-      this.value = {
-        from: value.startDate.toISOString().slice(0, 10),
-        to: value.endDate.toISOString().slice(0, 10)
-      };
+      if (this.currentFilter.value !== '$notBetween' && this.currentFilter.value !== '$between') {
+        this.value = dayjs(value.startDate.toISOString()).format('YYYY-MM-DD HH:mm');
+      } else {
+        this.value = {
+          from: value.startDate.toISOString().slice(0, 10),
+          to: value.endDate.toISOString().slice(0, 10)
+        };
+      }
     }
   },
   watch: {
