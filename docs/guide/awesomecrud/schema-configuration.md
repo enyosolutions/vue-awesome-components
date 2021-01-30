@@ -1,12 +1,4 @@
----
-{
-  "title": "Awesome Crud - configuration",
-  "lang": "en-US"
-}
----
-
-
-# Vue Awesome Crud configuration
+# Configuration of the schema
 
 
 The awesome crud configuration schema.

@@ -2,24 +2,17 @@
 pageClass: fullwidth-page
 ---
 
-# AwesomeForm
-
-## presentation
-
-
+## Presentation
 
 ## features
 
 ## default initialisation
 
-
 ```
 
   ```
 
-
 ## props
-
 
 <ClientOnly>
 <ComponentDoc :component="'AwesomeForm'" />
@@ -46,8 +39,6 @@ displayMode
 | ImagePicker  | Image Picker using base64 picker                               |
 | time         | time picker                                                    |
 
-
-
 ## events
 
 | Type                    | description |
@@ -57,9 +48,6 @@ displayMode
 | bulkEdit                |             |
 | aw-select-previous-item |             |
 | aw-select-next-item     |             |
-
-
-
 
 ## Styling classes :
 

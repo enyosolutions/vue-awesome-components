@@ -2,11 +2,7 @@
 pageClass: fullwidth-page
 ---
 
-# Properties
-
-
-## props
-
+# Props
 
 <ClientOnly>
 <ComponentDoc :component="'AwesomeTable'">
@@ -31,7 +27,6 @@ pageClass: fullwidth-page
 </ComponentDoc>
 </ClientOnly>
 
-
 ## columns types
 
 The table can display various type of data. By default the value used it the string;
@@ -51,17 +46,13 @@ The table can display various type of data. By default the value used it the str
 | list-of-value | The value is used to find the value in a vuex store                             |
 | list-of-data  | The value is used to find the value in a vuex store                             |
 
-
-
 ## Styling classes :
 
 `aw-table-card`
 `aw-table-card-head`
 `aw-table-card-body`
 
-
 ## events
-
 
 | Type              | description                                                             |
 |-------------------|-------------------------------------------------------------------------|
@@ -69,9 +60,7 @@ The table can display various type of data. By default the value used it the str
 | crud-list-updated | after the request to get list of items for the table is sent to the api |
 | afterRefresh      | after the local refresh of the table (no api)                           |
 
-
 ## Awesome bus events
-
 
 | Type               | description                                                              |
 |--------------------|--------------------------------------------------------------------------|

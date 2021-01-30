@@ -1,13 +1,4 @@
----
-{
-  "title": "Awesome Crud - Examples",
-  "lang": "en-US"
-}
----
-
-
-# Vue Awesome Crud Examples
-
+# Examples
 
 <ClientOnly>
 <AwesomeCrudDemo />

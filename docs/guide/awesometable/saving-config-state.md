@@ -1,4 +1,4 @@
-# Saving config state
+# Saving state
 
 Often you'll find yourself navigating back and forth between a table view and a detail view, exampel when you are checking quickly some details.
 
