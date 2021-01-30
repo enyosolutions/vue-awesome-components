@@ -200,7 +200,7 @@ export default {
       try {
         return Object.assign({}, this.defaultProps, this.componentProps, this.inputedProps);
       } catch (err) {
-        console.warn(err);
+        console.warn('[mergedProps] erroror while merging', err);
         return {};
       }
     },
@@ -221,16 +221,24 @@ export default {
       Object.keys(this.merged.props).forEach((propName) => {
         const propInfo = this.merged.props[propName];
         if (!this.componentProps[propName] && propInfo.default && propInfo.default !== 'undefined') {
-          let prop = propInfo.default;
-          if (['array', 'object'].indexOf(propInfo.type) > -1 && typeof prop === 'function') {
-            prop = prop();
+          let propDefault = propInfo.default;
+          if (['function'].indexOf(propInfo.type) === -1 && typeof propDefault === 'function') {
+            console.warn('[getDefaultProps] getting default value', propName, propDefault, propInfo.type);
+            propDefault = propDefault();
+            console.warn(
+              '[getDefaultProps] after getting default value',
+              propName,
+              propDefault,
+              propInfo.type,
+              typeof prop
+            );
           }
           try {
-            prop = JSON.parse(prop);
+            propDefault = JSON.parse(propDefault);
           } catch (err) {
-            console.warn(err, propName, prop);
+            console.warn('[getDefaultProps] try catch error', propName, propDefault, propInfo.type, err.message, err);
           }
-          defaultProps[propName] = prop;
+          defaultProps[propName] = propDefault;
         }
         return;
       });

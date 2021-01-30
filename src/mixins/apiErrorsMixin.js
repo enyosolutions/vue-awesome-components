@@ -11,7 +11,7 @@ export default {
         return;
       }
 
-      let messageOriginal = err.response || err.data || err;
+      const messageOriginal = err.response || err.data || err;
       let message = this.parseErrorResponse(messageOriginal);
       if (this.$te(`aw.messages.${message}`)) {
         message = this.$t(`aw.messages.${message}`);

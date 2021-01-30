@@ -99,7 +99,7 @@
                           v-if="_useCustomLayout"
                           :edit-mode="editLayoutMode"
                           :fields-list="_getFieldsList"
-                          :layout="layout"
+                          :layout.sync="layout"
                           @layout-updated="onLayoutUpdated"
                           @layout-fields-updated="onLayoutFieldsUpdated"
                         >
@@ -285,7 +285,7 @@
                             <AwesomeLayout
                               v-if="_useCustomLayout"
                               :edit-mode="editLayoutMode"
-                              :layout="layout"
+                              :layout.sync="layout"
                               :fields-list="_getFieldsList"
                               @layout-updated="onLayoutUpdated"
                               @layout-fields-updated="onLayoutFieldsUpdated"
@@ -813,7 +813,7 @@ export default {
     layout: {
       type: [Array, Object],
       note: 'Layout of the form',
-      default: () => null
+      default: () => []
     },
     editLayoutMode: {
       type: Boolean
@@ -846,6 +846,11 @@ export default {
       type: Boolean,
       default: false,
       note: 'Controls if the previous button should be displayed'
+    },
+    useCustomLayout: {
+      type: Boolean,
+      default: false,
+      note: 'If the form layout can be changed'
     }
   },
   data() {
@@ -999,7 +1004,7 @@ export default {
     },
 
     _useCustomLayout() {
-      return !!(this.options && this.options.useCustomLayout && this.layout);
+      return !!(this.useCustomLayout && this.layout);
     },
 
     _editItemTile() {
@@ -1038,11 +1043,13 @@ export default {
       const fieldsList = [];
       this.formSchema.fields.forEach((field) => {
         let exist = false;
-        this.layout.forEach((layout) => {
-          if (_.includes(layout.fields, field.model)) {
-            exist = true;
-          }
-        });
+        this.layout &&
+          Array.isArray(this.layout) &&
+          this.layout.forEach((layout) => {
+            if (_.includes(layout.fields, field.model)) {
+              exist = true;
+            }
+          });
         if (!exist) {
           fieldsList.push(field.model);
         }

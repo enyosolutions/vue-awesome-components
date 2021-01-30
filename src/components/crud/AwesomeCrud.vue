@@ -97,7 +97,7 @@
         </div>
 
         <div class="col-12 awesomecrud-stats-section">
-          <div v-if="mergedOptions.stats" class="row">
+          <div v-if="showStatsSectionComputed" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
               :entity="identity"
@@ -490,9 +490,9 @@ export default {
         'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
-      type: Object,
+      type: [Object, Array],
       required: false,
-      default: undefined,
+      default: () => [],
       note: 'The layout of the create/edit/view pages'
     },
     crudNeedsRefresh: {
@@ -971,6 +971,10 @@ export default {
         }
       }
       return '';
+    },
+
+    showStatsSectionComputed() {
+      return this.showItemsListSectionComputed && this.mergedOptions.stats;
     }
   },
   watch: {
