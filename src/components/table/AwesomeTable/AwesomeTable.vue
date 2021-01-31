@@ -538,7 +538,7 @@ export default {
       note: 'custom bulk action'
     },
     mode: {
-      default: '',
+      default: 'local',
       type: String,
       required: false,
       values: ['local', 'remote']

@@ -22,7 +22,8 @@
             v-if="
               !_isANestedDetailView &&
                 (displayMode === 'table' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
+                dataPaginationModeComputed
             "
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
@@ -679,7 +680,7 @@ export default {
       awesomeEditNeedsRefresh: false,
       statsNeedsRefresh: false,
       nestedCrudNeedsRefresh: false,
-      mergedOptions: {},
+      internalOptions: {},
       innerNestedSchemas: [],
       activeNestedTab: 'general',
       formOptions: {
@@ -789,7 +790,7 @@ export default {
     },
 
     listFieldsComputed() {
-      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      const allColumns = this.tableColumnsComputed;
       let columns = [];
       if (this.listOptions && Array.isArray(this.listOptions.fields)) {
         this.listOptions.fields.forEach((field) => {
@@ -803,7 +804,7 @@ export default {
     },
 
     kanbanFieldsComputed() {
-      const allColumns = this.parseColumns(this.schemaComputed.properties);
+      const allColumns = this.tableColumnsComputed;
       let columns = [];
       if (this._kanbanOptions && !Array.isArray(this._kanbanOptions.fields)) {
         return [];
@@ -1012,6 +1013,23 @@ export default {
         (this.displayMode === 'table' ||
           (this._displayModeHasPartialDisplay && this.mergedOptions.initialDisplayMode === 'table'))
       );
+    },
+
+    mergedOptions: {
+      get() {
+        let options = _.merge({}, defaultOptions, this.options, this.internalOptions);
+        if (this.$route && this.$route.query && this.$route.query.filters) {
+          options.queryParams = _.merge(
+            this.internalOptions.queryParams,
+            { filters: this.$route.query.filters },
+            { fields: this.$route.query.fields }
+          );
+        }
+        return options;
+      },
+      set(data) {
+        this.internalOptions = data;
+      }
     }
   },
   watch: {
@@ -1019,7 +1037,6 @@ export default {
     identity: 'loadModel',
     model: 'loadModel',
     'parent.id': 'loadModel',
-    options: 'mergeOptions',
     crudNeedsRefresh: 'refreshComponent',
     needsRefresh: 'refreshComponent',
     '$route.params.id': 'onRouteIdChanged'
@@ -1034,6 +1051,7 @@ export default {
         // console.warn(err.message);
       }
     }
+    window.addEventListener('scroll', this.handleScroll);
   },
   mounted() {
     // allow old property names to still work
@@ -1044,6 +1062,7 @@ export default {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
 
+    this.internalOptions = this.options;
     this.loadModel();
     this.displayMode = this.mergedOptions.initialDisplayMode;
 
@@ -1055,11 +1074,6 @@ export default {
       this.viewMode = this.nestedDisplayMode;
     }
 */
-    if (this.mergedOptions.detailPageMode === 'sideform') {
-      this.handleDebouncedScroll = _.debounce(this.handleScroll, 100);
-      window.addEventListener('scroll', this.handleScroll);
-    }
-
     if (!this.$route || !this.useRouterMode) {
       // stop if we don't have a router to bind ourselves to
       return;
@@ -1124,25 +1138,6 @@ export default {
       this.statsNeedsRefresh = true;
     },
 
-    mergeOptions() {
-      if (this.options && this.options.deletePermitted && this._actions.delete) {
-        if (
-          this.$store &&
-          this.$store.state &&
-          !this.options.deletePermitted.some((v) => this.$store.state.user.roles.indexOf(v.toUpperCase()) >= 0)
-        ) {
-          this._actions.delete = false;
-        }
-      }
-      this.mergedOptions = _.merge({}, defaultOptions, this.mergedOptions, this.options);
-      if (this.$route && this.$route.query && this.$route.query.filters) {
-        this.mergedOptions.queryParams = _.merge(
-          this.mergedOptions.queryParams,
-          { filters: this.$route.query.filters },
-          { fields: this.$route.query.fields }
-        );
-      }
-    },
     callbackFunctionForBAse64(e) {},
 
     importResponse(e) {
@@ -1209,8 +1204,6 @@ export default {
     },
 
     loadModel() {
-      this.mergeOptions();
-
       if (!this._model && !this.schema) {
         console.warn('AWESOME CRUD ERROR', `model ${this.identity} not found`);
         return;
@@ -1787,6 +1780,8 @@ export default {
 
     onSegmentChange() {},
     handleScroll(event) {
+      console.log('"ca scroole', event);
+
       this.isSideformSticky = window.scrollY > 252;
     }
   },
