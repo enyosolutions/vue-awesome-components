@@ -2,100 +2,6 @@
   <div class="content aw-crud" :class="'aw-crud-mode-' + displayMode">
     <div class="container-fluid">
       <div class="row ">
-        <div class="col-12 awesomecrud-detail-section">
-          <AwesomeForm
-            v-bind="$props"
-            v-if="showViewFormComputed"
-            :actions="_actionsBeforeCalculation"
-            :custom-inline-actions="_customInlineActions"
-            :custom-top-actions="_customFormTopActions"
-            :display-header="awFormDisplayHeader"
-            :displayMode="mergedOptions.detailPageMode"
-            :edit-layout-mode="editLayoutMode"
-            :has-next="hasNext"
-            :has-previous="hasPrevious"
-            :identity="identity"
-            :item="selectedItem"
-            :layout="viewPageLayoutComputed"
-            :mode="displayMode"
-            :model="_model"
-            :needs-refresh.sync="awesomeEditNeedsRefresh"
-            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :parent="parent"
-            :schema="schemaComputed"
-            :standalone="false"
-            :url="_url"
-            @create="goToCreatePage"
-            @view="goToViewPage"
-            @nestedView="nestedViewFunction"
-            @edit="goToEditPage"
-            @delete="goToDeletePage"
-            @cancel="onViewDisplayCancelled"
-            @closeRequested="onViewDisplayCancelled"
-            @customAction="onCustomAction"
-            @beforeCreate="forwardEvent.bind(this, 'beforeCreate')"
-            @itemCreated="onItemCreated"
-            @itemEdited="onItemEdited"
-            @itemsBulkEdited="onItemsBulkEdited"
-            @itemDeleted="onItemDeleted"
-            @itemViewed="onItemViewed"
-            @itemValidated="onItemValidated"
-            @itemValidationFailed="onItemValidationFailed"
-            @layout-updated="onLayoutUpdated"
-            @layout-resetted="onLayoutUpdated"
-            @layout-fields-updated="onLayoutFieldsUpdated"
-            @open-edit-layout-mode="onOpenEditLayoutMode"
-            @close-edit-layout-mode="onCloseEditLayoutMode"
-            @aw-select-previous-item="selectPreviousItem"
-            @aw-select-next-item="selectNextItem"
-          />
-          <AwesomeForm
-            v-bind="$props"
-            v-if="showEditFormComputed"
-            :mode="displayMode"
-            :model="_model"
-            :schema="schemaComputed"
-            :identity="identity"
-            :displayMode="mergedOptions.detailPageMode"
-            :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
-            createPageLayoutComputed
-            :item="selectedItem"
-            :bulk-items="selectedItems"
-            :needs-refresh.sync="awesomeEditNeedsRefresh"
-            :edit-layout-mode="editLayoutMode"
-            :standalone="false"
-            :display-header="awFormDisplayHeader"
-            :has-previous="hasPrevious"
-            :has-next="hasNext"
-            :actions="_actionsBeforeCalculation"
-            :custom-inline-actions="_customInlineActions"
-            :custom-top-actions="_customFormTopActions"
-            @create="goToCreatePage"
-            @view="goToViewPage"
-            @nestedView="nestedViewFunction"
-            @edit="goToEditPage"
-            @delete="goToDeletePage"
-            @cancel="onEditDisplayCancelled"
-            @closeRequested="onEditDisplayCancelled"
-            @customAction="onCustomAction"
-            @customBulkAction="onCustomBulkAction"
-            @itemCreated="onItemCreated"
-            @itemEdited="onItemEdited"
-            @itemsBulkEdited="onItemsBulkEdited"
-            @itemDeleted="onItemDeleted"
-            @itemViewed="onItemViewed"
-            @itemValidated="onItemValidated"
-            @itemValidationFailed="onItemValidationFailed"
-            @layout-updated="onLayoutUpdated"
-            @layout-resetted="onLayoutUpdated"
-            @layout-fields-updated="onLayoutFieldsUpdated"
-            @open-edit-layout-mode="onOpenEditLayoutMode"
-            @close-edit-layout-mode="onCloseEditLayoutMode"
-            @aw-select-previous-item="selectPreviousItem"
-            @aw-select-next-item="selectNextItem"
-          />
-        </div>
-
         <div class="col-12 awesomecrud-stats-section">
           <div v-if="showStatsSectionComputed" class="row">
             <EnyoCrudStatsSection
@@ -107,7 +13,11 @@
           </div>
         </div>
 
-        <div class="col-12 awesomecrud-list-table-section" v-show="showItemsListSectionComputed">
+        <div
+          class="awesomecrud-list-table-section"
+          v-show="showItemsListSectionComputed"
+          :class="displaySideFormContent ? 'col-6' : 'col-12'"
+        >
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
@@ -170,12 +80,8 @@
                     />
                   </template>
                   <button
-                    v-if="
-                      canShowCreateButton &&
-                        !_isANestedDetailView &&
-                        (displayMode === 'table' ||
-                          (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table'))
-                    "
+                    v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
+                    :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
                     :disabled="!canShowCreateButton"
                     class="btn btn-outline-primary aw-button-add"
                     @click.prevent="goToCreatePage()"
@@ -294,6 +200,115 @@
             @cardClicked="onCardClicked"
           >
           </AwesomeKanban>
+        </div>
+
+        <div
+          class="awesomecrud-detail-section"
+          :class="{
+            'col-6': displaySideFormContent,
+            'col-12': !displaySideFormContent,
+            'sticky-form': displaySideFormContent && isSideformSticky
+          }"
+        >
+          <button
+            v-if="!isSideformSticky"
+            :disabled="true"
+            class="btn btn-outline-primary aw-button-add invisible"
+            type="button"
+          >
+            <i class="fa fa-plus text-primary" />
+          </button>
+          <AwesomeForm
+            v-bind="$props"
+            v-if="showViewFormComputed"
+            :actions="_actionsBeforeCalculation"
+            :custom-inline-actions="_customInlineActions"
+            :custom-top-actions="_customFormTopActions"
+            :display-header="awFormDisplayHeader"
+            :displayMode="detailPageModeCpt"
+            :edit-layout-mode="editLayoutMode"
+            :has-next="hasNext"
+            :has-previous="hasPrevious"
+            :identity="identity"
+            :item="selectedItem"
+            :layout="viewPageLayoutComputed"
+            :mode="displayMode"
+            :model="_model"
+            :needs-refresh.sync="awesomeEditNeedsRefresh"
+            :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
+            :parent="parent"
+            :schema="schemaComputed"
+            :standalone="false"
+            :url="_url"
+            @create="goToCreatePage"
+            @view="goToViewPage"
+            @nestedView="nestedViewFunction"
+            @edit="goToEditPage"
+            @delete="goToDeletePage"
+            @cancel="onViewDisplayCancelled"
+            @closeRequested="onViewDisplayCancelled"
+            @customAction="onCustomAction"
+            @beforeCreate="forwardEvent.bind(this, 'beforeCreate')"
+            @itemCreated="onItemCreated"
+            @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
+            @itemDeleted="onItemDeleted"
+            @itemViewed="onItemViewed"
+            @itemValidated="onItemValidated"
+            @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
+            @layout-resetted="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
+            @aw-select-previous-item="selectPreviousItem"
+            @aw-select-next-item="selectNextItem"
+          />
+          <AwesomeForm
+            v-bind="$props"
+            v-if="showEditFormComputed"
+            :mode="displayMode"
+            :model="_model"
+            :schema="schemaComputed"
+            :identity="identity"
+            :displayMode="detailPageModeCpt"
+            :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
+            createPageLayoutComputed
+            :item="selectedItem"
+            :bulk-items="selectedItems"
+            :needs-refresh.sync="awesomeEditNeedsRefresh"
+            :edit-layout-mode="editLayoutMode"
+            :standalone="false"
+            :display-header="awFormDisplayHeader"
+            :has-previous="hasPrevious"
+            :has-next="hasNext"
+            :actions="_actionsBeforeCalculation"
+            :custom-inline-actions="_customInlineActions"
+            :custom-top-actions="_customFormTopActions"
+            @create="goToCreatePage"
+            @view="goToViewPage"
+            @nestedView="nestedViewFunction"
+            @edit="goToEditPage"
+            @delete="goToDeletePage"
+            @cancel="onEditDisplayCancelled"
+            @closeRequested="onEditDisplayCancelled"
+            @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
+            @itemCreated="onItemCreated"
+            @itemEdited="onItemEdited"
+            @itemsBulkEdited="onItemsBulkEdited"
+            @itemDeleted="onItemDeleted"
+            @itemViewed="onItemViewed"
+            @itemValidated="onItemValidated"
+            @itemValidationFailed="onItemValidationFailed"
+            @layout-updated="onLayoutUpdated"
+            @layout-resetted="onLayoutUpdated"
+            @layout-fields-updated="onLayoutFieldsUpdated"
+            @open-edit-layout-mode="onOpenEditLayoutMode"
+            @close-edit-layout-mode="onCloseEditLayoutMode"
+            @aw-select-previous-item="selectPreviousItem"
+            @aw-select-next-item="selectNextItem"
+          />
         </div>
       </div>
     </div>
@@ -675,7 +690,8 @@ export default {
       },
       supportedDataDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
-      itemsList: []
+      itemsList: [],
+      isSideformSticky: false
     };
   },
   computed: {
@@ -903,7 +919,8 @@ export default {
           'sidebar-left',
           'sidebar-right',
           'fade', // deprecated
-          'slide' // deprecated
+          'slide', // deprecated
+          'sideform' // deprecated
         ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
     },
@@ -975,6 +992,26 @@ export default {
 
     showStatsSectionComputed() {
       return this.showItemsListSectionComputed && this.mergedOptions.stats;
+    },
+
+    isDetailPageModeCpt() {
+      return this.displayMode === 'create' || this.displayMode === 'view' || this.displayMode === 'edit';
+    },
+
+    displaySideFormContent() {
+      return this.mergedOptions.detailPageMode === 'sideform' && this.isDetailPageModeCpt;
+    },
+    detailPageModeCpt() {
+      return this.mergedOptions.detailPageMode !== 'sideform' ? this.mergedOptions.detailPageMode : 'page';
+    },
+
+    shouldShowCreateButtonCpt() {
+      return (
+        this.canShowCreateButton &&
+        !this._isANestedDetailView &&
+        (this.displayMode === 'table' ||
+          (this._displayModeHasPartialDisplay && this.mergedOptions.initialDisplayMode === 'table'))
+      );
     }
   },
   watch: {
@@ -1018,6 +1055,11 @@ export default {
       this.viewMode = this.nestedDisplayMode;
     }
 */
+    if (this.mergedOptions.detailPageMode === 'sideform') {
+      this.handleDebouncedScroll = _.debounce(this.handleScroll, 100);
+      window.addEventListener('scroll', this.handleScroll);
+    }
+
     if (!this.$route || !this.useRouterMode) {
       // stop if we don't have a router to bind ourselves to
       return;
@@ -1743,10 +1785,14 @@ export default {
       }
     },
 
-    onSegmentChange() {}
+    onSegmentChange() {},
+    handleScroll(event) {
+      this.isSideformSticky = window.scrollY > 252;
+    }
   },
   beforeDestroy() {
     this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
+    window.removeEventListener('scroll', this.handleScroll);
   }
 };
 </script>
@@ -1812,6 +1858,18 @@ export default {
     .container-fluid {
       padding-left: 0;
       padding-right: 0;
+    }
+  }
+
+  .sticky-form {
+    position: fixed;
+    top: 10px;
+    right: 14px;
+    padding-left: 30px;
+
+    .modal-body {
+      height: 80vh;
+      overflow: auto;
     }
   }
 }

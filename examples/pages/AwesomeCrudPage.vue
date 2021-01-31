@@ -46,7 +46,6 @@ export default {
       ticketModel,
       userSchema,
       showAwesomeForm: false,
-      modalDisplayModeSelect: 'page',
       asList: [
         {
           picture: 'https://picsum.photos/200?1',
@@ -95,6 +94,7 @@ export default {
         filterInitiallyOn: true,
         actions: { create: true, edit: true, delete: true },
         initialDisplayMode: 'table',
+        detailPageMode: 'sideform',
         customInlineActions: [
           {
             name: 'validate-ride-comment',

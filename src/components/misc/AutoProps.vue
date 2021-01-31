@@ -5,7 +5,14 @@
         <div :is="component" v-bind="mergedProps" />
       </slot>
     </div>
-    <section v-if="merged.props" class="props" :class="{ 'prop-section-docked': dockedComputed }">
+    <section
+      v-if="merged.props"
+      class="props"
+      :class="{
+        'prop-section-docked': dockedComputed,
+        'prop-section-folded': foldedComputed
+      }"
+    >
       <table :is="dockedComputed && !debug ? 'div' : 'table'">
         <tr :is="rowDisplayMode" class="proprow props-header">
           <div class="component-name" v-if="dockedComputed">
@@ -153,6 +160,10 @@ export default {
       type: Boolean,
       default: true
     },
+    folded: {
+      type: Boolean,
+      default: false
+    },
     componentProps: {
       type: Object,
       required: false,
@@ -167,7 +178,8 @@ export default {
       defaultProps: {},
       inputedProps: {},
       debug: false,
-      isDocked: undefined
+      isDocked: undefined,
+      isFolded: undefined
     };
   },
   mounted() {
@@ -213,6 +225,9 @@ export default {
     },
     dockedComputed() {
       return this.isDocked !== undefined && this.isDocked !== null ? this.isDocked : this.docked;
+    },
+    foldedComputed() {
+      return this.isFolded !== undefined && this.isFolded !== null ? this.isFolded : this.folded;
     }
   },
   methods: {
@@ -432,6 +447,21 @@ function getTypeString(variable) {
   right: 0;
   top: 0;
   height: 100vh;
+  width: 30vw;
+  overflow: auto;
+  padding: 60px 10px 50px 10px;
+  background: #fff;
+  z-index: 10;
+  box-shadow: -1px 0px 2px #999;
+  margin: 0;
+}
+
+.prop-section-docked.prop-section-folded {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  height: auto;
   width: 30vw;
   overflow: auto;
   padding: 60px 10px 50px 10px;

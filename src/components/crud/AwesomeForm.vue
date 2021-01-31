@@ -773,6 +773,7 @@ export default {
             'fullscreen',
             'sidebar-left',
             'sidebar-right',
+            'sideform',
             'fade', // deprecated
             'slide' // deprecated
           ].indexOf(value) !== -1
@@ -1027,7 +1028,7 @@ export default {
     },
 
     _shouldShowBackdrop() {
-      return this.displayMode !== 'page' && this.displayMode !== 'fullscreen' && this.show;
+      return ['page', 'fullscreen', 'sideform'].indexOf(this.displayMode) === -1 && this.show;
     },
 
     _shouldHaveModalClasses() {
@@ -1058,7 +1059,7 @@ export default {
     },
 
     shouldDisplayHeaderCpt() {
-      return !['page', 'sidebar'].includes(this.displayMode) || this.displayHeader;
+      return !['page', 'sidebar', 'sideform'].includes(this.displayMode) || this.displayHeader;
     }
   },
   watch: {
