@@ -1562,7 +1562,7 @@ export default {
       if (this.useRouterMode) {
         let url = this.parentPath.replace('/edit', '');
         if (previousDisplayMode !== 'view') {
-          url = url.replace(`/${item ? item[this.primaryKey] : ''}`, '');
+          url = url.replace(`${item ? item[this.primaryKey] : ''}`, '');
         } else {
           url = `${this.parentPath}/${item ? item[this.primaryKey] : ''}`;
         }
