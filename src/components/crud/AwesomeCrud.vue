@@ -1780,8 +1780,6 @@ export default {
 
     onSegmentChange() {},
     handleScroll(event) {
-      console.log('"ca scroole', event);
-
       this.isSideformSticky = window.scrollY > 252;
     }
   },

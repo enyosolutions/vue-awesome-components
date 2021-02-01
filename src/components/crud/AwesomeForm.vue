@@ -686,7 +686,7 @@ export default {
         'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     needsRefresh: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false,
       note: 'Define whether the content of the table list should be refreshed'
     },
@@ -1069,8 +1069,8 @@ export default {
     model: 'loadModel',
     mode: 'onModeChanged',
     options: 'mergeOptions',
-    needsRefresh: 'refreshComponent',
-    item: 'loadModel'
+    item: 'refreshComponent',
+    needsRefresh: 'refreshComponent'
   },
   created() {
     if (!this.$http) {
@@ -1168,6 +1168,8 @@ export default {
     startCase: _.startCase,
     upperFirst: _.upperFirst,
     refreshComponent(newVal, preVal) {
+      console.warn('refreshcomponent');
+
       if (!newVal || newVal === false) {
         return;
       }
@@ -1180,7 +1182,9 @@ export default {
       setTimeout(() => {
         this.nestedElementsNeedRefresh = false;
         this.$emit('update:crudNeedsRefresh', false);
+        this.$emit('update:needsRefresh', false);
         this.$emit('input:crudNeedsRefresh', false);
+        this.$emit('input:needsRefresh', false);
       }, 100);
     },
 
