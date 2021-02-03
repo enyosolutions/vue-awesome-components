@@ -1,14 +1,14 @@
 <template>
   <div class="aw-list">
     <div class="float-left col-6 pl-0">
-      <slot name="table-header-left">
+      <slot name="list-header-left">
         <div class="card aw-segment-table-wrapper" v-if="segment">
           <awesome-segments :field="segment" @change="onSegmentChange" />
         </div>
       </slot>
     </div>
     <div class="float-right text-right col-6 pr-0">
-      <slot name="table-header-right"></slot>
+      <slot name="list-header-right"></slot>
     </div>
   <div class="aw-list-card aw-list-component awesome-list">
     <div
@@ -567,8 +567,6 @@ export default {
     getItemAtPath(item, path) {
       if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
         let result = this.templateParseText(path, {currentItem: item});
-        console.warn('path', result);
-
         ['p', 'br', 'hr', 'div', 'span', 'img', 'label', 'ul', 'li', 'pre'].forEach (tag => {
        //   result = result.replace(new RegExp('<(?!' + tag + '\\s?).*/?>', 'g'), '');
         })

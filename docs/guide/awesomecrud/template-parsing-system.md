@@ -61,13 +61,22 @@ Templated strings have predefined vaiable in them
 - `items` The list of items on display (for tables, lists and kanban).
 - `parent` The currentitem on the parent context (moslty used for nestedModules) .
 - `context` access to the component being sollicitated.
+- `$state` access to the vuex state.
+- `componentMode` access to the component display state => 'table' | 'create' | 'view' | 'edit' | 'list' | 'kanban' etc
 
+```
+        parent: this.parent,
+        context: this,
+        currentItem: this.selectedItem,
+        items: this.items,
+        $state: this.$store && this.$store.state,
+        userHasRole: this.userHasRole,
+        componentMode: this.mode || this.displayMode
+```
 
 ## functions
 
 Templated strings have predefined vaiable in them
 
-- `currentItem` The item currently displayed, or in use (case ).
-- `items` The list of items on display (for tables, lists and kanban).
-- `parent` The currentitem on the parent context (moslty used for nestedModules) .
-- `context` access to the component being sollicitated.
+- `userHasRole` Function to check the user role
+- `moment` Function to manipulate date

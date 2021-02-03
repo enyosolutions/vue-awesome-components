@@ -1,5 +1,10 @@
 import { templateSettings, template, isString, isFunction, merge } from 'lodash';
 import rolesMixin from './rolesMixin';
+import dayjs from 'dayjs';
+
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+
 
 export default {
   props: {
@@ -14,11 +19,14 @@ export default {
         currentItem: this.selectedItem,
         items: this.items,
         $state: this.$store && this.$store.state,
-        userHasRole: this.userHasRole
+        userHasRole: this.userHasRole,
+        componentMode: this.mode || this.displayMode,
+        moment: dayjs,
       }, data);
     },
 
     templateParser(source, data) {
+      data = this.contextDataMerger(data);
       templateSettings.interpolate = /{{([\s\S]+?)}}/g;
       const compiled = template(source);
       return compiled(data);
@@ -29,7 +37,7 @@ export default {
         return this.templateParser(text, data);
       }
       catch (err) {
-        console.warn('[templateParser]', err.message);
+        console.warn('[templateParserText]', err.message, data);
         return text;
       }
     },
@@ -56,7 +64,6 @@ export default {
         if (!text || text.indexOf('{{') === -1) {
           return text;
         }
-        data = this.contextDataMerger(data);
         const bool = this.templateParser(text, data);
         if (bool === '1' || bool === 'true') {
           return true;

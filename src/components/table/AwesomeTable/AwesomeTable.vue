@@ -869,7 +869,6 @@ export default {
           this.advancedFilters.push(filter);
         }
       });
-      console.warn('api Query params', JSON.stringify(this.advancedFilters));
     }
     // this.refreshLocalData();
     if (this.autoRefresh) {

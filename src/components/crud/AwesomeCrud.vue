@@ -171,6 +171,27 @@
             v-bind="listOptions"
             @itemClicked="onListItemClicked"
           >
+            <template slot="list-header-right">
+              <template v-if="_customTopRightActions">
+                <AwesomeActionList
+                  :actions="_customTopRightActions"
+                  location="topright"
+                  :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
+                  @customAction="onCustomAction"
+                />
+              </template>
+              <button
+                v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
+                :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
+                :disabled="!canShowCreateButton"
+                class="btn btn-outline-primary aw-button-add"
+                @click.prevent="goToCreatePage()"
+                type="button"
+              >
+                <i class="fa fa-plus text-primary" />
+                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+              </button>
+            </template>
           </AwesomeList>
           <AwesomeKanban
             v-if="
@@ -536,7 +557,6 @@ export default {
     nestedDisplayMode: {
       type: String,
       required: false,
-      default: 'table',
       values: ['view', 'edit', 'object', 'table'],
       note:
         'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
@@ -666,6 +686,11 @@ export default {
       type: [Object, String],
       title: 'The field to use for segmenting the lists',
       description: 'This field is used for segmenting the top section'
+    },
+    scrollEventTarget: {
+      type: String,
+      title: 'The selector to use for registering scroll events',
+      description: 'This prop is used for registering the scroll event (needed for sticky forms)'
     }
   },
   data() {
@@ -692,7 +717,9 @@ export default {
       supportedDataDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
       itemsList: [],
-      isSideformSticky: false
+      isSideformSticky: false,
+      scrollTarget: null,
+      awFormWidth: null
     };
   },
   computed: {
@@ -1010,7 +1037,7 @@ export default {
       return (
         this.canShowCreateButton &&
         !this._isANestedDetailView &&
-        (this.displayMode === 'table' ||
+        (this.supportedDataDisplayModes.includes(this.displayMode) ||
           (this._displayModeHasPartialDisplay && this.mergedOptions.initialDisplayMode === 'table'))
       );
     },
@@ -1042,7 +1069,9 @@ export default {
     '$route.params.id': 'onRouteIdChanged'
   },
   created() {
-    window._vue = this;
+    if (process.env.NODE_ENV === 'development') {
+      window._vue = this;
+    }
     if (!this.$http) {
       try {
         const axios = require('axios');
@@ -1051,7 +1080,6 @@ export default {
         // console.warn(err.message);
       }
     }
-    window.addEventListener('scroll', this.handleScroll);
   },
   mounted() {
     // allow old property names to still work
@@ -1066,7 +1094,7 @@ export default {
     this.loadModel();
     this.displayMode = this.mergedOptions.initialDisplayMode;
 
-    if (this._isNested) {
+    if (this._isNested && this.nestedDisplayMode) {
       this.displayMode = this.nestedDisplayMode;
     }
     /*
@@ -1074,6 +1102,13 @@ export default {
       this.viewMode = this.nestedDisplayMode;
     }
 */
+
+    const scrollTarget = this.scrollEventTarget ? document.querySelector(this.scrollEventTarget) : window;
+    if (scrollTarget) {
+      this.scrollTarget = scrollTarget;
+      this.scrollTarget.addEventListener('scroll', this.handleScroll);
+    }
+
     if (!this.$route || !this.useRouterMode) {
       // stop if we don't have a router to bind ourselves to
       return;
@@ -1780,12 +1815,27 @@ export default {
 
     onSegmentChange() {},
     handleScroll(event) {
-      this.isSideformSticky = window.scrollY > 252;
+      if (this.mergedOptions.detailPageMode !== 'sideform' || !this.scrollTarget) {
+        return;
+      }
+      const subForm = this.scrollTarget.querySelector('.aw-form');
+      if (this.scrollTarget && this.scrollTarget.scrollTop > 80) {
+        this.awFormWidth = subForm.offsetWidth;
+        this.isSideformSticky = true;
+        if (subForm) {
+          subForm.style = `width: ${this.awFormWidth}px; text-align:right; float: right`;
+        }
+      } else {
+        this.isSideformSticky = false;
+        if (subForm) {
+          subForm.style = '';
+        }
+      }
     }
   },
   beforeDestroy() {
     this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
-    window.removeEventListener('scroll', this.handleScroll);
+    this.scrollTarget.removeEventListener('scroll', this.handleScroll);
   }
 };
 </script>
@@ -1859,6 +1909,7 @@ export default {
     top: 10px;
     right: 14px;
     padding-left: 30px;
+    padding-right: 6px;
 
     .modal-body {
       height: 80vh;

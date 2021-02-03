@@ -111,7 +111,6 @@ export default {
 
     transformStateBooleans(field) {
       ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
-
         if (_.isString(field[prop])) {
           field[prop] = this.templateParseBoolean(field[prop]);
         }

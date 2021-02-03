@@ -1168,8 +1168,6 @@ export default {
     startCase: _.startCase,
     upperFirst: _.upperFirst,
     refreshComponent(newVal, preVal) {
-      console.warn('refreshcomponent');
-
       if (!newVal || newVal === false) {
         return;
       }
