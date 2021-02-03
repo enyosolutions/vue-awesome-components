@@ -76,7 +76,7 @@
         "
       >
         <i v-if="icon" :class="icon"></i>
-        <span>{{ title ? $t(title) : '' }}</span>
+        <span>{{ label ? $t(label) : '' }}</span>
       </button>
     </div>
   </div>

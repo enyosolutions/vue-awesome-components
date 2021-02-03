@@ -277,6 +277,7 @@ export default {
           }
           field.displayOptions = prop.field.displayOptions || {
             ...prop.column,
+            hidden: undefined,
             type: this.getColumnType(prop),
             classes: (prop.column && prop.column.classes),
             styles: (prop.column && prop.column.styles)
@@ -285,6 +286,8 @@ export default {
           field.displayOptions.relationUrl = field.displayOptions.relationUrl || relationUrl;
           field.displayOptions.relationKey = field.displayOptions.relationKey || relationKey;
           field.displayOptions.relationLabel = field.displayOptions.relationLabel || relationLabel;
+
+
           fields.push(field);
         }
       });

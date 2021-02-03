@@ -135,6 +135,10 @@ export default {
       width: 100%;
     }
   }
+
+  .aw-action {
+    display: inline-block;
+  }
 }
 
 .awesome-action-list-dropdown {
