@@ -4,6 +4,7 @@ const users = require('./users');
 const comments = require('./comments');
 const posts = require('./posts');
 const photos = require('./photos');
+const pictureItItems = require('./pictureItItems');
 
 module.exports = () => ({
   tickets,
@@ -11,4 +12,5 @@ module.exports = () => ({
   comments,
   posts,
   photos,
+  pictureItItems
 })

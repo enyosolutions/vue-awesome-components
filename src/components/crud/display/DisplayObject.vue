@@ -1,26 +1,29 @@
 <template>
   <div
     class="pointer text-avoid-overflow aw-display-object"
-    :class="$props.classes"
-    :style="$props.styles"
-    v-bind="$props"
+    :value="$props.value"
+    :field="$props.field"
+    :class="$props.wrapperClasses"
+    :style="$props.wrapperStyles"
   >
-    <template v-if="!_useArrayMode && !multiple">
-      {{ displayField ? value && value[displayField] : value }}
-    </template>
-    <template v-else>
-      <template v-for="(value, key) of $props.value" class="label label-info">
-        <div :key="key" class="badge badge-info aw-display-object-item mr-1">
-          <template v-if="multiple">
-            {{ (value && value[displayField]) || value }}
-          </template>
-          <template v-if="!_valueIsArray">
-            <label>{{ key }}:</label>
-            <label class="">{{ value }}</label> |
-          </template>
-        </div>
+    <div :class="$props.classes" :style="$props.styles">
+      <template v-if="!_useArrayMode && !multiple">
+        {{ displayField ? value && value[displayField] : value }}
       </template>
-    </template>
+      <template v-else>
+        <template v-for="(value, key) of $props.value" class="label label-info">
+          <div :key="key" class="badge badge-info aw-display-object-item mr-1">
+            <template v-if="multiple">
+              {{ (value && value[displayField]) || value }}
+            </template>
+            <template v-if="!_valueIsArray">
+              <label>{{ key }}:</label>
+              <label class="">{{ value }}</label> |
+            </template>
+          </div>
+        </template>
+      </template>
+    </div>
   </div>
 </template>
 

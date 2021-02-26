@@ -1,5 +1,5 @@
 <template>
-  <div class="content aw-form">
+  <div class="content aw-form" :class="'aw-form-' + identity">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
@@ -35,7 +35,7 @@
               >
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
-                    <div class="modal-header bg-primary text-white">
+                    <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
                       </h3>
@@ -148,7 +148,7 @@
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t(mode === 'view' ? 'AwesomeCrud.labels.view' : 'AwesomeCrud.labels.edit') }} {{ _name }}
+                        {{ $t(mode === 'view' ? '' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
                       </h3>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
@@ -280,7 +280,7 @@
                         </template>
                       </ul>
                       <slot name="edit-form" :selectedItem="selectedItem">
-                        <div class="tab-content">
+                        <div class="tab-content" :class="{ row: nestedLayoutMode === 'sidebar' }">
                           <div class="row" v-if="_useCustomLayout">
                             <AwesomeLayout
                               v-if="_useCustomLayout"
@@ -378,12 +378,14 @@
                   -
                   -->
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
+                            <!--
                             <template v-if="nestedLayoutMode === 'list'">
                               <h3 class="nested-model-title text-primary font-italic">
-                                {{ getNestedTabsTitle({ identity, title }) }} <b>{{ _editItemTile }}</b>
+                                <b>{{ _editItemTile }}</b>
                               </h3>
                               <hr class="mb-1" />
                             </template>
+                            -->
                             <div
                               class="tab-pane nested-tab fade"
                               :class="{

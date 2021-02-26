@@ -86,7 +86,7 @@
   "AwesomeCrud": {
     "labels": {
       "manageTitle": "Gestion des",
-      "createNew": "Créer un(e)",
+      "createNew": "Ajouter",
       "view": "Voir",
       "edit": "Editer"
     },

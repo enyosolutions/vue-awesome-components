@@ -89,7 +89,7 @@
                     type="button"
                   >
                     <i class="fa fa-plus text-primary" />
-                    {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                    {{ $t('AwesomeCrud.labels.createNew') }}
                   </button>
                 </slot>
               </div>
@@ -145,13 +145,13 @@
             :auto-refresh-interval="mergedOptions.autoRefreshInterval"
             :auto-refresh="mergedOptions.autoRefresh"
             :columns="listFieldsComputed"
-            :descriptionField="listOptions.descriptionField"
-            :displayFields="listOptions.displayFields"
+            :descriptionField="listOptions ? listOptions.descriptionField : ''"
+            :displayFields="listOptions ? listOptions.displayFields : []"
             :export-url="mergedOptions.exportUrl"
             :identity="identity"
-            :imageClasses="listOptions.imageClasses"
-            :imageField="listOptions.imageField"
-            :imageStyles="listOptions.imageStyles"
+            :imageClasses="listOptions && listOptions.imageClasses"
+            :imageField="listOptions && listOptions.imageField"
+            :imageStyles="listOptions && listOptions.imageStyles"
             :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -233,7 +233,7 @@
           }"
         >
           <button
-            v-if="!isSideformSticky"
+            v-if="displaySideFormContent && isSideformSticky"
             :disabled="true"
             class="btn btn-outline-primary aw-button-add invisible"
             type="button"
@@ -289,7 +289,7 @@
           <AwesomeForm
             v-bind="$props"
             v-if="showEditFormComputed"
-            :mode="displayMode"
+            :mode="displayBottomFormContent ? 'create' : displayMode"
             :model="_model"
             :schema="schemaComputed"
             :identity="identity"
@@ -948,7 +948,8 @@ export default {
           'sidebar-right',
           'fade', // deprecated
           'slide', // deprecated
-          'sideform' // deprecated
+          'sideform',
+          'bottomform'
         ].indexOf(this.mergedOptions.detailPageMode) > -1
       );
     },
@@ -967,7 +968,10 @@ export default {
     showEditFormComputed() {
       return (
         this.identity &&
-        (this.displayMode === 'edit' || this.displayMode === 'create' || this.displayMode === 'bulkEdit')
+        (this.displayMode === 'edit' ||
+          this.displayMode === 'create' ||
+          this.displayMode === 'bulkEdit' ||
+          this.mergedOptions.detailPageMode === 'bottomform')
       );
     },
 
@@ -1029,8 +1033,15 @@ export default {
     displaySideFormContent() {
       return this.mergedOptions.detailPageMode === 'sideform' && this.isDetailPageModeCpt;
     },
+
+    displayBottomFormContent() {
+      return this.mergedOptions.detailPageMode === 'bottomform';
+    },
+
     detailPageModeCpt() {
-      return this.mergedOptions.detailPageMode !== 'sideform' ? this.mergedOptions.detailPageMode : 'page';
+      return this.mergedOptions.detailPageMode === 'sideform' || this.mergedOptions.detailPageMode === 'bottomform'
+        ? 'page'
+        : this.mergedOptions.detailPageMode;
     },
 
     shouldShowCreateButtonCpt() {
@@ -1778,7 +1789,10 @@ export default {
           this.goToViewPage(row);
           break;
         case 'none':
+          break;
         default:
+          this.listItemClickedHandler(row);
+          s;
           break;
       }
     },
