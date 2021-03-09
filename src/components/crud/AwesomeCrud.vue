@@ -1792,7 +1792,6 @@ export default {
           break;
         default:
           this.listItemClickedHandler(row);
-          s;
           break;
       }
     },

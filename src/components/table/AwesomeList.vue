@@ -19,24 +19,26 @@
     >
       <h4 class>
         <slot name="aw-list-title">{{ _listTitle }}</slot>
-        <div class="btn-group btn-group-sm float-right aw-list-buttons">
-          <slot name="table-top-actions" class/>
-          <div v-if="isRefreshing" style="text-align: center">
-            <i
-                class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"
-                style="color:#888;margin-left:10px"
-            />
-          </div>
-          <div class="btn-group" role="group">
-            <button
+          <button
                 v-if="actions && actions.refresh"
                 class="btn btn-simple"
                 @click="getItems()"
             >
-              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')"/>
-              {{ $t("AwesomeList.buttons.refresh") }}
-            </button>
+              <i class='fa fa-refresh'  :class="(isRefreshing ? ' fa-spin text-primary' : '')"
 
+              />
+            </button>
+      </h4>
+      <p class="card-category">
+        <slot name="list-subtitle"/>
+      </p>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+ <div class="btn-group btn-group-sm float-right aw-list-buttons">
+          <slot name="table-top-actions" class/>
+
+          <div class="btn-group" role="group">
             <popper
                 trigger="clickToOpen"
                 :options="{
@@ -126,14 +128,6 @@
             </div>
           </div>
         </div>
-      </h4>
-      <p class="card-category">
-        <slot name="list-subtitle"/>
-      </p>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-6">
-
           </div>
           <div class="col-sm-6">
             <awesome-filter
