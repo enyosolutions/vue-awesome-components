@@ -3,7 +3,13 @@
     class=""
     v-bind="$props"
     :class="
-      $props.class + ' ajax-table-col-' + $props.field + ' ajax-table-col-value-' + valueClass + ' ' + $props.classes
+      $props.class +
+        ' aw-display-field ajax-table-col-' +
+        $props.field +
+        ' ajax-table-col-value-' +
+        valueClass +
+        ' ' +
+        $props.classes
     "
     :style="$props.styles"
     :is="tag"

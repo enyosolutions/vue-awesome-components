@@ -955,7 +955,17 @@ export default {
     },
 
     _kanbanOptions() {
-      return _.merge({}, defaultKanbanOptions, this.kanbanOptions);
+      const merged = _.merge({}, defaultKanbanOptions, this.kanbanOptions);
+      if (merged.splittingField && (!merged.splittingValues || !merged.splittingValues.length)) {
+        if (this.tableColumnsComputed) {
+          const field = this.tableColumnsComputed.find((f) => f.field === this.segmentField);
+          if (field && field.enum) {
+            merged.splittingValues = field.enum;
+          }
+        }
+      }
+
+      return merged;
     },
 
     canShowCreateButton() {

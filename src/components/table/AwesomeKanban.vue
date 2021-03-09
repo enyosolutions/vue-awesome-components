@@ -287,6 +287,10 @@ export default {
   max-width: 100%;
 }
 
+.aw-display-field {
+  white-space: normal;
+}
+
 .awesome-kanban {
   display: flex;
   width: 100%;
