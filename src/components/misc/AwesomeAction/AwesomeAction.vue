@@ -41,6 +41,7 @@
         :key="index"
         permanent-filter
         :field="field"
+        :field-label="label || title"
         :fields="columns"
         @update-filter="permanentFiltering"
       />
@@ -156,7 +157,7 @@ export default {
     columns: {
       type: Array,
       note: 'In case of type: filter || input, the list of the model\'s columns'
-    }
+    },
   },
   data: () => ({
     //

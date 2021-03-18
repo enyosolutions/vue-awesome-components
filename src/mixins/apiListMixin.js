@@ -69,6 +69,11 @@ export default {
       type: [Object, String],
       title: 'The field to use for segmenting the lists',
       description: 'This field is used for segmenting the top section'
+    },
+    autoSearch: {
+      type: Boolean,
+      default: true,
+      description: 'Allow to auto search using filtering or search input'
     }
   },
   data() {
@@ -231,7 +236,7 @@ export default {
     /** GET ENTITY ITEMS */
     getItems(options = { useSkeleton: false }) {
 
-      this.$emit('refresh');
+      // this.$emit('refresh');
       // if i got a refresh function
       if (this.refresh) {
         this.refresh();
