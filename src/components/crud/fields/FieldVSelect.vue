@@ -36,7 +36,7 @@
       :reduce="reduce"
       :getOptionLabel="formatLabel"
     ></v-select>
-    <div v-if="schema.relation || schema.relationRoute" class="aw-field-select-add-relation">
+    <div v-if="schema.relation || schema.relationRoute" class="aw-field-select-relation-actions">
       <template v-if="model && model[schema.model]">
         <router-link
           v-if="!schema.relationRoute"
@@ -134,22 +134,22 @@ export default {
   },
   computed: {
     fieldOptions() {
-      return this.schema.fieldOptions || this.$props.fieldOptions || {};
+      return (this.schema && this.schema.fieldOptions) || this.$props.fieldOptions || {};
     },
     // we need to override the mixin definition
     internalOptions() {
       return (
-        this.apiOptions || this.schema.fieldOptions.values || this.schema.fieldOptions.options || this.schema.values
+        this.apiOptions || this.fieldOptions.values || this.fieldOptions.options || (this.schema && this.schema.values)
       );
     },
     // @deprecated
     customLabel() {
       if (
-        typeof this.schema.fieldOptions !== 'undefined' &&
-        typeof this.schema.fieldOptions.customLabel !== 'undefined' &&
-        typeof this.schema.fieldOptions.customLabel === 'function'
+        typeof this.fieldOptions !== 'undefined' &&
+        typeof this.fieldOptions.customLabel !== 'undefined' &&
+        typeof this.fieldOptions.customLabel === 'function'
       ) {
-        return this.schema.fieldOptions.customLabel;
+        return this.fieldOptions.customLabel;
       }
       // this will let the multiselect library use the default behavior if customLabel is not specified
       return undefined;
@@ -178,7 +178,7 @@ export default {
       return this.fieldOptions.relationLabel || this.schema.relationLabel || this.fieldOptions.label || 'label';
     },
     _values() {
-      return Array.isArray(this.model[this.schema.model])
+      return this.model && Array.isArray(this.model[this.schema.model])
         ? this.model[this.schema.model].map((v) => v[this._trackBy])
         : this.model[this.schema.model];
     },

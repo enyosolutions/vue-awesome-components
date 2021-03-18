@@ -1,29 +1,28 @@
 <template>
   <div>
     <multiselect
-    v-bind="filteredProps"
-    :value="internalValue || value"
-    @input="updateSelected"
-    :searchable="searchable"
-    :internal-search="internalSearch"
-    @search-change="loadRemoteEntities"
-    :loading="isLoading"
-    :options="internalOptions"
-    :label="label"
+      v-bind="filteredProps"
+      :value="internalValue || value"
+      @input="updateSelected"
+      :searchable="searchable"
+      :internal-search="internalSearch"
+      @search-change="loadRemoteEntities"
+      :loading="isLoading"
+      :options="internalOptions"
+      :label="label"
     >
-    <span slot="noResult">
-      {{ noResult }}
-    </span>
-  </multiselect>
-</div>
+      <span slot="noResult">
+        {{ noResult }}
+      </span>
+    </multiselect>
+  </div>
 </template>
 <script>
-
 import multiselectMixin from 'vue-multiselect';
 import selectMixin from '../../mixins/selectMixin';
 
 export default {
-  name: 'enyo-select',
+  name: 'EnyoSelect',
   props: {
     options: {
       type: Array,
@@ -39,7 +38,7 @@ export default {
     searchable: {
       type: [String, Boolean, Number],
       default: false
-    },
+    }
   },
   model: {
     prop: 'vModelValue',
@@ -53,8 +52,7 @@ export default {
     };
   },
 
-  watch: {
-  },
+  watch: {},
 
   computed: {
     filteredProps() {
@@ -63,25 +61,23 @@ export default {
       delete props.input;
       delete props.value;
       return props;
-    },
-  },
-  methods: {
-
-  },
-
-  created() {
-  // Check if the component is loaded globally
-    if (!this.$root.$options.components.multiselect) {
-       /* eslint-disable-next-line */
-      console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
     }
   },
+  methods: {},
 
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.multiselect) {
+      /* eslint-disable-next-line */
+      console.error(
+        "'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!"
+      );
+    }
+  }
 };
 </script>
 <style lang="scss">
 .multiselect__tag {
   background: orange;
 }
-
 </style>

@@ -193,7 +193,7 @@ export default {
 
         this.errors = fieldErrors;
 
-        this.eventBus.$emit('field-validated', isValid, fieldErrors, this.fieldUID);
+        this.eventBus && this.eventBus.$emit('field-validated', isValid, fieldErrors, this.fieldUID);
         return fieldErrors;
       };
 
@@ -228,7 +228,7 @@ export default {
         changed = true;
       }
       if (changed) {
-        this.eventBus.$emit('model-updated', newValue, this.schema.model);
+        this.eventBus && this.eventBus.$emit('model-updated', newValue, this.schema.model);
 
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema);
@@ -295,6 +295,9 @@ export default {
     }
   },
   created() {
+    if (!this.eventBus) {
+      return;
+    }
     this.eventBus.$on('clear-validation-errors', this.clearValidationErrors);
     this.eventBus.$on('validate-fields', this.validate);
     this.eventBus.$emit('field-registering');
@@ -348,6 +351,9 @@ export default {
     }
   },
   beforeDestroy() {
+    if (!this.eventBus) {
+      return;
+    }
     this.eventBus.$off('clear-validation-errors', this.clearValidationErrors);
     this.eventBus.$off('validate-fields', this.validate);
     this.eventBus.$emit('field-deregistering', this);

@@ -102,6 +102,10 @@ module.exports = {
         path: '/guide/enyoselect'
       },
       {
+        title: 'Api',
+        path: '/guide/api/props.md'
+      },
+      {
         title: "Next steps",
         path: "/guide/next-steps.md"
       },

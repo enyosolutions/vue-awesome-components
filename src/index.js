@@ -25,6 +25,9 @@ import notificationsMixin from './mixins/notificationsMixin';
 import rolesMixin from './mixins/rolesMixin';
 import AwesomeActionList from './components/misc/AwesomeAction/AwesomeActionList';
 import AwesomeAction from './components/misc/AwesomeAction/AwesomeAction';
+import AwesomeFilter from './components/misc/AwesomeFilter';
+import AwesomeFilterValue from './components/misc/AwesomeFilter/AwesomeFilterValue';
+import AwesomeFilterOperator from './components/misc/AwesomeFilter/AwesomeFilterOperator';
 
 
 
@@ -53,6 +56,9 @@ const VueAwesomeComponents = {
   FormGenerator,
   abstractField,
   notificationsMixin,
+  AwesomeFilter,
+  AwesomeFilterValue,
+  AwesomeFilterOperator,
 }
 
 export {
@@ -82,7 +88,10 @@ export {
   FormGenerator,
   notificationsMixin,
   AwesomeActionList,
-  AwesomeAction
+  AwesomeAction,
+  AwesomeFilter,
+  AwesomeFilterValue,
+  AwesomeFilterOperator,
 }
 
 export default VueAwesomeComponents;
