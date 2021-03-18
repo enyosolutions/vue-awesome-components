@@ -287,7 +287,7 @@ export default {
   max-width: 100%;
 }
 
-.aw-display-field {
+.aw-display-field:not(pre) {
   white-space: normal;
 }
 
