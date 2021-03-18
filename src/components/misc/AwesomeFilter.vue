@@ -336,15 +336,21 @@ export default {
       width: 100%;
       text-align: center;
       justify-content: space-between;
+      .vs__dropdown-toggle {
+        border: none;
+      }
       .awesome-filter-value {
-        width: 30%;
+        width: 50%;
+        .aw-field-select-add-relation {
+          display: none;
+        }
       }
 
       .awesome-filter-operator {
-        width: 20%;
+        width: 10%;
       }
 
-      input {
+      input:not(.vs__search) {
         margin: 0 2px;
         height: calc(100% - 4px);
 

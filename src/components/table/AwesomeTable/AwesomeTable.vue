@@ -315,6 +315,9 @@
                   @customAction="$emit('customAction', $event)"
                   @permanent-filtering="permanentFiltering"
                 />
+                <button v-if="_actions.autoSearch === false" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
+                  <i class="fa fa-search"></i>
+                </button>
               </template>
             </div>
             <template slot="table-row" slot-scope="props">
@@ -909,7 +912,9 @@ export default {
         page: 0,
         permanent: true
       });
-      this.getItems({ useSkeleton: true });
+      if (this._actions.autoSearch) {
+        this.getItems({ useSkeleton: true });
+      }
     },
 
     advancedFiltering(parsedFilters, filters) {
@@ -919,7 +924,9 @@ export default {
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0
       });
-      this.getItems({ useSkeleton: true });
+      if (this._actions.autoSearch) {
+        this.getItems({ useSkeleton: true });
+      }
     },
 
     toggleFilter() {

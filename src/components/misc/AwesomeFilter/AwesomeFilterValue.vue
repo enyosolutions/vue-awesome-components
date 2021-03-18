@@ -128,12 +128,15 @@
         />
       </div>
       <!-- ADD SELECT FOR RELATION / OBJECT -->
-      <input
+      <FieldVSelect
           v-if="currentField.type === 'relation'"
-          v-model="value"
           class="form-control input-group-sm"
-          type="text"
+          v-bind="currentField"
+          :schema="{ ...currentField, model: currentField.field, fieldOptions: currentField }"
+          :model="{}"
           :placeholder="$t('AwesomeFilter.labels.filterValue')"
+          :url="currentField.relationUrl"
+          v-model="value"
       />
     </div>
   </div>
@@ -145,13 +148,15 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import dayjs from 'dayjs';
 import i18nMixin from '../../../mixins/i18nMixin';
 import localeData from 'dayjs/plugin/localeData';
+import FieldVSelect from '../../crud/fields/FieldVSelect';
 
 dayjs.extend(localeData);
 export default {
   name: 'AwesomeFilterValue',
   mixins: [i18nMixin],
   components: {
-    DateRangePicker
+    DateRangePicker,
+    FieldVSelect
   },
   props: {
     currentField: {
