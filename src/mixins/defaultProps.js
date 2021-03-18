@@ -19,7 +19,7 @@ export const defaultActions = {
   editLayout: true,
   collapse: true,
   formPagination: true,
-  autoSearch: false,
+  autoSearch: true,
 };
 
 export const defaultKanbanOptions = {
