@@ -55,12 +55,17 @@
     "buttons": {
       "filters": "Filters",
       "refresh": "Refresh",
-      "excel-currentpage": "excel-currentpage",
+      "excel": "Exporter tout",
+      "excel-currentpage": "Export data",
       "searchInput": "Search",
       "view": "view",
       "cancel": "cancel",
       "close": "close",
-      "columnsFilters": "Toggle columns filters",
+      "columnsFilters": {
+        "toggle": "Toggle columns filters",
+        "activate": "Activate les filtres",
+        "deactivate": "Disable les filtres"
+      },
       "clear-state": "Reset table configuration"
     },
     "next": "next",

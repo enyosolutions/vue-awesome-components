@@ -55,13 +55,18 @@
     "buttons": {
       "filters": "Filtres",
       "refresh": "Rafraichir",
-      "excel-currentpage": "Exporter la page en cours",
+      "excel": "Exporter toutes les données",
       "searchInput": "Rechercher",
       "view": "Voir",
       "cancel": "Annuler",
       "close": "Fermer",
-      "columnsFilters": "Activer/Désactiver les filtres de colonnes",
-      "clear-state": "Réinitialiser le configuration du tableau"
+      "clear-state": "Réinitialiser le configuration du tableau",
+      "excel-currentpage": "Exporter les données affichées",
+      "columnsFilters": {
+        "toggle": "Activer/Désactiver les filtres de colonnes",
+        "activate": "Activer les filtres de colonnes",
+        "deactivate": "Activer les filtres de colonnes"
+      }
     },
     "next": "Suivant",
     "prev": "Précédent",

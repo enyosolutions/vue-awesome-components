@@ -139,7 +139,7 @@ export default {
       type: Boolean,
       default: false,
       note: 'State if AwesomeFilter is in custom input mode (Always display filter) that fire call on API'
-    },
+    }
   },
   data: () => ({
     currentField: {},
@@ -257,7 +257,9 @@ export default {
 .awesome-filter {
   text-align: left;
   min-width: 350px;
-
+  .aw-field-select-relation-actions {
+    display: none;
+  }
   .container {
     display: flex;
     padding: 0;
