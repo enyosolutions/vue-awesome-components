@@ -315,7 +315,7 @@
                   @customAction="$emit('customAction', $event)"
                   @permanent-filtering="permanentFiltering"
                 />
-                <button v-if="_actions.autoSearch === false" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
+                <button v-if="!optionsComputed.autoSearch" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
                   <i class="fa fa-search"></i>
                 </button>
               </template>
@@ -517,7 +517,8 @@ export default {
         fixedHeader: false,
         maxHeight: '',
         pagination: true,
-        filterInitiallyOn: false
+        filterInitiallyOn: false,
+        autoSearch: true
       })
     },
     actions: {
@@ -912,7 +913,7 @@ export default {
         page: 0,
         permanent: true
       });
-      if (this._actions.autoSearch) {
+      if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
     },
@@ -924,7 +925,7 @@ export default {
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0
       });
-      if (this._actions.autoSearch) {
+      if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
     },
