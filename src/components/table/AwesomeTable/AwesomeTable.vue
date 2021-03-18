@@ -315,8 +315,8 @@
                   @customAction="$emit('customAction', $event)"
                   @permanent-filtering="permanentFiltering"
                 />
-                <button v-if="!_actions.autoSearch" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
-                  <i class="fa fa-search-plus"></i>
+                <button v-if="_actions.autoSearch === false" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
+                  <i class="fa fa-search"></i>
                 </button>
               </template>
             </div>
