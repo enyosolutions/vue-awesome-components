@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="/">Home</a>
+      <a class="navbar-brand" href="/">Demo PlayGround</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -62,7 +62,7 @@ export default {
   height: 100vh;
   display: flex;
   flex-flow: column;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
