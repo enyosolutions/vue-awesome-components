@@ -5,7 +5,7 @@
       <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column">
           <button
-            class="btn btn-primary btn-block dropdown-toggle"
+            class="btn btn-primary btn-block dropdown-toggle chip-button"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
@@ -40,7 +40,7 @@
           :disabled="!Object.keys(currentField).length"
           @click.prevent="addFilter()"
           type="button"
-          class="btn btn-primary btn-block"
+          class="btn btn-primary btn-block chip-button"
         >
           {{ $t('AwesomeFilter.labels.addFilter') }}
         </button>
@@ -369,7 +369,7 @@ export default {
         flex: 1;
       }
 
-      button {
+      button.chip-button {
         margin-right: -4px;
         appearance: none;
         -moz-appearance: none;
@@ -398,7 +398,7 @@ export default {
       color: white;
 
       .chip-content {
-        button {
+        button.chip-button {
           i {
             color: white;
           }
@@ -415,7 +415,7 @@ export default {
 
     &.chip-primary {
       .chip-content {
-        button:hover {
+        button.chip-button:hover {
           i {
             color: var(--primary);
             transition: 0.3s ease-in-out;

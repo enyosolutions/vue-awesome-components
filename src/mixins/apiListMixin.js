@@ -276,6 +276,7 @@ export default {
         .catch(err => {
           // eslint-disable-next-line
           console.warn(err);
+          this.apiErrorCallback(err);
         })
         .finally(() => {
           this.showSkeleton = false;

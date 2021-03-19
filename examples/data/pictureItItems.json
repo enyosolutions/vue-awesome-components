@@ -1,0 +1,70 @@
+[
+  {
+    "id": "117",
+    "title": "Oeuf",
+    "image": "http://localhost:1338/data/uploads/4a159522801d9f87ae0c4cf7899c4f11.png",
+    "picture": "http://localhost:1338/data/uploads/4a159522801d9f87ae0c4cf7899c4f11.png",
+    "names": {
+      "fr": "Un oeuf",
+      "pl": "",
+      "tg": "e hu"
+    },
+    "phonetic": {
+      "fr": "http://localhost:1338/data/uploads/2k19-E2i8IG8gwXg.mp3",
+      "pl": "",
+      "tg": ""
+    },
+    "sound": "http://localhost:1338/data/uploads/2k19-E2i8IG8gwXg.mp3"
+  },
+  {
+    "id": "117",
+    "title": "Oeuf",
+    "image": "http://localhost:1338/data/uploads/307510880501e7a4a1cdd06d20ef3b98.jpeg",
+    "picture": "http://localhost:1338/data/uploads/307510880501e7a4a1cdd06d20ef3b98.jpeg",
+    "names": {
+      "fr": "Un oeuf",
+      "pl": "huevo",
+      "tg": "e hu"
+    },
+    "phonetic": {
+      "fr": "",
+      "pl": "",
+      "tg": ""
+    },
+    "sound": "https://unsplash.com/photos/d-Cr8MEW5Uc"
+  },
+  {
+    "id": "117",
+    "title": "Yoga 2",
+    "image": "http://localhost:1338/data/uploads/f21aa0fd0983c94320aad6a0ce7a9f3b.jpeg",
+    "picture": "http://localhost:1338/data/uploads/f21aa0fd0983c94320aad6a0ce7a9f3b.jpeg",
+    "names": {
+      "fr": "le Yoga",
+      "pl": "el yoga",
+      "tg": "yoga wowo"
+    },
+    "phonetic": {
+      "fr": "",
+      "pl": "",
+      "tg": ""
+    },
+    "sound": "https://unsplash.com/photos/d-Cr8MEW5Uc"
+  },
+  {
+    "id": "117",
+    "title": "yoga",
+    "image": "http://localhost:1338/data/uploads/fac0bceeb29c6ade9000c6f89e19d1e6.jpeg",
+    "picture": "http://localhost:1338/data/uploads/fac0bceeb29c6ade9000c6f89e19d1e6.jpeg",
+    "names": {
+      "fr": "yoga",
+      "pl": "yoyo",
+      "tg": "yoga wowo"
+    },
+    "phonetic": {
+      "fr": "",
+      "pl": "",
+      "tg": ""
+    },
+    "sound": "https://unsplash.com/photos/d-Cr8MEW5Uc"
+  }
+]

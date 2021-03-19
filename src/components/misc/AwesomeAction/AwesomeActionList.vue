@@ -99,7 +99,7 @@ export default {
     },
     columns: {
       type: Array,
-      note: 'In case of type: filter || input, the list of the model\'s columns'
+      note: "In case of type: filter || input, the list of the model's columns"
     },
     location: {
       type: String,
@@ -138,6 +138,7 @@ export default {
 
   .aw-action {
     display: inline-block;
+    margin-left: 1px;
   }
 }
 

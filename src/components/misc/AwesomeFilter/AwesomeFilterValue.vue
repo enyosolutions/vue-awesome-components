@@ -1,59 +1,58 @@
 <template>
   <div
-      v-if="!['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(currentFilter.value)"
-      class="column awesome-filter-value"
+    v-if="!['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(currentFilter.value)"
+    class="column awesome-filter-value"
   >
     <div v-if="Object.keys(currentField).length || permanentInput">
       <!-- TYPE NUMBER -->
       <input
-          v-if="
-                (currentField.type === 'number' || currentField.type === 'integer') &&
-                  currentFilter.value !== '$between' &&
-                  currentFilter.value !== '$notBetween'
-              "
-          v-model.number="value"
-          type="number"
-          class="form-control input-group-sm"
-          :placeholder="$t('AwesomeFilter.labels.filterValue')"
+        v-if="
+          (currentField.type === 'number' || currentField.type === 'integer') &&
+            currentFilter.value !== '$between' &&
+            currentFilter.value !== '$notBetween'
+        "
+        v-model.number="value"
+        type="number"
+        class="form-control input-group-sm"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
       />
       <!-- TYPE STRING/TEXT -->
       <input
-          v-if="
-                ((currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
-                  !currentField.enum) || permanentInput
-              "
-          v-model="value"
-          type="text"
-          class="form-control input-group-sm"
-          :placeholder="$t('AwesomeFilter.labels.filterValue')"
+        v-if="
+          ((currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
+            !currentField.enum) ||
+            permanentInput
+        "
+        v-model="value"
+        type="text"
+        class="form-control input-group-sm"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
       />
       <!-- TYPE STRING/TEXT WITH ENUM -->
       <div
-          class="dropdown"
-          v-if="
-                (currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
-                  currentField.enum
-              "
+        class="dropdown"
+        v-if="
+          (currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
+            currentField.enum
+        "
       >
         <button
-            class="btn btn-default dropdown-toggle p-0 mr-2 ml-2"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
+          class="btn btn-default dropdown-toggle p-0 mr-2 ml-2"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
         >
           {{ Object.keys(value).length ? value : $t('AwesomeFilter.labels.values') }}
         </button>
         <div class="dropdown-menu" aria-labelledby="field">
-          <a href="" @click.prevent="value = ''" class="dropdown-item">{{
-              $t('AwesomeFilter.labels.values')
-            }}</a>
+          <a href="" @click.prevent="value = ''" class="dropdown-item">{{ $t('AwesomeFilter.labels.values') }}</a>
           <a
-              href=""
-              @click.prevent="value = field"
-              class="dropdown-item"
-              v-for="(field, index) in currentField.enum"
-              :key="index"
+            href=""
+            @click.prevent="value = field"
+            class="dropdown-item"
+            v-for="(field, index) in currentField.enum"
+            :key="index"
           >
             {{ field }}
           </a>
@@ -61,24 +60,19 @@
       </div>
       <!-- TYPE NUMBER BETWEEN/NOTBETWEEN -->
       <div
-          class="form-element between"
-          v-if="
-                (currentField.type === 'number' || currentField.type === 'integer') &&
-                  (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
-              "
+        class="form-element between"
+        v-if="
+          (currentField.type === 'number' || currentField.type === 'integer') &&
+            (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
+        "
       >
         <input
-            v-model.number="value.from"
-            type="number"
-            class="form-control"
-            :placeholder="$t('AwesomeFilter.labels.from')"
+          v-model.number="value.from"
+          type="number"
+          class="form-control"
+          :placeholder="$t('AwesomeFilter.labels.from')"
         />
-        <input
-            v-model="value.to"
-            type="number"
-            class="form-control"
-            :placeholder="$t('AwesomeFilter.labels.to')"
-        />
+        <input v-model="value.to" type="number" class="form-control" :placeholder="$t('AwesomeFilter.labels.to')" />
       </div>
       <!-- TYPE BOOLEAN -->
       <div v-if="currentField.type === 'boolean'" class="form-element">
@@ -90,53 +84,57 @@
       </div>
       <!-- TYPE DATETIME/DATE SIMPLE -->
       <div
-          class="form-element"
-          v-if="
-                (currentField.type === 'datetime' || currentField.type === 'date') &&
-                  currentFilter.value !== '$notBetween' &&
-                  currentFilter.value !== '$between'
-              "
+        class="form-element"
+        v-if="
+          (currentField.type === 'datetime' || currentField.type === 'date') &&
+            currentFilter.value !== '$notBetween' &&
+            currentFilter.value !== '$between'
+        "
       >
         <date-range-picker
-            class="form-group"
-            :locale-data="dateRangePicker.locale"
-            :date-range="dateRangePicker"
-            :single-date-picker="true"
-            :time-picker="true"
-            :open="'left'"
-            :time-picker-increment="1"
-            :show-week-numbers="false"
-            :show-dropdowns="false"
-            :ranges="false"
-            @update="onDateFilter"
+          class="form-group"
+          :locale-data="dateRangePicker.locale"
+          :date-range="dateRangePicker"
+          :single-date-picker="true"
+          :time-picker="true"
+          :open="'left'"
+          :time-picker-increment="1"
+          :show-week-numbers="false"
+          :show-dropdowns="false"
+          :ranges="false"
+          @update="onDateFilter"
         />
       </div>
       <!-- TYPE DATETIME/DATE RANGE-->
       <div
-          class="form-element"
-          v-if="
-                (currentField.type === 'datetime' || currentField.type === 'date') &&
-                  (currentFilter.value === '$notBetween' || currentFilter.value === '$between')
-              "
+        class="form-element"
+        v-if="
+          (currentField.type === 'datetime' || currentField.type === 'date') &&
+            (currentFilter.value === '$notBetween' || currentFilter.value === '$between')
+        "
       >
         <date-range-picker
-            class="form-group vgt-date-range"
-            :date-range="dateRangePicker"
-            :locale-data="dateRangePicker.locale"
-            :open="'left'"
-            @update="onDateFilter"
+          class="form-group vgt-date-range"
+          :date-range="dateRangePicker"
+          :locale-data="dateRangePicker.locale"
+          :open="'left'"
+          @update="onDateFilter"
         />
       </div>
       <!-- ADD SELECT FOR RELATION / OBJECT -->
       <FieldVSelect
-          v-if="currentField.type === 'relation'"
-          class="form-control input-group-sm"
-          v-bind="currentField"
-          :schema="{ ...currentField, model: currentField.field, fieldOptions: currentField }"
-          :model="{}"
-          :placeholder="$t('AwesomeFilter.labels.filterValue')"
-          :url="currentField.relationUrl"
-          v-model="value"
+        v-if="currentField.type === 'relation'"
+        class="form-control input-group-sm"
+        :schema="{
+          ...currentField,
+          model: currentField.field,
+          hidden: false,
+          fieldOptions: { ...currentField, hidden: false }
+        }"
+        :model="{}"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
+        :url="currentField.relationUrl"
+        v-model="value"
       />
     </div>
   </div>
@@ -217,7 +215,7 @@ export default {
       this.updateValue(newValue);
     },
     currentField(newField) {
-      if (Object.keys(newField).length) {
+      if (newField && typeof newField === 'object' && Object.keys(newField).length) {
         if (newField.type === 'datetime' || newField.type === 'date') {
           this.value = new Date().toISOString();
         } else if (newField.type === 'boolean') {
@@ -246,9 +244,18 @@ export default {
     this.dateRangePicker.locale.weekLabel = this.$t('dateRangePicker.weekLabel');
     this.dateRangePicker.locale.customRangeLabel = this.$t('dateRangePicker.customRangeLabel');
   }
-}
+};
 </script>
 
 <style scoped>
+.awesome-vue-select {
+  height: 28px;
+  padding: 2px;
+}
 
+.vs_actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 </style>

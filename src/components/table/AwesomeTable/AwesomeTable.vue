@@ -315,7 +315,12 @@
                   @customAction="$emit('customAction', $event)"
                   @permanent-filtering="permanentFiltering"
                 />
-                <button v-if="!optionsComputed.autoSearch" type="button" class="btn btn-primary btn-add-item " @click="getItems({ useSkeleton: true });">
+                <button
+                  v-if="!optionsComputed.autoSearch"
+                  type="button"
+                  class="btn btn-primary btn-add-item "
+                  @click="getItems({ useSkeleton: true })"
+                >
                   <i class="fa fa-search"></i>
                 </button>
               </template>
@@ -738,7 +743,7 @@ export default {
         return col;
       });
       const isInitialLoad = Object.keys(this.columnsState).length < 1;
-      if (isInitialLoad && newcolumns.length > this.columnsDisplayed) {
+      if (isInitialLoad) {
         newcolumns.forEach((col, idx) => {
           this.$set(this.columnsState, col.field, idx < this.columnsDisplayed);
         });
