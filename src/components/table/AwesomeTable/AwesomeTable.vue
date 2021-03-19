@@ -921,6 +921,7 @@ export default {
       if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
+      this.$awEmit('aw-permanent-filter', parsedFilters);
     },
 
     advancedFiltering(parsedFilters, filters) {
@@ -933,6 +934,7 @@ export default {
       if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
+      this.$awEmit('aw-advanced-filter', parsedFilters, filters);
     },
 
     toggleFilter() {

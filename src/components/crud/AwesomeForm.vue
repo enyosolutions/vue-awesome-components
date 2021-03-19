@@ -631,7 +631,7 @@ const defaultOptions = {
 
 export default {
   name: 'AwesomeForm',
-  introduction: 'A component to quickly create a table UI with edit capabilities',
+  introduction: 'A component to forms from a json schema',
   components: {
     AwesomeCrud: AwesomeCrud,
     /* Column,

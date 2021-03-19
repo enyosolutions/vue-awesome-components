@@ -15,7 +15,12 @@
     </template>
 
     <template v-for="(component, index) in myComponents">
-      <div :key="index" v-if="component.name" :id="'all-components-' + index">
+      <div
+        :key="component.name + index"
+        v-if="component.name"
+        :id="'all-components-' + index"
+        style="margin-top: 100px"
+      >
         <h2>{{ index }}</h2>
         <div v-if="component.name !== index">
           Alias of
@@ -23,7 +28,14 @@
             ><b>{{ component.name }}</b></a
           >
         </div>
-        <ComponentDoc v-else :component="component" />
+        <div v-else style="border-left: 1px solid var(--primary,#eee); padding-left: 10px">
+          <div
+            v-if="component.introduction || component.description"
+            v-html="marked(component.introduction || component.description)"
+          ></div>
+          <h3>Props</h3>
+          <ComponentDoc :component="component" />
+        </div>
       </div>
     </template>
   </article>
@@ -48,15 +60,27 @@ export default {
     }
   },
   async mounted() {
-    this.myComponents = await import('../../../src');
+    this.components = await import('../../../src');
     this.scrollToHash();
+  },
+  computed: {
+    myComponents() {
+      const comps = {};
+      Object.entries(this.components).forEach(([key, component]) => {
+        if (typeof component === 'string' || typeof component === 'object') {
+          comps[key] = component;
+        }
+      });
+      return comps;
+    }
   },
   data() {
     return {
-      myComponents: []
+      components: []
     };
   },
   methods: {
+    marked,
     scrollToHash() {
       setTimeout(() => {
         try {

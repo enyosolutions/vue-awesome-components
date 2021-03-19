@@ -2,7 +2,7 @@
 pageClass: fullwidth-page
 ---
 
-# All components doc
+# Components api reference
 
 <ClientOnly>
 <AllComponents />
