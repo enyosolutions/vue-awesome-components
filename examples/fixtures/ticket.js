@@ -93,7 +93,7 @@ module.exports = {
       title: 'numéro utilisateur',
       description: 'Identifiant utilisateur',
       relation: 'user',
-      relationUrl: '/users',
+      relationUrl: '/api/users',
       relationKey: 'id',
       relationLabel: 'email',
       field: {
@@ -111,7 +111,7 @@ module.exports = {
     userId2: {
       type: 'integer',
       relation: 'user',
-      relationUrl: '/users',
+      relationUrl: '/api/users',
       relationKey: 'id',
       relationLabel: 'email',
       label: 'email',

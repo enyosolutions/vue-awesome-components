@@ -28,6 +28,8 @@ module.exports = {
       { text: "Home", link: "/" },
       { text: "AwesomeCrud", link: "/guide/awesomecrud/" },
       { text: "AwesomeTable", link: "/guide/awesometable/" },
+      { text: "Api", link: "/guide/api/props.md" },
+      { text: "Playground", link: "http://vue-enyo-components.dev.enyosolutions.com/" },
     ],
     sidebar: [
       {

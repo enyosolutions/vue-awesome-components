@@ -14,7 +14,7 @@
       v-slot="{ userProps }"
     >
       <AwesomeCrud
-        url="http://localhost:3000/tickets"
+        url="/api/tickets"
         :apiResponseConfig="{
           dataPath: false,
           totalCountPath: 'headers.x-total-count'

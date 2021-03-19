@@ -148,7 +148,7 @@
           identity="user"
           :schema="userSchema"
           :columns="['col1', 'col2', 'col3']"
-          url="http://localhost:3000/users"
+          url="/api/users"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -201,7 +201,7 @@
             :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
             :options="{ detailPageMode: 'fullscreen', useCustomLayout: true }"
             :model="_ticketModel"
-            url="http://localhost:3000/tickets"
+            url="/api/tickets"
             :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count'
@@ -223,7 +223,7 @@
           :item="{ id: 666087 }"
           mode="edit"
           displayMode="modal"
-          url="http://localhost:3000/tickets"
+          url="/api/tickets"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -235,7 +235,7 @@
         <AwesomeCrud
           identity="photos"
           :schema="photoSchema"
-          url="http://localhost:3000/photos"
+          url="/api/photos"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -249,7 +249,7 @@
         <AwesomeCrud
           identity="photo"
           :schema="photoSchema"
-          url="http://localhost:3000/photos"
+          url="/api/photos"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -268,7 +268,7 @@
         <AwesomeCrud
           identity="photo"
           :schema="photoSchema"
-          url="http://localhost:3000/photos"
+          url="/api/photos"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -324,7 +324,7 @@
             :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
             :options="{ detailPageMode: 'fullscreen' }"
             :model="_ticketModel"
-            url="http://localhost:3000/tickets"
+            url="/api/tickets"
             :apiResponseConfig="{
               dataPath: false,
               totalCountPath: 'headers.x-total-count'
@@ -339,7 +339,7 @@
         <AwesomeCrud
           identity="photos"
           :schema="photoSchema"
-          url="http://localhost:3000/photos"
+          url="/api/photos"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -355,7 +355,7 @@
         <AwesomeCrud
           identity="photos"
           :schema="photoSchema"
-          url="http://localhost:3000/photos"
+          url="/api/photos"
           :apiResponseConfig="{
             dataPath: false,
             totalCountPath: 'headers.x-total-count'
@@ -381,7 +381,7 @@
           }"
           :model="_ticketModel"
           title="Tickets (Segments demo)"
-          url="http://localhost:3000/tickets"
+          url="/api/tickets"
           :apiResponseConfig="{ dataPath: false, totalCountPath: 'headers.x-total-count' }"
           v-bind="userProps"
           @layout-updated="onLayoutUpdated"
