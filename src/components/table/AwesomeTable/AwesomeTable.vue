@@ -912,7 +912,7 @@ export default {
       }, this.autoRefreshInterval * 1000);
     },
 
-    permanentFiltering(parsedFilters) {
+    permanentFiltering(parsedFilters, filters) {
       this.updateParams({
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0,
@@ -921,7 +921,8 @@ export default {
       if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
-      this.$awEmit('aw-permanent-filter', parsedFilters);
+      this.$awEmit('permanent-filter', { filters: parsedFilters });
+      this.$awEmit('filter', { filters: this.serverParams.filters });
     },
 
     advancedFiltering(parsedFilters, filters) {
@@ -934,7 +935,8 @@ export default {
       if (this.optionsComputed.autoSearch) {
         this.getItems({ useSkeleton: true });
       }
-      this.$awEmit('aw-advanced-filter', parsedFilters, filters);
+      this.$awEmit('advanced-filter', parsedFilters, filters);
+      this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
     },
 
     toggleFilter() {

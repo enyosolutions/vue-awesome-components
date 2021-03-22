@@ -114,21 +114,6 @@
           </tr>
         </template>
       </table>
-
-      <div class="props-footer row m-0">
-        <div class="form-check mr-3">
-          <input class="form-check-input" type="checkbox" value="" v-model="isDocked" id="defaultCheck2" />
-          <label class="form-check-label" for="defaultCheck2">
-            Docked
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" v-model="debug" id="defaultCheck1" />
-          <label class="form-check-label" for="defaultCheck1">
-            Extra infos
-          </label>
-        </div>
-      </div>
     </section>
   </article>
 </template>

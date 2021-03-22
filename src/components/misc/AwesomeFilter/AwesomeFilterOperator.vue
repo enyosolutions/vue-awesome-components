@@ -108,7 +108,7 @@ export default {
         '$isDefined',
         '$isNotDefined'
       ],
-      relation: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
+      relation: ['$eq', '$ne', '$in', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
       boolean: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
     }
   }),
@@ -138,6 +138,7 @@ export default {
   mounted() {
     this.filters = [
       { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' },
+      { shortText: '', text: this.$t('AwesomeFilter.filters.in'), value: '$in' },
       { shortText: '!=', text: this.$t('AwesomeFilter.filters.not-equals'), value: '$ne' },
       { shortText: '>', text: this.$t('AwesomeFilter.filters.greater-than'), value: '$gt' },
       { shortText: '>=', text: this.$t('AwesomeFilter.filters.greater-or-equals'), value: '$gte' },

@@ -48,7 +48,8 @@
       "is-null": "est null",
       "is-not-null": "N'est pas null",
       "is-defined": "Est défini",
-      "is-not-defined": "N'est pas défini"
+      "is-not-defined": "N'est pas défini",
+      "in": "Est parmi"
     }
   },
   "AwesomeTable": {

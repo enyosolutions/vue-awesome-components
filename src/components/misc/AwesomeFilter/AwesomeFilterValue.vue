@@ -132,6 +132,7 @@
           fieldOptions: { ...currentField, hidden: false }
         }"
         :model="{}"
+        :multiple="currentFilter && currentFilter.value === '$in'"
         :placeholder="$t('AwesomeFilter.labels.filterValue')"
         :url="currentField.relationUrl"
         v-model="value"
@@ -247,15 +248,29 @@ export default {
 };
 </script>
 
-<style scoped>
-.awesome-vue-select {
-  height: 28px;
-  padding: 2px;
-}
+<style lang="scss">
+.awesome-filter-value {
+  .awesome-vue-select {
+    height: 28px;
+    padding: 2px;
+  }
 
-.vs_actions {
-  position: absolute;
-  right: 0;
-  top: 0;
+  .vs__selected-options {
+    display: inline-block;
+    overflow: auto;
+    display: block;
+    white-space: nowrap;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .vs_actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 </style>

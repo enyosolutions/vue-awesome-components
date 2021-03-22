@@ -5,6 +5,18 @@
 | dataChanged       | after the request to get list of items for the table is sent to the api |
 | crud-list-updated | after the request to get list of items for the table is sent to the api |
 | afterRefresh      | after the local refresh of the table (no api)                           |
+| permanent-filter  | When a permanent filter is used                           |
+| advanced-filter   | When a permanent filter is used                           |
+| onRowClicked            |                            |
+| onRowDoubleClicked            |                            |
+| customAction            |                            |
+| bulkDelete            |                           |
+| bulkEdit            |                           |
+| view            |                           |
+| edit            |                           |
+| delete            |                           |
+| create            |                           |
+| updateAutoRefresh            |                           |
 
 ## Events sent via awesomeBus
 

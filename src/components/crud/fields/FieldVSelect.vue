@@ -25,6 +25,7 @@
     <v-select
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
+      :multiple="multiple || fieldOptions.multiple"
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
@@ -118,6 +119,7 @@ export default {
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
     preloadQueryParam: { type: String, default: 'perPage=10000' },
+    multiple: { type: Boolean, default: false },
     addNewUrl: { type: [String, Function], default: '' }
   }, // 'schema', 'disabled', 'value' are in the abstract field
   mounted() {

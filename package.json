@@ -7,7 +7,7 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint --fix",
     "api": "json-server examples/data/db.js --port 4444 --routes examples/routes.json ",
-    "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es --name vec src/index.js --report",
+    "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es src/index.js --report",
     "dev": "vue-cli-service serve",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
