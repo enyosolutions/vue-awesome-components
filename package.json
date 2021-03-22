@@ -1,6 +1,6 @@
 {
   "name": "vue-aw-components",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -52,6 +52,7 @@
     "jquery": "^3.5.1",
     "json-schema-test-data-generator": "https://github.com/enyosolutions-team/json-schema-test-data-generator",
     "json-schema-to-openapi-schema": "^0.4.0",
+    "json-server": "latest",
     "lint-staged": "^10.5.1",
     "lodash-webpack-plugin": "^0.11.5",
     "luxon": "^1.24.1",
@@ -82,8 +83,7 @@
     "vuepress": "^1.7.1",
     "vuex": "^3.1.0",
     "webpack-bundle-analyzer": "^3.7.0",
-    "weekstart": "^1.0.1",
-    "json-server": "latest"
+    "weekstart": "^1.0.1"
   },
   "peerDependencies": {
     "axios": "^0.18.1",
