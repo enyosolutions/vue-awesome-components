@@ -21,7 +21,7 @@
     "luxon": "^1.24.1",
     "marked": "^0.6.1",
     "moment": "^2.24.0",
-    "qs": "^6.6.0",
+    "qs": "^6.10.1",
     "sweetalert2": "^8.2.6",
     "vue-base64-file-upload": "^1.0.4",
     "vue-clickaway": "^2.2.2",
