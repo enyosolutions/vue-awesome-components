@@ -319,7 +319,7 @@
                   v-if="!optionsComputed.autoSearch"
                   type="button"
                   class="btn btn-primary btn-add-item "
-                  @click="getItems({ useSkeleton: true })"
+                  @click="doRefresh"
                 >
                   <i class="fa fa-search"></i>
                 </button>
@@ -937,6 +937,14 @@ export default {
       }
       this.$awEmit('advanced-filter', parsedFilters, filters);
       this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
+    },
+
+    doRefresh() {
+      this.$awEmit('refresh', { filters: this.serverParams.filters });
+
+      if (this.mode == 'remote') {
+        this.getItems({ useSkeleton: true });
+      }
     },
 
     toggleFilter() {

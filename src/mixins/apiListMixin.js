@@ -234,7 +234,10 @@ export default {
       // this.$emit('refresh');
       // if i got a refresh function
       if (this.refresh) {
-        this.refresh();
+        this.refresh({
+          filters: this.serverParams && this.serverParams.filters,
+          translatedParams: this._translatedServerParams
+        });
         return;
       }
 
