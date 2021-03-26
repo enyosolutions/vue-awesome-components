@@ -267,6 +267,9 @@ export default {
       display: none;
     }
   }
+  .vs__dropdown-toggle-menu::-webkit-scrollbar {
+    display: none;
+  }
   .vs_actions {
     position: absolute;
     right: 0;

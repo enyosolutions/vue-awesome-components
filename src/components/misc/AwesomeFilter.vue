@@ -338,6 +338,11 @@ export default {
       width: 100%;
       text-align: center;
       justify-content: space-between;
+
+      .vs__search {
+        width: 100%;
+      }
+
       .vs__dropdown-toggle {
         border: none;
       }
@@ -357,7 +362,7 @@ export default {
         height: calc(100% - 4px);
 
         &::placeholder {
-          color: white;
+          color: rgba(255, 255, 255, 0.808);
         }
       }
 
@@ -395,7 +400,7 @@ export default {
     }
 
     &.dark {
-      color: white;
+      color: rgba(255, 255, 255, 0.767);
 
       .chip-content {
         button.chip-button {

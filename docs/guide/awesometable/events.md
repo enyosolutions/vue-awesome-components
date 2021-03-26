@@ -17,6 +17,7 @@
 | delete            |                           |
 | create            |                           |
 | updateAutoRefresh            |                           |
+| refresh            |                           |
 
 ## Events sent via awesomeBus
 
