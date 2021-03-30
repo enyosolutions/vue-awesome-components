@@ -167,7 +167,7 @@ export default {
       required: true
     },
     currentValue: {
-      type: [String, Object, Number],
+      type: [String, Object, Number, Array],
       required: true
     },
     permanentInput: {

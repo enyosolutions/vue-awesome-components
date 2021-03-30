@@ -40,6 +40,7 @@
       <AwesomeFilter
         :key="index"
         permanent-filter
+        :defaultOperator="defaultOperator"
         :field="field"
         :field-label="label || title"
         :fields="columns"
@@ -154,10 +155,14 @@ export default {
       type: String,
       note: 'In case of type: filter || input, the field to search on'
     },
+    defaultOperator: {
+      type: String,
+      note: 'In case of type: filter || input, the defaultOperator to display'
+    },
     columns: {
       type: Array,
-      note: 'In case of type: filter || input, the list of the model\'s columns'
-    },
+      note: "In case of type: filter || input, the list of the model's columns"
+    }
   },
   data: () => ({
     //

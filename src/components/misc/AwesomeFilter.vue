@@ -28,10 +28,10 @@
             </a>
           </div>
         </div>
-        <awesome-filter-operator :current-field="currentField" :current-filter.sync="currentFilter" in-popper />
+        <awesome-filter-operator :current-field="currentField" :current-filter.sync="currentOperator" in-popper />
         <awesome-filter-value
           :current-field="currentField"
-          :current-filter="currentFilter"
+          :current-filter="currentOperator"
           :current-value.sync="currentValue"
         />
       </form>
@@ -53,12 +53,12 @@
             <span>{{ fieldLabel || field }}</span>
             <awesome-filter-operator
               :current-field="currentField"
-              :current-filter.sync="currentFilter"
+              :current-filter.sync="currentOperator"
               :permanent-input="permanentInput"
             />
             <awesome-filter-value
               :current-field="currentField"
-              :current-filter="currentFilter"
+              :current-filter="currentOperator"
               :current-value.sync="currentValue"
               :permanent-input="permanentInput"
             />
@@ -117,6 +117,9 @@ export default {
     fieldLabel: {
       type: String
     },
+    defaultOperator: {
+      type: String
+    },
     fields: {
       type: Array
     },
@@ -144,26 +147,26 @@ export default {
   data: () => ({
     currentField: {},
     currentValue: '',
-    currentFilter: {},
+    currentOperator: {},
     selectedFilters: []
   }),
   methods: {
     addFilter() {
       const value =
-        ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentFilter.value) > -1
+        ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentOperator.value) > -1
           ? true
           : this.currentValue;
       if (Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
           value,
-          filter: this.currentFilter
+          filter: this.currentOperator
         };
         this.selectedFilters.push(filter);
         if (!this.permanentFilter && !this.permanentInput) {
           this.currentField = {};
           this.currentValue = '';
-          this.currentFilter = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
+          this.currentOperator = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
         }
         this.parseFilter(this.selectedFilters);
       }
@@ -220,7 +223,7 @@ export default {
       this.selectedFilters = newFilters;
     },
 
-    currentFilter() {
+    currentOperator() {
       if (this.permanentFilter || this.permanentInput) {
         this.addFilter();
       }
@@ -233,11 +236,17 @@ export default {
     }
   },
   mounted() {
-    this.currentFilter = {
-      shortText: '=',
-      text: this.$t('AwesomeFilter.filters.equals'),
-      value: '$eq'
-    };
+    this.currentOperator = this.defaultOperator
+      ? {
+          shortText: this.defaultOperator,
+          text: this.$t(`AwesomeFilter.filters.${this.defaultOperator}`),
+          value: this.defaultOperator
+        }
+      : {
+          shortText: '=',
+          text: this.$t('AwesomeFilter.filters.equals'),
+          value: '$eq'
+        };
     if (this.permanentFilter || this.permanentInput) {
       if (this.fields && this.fields.length) {
         this.currentField = this.fields.filter((item) => item.field === this.field)[0];
@@ -340,7 +349,8 @@ export default {
       justify-content: space-between;
 
       .vs__search {
-        width: 100%;
+        min-width: 40%;
+        width: auto;
       }
 
       .vs__dropdown-toggle {
