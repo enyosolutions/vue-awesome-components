@@ -7,6 +7,7 @@ export const defaultActions = {
   view: true,
   delete: true,
   export: false,
+  exportLocal: false,
   import: false,
   dateFilter: true,
   refresh: true,

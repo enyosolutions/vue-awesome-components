@@ -129,7 +129,11 @@
               <button
                 v-if="
                   _actions &&
-                    (_actions.export || _actions.import || _actions.columnsFilters || _actions.dropdownActions)
+                    (_actions.export ||
+                      _actions.exportLocal ||
+                      _actions.import ||
+                      _actions.columnsFilters ||
+                      _actions.dropdownActions)
                 "
                 id="dropdownMenuButton"
                 class="btn dropdown-toggle"
@@ -168,7 +172,7 @@
                 </button>
 
                 <button
-                  v-if="_actions && _actions.export"
+                  v-if="_actions && _actions.exportLocal"
                   type="button"
                   class="btn btn-simple text-success btn-main-style btn-block"
                   @click="exportCurrentArrayToExcel"
