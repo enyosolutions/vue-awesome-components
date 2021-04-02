@@ -1,5 +1,5 @@
 import fecha from 'fecha';
-let inputFormat = 'YYYY-MM-DD HH:mm:ss';
+let inputFormat = 'YYYY-MM-DD hh:mm:ss';
 
 export default {
   getDefaultInputFormat() {

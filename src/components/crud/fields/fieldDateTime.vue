@@ -27,7 +27,7 @@ import { Datetime } from 'vue-datetime';
 // You need a specific loader for CSS files
 import 'vue-datetime/dist/vue-datetime.css';
 
-const inputFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+const inputFormat = 'YYYY-MM-DDThh:mm:ssZ';
 
 export default {
   mixins: [VueFormGenerator.abstractField],

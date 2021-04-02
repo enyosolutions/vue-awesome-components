@@ -646,7 +646,7 @@ export default {
         }
 
         if (col.type && col.type === 'datetime') {
-          col.format = 'D MMM YYYY <br/> HH:MM';
+          col.format = 'D MMM YYYY <br/> hh:mm';
           col.formatFn = function(value) {
             if (!value) {
               return value;
