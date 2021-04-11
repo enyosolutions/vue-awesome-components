@@ -46,7 +46,7 @@
 <script>
 import abstractField from '../abstractField';
 import { debounce, get as objGet, isFunction, isNumber } from 'lodash';
-import fecha from 'fecha';
+import dayjs from 'dayjs';
 
 const DATETIME_FORMATS = {
   date: 'YYYY-MM-DD',
@@ -87,10 +87,10 @@ export default {
     },
     formatDatetimeToModel(newValue, oldValue) {
       let defaultFormat = DATETIME_FORMATS[this.inputType];
-      let m = fecha.parse(newValue, defaultFormat);
+      let m = dayjs.parse(newValue, defaultFormat);
       if (m !== false) {
         if (this.schema.format) {
-          newValue = fecha.format(m, this.schema.format);
+          newValue = dayjs.format(m, this.schema.format);
         } else {
           newValue = m.valueOf();
         }

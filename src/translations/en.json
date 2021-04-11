@@ -18,6 +18,17 @@
       "listName": "List name",
       "removeList": "Remove list",
       "noData": "No fields selected"
+    },
+    "buttons": {
+      "filters": "Filters",
+      "refresh": "Refresh",
+      "excel-currentpage": "excel-currentpage",
+      "searchInput": "Search",
+      "view": "view",
+      "cancel": "cancel",
+      "close": "close",
+      "columnsFilters": "Toggle columns filters",
+      "clear-state": "Reset table configuration"
     }
   },
   "AwesomeFilter": {

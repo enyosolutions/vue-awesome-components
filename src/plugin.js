@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { directive as vClickOutside } from 'vue-clickaway';
 import _ from 'lodash'
 import FieldEnyoSelect from './components/crud/fields/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/fields/FieldFileInput.vue';
@@ -149,7 +148,7 @@ const install = (Vue, options = {}) => {
 
 
   // DIRECTIVES
-  Vue.directive('click-outside', vClickOutside);
+  // Vue.directive('click-outside', vClickOutside);
 
   // MIXINS
   Vue.mixin(notificationsMixin);

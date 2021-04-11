@@ -74,6 +74,10 @@
               <p class="card-text" v-if="fields && fields.description && data[fields.description]">
                 {{ data[fields.description] }}
               </p>
+              <div v-if="fields && fields.labels && data[fields.labels]" class="pull-right">
+                <small v-for="label in data[fields.labels]" :key="label" class="badge badge-primary">{{ label }}</small>
+              </div>
+
               <template v-if="columns && columns.length">
                 <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
                   {{ key }} :
@@ -282,6 +286,19 @@ export default {
 
       .card {
         cursor: pointer;
+
+        .card-title {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+          overflow: hidden;
+        }
+
+        .card-text {
+          overflow: hidden;
+          white-space: initial;
+          line-height: 1;
+        }
       }
 
       .moving-card {

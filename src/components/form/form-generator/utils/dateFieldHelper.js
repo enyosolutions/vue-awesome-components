@@ -1,4 +1,4 @@
-import fecha from 'fecha';
+import dayjs from 'dayjs';
 let inputFormat = 'YYYY-MM-DD hh:mm:ss';
 
 export default {
@@ -16,12 +16,12 @@ export default {
     if (value != null) {
       let dt;
       if (typeof this.fieldOptions.format !== 'undefined') {
-        dt = fecha.parse(value, this.fieldOptions.format);
+        dt = dayjs.parse(value, this.fieldOptions.format);
       } else {
         dt = new Date(value);
       }
 
-      return fecha.format(dt, this.getDateFormat());
+      return dayjs.format(dt, this.getDateFormat());
     }
 
     return value;
@@ -29,9 +29,9 @@ export default {
 
   formatValueToModel(value) {
     if (value != null) {
-      let m = fecha.parse(value, this.getDateFormat());
+      let m = dayjs.parse(value, this.getDateFormat());
       if (typeof this.fieldOptions.format !== 'undefined') {
-        value = fecha.format(m, this.fieldOptions.format);
+        value = dayjs.format(m, this.fieldOptions.format);
       } else {
         value = m.valueOf();
       }

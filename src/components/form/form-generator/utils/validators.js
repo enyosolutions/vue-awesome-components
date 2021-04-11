@@ -1,5 +1,5 @@
 import { defaults, isNil, isNumber, isInteger, isString, isArray, isFunction } from 'lodash';
-import fecha from 'fecha';
+import dayjs from 'dayjs';
 
 let resources = {
   fieldIsRequired: 'This field is required!',
@@ -160,14 +160,14 @@ const validators = {
     if (!isNil(field.fieldOptions) && !isNil(field.fieldOptions.min)) {
       let min = new Date(field.fieldOptions.min);
       if (m.valueOf() < min.valueOf()) {
-        err.push(msg(messages.dateIsEarly, fecha.format(m), fecha.format(min)));
+        err.push(msg(messages.dateIsEarly, dayjs.format(m), dayjs.format(min)));
       }
     }
 
     if (!isNil(field.fieldOptions) && !isNil(field.fieldOptions.max)) {
       let max = new Date(field.fieldOptions.max);
       if (m.valueOf() > max.valueOf()) {
-        err.push(msg(messages.dateIsLate, fecha.format(m), fecha.format(max)));
+        err.push(msg(messages.dateIsLate, dayjs.format(m), dayjs.format(max)));
       }
     }
 
@@ -211,8 +211,8 @@ const validators = {
     if (res != null) return res;
 
     /*  From validator.js code
-			https://github.com/chriso/validator.js/blob/master/src/lib/isCreditCard.js
-		*/
+      https://github.com/chriso/validator.js/blob/master/src/lib/isCreditCard.js
+    */
     const creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
     const sanitized = value.replace(/[^0-9]+/g, '');
     if (!creditCard.test(sanitized)) {

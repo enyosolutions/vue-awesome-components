@@ -11,7 +11,7 @@
           <div class="btn-group" role="group">
             <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
               <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t('awesomelist.buttons.refresh') }}
+              {{ $t('AwesomeKanban.buttons.refresh') }}
             </button>
           </div>
         </div>
@@ -46,7 +46,7 @@
           @cardClicked="onCardClicked"
         ></KanbanList>
       </Draggable>
-      <div class="card add-list" @click.stop="editForm">
+      <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
         <div class="card-body">
           <div v-if="!isAddingList" class="card-text">
             <i class="fa fa-plus"></i>
@@ -134,7 +134,8 @@ export default {
     actions: {
       type: Object,
       default: () => ({
-        refresh: true
+        refresh: true,
+        addList: true
       })
     }
   },
