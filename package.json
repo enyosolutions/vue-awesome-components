@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "chartist": "^0.11.0",
+    "chartist": "^0.11.4",
     "chartist-plugin-pointlabels": "^0.0.6",
     "chartist-plugin-tooltips": "^0.0.17",
     "crip-vue-loading": "^1.2.5",
