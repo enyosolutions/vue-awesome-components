@@ -955,6 +955,9 @@ export default {
       this.columnsFilterState = !this.columnsFilterState;
 
       if (!this.columnsFilterState) {
+        if (!this.serverParams) {
+          this.serverParams = {};
+        }
         this.serverParams.range = {};
         this.serverParams.filters = {};
         this.getItems({ useSkeleton: true });

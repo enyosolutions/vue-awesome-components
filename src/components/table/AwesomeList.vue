@@ -546,6 +546,9 @@ export default {
       this.filterable = !this.filterable;
 
       if (!this.filterable) {
+        if (!this.serverParams) {
+          this.serverParams = {};
+        }
         this.serverParams.range = {};
         this.serverParams.filters = {};
         this.getItems({ useSkeleton: true });

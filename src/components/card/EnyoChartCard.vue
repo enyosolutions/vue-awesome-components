@@ -1,35 +1,22 @@
 <template>
-  <div
-    class="card"
-    :class="chartClasses"
-  >
-    <div
-      v-if="$slots.header"
-      class="card-header"
-      :class="headerClasses"
-    >
+  <div class="card" :class="chartClasses">
+    <div v-if="$slots.header" class="card-header" :class="headerClasses">
       <slot name="header" />
     </div>
     <div class="card-body">
-      <div
-        :id="chartId"
-        class="ct-chart"
-      />
+      <div :id="chartId" class="ct-chart" />
     </div>
-    <div
-      v-if="$slots.footer"
-      class="card-footer"
-    >
+    <div v-if="$slots.footer" class="card-footer">
       <slot name="footer" />
     </div>
   </div>
 </template>
 <script>
+import chartist from 'chartist';
 
 export default {
   name: 'EnyoChartCard',
-  components: {
-  },
+  components: {},
   props: {
     classes: String,
     headerClasses: String,
@@ -57,7 +44,6 @@ export default {
   data() {
     return {
       chartId: 'no-id',
-      $Chartist: null,
       chart: null,
       animationsClasses: ''
     };
@@ -65,6 +51,10 @@ export default {
   computed: {
     chartClasses() {
       return `${this.class || ''} ${this.animationsClasses} `;
+    },
+
+    $Chartist() {
+      return chartist;
     }
   },
   watch: {
@@ -75,7 +65,7 @@ export default {
   async mounted() {
     this.updateChartId();
     // we need dynamic import because of SSR
-    this.$Chartist = await import('chartist');
+    this;
     setTimeout(() => {
       this.initChart();
     }, 100);
@@ -103,18 +93,11 @@ export default {
             ...this.chartOptions,
             labelInterpolationFnc(value, index) {
               return `${value} (${Math.round(
-                (chartData.series[index] /
-                  chartData.series.reduce((a, b) => a + b)) *
-                  100
+                (chartData.series[index] / chartData.series.reduce((a, b) => a + b)) * 100
               )}%)`;
             }
           };
-          this.chart = this.$Chartist[this.chartType](
-            chartIdQuery,
-            chartData,
-            barChartOptions,
-            this.responsiveOptions
-          );
+          this.chart = this.$Chartist[this.chartType](chartIdQuery, chartData, barChartOptions, this.responsiveOptions);
 
           break;
         case 'Line':
@@ -177,7 +160,10 @@ export default {
       let seq = 0;
       const durations = 500;
       const delays = 80;
-      this.chart.on('draw', data => {
+      if (!this.chart) {
+        return;
+      }
+      this.chart.on('draw', (data) => {
         if (data.type === 'line' || data.type === 'area') {
           data.element.animate({
             d: {
@@ -211,7 +197,10 @@ export default {
       let seq = 0;
       const durations = 500;
       const delays = 80;
-      this.chart.on('draw', data => {
+      if (!this.chart) {
+        return;
+      }
+      this.chart.on('draw', (data) => {
         if (data.type === 'bar') {
           seq++;
           data.element.animate({
@@ -232,8 +221,11 @@ export default {
       let seq = 0;
       const durations = 150;
       const delays = 80;
+      if (!this.chart) {
+        return;
+      }
       // this.animationsClasses = 'fade';
-      this.chart.on('draw', data => {
+      this.chart.on('draw', (data) => {
         if (data.type === 'slice') {
           seq++;
           data.element.animate({
@@ -251,5 +243,4 @@ export default {
   }
 };
 </script>
-<style>
-</style>
+<style></style>

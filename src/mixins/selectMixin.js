@@ -124,11 +124,6 @@ export default {
   },
 
   created() {
-    // Check if the component is loaded globally
-    if (!this.$root.$options.components.multiselect) {
-      /* eslint-disable-next-line */
-      console.error("'vue-multiselect' is missing. Please download from https://github.com/monterail/vue-multiselect and register the component globally!");
-    }
   },
 
   mounted() {
