@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import Vue from 'vue';
-
 export default {
   props: {
     modelsStorePath: {
       type: String,
-      default: (Vue.prototype.awComponentsConfig && Vue.prototype.awComponentsConfig.modelsStorePath) || 'data.models',
+      default: function () {
+        return (this.awComponentsConfig && this.awComponentsConfig.modelsStorePath) || 'data.models';
+      },
       note:
         'Location of the array in the vuex state that contains all the models eg if you provide data.models => we will look ink this.$store.state.data.models'
     }
@@ -17,7 +17,8 @@ export default {
       if (this.$store && this.$store.state) {
         // if we have path
         if (modelsStorePath) {
-          const models = _.get(this.$store.state, modelsStorePath);
+          // we should search every where not just in the state. This is for backward compatibility
+          const models = _.get(this.$store, modelsStorePath) || _.get(this.$store.state, modelsStorePath);
           // if we have a list
           if (models && Array.isArray(models)) {
             return models.find((model) => model.identity === modelId || model.modelName === modelId);

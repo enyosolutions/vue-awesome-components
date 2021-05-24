@@ -668,11 +668,6 @@ export default {
       description: `Defines whether the component is used as paart of another parent component
         (usually AwesomeCrud) or alone. Some actions won't have the same behavior`
     },
-    primaryKey: {
-      type: String,
-      default: 'id',
-      note: 'The field to use as a primary key (id / _id)'
-    },
     model: {
       type: Object,
       required: false,
@@ -721,6 +716,7 @@ export default {
       type: String,
       required: false,
       default: 'list',
+      values: ['view', 'edit', 'object', 'table'],
       note:
         'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
@@ -765,6 +761,17 @@ export default {
         'fullscreen':   Display as a full screen component
         'page':   Display as an in page component
       `,
+      values: [
+        'modal',
+        'sidebar',
+        'page',
+        'fullscreen',
+        'sidebar-left',
+        'sidebar-right',
+        'sideform',
+        'fade', // deprecated
+        'slide' // deprecated
+      ],
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
         return (

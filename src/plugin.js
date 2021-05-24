@@ -41,27 +41,7 @@ import {
 const install = (Vue, options = {}) => {
   if (options) {
 
-    // if (options.global) {
-    //   [FieldEnyoSelect,
-    //     FieldFileInput,
-    //     FieldJsonTextarea,
-    //     FieldDateTime,
-    //     FieldVSelect,
-    //     AwesomeCrud,
-    //     AwesomeForm,
-    //     AwesomeKanban,
-    //     FormGenerator,
-    //     EnyoSelect,
-    //     UploadButton,
-    //     LiveEdit,
-    //     EnyoCard,
-    //     EnyoStatsCard,
-    //     TableAndChartsCard,
-    //     EnyoCrudStatsSection,
-    //     AwesomeTable,].forEach(comp => {
-    //       comp.props = _.merge(AwesomeCrud.props, options.global.props);
-    //     })
-    // }
+
     //    const { exclude } = options;
     Vue.prototype.awComponentsConfig = {};
 

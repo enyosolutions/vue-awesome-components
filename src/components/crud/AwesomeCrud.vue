@@ -425,12 +425,6 @@ export default {
       required: true,
       note: 'Deprecated use identity'
     },
-
-    primaryKey: {
-      type: String,
-      default: 'id',
-      note: 'The field to use as a primary key (id / _id)'
-    },
     model: {
       type: Object,
       required: false,

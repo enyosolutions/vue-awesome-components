@@ -8,7 +8,12 @@ import templatingMixin from './templatingMixin';
 export default {
   mixins: [templatingMixin],
   props: {
-    primaryKey: { type: String, default: 'id' },
+    primaryKey: {
+      type: String,
+      default: function () {
+        return this.awComponentsConfig && this.awComponentsConfig.primaryKey ? this.awComponentsConfig.primaryKey : 'id';
+      }
+    },
     url: { type: [String, Function], default: '' },
     apiRequestConfig: {
       type: Object,

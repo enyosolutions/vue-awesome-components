@@ -4,6 +4,7 @@ export default {
       type: String,
       required: false,
       default: 'table',
+      values: ['view', 'edit', 'object', 'table'],
       note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form',
     },
   },
