@@ -13,12 +13,8 @@ import fieldCleave from '../fields/optional/fieldCleave.vue';
 import fieldDateTimePicker from '../fields/optional/fieldDateTimePicker.vue';
 import fieldGoogleAddress from '../fields/optional/fieldGoogleAddress.vue';
 import fieldImage from '../fields/optional/fieldImage.vue';
-import fieldMasked from '../fields/optional/fieldMasked.vue';
 import fieldNoUiSlider from '../fields/optional/fieldNoUiSlider.vue';
 import fieldPikaday from '../fields/optional/fieldPikaday.vue';
-import fieldRangeSlider from '../fields/optional/fieldRangeSlider.vue';
-import fieldSelectEx from '../fields/optional/fieldSelectEx.vue';
-import fieldSpectrum from '../fields/optional/fieldSpectrum.vue';
 import fieldStaticMap from '../fields/optional/fieldStaticMap.vue';
 import fieldSwitch from '../fields/optional/fieldSwitch.vue';
 import fieldVueMultiSelect from '../fields/optional/fieldVueMultiSelect.vue';
@@ -37,12 +33,8 @@ export {
   fieldDateTimePicker,
   fieldGoogleAddress,
   fieldImage,
-  fieldMasked,
   fieldNoUiSlider,
   fieldPikaday,
-  fieldRangeSlider,
-  fieldSelectEx,
-  fieldSpectrum,
   fieldStaticMap,
   fieldSwitch,
   fieldVueMultiSelect

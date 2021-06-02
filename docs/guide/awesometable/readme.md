@@ -1,6 +1,7 @@
 # Presentation
 
 AwesomeTable is a component for displaying content in a table. The content can come from an api url a property.
+It's based on the vue-good-table https://xaksis.github.io/vue-good-table/
 
 ## features
 

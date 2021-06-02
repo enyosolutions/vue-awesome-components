@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const version = require('./package.json').version;
+const peerDependencies = require('./package.json').peerDependencies;
 // const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -13,6 +14,12 @@ const banner = `
 `;
 
 
+function getProdExternals() {
+  Object.keys(peerDependencies).forEach(k => peerDependencies[k] = k)
+  return peerDependencies;
+}
+
+
 let plugins = [];
 let optimization = {};
 
@@ -20,6 +27,13 @@ let optimization = {};
 // plugins.push(new BundleAnalyzerPlugin());
 
 
+const externals = process.env.NODE_ENV === 'production' ?
+  getProdExternals() : {};
+externals['core-js'] = 'core-js';
+externals['sweetalert2'] = 'sweetalert2';
+externals['sweetalert2/dist'] = 'sweetalert2/dist';
+externals['sweetalert2/dist/sweetalert2.js'] = 'sweetalert2/dist/sweetalert2.js';
+console.log('externals()', externals)
 module.exports = {
   lintOnSave: false,
   filenameHashing: false,
@@ -27,6 +41,7 @@ module.exports = {
   transpileDependencies: [],
   productionSourceMap: false,
   configureWebpack: {
+    externals,
     plugins,
     optimization,
 
@@ -43,6 +58,7 @@ module.exports = {
 
   chainWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
+      config.externals = externals;
       // config.externals = {
       //   'vue-multiselect': 'vue-multiselect',
       //   'sweetalert2': 'sweetalert2',

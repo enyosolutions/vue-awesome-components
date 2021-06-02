@@ -525,6 +525,7 @@ export default {
     if (localStorage.getItem('onLayoutUpdated')) {
       this.editedLayout = JSON.parse(localStorage.getItem('onLayoutUpdated'));
     }
+    window.appInstance = this;
   },
 
   methods: {

@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
 import awEmitMixin from './awEmitMixin';
-import * as localforage from 'localforage';
 
 export default {
   mixins: [apiConfigMixin, awEmitMixin],
@@ -513,14 +512,14 @@ export default {
     },
 
     saveComponentState() {
-      if (this.isSaveStateEnabledCpt && this.uuid) {
+      if (this.isSaveStateEnabledCpt && this.uuid && window.localStorage) {
         try {
-          localforage.setItem(`${this.uuid}-${this.$options.name}-state`, {
+          localStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
             routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
             columnsState: this.saveColumnsState ? this.columnsState : undefined,
             columnFilters: this.saveColumnsState ? this.columnFilters : undefined,
             advancedFilters: this.saveColumnsState ? this.advancedFilters : undefined,
-          });
+          }));
         }
         catch (err) {
           console.warn(err.message);
@@ -529,10 +528,11 @@ export default {
     },
 
     async restoreComponentState() {
-      if (this.isSaveStateEnabledCpt && this.uuid) {
+      if (this.isSaveStateEnabledCpt && this.uuid && window.localStorage) {
         try {
-          const parsedState = await localforage.getItem(`${this.uuid}-${this.$options.name}-state`);
+          let parsedState = await localStorage.getItem(`${this.uuid}-${this.$options.name}-state`);
           if (parsedState) {
+            parsedState = JSON.parse(parsedState);
             if (this.savePaginationState) {
               this.routeQueryParams = parsedState.routeQueryParams;
             }
@@ -551,7 +551,7 @@ export default {
 
     clearComponentState() {
       try {
-        localforage.removeItem(`${this.uuid}-${this.$options.name}-state`);
+        window.localStorage && localStorage.removeItem(`${this.uuid}-${this.$options.name}-state`);
       }
       catch (err) {
         console.warn(err);

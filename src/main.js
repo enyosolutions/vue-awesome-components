@@ -17,7 +17,8 @@ import FormGenerator from './components/form/form-generator';
 import notificationsMixin from './mixins/notificationsMixin';
 import VueGoodTablePlugin from 'vue-good-table';
 import VueRouter from 'vue-router';
-import Multiselect from 'vue-multiselect'
+import Multiselect from 'vue-multiselect';
+import Draggable from 'vuedraggable';
 
 import App from './App.vue';
 import VueEnyoComponents from './plugin';
@@ -34,6 +35,7 @@ import $ from 'jquery';
 Vue.use(VueGoodTablePlugin);
 Vue.use(VueRouter);
 
+Vue.component('Draggable', Draggable);
 Vue.component('multiselect', Multiselect);
 Vue.component('datetime', Datetime);
 Vue.component('vue-form-generator', FormGenerator, []);

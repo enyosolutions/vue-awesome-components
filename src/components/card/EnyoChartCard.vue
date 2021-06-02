@@ -12,8 +12,6 @@
   </div>
 </template>
 <script>
-import chartist from 'chartist';
-
 export default {
   name: 'EnyoChartCard',
   components: {},
@@ -43,6 +41,7 @@ export default {
   },
   data() {
     return {
+      chartist: null,
       chartId: 'no-id',
       chart: null,
       animationsClasses: ''
@@ -54,7 +53,7 @@ export default {
     },
 
     $Chartist() {
-      return chartist;
+      return this.chartist;
     }
   },
   watch: {
@@ -63,6 +62,7 @@ export default {
     chartOptions: 'initChart'
   },
   async mounted() {
+    this.chartist = await import('chartist');
     this.updateChartId();
     // we need dynamic import because of SSR
     this;

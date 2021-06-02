@@ -53,7 +53,7 @@
                 <div v-for="(field, index) in item.fields" :key="index">
                   <div :class="editMode ? 'draggable-item card' : ''">
                     <div :class="editMode ? 'card-body p-2' : ''">
-                      <slot name="field" :field="field">{{field}}</slot>
+                      <slot name="field" :field="field">{{ field }}</slot>
                     </div>
                   </div>
                 </div>
@@ -103,7 +103,7 @@
         <div v-for="(field, index) in fieldsList" :key="index">
           <div class="draggable-item card">
             <div class="card-body p-2">
-              {{field.model || field.label || field.title || field}}
+              {{ field.model || field.label || field.title || field }}
             </div>
           </div>
         </div>
@@ -113,18 +113,12 @@
 </template>
 
 <script>
-import VueGridLayout from 'vue-grid-layout';
-import Draggable from 'vuedraggable';
 import i18nMixin from '../../../mixins/i18nMixin';
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: 'AwesomeLayout',
-  components: {
-    GridLayout: VueGridLayout.GridLayout,
-    GridItem: VueGridLayout.GridItem,
-    Draggable
-  },
+  components: {},
   mixins: [i18nMixin],
   props: {
     layout: {
@@ -153,7 +147,7 @@ export default {
       maxW: 12,
       minH: 2,
       fields: []
-    },
+    }
   }),
   methods: {
     onLayoutUpdated(items) {
@@ -197,6 +191,22 @@ export default {
     },
     isResizable() {
       return this.editMode;
+    }
+  },
+
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.draggable) {
+      /* eslint-disable-next-line */
+      console.error('`Draggable` is missing. Please download vuedraggable and register the component globally!');
+    }
+    if (!this.$root.$options.components.GridLayout) {
+      /* eslint-disable-next-line */
+      console.error('`GridLayout` is missing. Please download vue-grid-layout and register the component globally!');
+    }
+    if (!this.$root.$options.components.GridItem) {
+      /* eslint-disable-next-line */
+      console.error('`GridItem` is missing. Please download vue-grid-layout and register the component globally!');
     }
   },
 
@@ -292,7 +302,7 @@ export default {
     position: relative;
     width: 200px;
     border-radius: 10px;
-    box-shadow: 0 3px 3px -2px rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12);
+    box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12);
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;

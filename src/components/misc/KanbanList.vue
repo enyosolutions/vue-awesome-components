@@ -102,7 +102,6 @@
 </template>
 
 <script>
-import Draggable from 'vuedraggable';
 import i18nMixin from '../../mixins/i18nMixin';
 import _ from 'lodash';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
@@ -110,7 +109,6 @@ import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 export default {
   name: 'KanbanList',
   components: {
-    Draggable,
     AwesomeDisplay
   },
   mixins: [i18nMixin],
@@ -180,6 +178,13 @@ export default {
     customListActions: {
       type: Array,
       default: () => []
+    }
+  },
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.Draggable) {
+      /* eslint-disable-next-line */
+      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
     }
   },
   data: () => ({

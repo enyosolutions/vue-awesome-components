@@ -73,22 +73,17 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
-
-import _ from 'lodash';
-
 import KanbanList from '../misc/KanbanList';
-import Draggable from 'vuedraggable';
-
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
 export default {
   name: 'AwesomeKanban',
   components: {
-    KanbanList,
-    Draggable
+    KanbanList
   },
   mixins: [i18nMixin, apiErrorsMixin, apiListMixin],
   props: {
@@ -235,6 +230,13 @@ export default {
 
     onCustomListAction(body) {
       this.$emit('customListAction', body);
+    }
+  },
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.Draggable) {
+      /* eslint-disable-next-line */
+      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
     }
   },
   mounted() {

@@ -1,32 +1,63 @@
 {
   "name": "vue-aw-components",
+  "contributors": [],
   "version": "1.11.0",
+  "main": "dist/vac.common.js",
+  "module": "src/index.js",
+  "files": [
+    "src",
+    "dist"
+  ],
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint --fix",
-    "lint:fix": "vue-cli-service lint --fix",
+    "pre-commit": "lint-staged",
     "api": "json-server examples/data/db.js --port 4444 --routes examples/routes.json ",
+    "build": "vue-cli-service build",
     "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es src/index.js --report",
+    "build:lib": "vue-cli-service build  --target lib --name vac src/index.js --report",
     "dev": "vue-cli-service serve",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
     "docs:dev": "vuepress dev docs",
+    "lint": "vue-cli-service lint --fix",
+    "lint:fix": "vue-cli-service lint --fix",
+    "serve": "vue-cli-service serve",
     "start": "vue-cli-service serve",
-    "pre-commit": "lint-staged"
+    "test:unit": "vue-cli-service test:unit"
   },
-  "main": "src/index.js",
-  "module": "src/index.js",
   "dependencies": {
     "dayjs": "^1.9.7",
-    "localforage": "^1.9.0",
     "qs": "^6.6.0",
     "uuid": "^8.3.0"
   },
-  "files": [
-    "src"
-  ],
+  "peerDependencies": {
+    "axios": "^0.18.1",
+    "bootstrap": "^4.3.1",
+    "chartist": "^0.11.0",
+    "chartist-plugin-pointlabels": "^0.0.6",
+    "chartist-plugin-tooltips": "^0.0.17",
+    "core-js": "^3.6.5",
+    "crip-vue-loading": "^1.2.5",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.13",
+    "luxon": "^1.24.1",
+    "sweetalert2": "^8.2.6",
+    "vue-base64-file-upload": "^1.0.4",
+    "vue-chartist": "2.2.1",
+    "vue-datetime": "^1.0.0-beta.10",
+    "vue-good-table": "^2.14.4",
+    "vue-grid-layout": "^2.3.8",
+    "vue-i18n": "^8.1.0",
+    "vue-loading-skeleton": "^1.1.9",
+    "vue-multiselect": "^2.1.6",
+    "vue-notifyjs": "^0.4.3",
+    "vue-popperjs": "^2.3.0",
+    "vue-router": "^3.0.1",
+    "vue-select": "^3.10.3",
+    "vue2-daterange-picker": "^0.6.3",
+    "vuedraggable": "^2.24.3",
+    "vuejs-paginate": "^2.1.0",
+    "weekstart": "^1.0.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@vue/cli": "^4.3.1",
@@ -49,8 +80,8 @@
     "crip-vue-loading": "^1.2.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
+    "execa": "^5.0.0",
     "husky": "^4.3.0",
-    "jquery": "^3.5.1",
     "json-schema-test-data-generator": "https://github.com/enyosolutions-team/json-schema-test-data-generator",
     "json-schema-to-openapi-schema": "^0.4.0",
     "json-server": "latest",
@@ -71,48 +102,23 @@
     "vue-i18n": "^8.1.0",
     "vue-loader": "^15.7.0",
     "vue-loading-skeleton": "^1.1.9",
-    "vue-multiselect": "^2.1.6",
     "vue-notifyjs": "^0.4.3",
     "vue-popperjs": "^2.3.0",
     "vue-router": "^3.0.1",
     "vue-select": "^3.10.3",
     "vue-template-compiler": "2.6.11",
     "vue2-daterange-picker": "^0.6.3",
-    "vuedraggable": "^2.24.1",
     "vuejs-paginate": "^2.1.0",
     "vuepress": "^1.7.1",
     "vuex": "^3.1.0",
     "webpack-bundle-analyzer": "^3.7.0",
     "weekstart": "^1.0.1"
   },
-  "peerDependencies": {
-    "axios": "^0.18.1",
-    "bootstrap": "^4.3.1",
-    "chartist": "^0.11.0",
-    "chartist-plugin-pointlabels": "^0.0.6",
-    "chartist-plugin-tooltips": "^0.0.17",
-    "core-js": "^3.6.5",
-    "crip-vue-loading": "^1.2.5",
-    "lodash": "^4.17.13",
-    "luxon": "^1.24.1",
-    "sweetalert2": "^8.2.6",
-    "vue-base64-file-upload": "^1.0.4",
-    "vue-chartist": "2.2.1",
-    "vue-datetime": "^1.0.0-beta.10",
-    "vue-good-table": "^2.14.4",
-    "vue-grid-layout": "^2.3.8",
-    "vue-i18n": "^8.1.0",
-    "vue-loading-skeleton": "^1.1.9",
-    "vue-multiselect": "^2.1.6",
-    "vue-notifyjs": "^0.4.3",
-    "vue-popperjs": "^2.3.0",
-    "vue-router": "^3.0.1",
-    "vue-select": "^3.10.3",
-    "vue2-daterange-picker": "^0.6.3",
-    "vuedraggable": "^2.24.1",
-    "vuejs-paginate": "^2.1.0",
-    "weekstart": "^1.0.1"
-  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
   "eslintConfig": {
     "root": true,
     "env": {
@@ -159,6 +165,14 @@
       }
     ]
   },
+  "lint-staged": {
+    "*.{js,vue}": "yarn lint --fix"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
   "prettier": {
     "printWidth": 120,
     "tabWidth": 2,
@@ -168,18 +182,5 @@
     "useTabs": false,
     "arrowParens": "always",
     "singleQuote": true
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ],
-  "lint-staged": {
-    "*.{js,vue}": "yarn lint --fix"
   }
 }

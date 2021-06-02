@@ -18,11 +18,12 @@
   </div>
 </template>
 <script>
-import multiselectMixin from 'vue-multiselect';
+// import multiselectMixin from 'vue-multiselect';
 import selectMixin from '../../mixins/selectMixin';
 
 export default {
   name: 'EnyoSelect',
+  components: {},
   props: {
     options: {
       type: Array,
@@ -44,7 +45,7 @@ export default {
     prop: 'vModelValue',
     event: 'input'
   },
-  mixins: [multiselectMixin, selectMixin],
+  mixins: [selectMixin],
   data() {
     return {
       isLoading: false,

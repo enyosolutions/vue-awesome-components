@@ -29,8 +29,6 @@ import AwesomeFilter from './components/misc/AwesomeFilter';
 import AwesomeFilterValue from './components/misc/AwesomeFilter/AwesomeFilterValue';
 import AwesomeFilterOperator from './components/misc/AwesomeFilter/AwesomeFilterOperator';
 
-
-
 import install from './plugin';
 
 const VueAwesomeComponents = {
