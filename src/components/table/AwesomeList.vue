@@ -12,6 +12,7 @@
     </div>
   <div class="aw-list-card aw-list-component awesome-list">
     <div
+    v-if="showHeader"
         :class="
         'aw-list-header ' +
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
@@ -131,12 +132,13 @@
           </div>
           <div class="col-sm-6">
             <awesome-filter
+                v-if="actions.filter"
                 display-filters
                 :fields="columns"
                 @update-filter="advancedFiltering"
                 :advanced-filters="advancedFilters"
             />
-            <input type="text" v-model="search" placeholder="Rechercher" class="form-control">
+            <input  v-if="actions.search" type="text" v-model="search" placeholder="Rechercher" class="form-control">
           </div>
         </div>
       </div>
@@ -149,7 +151,7 @@
           :class="itemWrapperClasses"
           @click="handleItemClick($event, item)"
       >
-        <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow">
+        <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
           <div
               class="card mb-3 aw-list-item flex-fill"
               :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
@@ -213,8 +215,8 @@
         </slot>
       </div>
     </div>
-    <hr/>
-    <nav class="text-center">
+    <hr v-if="actions.paginate"/>
+    <nav class="text-center" v-if="actions.paginate">
       <paginate
           v-model="page"
           :page-count="_pageCount"
@@ -274,6 +276,14 @@ export default {
       type: Number,
       default: 6
     },
+    useGridSystem: {
+      type: Boolean,
+      default: true
+    },
+    showHeader: {
+      type: Boolean,
+      default: true
+    },
     gridModeItemHeight: {
       type: [Number, String],
       default: undefined
@@ -313,7 +323,8 @@ export default {
       default: () => ({
         itemButton: true,
         refresh: true,
-        itemsPerRow: true
+        itemsPerRow: true,
+        pagination: true
       })
     },
     defaultOptions: {
@@ -383,6 +394,9 @@ export default {
     },
 
     itemWrapperClasses() {
+      if (!this.useGridSystem) {
+        return '';
+      }
       switch (this.itemsPerRow) {
         case 0:
         case 1:

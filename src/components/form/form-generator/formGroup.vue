@@ -1,5 +1,5 @@
 <template>
-  <fieldset v-if="fields && groupVisible(group)" :is="tag" :class="[groupRowClasses, validationClass]" ref="group">
+  <fieldset v-if="fields && groupIsVisible" :is="tag" :class="[groupRowClasses, validationClass]" ref="group">
     <slot name="group-legend" :group="group" :group-legend="groupLegend"></slot>
     <slot name="group-help" :group="group"></slot>
     <template v-for="(field, index) in fields">
@@ -123,6 +123,19 @@ export default {
         baseClasses = this.getStyleClasses(this.group, baseClasses);
       }
       return baseClasses;
+    },
+
+    groupIsVisible() {
+      console.log('group', this.group);
+      if (this.group && this.group.visible && isFunction(this.group.visible)) {
+        return this.group.visible.call(this, this.model, group, this);
+      }
+
+      if (isNil(this.group.visible)) {
+        return true;
+      }
+
+      return this.group.visible;
     }
   },
   methods: {
@@ -140,17 +153,6 @@ export default {
     },
 
     // Get visible prop of the group
-    groupVisible(group) {
-      if (isFunction(group.visible)) {
-        return group.visible.call(this, this.model, group, this);
-      }
-
-      if (isNil(group.visible)) {
-        return true;
-      }
-
-      return group.visible;
-    },
 
     getGroupTag(field) {
       if (!isNil(field.tag)) {

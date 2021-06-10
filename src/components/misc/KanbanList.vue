@@ -29,7 +29,7 @@
                   @click="
                     $emit('customListAction', {
                       action,
-                      items: list,
+                      items,
                       location: '',
                       id: action.name + '-' + index
                     })
@@ -50,14 +50,14 @@
       <div class="list-cards">
         <Draggable
           class="draggable-card"
-          :list="list"
+          :list="items"
           :group="group"
           :animation="animation"
           ghost-class="moving-card"
           :scroll-sensitivity="scrollSensitivity"
           @change="cardChanged"
         >
-          <div class="card" v-for="(data, index) in list" :key="index" @click="cardClicked(data)">
+          <div class="card" v-for="(data, index) in items" :key="index" @click="cardClicked(data)">
             <img
               class="card-img-top"
               v-if="fields && fields.image && data[fields.image]"
@@ -102,8 +102,9 @@
 </template>
 
 <script>
-import i18nMixin from '../../mixins/i18nMixin';
 import _ from 'lodash';
+import Vue from 'vue';
+import i18nMixin from '../../mixins/i18nMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
 export default {
@@ -114,8 +115,13 @@ export default {
   mixins: [i18nMixin],
   props: {
     /**
-     * The title of the list
+     * The id of the list
      * */
+    id: {
+      type: String,
+      required: true
+    },
+
     title: {
       type: String,
       default: 'Title'
@@ -124,7 +130,7 @@ export default {
     /**
      * The list with all the data
      * */
-    list: {
+    items: {
       type: Array,
       default: () => []
     },
@@ -182,7 +188,7 @@ export default {
   },
   created() {
     // Check if the component is loaded globally
-    if (!this.$root.$options.components.Draggable) {
+    if (!this.$root.$options.components['Draggable'] && !Vue.options.components['Draggable']) {
       /* eslint-disable-next-line */
       console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
     }
@@ -192,11 +198,22 @@ export default {
   }),
   methods: {
     removeList() {
-      this.$emit('remove-list', this.title);
+      this.$emit('remove-list', { id: this.id, title: this.title });
     },
 
     cardChanged(item) {
-      this.$emit('change', item, this.title);
+      this.$emit('change', item, { id: this.id, title: this.title });
+      if (item) {
+        if (item.added) {
+          this.$emit('cardAdded', item.added, { id: this.id, title: this.title });
+        }
+        if (item.removed) {
+          this.$emit('cardRemoved', item.removed, { id: this.id, title: this.title });
+        }
+        if (item.moved) {
+          this.$emit('cardMoved', item.moved, { id: this.id, title: this.title });
+        }
+      }
     },
 
     getAllowedData(data) {

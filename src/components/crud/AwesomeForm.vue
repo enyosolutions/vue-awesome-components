@@ -43,7 +43,7 @@
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
-                        style="flex:auto"
+                        style="flex: auto"
                       >
                         <button
                           v-if="!editLayoutMode && layout"
@@ -163,7 +163,7 @@
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
-                        style="flex:auto"
+                        style="flex: auto"
                       >
                         <button
                           v-if="!editLayoutMode && layout"
@@ -274,7 +274,7 @@
                               @click="activeNestedTab = (ns && ns.identity) || 'general'"
                             >
                               <i v-if="ns.icon" :class="ns.icon" />
-                              {{ upperFirst($t(ns.namePlural || ns.title || ns.identity)) }}
+                              {{ $t(ns.namePlural || ns.title || ns.identity) }}
                             </a>
                           </li>
                         </template>
@@ -406,9 +406,9 @@
                           <template
                             v-if="
                               nestedModels &&
-                                nestedModels.length &&
-                                (mode === 'view' || mode === 'edit') &&
-                                selectedItem
+                              nestedModels.length &&
+                              (mode === 'view' || mode === 'edit') &&
+                              selectedItem
                             "
                           >
                             <template v-for="ns in nestedModels">
@@ -425,9 +425,8 @@
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
                                       getNestedActions(ns).collapse
-                                        ? (nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[
-                                            ns.identity
-                                          ])
+                                        ? (nestedModelsCollapseState[ns.identity] =
+                                            !nestedModelsCollapseState[ns.identity])
                                         : ''
                                     "
                                   >
@@ -446,7 +445,7 @@
                                   :id="'list-collapse-' + ns.identity"
                                   v-bind="ns"
                                   :parent="selectedItem"
-                                  :parentIdentity="model.identity || identity"
+                                  :parentIdentity="(model && model.identity) || identity"
                                   :useRouterMode="false"
                                   :crud-needs-refresh="nestedElementsNeedRefresh"
                                   :needs-refresh="nestedElementsNeedRefresh"
@@ -490,7 +489,7 @@
                         </template>
 
                         <button
-                          v-if="actions.delete && !mergedOptions.noActions"
+                          v-if="actions.delete && !_mergedOptions.noActions"
                           type="button"
                           class="btn btn-danger btn-main-style ml-2"
                           @click.prevent.stop="deleteFunction(selectedItem)"
@@ -502,7 +501,7 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
-                          v-if="mode === 'view' && actions.edit && !mergedOptions.noActions"
+                          v-if="mode === 'view' && actions.edit && !_mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
                           @click.prevent.stop="editFunction(selectedItem)"
@@ -579,7 +578,7 @@
             v-if="_shouldShowBackdrop"
             class="modal-backdrop backdrop-custom show"
             :class="'display-mode-' + displayMode"
-            style="background: #111;"
+            style="background: #111"
           ></div>
         </div>
       </div>
@@ -587,7 +586,7 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import { upperFirst, merge, includes, startCase, cloneDeep, debounce, get, isString } from 'lodash';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
@@ -672,15 +671,13 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     needsRefresh: {
       type: [Boolean, String],
@@ -717,8 +714,7 @@ export default {
       required: false,
       default: 'list',
       values: ['view', 'edit', 'object', 'table'],
-      note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     translations: {
       type: Object,
@@ -839,8 +835,7 @@ export default {
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note:
-        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     displayHeader: {
       type: Boolean,
@@ -893,20 +888,20 @@ export default {
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
           ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
+          : startCase(this._model.singularName);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
 
     _titlePlural() {
       if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
       }
 
       if (this.title) {
@@ -916,36 +911,36 @@ export default {
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}s`)
           ? this.$t(`app.labels.${this.identity}s`)
-          : _.startCase(this.identity + 's');
+          : startCase(this.identity + 's');
       }
       return '';
     },
 
     _name() {
       if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+        return this.$te(this._model.name) ? this.$t(this._model.name) : startCase(this._model.name);
       }
 
       if (this.namePlural) {
-        return this.$te(this.namePlural) ? this.$t(this.namePlural) : _.startCase(this.namePlural);
+        return this.$te(this.namePlural) ? this.$t(this.namePlural) : startCase(this.namePlural);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
     _namePlural() {
       if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
@@ -968,6 +963,25 @@ export default {
       return this.model || this.getModelFromStore(this.identity);
     },
 
+    _mergedOptions() {
+      let mergedOptions = merge({}, defaultOptions, this.options, this._model.options);
+      if (this.options !== defaultOptions) {
+        console.warn('options are diffrent from the basics', this.options);
+        mergedOptions = merge(mergedOptions, this.options);
+      }
+      if (this.$route && this.$route.query && this.$route.query.filters) {
+        mergedOptions.queryParams = merge(this.mergedOptions.queryParams || this.$route.query.filters);
+      }
+
+      if (!mergedOptions.exportUrl) {
+        mergedOptions.exportUrl = `${this._url}/export`;
+      }
+
+      if (!mergedOptions.importUrl) {
+        mergedOptions.importUrl = `${this._url}/import`;
+      }
+      return mergedOptions || {};
+    },
     formSchema() {
       if (!this._schema) {
         return [];
@@ -1002,10 +1016,10 @@ export default {
     },
 
     _actions() {
-      return _.merge(
+      return merge(
         {},
         defaultActions,
-        this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
+        this.actions || (this._mergedOptions && this._mergedOptions.actions) // old location kept for BC
       );
     },
 
@@ -1056,7 +1070,7 @@ export default {
         this.layout &&
           Array.isArray(this.layout) &&
           this.layout.forEach((layout) => {
-            if (_.includes(layout.fields, field.model)) {
+            if (includes(layout.fields, field.model)) {
               exist = true;
             }
           });
@@ -1092,7 +1106,7 @@ export default {
     }
   },
   mounted() {
-    this.openModalDebounced = _.debounce(this.openModal, 300, { leading: true });
+    this.openModalDebounced = debounce(this.openModal, 300, { leading: true });
     // @deprecated
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
@@ -1129,7 +1143,7 @@ export default {
           delete this.$route.params.id;
         }
         if (this.$route.query.item) {
-          this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+          this.selectedItem = merge(this.selectedItem, this.$route.query.item);
         }
         this.$emit('create', this.selectedItem, { reset: false });
 
@@ -1140,7 +1154,7 @@ export default {
         if (this.$route.params.id === 'bulkEdit') {
           delete this.$route.params.id;
           if (this.$route.query.item) {
-            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+            this.selectedItem = merge(this.selectedItem, this.$route.query.item);
           }
           this.$emit('bulkEdit', this.selectedItem, { reset: false });
 
@@ -1174,8 +1188,8 @@ export default {
 
   methods: {
     $alert: Swal,
-    startCase: _.startCase,
-    upperFirst: _.upperFirst,
+    startCase,
+    upperFirst: (str) => upperFirst(str),
     refreshComponent(newVal, preVal) {
       if (!newVal || newVal === false) {
         return;
@@ -1216,9 +1230,9 @@ export default {
           this.actions.delete = false;
         }
       }
-      this.mergedOptions = _.merge({}, defaultOptions, this.mergedOptions, this.options);
+      this.mergedOptions = merge({}, defaultOptions, this.mergedOptions, this.options);
       if (this.$route && this.$route.query && this.$route.query.filters) {
-        this.mergedOptions.queryParams = _.merge(this.mergedOptions.queryParams || this.$route.query.filters);
+        this.mergedOptions.queryParams = merge(this.mergedOptions.queryParams || this.$route.query.filters);
       }
     },
 
@@ -1231,15 +1245,6 @@ export default {
       setTimeout(() => {
         this.openModalDebounced();
       }, 100);
-      // now a computed property...
-      // this.mergedOptions.url =
-      //   this.url ||
-      //   (this.options && this.options.url) ||
-      //   (this._model && this._model.url) ||
-      //   `/${this.identity}`;
-      // if (typeof this.mergedOptions.url === 'function') {
-      //   this.mergedOptions.url = this.mergedOptions.url(this.parent, this);
-      // }
 
       if (!this.mergedOptions.exportUrl) {
         this.mergedOptions.exportUrl = `${this._url}/export`;
@@ -1270,14 +1275,14 @@ export default {
           .then((res) => {
             const data =
               this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-                ? _.get(res, this.apiResponseConfig.dataPath)
+                ? get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
             this.$emit('itemFetched', this.selectedItem); // @deprecated
             this.$awEmit('item-fetched', {
               component: 'aw-form',
               context: this,
-              item: _.cloneDeep(data),
+              item: cloneDeep(data),
               identity: this.identity,
               parentIdentity: this.parentIdentity,
               parent: this.parent
@@ -1303,7 +1308,7 @@ export default {
 
     getSelectEnumFromStore(val) {
       const options =
-        _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
+        isString(val) && val.indexOf('$store') === 0 ? get(this.$store.state, val.replace('$store.', '')) : val;
       return options;
     },
     openModalDebounced: () => {},
@@ -1353,7 +1358,7 @@ export default {
     },
 
     goToEditPage(item) {
-      if (!this.mergedOptions.editPath) {
+      if (!this._mergedOptions.editPath) {
         if (this.updateRouter) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
           this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
@@ -1362,12 +1367,12 @@ export default {
         return;
       }
       this.$router.push(
-        this.mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        this._mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
       );
     },
 
     goToViewPage(item) {
-      if (!this.mergedOptions.viewPath) {
+      if (!this._mergedOptions.viewPath) {
         if (this.updateRouter) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
           this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
@@ -1377,7 +1382,7 @@ export default {
         return;
       }
       this.$router.push(
-        this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        this._mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
       );
     },
 
@@ -1484,7 +1489,7 @@ export default {
       }
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
-          element = _.merge(element, this.selectedItem);
+          element = merge(element, this.selectedItem);
           this.$emit('itemsBulkEdited', element);
         }
       });
@@ -1598,7 +1603,7 @@ export default {
         .then((res) => {
           this.selectedItem =
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-              ? _.get(res, this.apiResponseConfig.dataPath)
+              ? get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
           this.$emit('itemFfetched', this.selectedItem); // @deprecated
           this.$awEemit('item-fetched', {
@@ -1685,7 +1690,7 @@ export default {
     },
 
     getNestedActions(nestedModel) {
-      return _.merge({}, defaultActions, nestedModel.actions);
+      return merge({}, defaultActions, nestedModel.actions);
     }
   }
 };

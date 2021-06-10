@@ -6,7 +6,7 @@
         <div class="btn-group btn-group-sm float-right awesome-list-buttons">
           <slot name="kanban-top-actions" class />
           <div v-if="isRefreshing" style="text-align: center">
-            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color:#888;margin-left:10px" />
+            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
           </div>
           <div class="btn-group" role="group">
             <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
@@ -30,9 +30,10 @@
       >
         <KanbanList
           v-for="(list, index) in localLists"
+          :id="list.id || list.title"
           :key="index"
           :title="list.title"
-          :list="list.content"
+          :items="list.content"
           :fields="options.fields"
           :columns="columns"
           group="card"
@@ -43,7 +44,10 @@
           @remove-list="onRemoveList"
           @customListAction="onCustomListAction"
           @change="onCardChanged"
+          @cardRemoved="onCardRemoved"
+          @cardAdded="onCardAdded"
           @cardClicked="onCardClicked"
+          @cardMoved="onCardMoved"
         ></KanbanList>
       </Draggable>
       <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
@@ -172,8 +176,17 @@ export default {
       this.$emit('listChanged', item);
     },
 
-    onCardChanged(item, listTitle) {
-      this.$emit('cardChanged', item, listTitle);
+    onCardChanged(item, list) {
+      this.$emit('cardChanged', item, list);
+    },
+    onCardRemoved(item, list) {
+      this.$emit('cardRemoved', item, list);
+    },
+    onCardAdded(item, list) {
+      this.$emit('cardAdded', item, list);
+    },
+    onCardMoved(item, list) {
+      this.$emit('cardAdded', item, list);
     },
 
     onCardClicked(item) {
@@ -266,6 +279,9 @@ export default {
   },
 
   watch: {
+    lists() {
+      this.handleLists();
+    },
     data() {
       this.handleLists();
     },

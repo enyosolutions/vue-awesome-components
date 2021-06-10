@@ -1,7 +1,7 @@
 <template>
   <div class="content aw-crud" :class="'aw-crud-mode-' + displayMode">
     <div class="container-fluid">
-      <div class="row ">
+      <div class="row">
         <div class="col-12 awesomecrud-stats-section">
           <div v-if="showStatsSectionComputed" class="row">
             <EnyoCrudStatsSection
@@ -21,9 +21,9 @@
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'table' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
-                dataPaginationModeComputed
+              (displayMode === 'table' ||
+                (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
+              dataPaginationModeComputed
             "
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
@@ -134,8 +134,7 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'list' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+              (displayMode === 'list' || (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
             "
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -196,8 +195,8 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'kanban' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+              (displayMode === 'kanban' ||
+                (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
@@ -429,15 +428,13 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
       type: [Object, Array],
@@ -471,16 +468,14 @@ export default {
       type: String,
       required: false,
       values: ['view', 'edit', 'object', 'table'],
-      note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     nestedLayoutMode: {
       type: String,
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note:
-        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     parent: {
       type: Object,
@@ -517,7 +512,7 @@ export default {
     },
     options: {
       type: Object,
-      default: () => defaultOptions
+      default: () => ({})
     },
     listOptions: {
       type: Object,
@@ -525,7 +520,7 @@ export default {
     },
     kanbanOptions: {
       type: Object,
-      default: () => defaultKanbanOptions
+      default: () => ({})
     },
     actions: {
       type: Object,
@@ -868,7 +863,7 @@ export default {
     },
 
     _kanbanOptions() {
-      const merged = _.merge({}, defaultKanbanOptions, this.kanbanOptions);
+      const merged = _.merge({}, defaultKanbanOptions, this._model && this._model.kanbanOptions, this.kanbanOptions);
       if (merged.splittingField && (!merged.splittingValues || !merged.splittingValues.length)) {
         if (this.tableColumnsComputed) {
           const field = this.tableColumnsComputed.find((f) => f.field === this.segmentField);
@@ -978,7 +973,13 @@ export default {
 
     mergedOptions: {
       get() {
-        let options = _.merge({}, defaultOptions, this.options, this.internalOptions);
+        let options = _.merge(
+          {},
+          defaultOptions,
+          this._model && this._model.options,
+          this.options,
+          this.internalOptions
+        );
         if (this.$route && this.$route.query && this.$route.query.filters) {
           options.queryParams = _.merge(
             this.internalOptions.queryParams,
@@ -1024,7 +1025,7 @@ export default {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
 
-    this.internalOptions = this.options;
+    this.internalOptions = _.cloneDeep(this.mergedOptions);
     this.loadModel();
     this.displayMode = this.mergedOptions.initialDisplayMode;
 
@@ -1049,10 +1050,7 @@ export default {
     }
 
     this.parentPath = this.$route.path;
-    this.parentPath = this.parentPath
-      .replace('/view', '')
-      .replace('/edit', '')
-      .replace('/:id', '');
+    this.parentPath = this.parentPath.replace('/view', '').replace('/edit', '').replace('/:id', '');
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];

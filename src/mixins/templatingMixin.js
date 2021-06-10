@@ -71,7 +71,7 @@ export default {
         if (bool === 0 || bool === 'false') {
           return false;
         }
-        console.warn('[VAC] boolean templates must revolve to a boolean result', bool, 'returned');
+        console.warn('[VAC] boolean templates must revolve to a boolean result.', bool, 'was returned for template', text);
         return false;
       }
       catch (err) {

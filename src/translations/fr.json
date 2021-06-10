@@ -108,9 +108,9 @@
       "edit": "Editer"
     },
     "buttons": {
-      "yes_delete_it": "Yes i confirm",
+      "yes_delete_it": "Oui je confirme",
       "view": "Open",
-      "cancel": "Anuler",
+      "cancel": "Annuler",
       "close": "Fermer",
       "edit": "Editer",
       "save": "Enregistrer",
@@ -158,7 +158,7 @@
     },
     "buttons": {
       "yes": "Oui",
-      "cancel": "Anuler",
+      "cancel": "Annuler",
       "close": "Fermer"
     }
   }

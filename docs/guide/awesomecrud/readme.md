@@ -148,3 +148,9 @@ This component magically create lists and edit data based on a json schema.
 
 ```
 
+
+
+## configuring the list mode
+
+initialDisplayMode: 'table', // list | table | 'kanban'
+
