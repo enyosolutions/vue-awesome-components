@@ -406,9 +406,9 @@
                           <template
                             v-if="
                               nestedModels &&
-                              nestedModels.length &&
-                              (mode === 'view' || mode === 'edit') &&
-                              selectedItem
+                                nestedModels.length &&
+                                (mode === 'view' || mode === 'edit') &&
+                                selectedItem
                             "
                           >
                             <template v-for="ns in nestedModels">
@@ -425,8 +425,9 @@
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
                                       getNestedActions(ns).collapse
-                                        ? (nestedModelsCollapseState[ns.identity] =
-                                            !nestedModelsCollapseState[ns.identity])
+                                        ? (nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[
+                                            ns.identity
+                                          ])
                                         : ''
                                     "
                                   >
@@ -671,13 +672,15 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note:
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     needsRefresh: {
       type: [Boolean, String],
@@ -714,7 +717,8 @@ export default {
       required: false,
       default: 'list',
       values: ['view', 'edit', 'object', 'table'],
-      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     translations: {
       type: Object,
@@ -835,7 +839,8 @@ export default {
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     displayHeader: {
       type: Boolean,
@@ -1184,6 +1189,10 @@ export default {
     next((vm) => {
       vm.closeModal();
     });
+  },
+
+  beforeDestroy() {
+    document.body.classList.remove('modal-open');
   },
 
   methods: {

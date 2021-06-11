@@ -8,9 +8,13 @@ const { uniq } = require('lodash')
 const baseDir = path.resolve(__dirname, '..')
 const pkg = require(path.resolve(baseDir, 'package.json'))
 
+const parameters = process.argv.slice(2);
+const gitTagArg = parameters[0];
+
 // --- Constants ---
 
-const FILE_NAME = 'RELEASE-NOTES.md'
+const FILE_NAME = '../RELEASE-NOTES.md'
+const CHANGELOG_FILE_NAME = '../CHANGELOG.md'
 
 const TYPES = {
   feat: { title: '🚀 Features' },
@@ -45,6 +49,7 @@ const getGitDiff = async (from, to) => {
     `${from}...${to}`,
     '--pretty=%s|%h|%an|%ae'
   ])
+  console.log(result);
   return result.split('\n').map(line => {
     const [message, commit, authorName, authorEmail] = line.split('|')
     return { message, commit, authorName, authorEmail }
@@ -152,12 +157,12 @@ const generateMarkDown = commits => {
 
 const main = async () => {
   // Get last git tag
-  const lastGitTag = await getLastGitTag()
+  const lastGitTag = gitTagArg || await getLastGitTag()
 
   // Get current branch
   const currentGitBranch = await getCurrentGitBranch()
-  console.log('lastGitTag', lastGitTag)
-  console.log('currentGitBranch', currentGitBranch)
+  console.debug('lastGitTag', lastGitTag)
+  console.debug('currentGitBranch', currentGitBranch)
   // Get all commits from last release to current branch
   let commits = await getGitDiff(currentGitBranch, lastGitTag)
 
@@ -168,7 +173,10 @@ const main = async () => {
   commits = commits.filter(c => ALLOWED_TYPES.includes(c.type) && !IGNORE_SCOPES.includes(c.scope))
 
   // Write markdown file
-  await fs.writeFile(FILE_NAME, generateMarkDown(commits), 'utf-8')
+  const markdown = generateMarkDown(commits)
+  console.log('generateMarkDown(commits)', markdown)
+  await fs.writeFile(FILE_NAME, markdown, 'utf-8')
+  await fs.appendFile(CHANGELOG_FILE_NAME, '\n\n --- \n\n' + markdown, 'utf-8')
 }
 
 main()

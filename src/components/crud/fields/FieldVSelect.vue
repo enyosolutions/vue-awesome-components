@@ -159,11 +159,13 @@ export default {
 
     dataUrl() {
       // eslint-disable-next-line
-      return this.url || this.fieldOptions.url;
-    },
-    dataUrl() {
-      // eslint-disable-next-line
-      return this.url || this.fieldOptions.url;
+      let url = this.url || this.fieldOptions.url;
+      console.log('url', url, { currentItem: this.$props.model });
+      if (url && url.indexOf('{{') > -1) {
+        url = this.templateParser(url, { currentItem: this.$props.model, context: this });
+        console.log('url', url);
+      }
+      return url;
     },
 
     _trackBy() {
