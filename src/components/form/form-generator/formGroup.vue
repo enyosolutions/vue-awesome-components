@@ -114,6 +114,7 @@ export default {
       }
       return '';
     },
+
     groupRowClasses() {
       // TODO find a way to detect errors in child to add some classes (error/valid/etc)
       let baseClasses = {
@@ -126,9 +127,8 @@ export default {
     },
 
     groupIsVisible() {
-      console.log('group', this.group);
       if (this.group && this.group.visible && isFunction(this.group.visible)) {
-        return this.group.visible.call(this, this.model, group, this);
+        return this.group.visible.call(this, this.model, this.group, this);
       }
 
       if (isNil(this.group.visible)) {

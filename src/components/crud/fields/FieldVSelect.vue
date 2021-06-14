@@ -160,10 +160,8 @@ export default {
     dataUrl() {
       // eslint-disable-next-line
       let url = this.url || this.fieldOptions.url;
-      console.log('url', url, { currentItem: this.$props.model });
       if (url && url.indexOf('{{') > -1) {
-        url = this.templateParser(url, { currentItem: this.$props.model, context: this });
-        console.log('url', url);
+        url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model, context: this });
       }
       return url;
     },
@@ -330,7 +328,7 @@ export default {
 
     templateParser(source, data) {
       _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-      var compiled = _.template(source);
+      const compiled = _.template(source);
       return compiled(data);
     },
 
@@ -340,7 +338,11 @@ export default {
       }
       let label;
       if (this._labelField.indexOf('{{') > -1) {
-        label = this.templateParser(this._labelField, item);
+        try {
+          label = this.templateParser(this._labelField, { ...item, currentItem: item });
+        } catch (err) {
+          console.warn('[vSelect][templateParser]', err.message);
+        }
       } else {
         label = this.get(item, this._labelField, '');
       }

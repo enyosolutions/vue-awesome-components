@@ -789,12 +789,6 @@ export default {
         );
       }
     },
-    updateRouter: {
-      type: Boolean,
-      required: false,
-      default: true,
-      node: 'Controls if the actions (create / edit / view)  should update the current route url'
-    },
     useSimpleCreateForm: {
       type: Boolean,
       required: false,
@@ -833,6 +827,13 @@ export default {
       required: false,
       default: true,
       node: 'Controls if the actions (create / edit / view)  should update the current route url'
+    },
+    updateRouter: {
+      type: Boolean,
+      required: false,
+      default: true,
+      node:
+        'Controls if the actions (create / edit / view)  should update the current route url. @Deprecated, use `useRouterMode` instead.'
     },
     nestedLayoutMode: {
       type: String,
@@ -1133,6 +1134,7 @@ export default {
     this.loadModel();
     if (this.mode === 'create') {
       this.selectedItem = createDefaultObject(this.formSchema);
+      this.selectedItem = merge(this.selectedItem, this.item);
     }
 
     this.nestedElementsNeedRefresh = true;
@@ -1343,7 +1345,7 @@ export default {
       if (this.standalone) {
         return;
       }
-      if (this.parentPath && this.updateRouter) {
+      if (this.parentPath && this.useRouterMode) {
         // window.history.pushState({}, null, `${this.parentPath}`);
         this.$router.replace(`${this.parentPath}`);
       }
@@ -1368,7 +1370,7 @@ export default {
 
     goToEditPage(item) {
       if (!this._mergedOptions.editPath) {
-        if (this.updateRouter) {
+        if (this.useRouterMode) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
           this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
         }
@@ -1382,7 +1384,7 @@ export default {
 
     goToViewPage(item) {
       if (!this._mergedOptions.viewPath) {
-        if (this.updateRouter) {
+        if (this.useRouterMode) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
           this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
         }
