@@ -65,6 +65,15 @@
               :alt="data[fields.title]"
             />
             <div class="card-body">
+              <div v-if="fields && fields.users && data[fields.users]" class="pull-right">
+                <img
+                  v-for="(user, index) in data[fields.users]"
+                  :key="index"
+                  class="kanban-user-img"
+                  :alt="user.label"
+                  :src="user.src"
+                />
+              </div>
               <h5 class="card-title" v-if="fields && fields.title && data[fields.title]">
                 {{ data[fields.title] }}
               </h5>
@@ -166,7 +175,9 @@ export default {
         image: '',
         title: '',
         subtitle: '',
-        description: ''
+        description: '',
+        users: '',
+        labels: ''
       })
     },
 
@@ -308,7 +319,11 @@ export default {
 
       .card {
         cursor: pointer;
-
+        .kanban-user-img {
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+        }
         .card-title {
           text-overflow: ellipsis;
           white-space: nowrap;

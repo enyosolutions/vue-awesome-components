@@ -33,6 +33,7 @@ export const defaultKanbanOptions = {
     image: 'image',
     description: 'description',
     labels: 'labels',
+    users: 'users',
   },
   splittingField: '',
   splittingValues: [],
