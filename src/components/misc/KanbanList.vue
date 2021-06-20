@@ -71,6 +71,7 @@
                   :key="index"
                   class="kanban-user-img"
                   :alt="user.label"
+                  :title="user.label"
                   :src="user.src"
                 />
               </div>

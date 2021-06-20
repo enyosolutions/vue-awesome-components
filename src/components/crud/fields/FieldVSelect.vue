@@ -37,7 +37,10 @@
       :reduce="reduce"
       :getOptionLabel="formatLabel"
     ></v-select>
-    <div v-if="schema.relation || schema.relationRoute" class="aw-field-select-relation-actions">
+    <div
+      v-if="(schema.relation || schema.relationRoute) && !fieldOptions.disableRelationActions"
+      class="aw-field-select-relation-actions"
+    >
       <template v-if="model && model[schema.model]">
         <router-link
           v-if="!schema.relationRoute"

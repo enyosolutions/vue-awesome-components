@@ -923,12 +923,17 @@ export default {
     },
 
     _name() {
+      console.log('_name computed', this._model && this._model.name, this._namePlural);
       if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : startCase(this._model.name);
-      }
-
-      if (this.namePlural) {
-        return this.$te(this.namePlural) ? this.$t(this.namePlural) : startCase(this.namePlural);
+        if (this.$te(this._model.name)) {
+          const t = this.$t(this._model.name);
+          if (typeof t === 'string') {
+            return t;
+          }
+        }
+        {
+          return startCase(this._model.name);
+        }
       }
 
       if (this.identity) {
