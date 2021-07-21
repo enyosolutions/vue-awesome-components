@@ -1,27 +1,40 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import _ from 'lodash';
+import { isObject, camelCase } from 'lodash';
+import toaster from 'izitoast';
+
+
+const mapColor = {
+  error: 'red',
+  danger: 'red',
+  success: 'green',
+  info: 'blue',
+  warning: 'yellow',
+}
+
+toaster.settings({
+  timeout: 5000,
+  resetOnHover: true,
+  icon: 'fontAwesome',
+  transitionIn: 'flipInX',
+  transitionOut: 'flipOutX',
+  position: 'topRight',
+});
+
 export default {
   methods: {
     $awNotify(message) {
-      const payload = _.isObject(message)
+
+      const payload = isObject(message)
         ? {
-          timer: 3000,
           title: message,
-          type: 'success',
           ...message, // Placement is important to guarantee theat the display is always a notification
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false
         }
         : {
-          timer: 3000,
-          type: 'info',
+          icon: 'fa fa-info',
           title: message,
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false
         };
-      Swal.fire(payload);
+
+      toaster[payload.type || 'info'](payload);
     },
 
     $awConfirm(message) {

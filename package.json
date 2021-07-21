@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "dayjs": "^1.9.7",
+    "izitoast": "^1.4.0",
     "qs": "^6.6.0",
     "uuid": "^8.3.0"
   },

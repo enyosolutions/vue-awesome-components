@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isString, get, isFunction, find, startCase, merge } from 'lodash';
 import templatingMixin from './templatingMixin';
 
 export default {
@@ -109,9 +109,15 @@ export default {
       }
     },
 
+    getSelectEnumFromStore(val) {
+      const options =
+        isString(val) && val.indexOf('$store') === 0 ? get(this.$store.state, val.replace('$store.', '')) : val;
+      return options;
+    },
+
     transformStateBooleans(field) {
       ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
-        if (_.isString(field[prop])) {
+        if (isString(field[prop])) {
           field[prop] = this.templateParseBoolean(field[prop]);
         }
       });
@@ -120,7 +126,7 @@ export default {
     transformStateFunctions(field) {
       ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
 
-        if (_.isFunction(field[prop])) {
+        if (isFunction(field[prop])) {
           field[prop] = this.templateParseFunc(field[prop]);
         }
       });
@@ -150,7 +156,7 @@ export default {
         }
         if (prop.type === 'object' && !(prop.field.type)) {
           const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
-          subSchema.legend = prop.title || _.startCase(key);
+          subSchema.legend = prop.title || startCase(key);
           subSchema.type = 'group';
           subSchema.default = {};
           subSchema.id = key;
@@ -160,33 +166,34 @@ export default {
           const relationUrl = this.getRelationUrl(prop);
           const relationKey = this.getRelationKey(prop);
           const relationLabel = this.getRelationLabel(prop);
-          if (prop.relation && prop.field.fieldOptions) {
-            prop.field.fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
-            prop.field.fieldOptions.trackBy = relationKey || prop.foreignKey;
-            prop.field.fieldOptions.searchable = true;
+
+          const fieldOptions = merge({}, {
+            url: relationUrl || prop.relationUrl || prop.relation,
+            trackBy: relationKey || prop.foreignKey || 'id',
+            label: relationLabel || 'label', // key label for enyo select >
+            name: relationLabel || 'label', // key label for native select
+            step: prop.field.step,
+            readonly: this.displayMode === 'view' || (prop.field.readonly),
+            disabled: this.displayMode === 'view' || (prop.field.disabled),
+            relation: prop.relation,
+            foreignKey: relationKey,
+            relationKey,
+            relationLabel,
+            relationUrl,
+          }, { ...prop.field.fieldOptions });
+
+          if (prop.relation) {
+            fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
+            fieldOptions.trackBy = relationKey || prop.foreignKey;
+            fieldOptions.searchable = true;
           }
           const field = {
             type: (prop.field.type) || this.getFormtype(prop),
-            label: prop.title || prop.description || _.startCase(key),
+            label: prop.title || prop.description || startCase(key),
             placeholder: prop.placeholder,
-            fieldOptions: (prop.field.fieldOptions) || {
-              url: relationUrl || prop.relationUrl || prop.relation,
-              trackBy: relationKey || prop.foreignKey || 'id',
-              label: relationLabel || 'label', // key label for enyo select >
-              name: relationLabel || 'label', // key label for native select
-              step: prop.field.step,
-              readonly: this.displayMode === 'view' || (prop.field.readonly),
-              disabled: this.displayMode === 'view' || (prop.field.disabled),
-              relation: prop.relation,
-              foreignKey: relationKey,
-              relationKey,
-              relationLabel,
-              relationUrl
-            },
             values:
               (
-                prop.field.fieldOptions &&
-                (prop.field.fieldOptions.values || this.getSelectEnumFromStore(prop.field.fieldOptions.enum))) ||
+                (fieldOptions.values || this.getSelectEnumFromStore(fieldOptions.enum))) ||
               prop.enum ||
               (prop.items && prop.items.enum) ||
               [],
@@ -198,14 +205,16 @@ export default {
             styleClasses: ((prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
             relation: prop.relation,
             foreignKey: relationKey || prop.foreignKey,
+            relationUrl,
             relationKey,
             relationLabel,
             ...prop.field,
             readonly: this.displayMode === 'view' || (prop.field.readonly),
             disabled: this.displayMode === 'view' || (prop.field.disabled),
           };
-          if (!field.fieldOptions.inputType) {
-            field.fieldOptions.inputType =
+
+          if (!fieldOptions.inputType) {
+            fieldOptions.inputType =
               (prop.field.inputType) || this.getFormInputType(prop) || 'text';
           }
           if (
@@ -221,7 +230,7 @@ export default {
           }
           // datetime picker icons
           if (field.type === 'dateTime' || field.type === 'date') {
-            field.fieldOptions.icons = {
+            fieldOptions.icons = {
               time: 'fa fa-clock-o',
               date: 'fa fa-calendar',
               up: 'fa fa-arrow-up',
@@ -232,21 +241,26 @@ export default {
 
           if (field.type === 'date') {
             field.type = 'dateTime';
-            if (!field.fieldOptions.type) {
-              field.fieldOptions.type = 'date';
+            if (!fieldOptions.type) {
+              fieldOptions.type = 'date';
             }
           }
 
           if (field.type === 'time') {
             field.type = 'dateTime';
-            if (!field.fieldOptions.type) {
-              field.fieldOptions.type = 'time';
+            if (!fieldOptions.type) {
+              fieldOptions.type = 'time';
             }
           }
 
           // default items for selects
-          if (field.type === 'enyoSelect' && !field.fieldOptions.options) {
+          if (field.type === 'enyoSelect' && !fieldOptions.options) {
             field.options = field.values;
+          }
+
+          // default items for selects
+          if (field.type === 'vSelect' && fieldOptions.store && !fieldOptions.options) {
+            fieldOptions.options = get(this.$store.state, fieldOptions.store);
           }
 
           this.transformStateBooleans(field);
@@ -269,8 +283,6 @@ export default {
 
           }
 
-
-
           if (field.viewOptions && !field.displayOptions) {
             console.warn('@deprecated, please rename field.viewOptions into field.displayOptions');
             field.viewOptions = field.displayOptions;
@@ -287,8 +299,7 @@ export default {
           field.displayOptions.relationKey = field.displayOptions.relationKey || relationKey;
           field.displayOptions.relationLabel = field.displayOptions.relationLabel || relationLabel;
 
-
-          fields.push(field);
+          fields.push({ ...field, fieldOptions });
         }
       });
       // let groups = this.parseSchemaGroups(schema);
@@ -306,7 +317,7 @@ export default {
         if (!prop.hidden && !(prop.column && prop.column.hidden)) {
           newCol.field = key;
           newCol.type = this.getColumnType(prop);
-          newCol.label = _.startCase((prop.column && prop.column.title) || prop.title || key);
+          newCol.label = startCase((prop.column && prop.column.title) || prop.title || key);
           newCol.filterOptions = { enabled: false };
           newCol.enum = (prop.column && prop.column.enum) || prop.enum;
           newCol.sortable = prop.column && prop.column.sortable !== undefined ? prop.column.sortable : true;
@@ -362,7 +373,7 @@ export default {
           const keys = f.group.split('.');
           let targetGroup = { groups };
           keys.forEach((key) => {
-            targetGroup = _.find(targetGroup.groups, { id: key });
+            targetGroup = find(targetGroup.groups, { id: key });
           });
           if (targetGroup) {
             if (!targetGroup.fields) {

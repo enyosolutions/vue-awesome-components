@@ -1322,11 +1322,6 @@ export default {
       return { ...this.formSchema, fields: fieldsDefinition };
     },
 
-    getSelectEnumFromStore(val) {
-      const options =
-        isString(val) && val.indexOf('$store') === 0 ? get(this.$store.state, val.replace('$store.', '')) : val;
-      return options;
-    },
     openModalDebounced: () => {},
     openModal() {
       switch (this.displayMode) {

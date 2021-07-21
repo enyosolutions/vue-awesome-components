@@ -1264,11 +1264,6 @@ export default {
       }
     },
 
-    getSelectEnumFromStore(val) {
-      const options =
-        _.isString(val) && val.indexOf('$store') === 0 ? _.get(this.$store.state, val.replace('$store.', '')) : val;
-      return options;
-    },
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
