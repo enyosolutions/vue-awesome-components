@@ -17,8 +17,7 @@ import FormGenerator from './components/form/form-generator';
 import notificationsMixin from './mixins/notificationsMixin';
 import VueGoodTablePlugin from 'vue-good-table';
 import VueRouter from 'vue-router';
-import Multiselect from 'vue-multiselect';
-import Draggable from 'vuedraggable';
+// import Draggable from 'vuedraggable';
 
 import App from './App.vue';
 import VueEnyoComponents from './plugin';
@@ -26,17 +25,13 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Importing Lodash
 import _ from 'lodash';
-// Importing jQuery
-import 'jquery';
-import $ from 'jquery';
 
 
 // Vue Use and Components
 Vue.use(VueGoodTablePlugin);
 Vue.use(VueRouter);
 
-Vue.component('Draggable', Draggable);
-Vue.component('multiselect', Multiselect);
+// Vue.component('Draggable', Draggable);
 Vue.component('datetime', Datetime);
 Vue.component('vue-form-generator', FormGenerator, []);
 Vue.mixin(notificationsMixin);
@@ -155,13 +150,6 @@ Vue.prototype.$http = axios.create({
     'Content-Type': 'application/json'
   }
 });
-if (process.env.NODE_ENV === 'development') {
-
-  window.$ = $;
-  window.$ = window.jQuery = require('jquery');
-  window._ = _;
-
-}
 window.vm = new Vue({
   // i18n,
   router,

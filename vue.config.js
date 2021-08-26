@@ -30,9 +30,9 @@ let optimization = {};
 const externals = process.env.NODE_ENV === 'production' ?
   getProdExternals() : {};
 externals['core-js'] = 'core-js';
-externals['sweetalert2'] = 'sweetalert2';
-externals['sweetalert2/dist'] = 'sweetalert2/dist';
-externals['sweetalert2/dist/sweetalert2.js'] = 'sweetalert2/dist/sweetalert2.js';
+// externals['sweetalert2'] = 'sweetalert2';
+// externals['sweetalert2/dist'] = 'sweetalert2/dist';
+// externals['sweetalert2/dist/sweetalert2.js'] = 'sweetalert2/dist/sweetalert2.js';
 console.log('externals()', externals)
 module.exports = {
   lintOnSave: false,

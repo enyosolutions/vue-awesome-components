@@ -150,7 +150,7 @@
                 <button
                   v-if="_actions.columnsFilters"
                   type="button"
-                  class="btn btn-simple"
+                  class="btn btn-simple btn-main-style"
                   :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
                   @click="toggleFilter()"
                 >
