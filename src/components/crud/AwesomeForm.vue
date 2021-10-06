@@ -82,7 +82,6 @@
                           {{ $t('AwesomeCrud.buttons.closeEditLayoutMode') }}
                         </button>
                       </div>
-
                       <button
                         v-if="(!standalone && !_isEmbedded) || _actions.close"
                         type="button"
@@ -231,7 +230,7 @@
                       </template>
 
                       <button
-                        v-if="!standalone && !_isEmbedded"
+                        v-if="(!standalone && !_isEmbedded) || _actions.close"
                         type="button"
                         class="close"
                         aria-label="Close"
