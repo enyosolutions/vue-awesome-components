@@ -84,7 +84,7 @@
                       </div>
 
                       <button
-                        v-if="!standalone && !_isEmbedded"
+                        v-if="(!standalone && !_isEmbedded) || _actions.close"
                         type="button"
                         class="close"
                         aria-label="Close"
@@ -665,7 +665,7 @@ export default {
       type: Boolean,
       required: false,
       default: true,
-      description: `Defines whether the component is used as paart of another parent component
+      description: `Defines whether the component is used as part of another parent component
         (usually AwesomeCrud) or alone. Some actions won't have the same behavior`
     },
     model: {
