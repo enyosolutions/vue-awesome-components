@@ -19,7 +19,8 @@ export const defaultActions = {
   itemsPerRow: true,
   editLayout: true,
   collapse: true,
-  formPagination: true
+  formPagination: true,
+  changDisplayMode: true,
 };
 
 export const defaultKanbanOptions = {
@@ -28,12 +29,12 @@ export const defaultKanbanOptions = {
   moveList: false,
   moveCard: true,
   fields: {
-    title: 'title',
-    subtitle: 'subtitle',
-    image: 'image',
-    description: 'description',
-    labels: 'labels',
-    users: 'users',
+    title: '',
+    subtitle: '',
+    image: '',
+    description: '',
+    labels: '',
+    users: '',
   },
   splittingField: '',
   splittingValues: [],

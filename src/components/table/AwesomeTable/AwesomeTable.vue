@@ -1078,6 +1078,7 @@ export default {
 </script>
 <style lang="scss">
 .aw-table {
+  clear: both;
   .aw-table-card {
     clear: both;
   }

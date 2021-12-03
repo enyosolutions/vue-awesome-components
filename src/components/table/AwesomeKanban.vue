@@ -1,74 +1,78 @@
 <template>
-  <div>
+  <div class="card aw-kanban-card">
     <div class="d-block">
-      <h4>
-        <slot name="awesome-list-title">{{ titleComputed }}</slot>
-        <div class="btn-group btn-group-sm float-right awesome-list-buttons">
-          <slot name="kanban-top-actions" class />
-          <div v-if="isRefreshing" style="text-align: center">
-            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
+      <div class="card-header">
+        <h4 class="text-left">
+          <slot name="aw-kanban-title">{{ titleComputed }}</slot>
+          <div class="btn-group btn-group-sm float-right awesome-list-buttons">
+            <slot name="kanban-top-actions" class />
+            <div v-if="isRefreshing" style="text-align: center">
+              <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
+            </div>
+            <div class="btn-group" role="group">
+              <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
+                <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
+                {{ $t('AwesomeKanban.buttons.refresh') }}
+              </button>
+            </div>
           </div>
-          <div class="btn-group" role="group">
-            <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
-              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-              {{ $t('AwesomeKanban.buttons.refresh') }}
-            </button>
-          </div>
-        </div>
-      </h4>
+        </h4>
+      </div>
     </div>
-    <div class="awesome-kanban">
-      <Draggable
-        class="draggable-list"
-        :list="localLists"
-        group="lists"
-        :animation="options.animation"
-        ghost-class="moving-list"
-        :scroll-sensitivity="options.scrollSensitivity"
-        @change="listChanged"
-        :disabled="!options.moveList"
-      >
-        <KanbanList
-          v-for="(list, index) in localLists"
-          :id="list.id || list.title"
-          :key="index"
-          :title="list.title"
-          :items="list.content"
-          :fields="options.fields"
-          :columns="columns"
-          group="card"
+    <div class="card-body">
+      <div class="awesome-kanban">
+        <Draggable
+          class="draggable-list"
+          :list="localLists"
+          group="lists"
           :animation="options.animation"
+          ghost-class="moving-list"
           :scroll-sensitivity="options.scrollSensitivity"
-          :disabled="!options.moveCard"
-          :custom-list-actions="actions.customListActions"
-          @remove-list="onRemoveList"
-          @customListAction="onCustomListAction"
-          @change="onCardChanged"
-          @cardRemoved="onCardRemoved"
-          @cardAdded="onCardAdded"
-          @cardClicked="onCardClicked"
-          @cardMoved="onCardMoved"
-        ></KanbanList>
-      </Draggable>
-      <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
-        <div class="card-body">
-          <div v-if="!isAddingList" class="card-text">
-            <i class="fa fa-plus"></i>
-            {{ $t('AwesomeKanban.labels.addList') }}
-          </div>
-          <div v-if="isAddingList">
-            <input
-              v-model="newListName"
-              class="form-control"
-              type="text"
-              :placeholder="$t('AwesomeKanban.labels.listName')"
-            />
-            <button :disabled="!newListName" @click.stop="addList" class="btn btn-simple btn-primary">
-              {{ $t('AwesomeKanban.labels.add') }}
-            </button>
-            <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
-              <i class="fa fa-times"></i>
-            </button>
+          @change="listChanged"
+          :disabled="!options.moveList"
+        >
+          <KanbanList
+            v-for="(list, index) in localLists"
+            :id="list.id || list.title"
+            :key="index"
+            :title="list.title"
+            :items="list.content"
+            :fields="options.fields"
+            :columns="columns"
+            group="card"
+            :animation="options.animation"
+            :scroll-sensitivity="options.scrollSensitivity"
+            :disabled="!options.moveCard"
+            :custom-list-actions="actions.customListActions"
+            @remove-list="onRemoveList"
+            @customListAction="onCustomListAction"
+            @change="onCardChanged"
+            @cardRemoved="onCardRemoved"
+            @cardAdded="onCardAdded"
+            @cardClicked="onCardClicked"
+            @cardMoved="onCardMoved"
+          ></KanbanList>
+        </Draggable>
+        <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
+          <div class="card-body">
+            <div v-if="!isAddingList" class="card-text">
+              <i class="fa fa-plus"></i>
+              {{ $t('AwesomeKanban.labels.addList') }}
+            </div>
+            <div v-if="isAddingList">
+              <input
+                v-model="newListName"
+                class="form-control"
+                type="text"
+                :placeholder="$t('AwesomeKanban.labels.listName')"
+              />
+              <button :disabled="!newListName" @click.stop="addList" class="btn btn-simple btn-primary">
+                {{ $t('AwesomeKanban.labels.add') }}
+              </button>
+              <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -243,6 +247,16 @@ export default {
 
     onCustomListAction(body) {
       this.$emit('customListAction', body);
+    },
+
+    getSegmentValues(field) {
+      return (
+        field &&
+        ((field.fieldOptions && field.fieldOptions.filterDropdownItems) ||
+          field.enum ||
+          field.fieldOptions.values ||
+          field.fieldOptions.options)
+      );
     }
   },
   created() {

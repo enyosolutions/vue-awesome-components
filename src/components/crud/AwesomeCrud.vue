@@ -18,12 +18,14 @@
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
+          <ListModeSelector v-if="_actions.changeDisplayMode" v-model="displayMode" />
+
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'table' ||
-                (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
-              dataPaginationModeComputed
+                (displayMode === 'table' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
+                dataPaginationModeComputed
             "
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
@@ -134,7 +136,8 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'list' || (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+                (displayMode === 'list' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
             "
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -195,8 +198,8 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'kanban' ||
-                (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+                (displayMode === 'kanban' ||
+                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
@@ -212,8 +215,8 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :useRouterMode="useRouterMode"
             :options="_kanbanOptions.options"
-            :segment="segment"
-            :segmentField="segmentField"
+            :splittingField="_kanbanOptions.splittingField || segmentField"
+            :splittingValues="_splittingValuesComputed"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
             @listChanged="onListChanged"
@@ -355,6 +358,7 @@ import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
 import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
+import ListModeSelector from './parts/ListModeSelector';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -396,7 +400,8 @@ export default {
     AwesomeForm,
     AwesomeList,
     AwesomeKanban,
-    AwesomeActionList
+    AwesomeActionList,
+    ListModeSelector
   },
   mixins: [
     uuidMixin,
@@ -428,13 +433,15 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note:
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
       type: [Object, Array],
@@ -468,14 +475,16 @@ export default {
       type: String,
       required: false,
       values: ['view', 'edit', 'object', 'table'],
-      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     nestedLayoutMode: {
       type: String,
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     parent: {
       type: Object,
@@ -741,14 +750,23 @@ export default {
     kanbanFieldsComputed() {
       const allColumns = this.tableColumnsComputed;
       let columns = [];
-      if (this._kanbanOptions && !Array.isArray(this._kanbanOptions.fields)) {
-        return [];
+      // If we provided an array of fields to display
+      if (this._kanbanOptions && Array.isArray(this._kanbanOptions.fields)) {
+        this._kanbanOptions.fields.forEach((field) => {
+          columns.push(_.filter(allColumns, ['field', field]));
+        });
+        columns = _.flatten(columns);
+        return columns;
       }
-      this._kanbanOptions.fields.forEach((field) => {
-        columns.push(_.filter(allColumns, ['field', field]));
-      });
-      columns = _.flatten(columns);
-      return columns;
+      const hasFielddMapping =
+        this._kanbanOptions && this._kanbanOptions.fields && Object.values(this._kanbanOptions.fields).some((f) => f);
+      if (this.model && this.model.displayField && !hasFielddMapping) {
+        const displayField = allColumns.find((c) => c.field === this.model.displayField);
+        if (displayField) {
+          return [displayField];
+        }
+      }
+      return [];
     },
 
     tableColumnsComputed() {
@@ -940,6 +958,17 @@ export default {
       return '';
     },
 
+    segmentFieldPossibleValues() {
+      const field = this.segmentFieldDefinitionComputed;
+      const values =
+        field &&
+        ((field.fieldOptions && field.fieldOptions.filterDropdownItems) ||
+          field.enum ||
+          field.fieldOptions.values ||
+          field.fieldOptions.options);
+      return Array.isArray(values) ? values : [];
+    },
+
     showStatsSectionComputed() {
       return this.showItemsListSectionComputed && this.mergedOptions.stats;
     },
@@ -992,6 +1021,12 @@ export default {
       set(data) {
         this.internalOptions = data;
       }
+    },
+
+    _splittingValuesComputed() {
+      return this._kanbanOptions.splittingValues.length
+        ? this._kanbanOptions.splittingValues
+        : this.segmentFieldPossibleValues;
     }
   },
   watch: {
@@ -1050,7 +1085,10 @@ export default {
     }
 
     this.parentPath = this.$route.path;
-    this.parentPath = this.parentPath.replace('/view', '').replace('/edit', '').replace('/:id', '');
+    this.parentPath = this.parentPath
+      .replace('/view', '')
+      .replace('/edit', '')
+      .replace('/:id', '');
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
@@ -1263,7 +1301,6 @@ export default {
         }
       }
     },
-
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {

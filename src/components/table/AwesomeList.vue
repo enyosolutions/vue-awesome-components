@@ -10,37 +10,35 @@
     <div class="float-right text-right col-6 pr-0">
       <slot name="list-header-right"></slot>
     </div>
-  <div class="aw-list-card aw-list-component awesome-list">
+  <div class="card aw-list-card aw-list-component awesome-list">
     <div
+    class="card-header"
     v-if="showHeader"
         :class="
         'aw-list-header ' +
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h4 class>
+      <h3 class>
         <slot name="aw-list-title">{{ _listTitle }}</slot>
           <button
                 v-if="actions && actions.refresh"
-                class="btn btn-simple"
+                class="btn btn-simple btn-sm"
                 @click="getItems()"
             >
-              <i class='fa fa-refresh'  :class="(isRefreshing ? ' fa-spin text-primary' : '')"
+              <i class='fa fa-refresh'  :class="(isRefreshing ? ' fa-spin text-primary' : 'text-muted')"
 
               />
             </button>
-      </h4>
-      <p class="card-category">
-        <slot name="list-subtitle"/>
-      </p>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-6">
- <div class="btn-group btn-group-sm float-right aw-list-buttons">
-          <slot name="table-top-actions" class/>
 
-          <div class="btn-group" role="group">
-            <popper
+
+
+
+            <div class="btn-group float-right aw-list-buttons">
+            <slot name="table-top-actions" class/>
+
+            <div class="btn-group" role="group">
+              <popper
                 trigger="clickToOpen"
                 :options="{
               placement: 'bottom',
@@ -73,7 +71,7 @@
             </popper>
 
             <template v-if="actions && actions.itemsPerRow">
-              <button class="btn " @click="setListMode()"
+              <button class="btn btn-sm" @click="setListMode()"
                       :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
               >
                 <i :class="'fa fa-list'"/>
@@ -128,7 +126,17 @@
               </div>
             </div>
           </div>
-        </div>
+          </div>
+
+
+      </h3>
+
+      <p class="card-category">
+        <slot name="list-subtitle"/>
+      </p>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
           </div>
           <div class="col-sm-6">
             <awesome-filter

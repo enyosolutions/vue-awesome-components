@@ -23,6 +23,7 @@ be configured.
 - editLayout
 - collapse
 - formPagination
+- changeDisplayMode // Show's the controls for switching between table, list and kanban
 
 ## Custom actions List
 
