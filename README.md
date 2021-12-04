@@ -3,7 +3,7 @@
 
 A set of various vue components to simplify the creation of backoffices and admin panels.
 
-See [Github](https://github.com/enyosolutions-team/vue-enyo-components/).
+See [DOCUMENTATION](https://enyosolutions-team.github.io/vue-awesome-components/).
 
 
 ## Dependencies
