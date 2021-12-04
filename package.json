@@ -116,7 +116,8 @@
     "vuepress": "^1.7.1",
     "vuex": "^3.1.0",
     "webpack-bundle-analyzer": "^3.7.0",
-    "weekstart": "^1.0.1"
+    "weekstart": "^1.0.1",
+    "yarn-audit-fix": "^8.0.1"
   },
   "browserslist": [
     "> 1%",
