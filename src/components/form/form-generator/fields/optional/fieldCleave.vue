@@ -1,14 +1,15 @@
 <template>
-	<input
-		class="form-control"
-		type="text"
-		:value="value"
-		:autocomplete="fieldOptions.autocomplete"
-		:disabled="disabled"
-		:placeholder="placeholder"
-		:readonly="readonly"
-		:name="inputName"
-		:id="fieldID"/>
+  <input
+    class="form-control"
+    type="text"
+    :value="value"
+    :autocomplete="fieldOptions.autocomplete"
+    :disabled="disabled"
+    :placeholder="placeholder"
+    :readonly="readonly"
+    :name="inputName"
+    :id="fieldID"
+  />
 </template>
 
 <script>
@@ -55,7 +56,7 @@ export default {
             maxLength: 0
           })
         );
-
+        // eslint-disable-next-line
         if (this.cleave.properties && this.cleave.properties.hasOwnProperty('result')) {
           this.$watch('cleave.properties.result', () => {
             this.value = this.cleave.properties.result;

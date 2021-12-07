@@ -586,7 +586,7 @@
   </div>
 </template>
 <script>
-import { upperFirst, merge, includes, startCase, cloneDeep, debounce, get, isString } from 'lodash';
+import { upperFirst, merge, includes, startCase, cloneDeep, debounce, get } from 'lodash';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
@@ -922,7 +922,6 @@ export default {
     },
 
     _name() {
-      console.log('_name computed', this._model && this._model.name, this._namePlural);
       if (this._model && this._model.name) {
         if (this.$te(this._model.name)) {
           const t = this.$t(this._model.name);

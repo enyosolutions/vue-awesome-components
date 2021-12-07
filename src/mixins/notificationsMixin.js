@@ -1,15 +1,7 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { isObject, camelCase } from 'lodash';
+import { isObject } from 'lodash';
 import toaster from 'izitoast';
 
-
-const mapColor = {
-  error: 'red',
-  danger: 'red',
-  success: 'green',
-  info: 'blue',
-  warning: 'yellow',
-}
 
 toaster.settings({
   timeout: 5000,
