@@ -1,77 +1,90 @@
 <template>
-  <div class="card aw-kanban-card">
-    <div class="d-block">
-      <div class="card-header">
-        <h4 class="text-left">
-          <slot name="aw-kanban-title">{{ titleComputed }}</slot>
-          <div class="btn-group btn-group-sm float-right awesome-list-buttons">
-            <slot name="kanban-top-actions" class />
-            <div v-if="isRefreshing" style="text-align: center">
-              <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
-            </div>
-            <div class="btn-group" role="group">
-              <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
-                <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-                {{ $t('AwesomeKanban.buttons.refresh') }}
-              </button>
-            </div>
-          </div>
-        </h4>
-      </div>
+  <div class="aw-kanban">
+    <div class="float-left col-6 pl-0">
+      <slot name="list-header-left">
+        <div class="card aw-segment-table-wrapper" v-if="segment">
+          <awesome-segments :field="segment" @change="onSegmentChange" />
+        </div>
+      </slot>
     </div>
-    <div class="card-body">
-      <div class="awesome-kanban">
-        <Draggable
-          class="draggable-list"
-          :list="localLists"
-          group="lists"
-          :animation="options.animation"
-          ghost-class="moving-list"
-          :scroll-sensitivity="options.scrollSensitivity"
-          @change="listChanged"
-          :disabled="!options.moveList"
-        >
-          <KanbanList
-            v-for="(list, index) in localLists"
-            :id="list.id || list.title"
-            :key="index"
-            :title="list.title"
-            :items="list.content"
-            :fields="options.fields"
-            :columns="columns"
-            group="card"
-            :animation="options.animation"
-            :scroll-sensitivity="options.scrollSensitivity"
-            :disabled="!options.moveCard"
-            :custom-list-actions="actions.customListActions"
-            @remove-list="onRemoveList"
-            @customListAction="onCustomListAction"
-            @change="onCardChanged"
-            @cardRemoved="onCardRemoved"
-            @cardAdded="onCardAdded"
-            @cardClicked="onCardClicked"
-            @cardMoved="onCardMoved"
-          ></KanbanList>
-        </Draggable>
-        <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
-          <div class="card-body">
-            <div v-if="!isAddingList" class="card-text">
-              <i class="fa fa-plus"></i>
-              {{ $t('AwesomeKanban.labels.addList') }}
+    <div class="float-right text-right col-6 pr-0">
+      <slot name="list-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
+    </div>
+
+    <div class="card aw-kanban-card">
+      <div class="d-block">
+        <div class="card-header">
+          <h4 class="text-left">
+            <slot name="aw-kanban-title">{{ titleComputed }}</slot>
+            <div class="btn-group btn-group-sm float-right awesome-list-buttons">
+              <div v-if="isRefreshing" style="text-align: center">
+                <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
+              </div>
+              <slot name="top-actions" class />
+              <div class="btn-group" role="group">
+                <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
+                  <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
+                  {{ $t('AwesomeKanban.buttons.refresh') }}
+                </button>
+              </div>
             </div>
-            <div v-if="isAddingList">
-              <input
-                v-model="newListName"
-                class="form-control"
-                type="text"
-                :placeholder="$t('AwesomeKanban.labels.listName')"
-              />
-              <button :disabled="!newListName" @click.stop="addList" class="btn btn-simple btn-primary">
-                {{ $t('AwesomeKanban.labels.add') }}
-              </button>
-              <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
-                <i class="fa fa-times"></i>
-              </button>
+          </h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="awesome-kanban">
+          <Draggable
+            class="draggable-list"
+            :list="localLists"
+            group="lists"
+            :animation="options.animation"
+            ghost-class="moving-list"
+            :scroll-sensitivity="options.scrollSensitivity"
+            @change="listChanged"
+            :disabled="!options.moveList"
+          >
+            <KanbanList
+              v-for="(list, index) in localLists"
+              :id="list.id || list.title"
+              :key="index"
+              :title="list.title"
+              :items="list.content"
+              :fields="options.fields"
+              :columns="columns"
+              group="card"
+              :animation="options.animation"
+              :scroll-sensitivity="options.scrollSensitivity"
+              :disabled="!options.moveCard"
+              :custom-list-actions="actions.customListActions"
+              @remove-list="onRemoveList"
+              @customListAction="onCustomListAction"
+              @change="onCardChanged"
+              @cardRemoved="onCardRemoved"
+              @cardAdded="onCardAdded"
+              @cardClicked="onCardClicked"
+              @cardMoved="onCardMoved"
+            ></KanbanList>
+          </Draggable>
+          <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
+            <div class="card-body">
+              <div v-if="!isAddingList" class="card-text">
+                <i class="fa fa-plus"></i>
+                {{ $t('AwesomeKanban.labels.addList') }}
+              </div>
+              <div v-if="isAddingList">
+                <input
+                  v-model="newListName"
+                  class="form-control"
+                  type="text"
+                  :placeholder="$t('AwesomeKanban.labels.listName')"
+                />
+                <button :disabled="!newListName" @click.stop="addList" class="btn btn-simple btn-primary">
+                  {{ $t('AwesomeKanban.labels.add') }}
+                </button>
+                <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -267,7 +280,6 @@ export default {
     }
   },
   mounted() {
-    this.refreshLocalData();
     this.handleLists();
   },
 
@@ -320,6 +332,9 @@ export default {
   max-width: 100%;
 }
 
+.aw-kanban-card {
+  clear: both;
+}
 .aw-display-field:not(pre) {
   white-space: normal;
 }

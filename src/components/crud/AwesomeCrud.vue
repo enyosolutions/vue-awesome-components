@@ -23,8 +23,7 @@
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'table' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'table')) &&
+                (displayMode === 'table' || (_displayModeHasPartialDisplay && listDisplayMode === 'table')) &&
                 dataPaginationModeComputed
             "
             v-bind="$props"
@@ -96,6 +95,16 @@
                 </slot>
               </div>
             </template>
+            <template slot="table-top-actions">
+              <template v-if="_customTitleBarActions">
+                <AwesomeActionList
+                  :actions="_customTitleBarActions"
+                  location="topright"
+                  :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
+                  @customAction="onCustomAction"
+                />
+              </template>
+            </template>
             <template slot="table-top-more-actions">
               <upload-button
                 v-if="_actions.import"
@@ -136,8 +145,7 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'list' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'list'))
+                (displayMode === 'list' || (_displayModeHasPartialDisplay && listDisplayMode === 'list'))
             "
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -154,6 +162,7 @@
             :imageClasses="listOptions && listOptions.imageClasses"
             :imageField="listOptions && listOptions.imageField"
             :imageStyles="listOptions && listOptions.imageStyles"
+            :perRow="listOptions && listOptions.perRow"
             :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -165,14 +174,24 @@
               listWrapperClasses: 'row',
               itemWrapperClasses: 'col-3'
             }"
-            :subtitleField="listOptions.subtitleField"
+            :subtitleField="listOptions && listOptions.subtitleField"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
-            :titleField="listOptions.titleField"
+            :titleField="listOptions && listOptions.titleField"
             :url="_url"
             :useRouterMode="useRouterMode"
             v-bind="listOptions"
             @itemClicked="onListItemClicked"
           >
+            <template slot="top-actions">
+              <template v-if="_customTitleBarActions">
+                <AwesomeActionList
+                  :actions="_customTitleBarActions"
+                  location="topright"
+                  :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
+                  @customAction="onCustomAction"
+                />
+              </template>
+            </template>
             <template slot="list-header-right">
               <template v-if="_customTopRightActions">
                 <AwesomeActionList
@@ -198,8 +217,7 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'kanban' ||
-                  (_displayModeHasPartialDisplay && mergedOptions.initialDisplayMode === 'kanban'))
+                (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
             :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
@@ -223,6 +241,16 @@
             @cardChanged="onCardChanged"
             @cardClicked="onCardClicked"
           >
+            <template slot="top-actions">
+              <template v-if="_customTitleBarActions">
+                <AwesomeActionList
+                  :actions="_customTitleBarActions"
+                  location="topright"
+                  :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
+                  @customAction="onCustomAction"
+                />
+              </template>
+            </template>
           </AwesomeKanban>
         </div>
 
@@ -561,6 +589,11 @@ export default {
       default: () => [],
       note: 'custom top action to display inside view and edit forms'
     },
+    customTitleBarActions: {
+      type: Array,
+      default: () => [],
+      note: 'custom top action to display inside the title header bar on the right'
+    },
     savePaginationState: {
       type: Boolean,
       default: true,
@@ -608,6 +641,36 @@ export default {
       type: String,
       title: 'The selector to use for registering scroll events',
       description: 'This prop is used for registering the scroll event (needed for sticky forms)'
+    },
+    detailPageMode: {
+      type: String,
+      description: 'the way the detail page shows when you open an item from the list',
+      values: [
+        'modal',
+        'fade',
+        'slide',
+        'sidebar',
+        'sidebar',
+        'sidebar',
+        'fullscreen',
+        'page',
+        'sideform',
+        'bottomform'
+      ],
+      validator: (value) =>
+        !value ||
+        [
+          'modal',
+          'fade',
+          'slide',
+          'sidebar',
+          'sidebar',
+          'sidebar',
+          'fullscreen',
+          'page',
+          'sideform',
+          'bottomform'
+        ].includes(value)
     }
   },
   data() {
@@ -616,6 +679,7 @@ export default {
       selectedItem: {},
       selectedItems: [],
       previousDisplayMode: '',
+      listDisplayMode: 'table',
       displayMode: 'table',
       isRefreshing: false,
       tableNeedsRefresh: false,
@@ -857,6 +921,10 @@ export default {
       );
     },
 
+    _customTitleBarActions() {
+      return _.merge([], this.customTitleBarActions.length && this.customTitleBarActions);
+    },
+
     _customBulkActions() {
       return _.merge(
         [],
@@ -876,7 +944,7 @@ export default {
           'slide', // deprecated
           'sideform',
           'bottomform'
-        ].indexOf(this.mergedOptions.detailPageMode) > -1
+        ].indexOf(this._detailPageMode) > -1
       );
     },
 
@@ -897,7 +965,7 @@ export default {
     canShowCreateButton() {
       return (
         this._actions.create &&
-        !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this.mergedOptions.detailPageMode === 'page')
+        !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this._detailPageMode === 'page')
       );
     },
 
@@ -907,7 +975,7 @@ export default {
         (this.displayMode === 'edit' ||
           this.displayMode === 'create' ||
           this.displayMode === 'bulkEdit' ||
-          this.mergedOptions.detailPageMode === 'bottomform')
+          this._detailPageMode === 'bottomform')
       );
     },
 
@@ -916,9 +984,7 @@ export default {
     },
 
     showItemsListSectionComputed() {
-      return (
-        this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this.mergedOptions.detailPageMode !== 'page'
-      );
+      return this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
     },
 
     currentItemIndex() {
@@ -960,12 +1026,13 @@ export default {
 
     segmentFieldPossibleValues() {
       const field = this.segmentFieldDefinitionComputed;
+      if (!field) {
+        return [];
+      }
       const values =
-        field &&
-        ((field.fieldOptions && field.fieldOptions.filterDropdownItems) ||
-          field.enum ||
-          field.fieldOptions.values ||
-          field.fieldOptions.options);
+        (field.fieldOptions &&
+          (field.fieldOptions.filterDropdownItems || field.fieldOptions.values || field.fieldOptions.options)) ||
+        field.enum;
       return Array.isArray(values) ? values : [];
     },
 
@@ -978,17 +1045,21 @@ export default {
     },
 
     displaySideFormContent() {
-      return this.mergedOptions.detailPageMode === 'sideform' && this.isDetailPageModeCpt;
+      return this._detailPageMode === 'sideform' && this.isDetailPageModeCpt;
     },
 
     displayBottomFormContent() {
-      return this.mergedOptions.detailPageMode === 'bottomform';
+      return this._detailPageMode === 'bottomform';
+    },
+
+    _detailPageMode() {
+      return this.detailPageMode || this.mergedOptions.detailPageMode;
     },
 
     detailPageModeCpt() {
-      return this.mergedOptions.detailPageMode === 'sideform' || this.mergedOptions.detailPageMode === 'bottomform'
+      return this._detailPageMode === 'sideform' || this._detailPageMode === 'bottomform'
         ? 'page'
-        : this.mergedOptions.detailPageMode;
+        : this._detailPageMode;
     },
 
     shouldShowCreateButtonCpt() {
@@ -1036,7 +1107,8 @@ export default {
     'parent.id': 'loadModel',
     crudNeedsRefresh: 'refreshComponent',
     needsRefresh: 'refreshComponent',
-    '$route.params.id': 'onRouteIdChanged'
+    '$route.params.id': 'onRouteIdChanged',
+    displayMode: 'onDisplayModeChanged'
   },
   created() {
     if (process.env.NODE_ENV === 'development') {
@@ -1063,6 +1135,7 @@ export default {
     this.internalOptions = _.cloneDeep(this.mergedOptions);
     this.loadModel();
     this.displayMode = this.mergedOptions.initialDisplayMode;
+    this.listDisplayMode = this.mergedOptions.initialDisplayMode;
 
     if (this._isNested && this.nestedDisplayMode) {
       this.displayMode = this.nestedDisplayMode;
@@ -1321,6 +1394,8 @@ export default {
       //  console.warn('setDisplayMode', mode);
       this.displayMode = mode;
       if (['table', 'list', 'kanban'].indexOf(mode) > -1) {
+        // saved for the future needs
+        this.listDisplayMode = mode;
         this.tableNeedsRefresh = options.refresh;
         this.selectedItem = {};
       } else {
@@ -1781,7 +1856,7 @@ export default {
 
     onSegmentChange() {},
     handleScroll(event) {
-      if (this.mergedOptions.detailPageMode !== 'sideform' || !this.scrollTarget) {
+      if (this._detailPageMode !== 'sideform' || !this.scrollTarget) {
         return;
       }
       const subForm = this.scrollTarget.querySelector('.aw-form');
@@ -1796,6 +1871,12 @@ export default {
         if (subForm) {
           subForm.style = '';
         }
+      }
+    },
+
+    onDisplayModeChanged(mode) {
+      if (['table', 'list', 'kanban'].includes(mode)) {
+        this.listDisplayMode = mode;
       }
     }
   },

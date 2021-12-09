@@ -17,9 +17,14 @@ export default {
   props: {
     value: {
       type: String,
-      validator: (val) => ['list', 'table', 'kanban'].includes(val),
+      validator: (val) => !val || ['list', 'table', 'kanban'].includes(val),
       values: ['list', 'table', 'kanban']
     }
   }
 };
 </script>
+<style scoped>
+.btn-link {
+  color: unset;
+}
+</style>

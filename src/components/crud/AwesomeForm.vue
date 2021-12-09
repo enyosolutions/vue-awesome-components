@@ -739,11 +739,12 @@ export default {
     mode: {
       type: String,
       required: true,
+      values: ['create', 'edit', 'view', 'bulkEdit'],
       validator: (value) => {
         // Only accepts values that contain the string 'cookie-dough'.
         return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
       },
-      description: 'Define what mode should the form be used in (create| edit | view | bulkEdit '
+      description: 'Define what mode should the form be used in (create | edit | view | bulkEdit)'
     },
     displayMode: {
       type: String,
@@ -1357,13 +1358,13 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.$emit('cancel', this.item, { context: this.mode });
+      this.$awEmit('cancel', this.item, { context: this.mode });
     },
 
     close() {
       //eslint-disable-next-line
       this.closeModal();
-      this.$emit('closeRequested', this.item, { context: this.mode });
+      this.$awEmit('closeRequested', this.item, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1456,7 +1457,7 @@ export default {
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
           this.close();
-          this.$emit('itemCreated', this.selectedItem, {
+          this.$awEmit('itemCreated', this.selectedItem, {
             context: this.mode
           });
         })
@@ -1499,7 +1500,7 @@ export default {
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
           element = merge(element, this.selectedItem);
-          this.$emit('itemsBulkEdited', element);
+          this.$awEmit('itemsBulkEdited', element);
         }
       });
       this.close();
@@ -1563,7 +1564,7 @@ export default {
           });
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
-          this.$emit('itemEdited', this.selectedItem, {
+          this.$awEmit('itemEdited', this.selectedItem, {
             context: this.mode
           });
           this.close();
@@ -1577,16 +1578,16 @@ export default {
     },
 
     createFunction(item) {
-      this.$emit('create', item);
+      this.$awEmit('create', item);
     },
 
     editFunction(item) {
       this.activeNestedTab = 'general';
-      this.$emit('edit', item);
+      this.$awEmit('edit', item);
     },
 
     viewFunction(item) {
-      this.$emit('view', item);
+      this.$awEmit('view', item);
     },
 
     nestedViewFunction(item) {

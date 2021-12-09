@@ -25,6 +25,7 @@ export default {
     useRouterMode: {
       type: Boolean,
       default: false,
+      description: 'Determine whether the component should interact with the vue-router.'
     },
     entity: {
       type: String,

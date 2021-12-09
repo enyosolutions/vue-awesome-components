@@ -104,8 +104,9 @@
     "labels": {
       "manageTitle": "Gestion des",
       "createNew": "Ajouter",
-      "view": "Voir",
-      "edit": "Editer"
+      "view": "Consultation:",
+      "edit": "Edition:",
+      "add_a": "Creation:"
     },
     "buttons": {
       "yes_delete_it": "Oui je confirme",

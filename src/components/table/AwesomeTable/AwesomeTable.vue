@@ -57,22 +57,29 @@
           </div>
           <div class="btn-group btn-group-sm float-right mt-0">
             <slot name="table-top-actions" />
-            <div v-if="canHideColumns" class="dropdown">
+            <popper
+              trigger="clickToOpen"
+              :options="{
+                placement: 'bottom',
+                modifiers: { offset: { offset: '0,10px' } }
+              }"
+              ref="filterPopover"
+              v-if="canHideColumns"
+            >
               <button
-                id="dropdownMenuButton"
-                class="btn btn-default btn-simple dropdown-toggle"
+                slot="reference"
                 type="button"
-                data-toggle="dropdown"
+                class="btn btn-simple dropdown-toggle"
+                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
                 aria-haspopup="true"
                 aria-expanded="false"
+                id="advancedFilterButton"
+                @click="toggleAdvancedFilters"
               >
                 {{ $t('AwesomeTable.columns') }}
               </button>
-              <div
-                class="dropdown-menu"
-                aria-labelledby="dropdownMenuButton"
-                style="max-height: 100vh; overflow: auto;"
-              >
+
+              <div class="popper card mt-0" style="z-index: 1;">
                 <button
                   v-for="(col, index) in formattedColumns"
                   :key="index"
@@ -88,7 +95,8 @@
                   {{ col.label }}
                 </button>
               </div>
-            </div>
+            </popper>
+
             <popper
               trigger="clickToOpen"
               :options="{
@@ -125,27 +133,36 @@
               </div>
             </popper>
 
-            <div class="dropdown">
+            <popper
+              trigger="clickToOpen"
+              :options="{
+                placement: 'bottom',
+                modifiers: { offset: { offset: '0,10px' } }
+              }"
+              v-if="
+                _actions &&
+                  (_actions.export ||
+                    _actions.exportLocal ||
+                    _actions.import ||
+                    _actions.columnsFilters ||
+                    _actions.dropdownActions)
+              "
+            >
               <button
-                v-if="
-                  _actions &&
-                    (_actions.export ||
-                      _actions.exportLocal ||
-                      _actions.import ||
-                      _actions.columnsFilters ||
-                      _actions.dropdownActions)
-                "
-                id="dropdownMenuButton"
-                class="btn dropdown-toggle"
+                slot="reference"
                 type="button"
-                data-toggle="dropdown"
+                class="btn btn-simple dropdown-toggle"
+                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
                 aria-haspopup="true"
                 aria-expanded="false"
+                id="advancedFilterButton"
+                @click="toggleAdvancedFilters"
               >
                 <i class="fa fa-cog" />
                 {{ $t('AwesomeTable.configuration') }}
               </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+              <div class="popper card mt-0" style="z-index: 1;">
                 <slot name="table-top-more-actions" />
                 <button
                   v-if="_actions.columnsFilters"
@@ -190,7 +207,7 @@
                   {{ $t('AwesomeTable.buttons.clear-state') }}
                 </button>
               </div>
-            </div>
+            </popper>
           </div>
         </h3>
         <p class="card-category">

@@ -7,13 +7,14 @@ The component `AwesomeAction` is used for that.
 
 There are multiple location where you can add custom action.
 
-|   Key                   |     Location                                                                         |
-|-------------------------|--------------------------------------------------------------------------------------|
-| `customTopRightActions` | Actions that appears on the top right of `Awesome Crud`                              |
-| `customInlineActions`   | Actions that appears in row of `Awesome Table` and in footer of `Awesome Form`       |
-| `customBulkActions`     | Actions that appears when you select element(s) in `Awesome Table`                   |
-| `customTableTopActions` | Actions that appears on top of `Awesome Table`                                       |
-| `customFormTopActions`  | Actions that appears on top of `Awesome Form`                                        |
+| Key                     | Location                                                                       |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| `customTopRightActions` | Actions that appears on the top right of `Awesome Crud`                        |
+| `customInlineActions`   | Actions that appears in row of `Awesome Table` and in footer of `Awesome Form` |
+| `customBulkActions`     | Actions that appears when you select element(s) in `Awesome Table`             |
+| `customTableTopActions` | Actions that appears on top of `Awesome Table`                                 |
+| `customFormTopActions`  | Actions that appears on top of `Awesome Form`                                  |
+| `customTitleBarActions` | Actions that appears on in the title bar                                       |
 
 ## Locations examples
 
@@ -27,11 +28,11 @@ customTopRightActions: [
     classes: 'btn-warning',
     title: 'Action title',
     icon: 'fa fa-question',
-    action: ({items, action, location, props, id}, context) => {
+    action: ({ items, action, location, props, id }, context) => {
       // Do what you want
-    },
-  },
-]
+    }
+  }
+];
 ```
 
 `AwesomeTable`
@@ -47,11 +48,11 @@ customInlineActions: [
     classes: 'btn-warning',
     title: 'Action title',
     icon: 'fa fa-question',
-    action: ({items, action, location, props, id}, context) => {
+    action: ({ items, action, location, props, id }, context) => {
       // Do what you want
-    },
-  },
-]
+    }
+  }
+];
 ```
 
 `AwesomeTable`
@@ -72,17 +73,16 @@ customBulkActions: [
     classes: 'btn-warning',
     title: 'Action title',
     icon: 'fa fa-question',
-    action: ({items, action, location, props, id}, context) => {
+    action: ({ items, action, location, props, id }, context) => {
       // Do what you want
-    },
-  },
-]
+    }
+  }
+];
 ```
 
 `AwesomeTable`
 
 ![Demo customBulkActions](./customs-actions-examples/customBulkActions.png)
-
 
 ### `customTableTopActions`
 
@@ -94,11 +94,11 @@ customTableTopActions: [
     classes: 'btn-warning',
     title: 'Action title',
     icon: 'fa fa-question',
-    action: ({items, action, location, props, id}, context) => {
+    action: ({ items, action, location, props, id }, context) => {
       // Do what you want
-    },
-  },
-]
+    }
+  }
+];
 ```
 
 `AwesomeTable`
@@ -115,11 +115,11 @@ customFormTopActions: [
     classes: 'btn-warning',
     title: 'Action title',
     icon: 'fa fa-question',
-    action: ({items, action, location, props, id}, context) => {
+    action: ({ items, action, location, props, id }, context) => {
       // Do what you want
-    },
-  },
-]
+    }
+  }
+];
 ```
 
 `AwesomeForm`

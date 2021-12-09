@@ -12,11 +12,31 @@ pageClass: fullwidth-page
 
 The options property is an option object that controls various behaviors of the awesomecrud component.
 
-| Property       | type    | Description | Possible Values                                                           | Default |
-| -------------- | ------- | ----------- | ------------------------------------------------------------------------- | ------- |
-| useRouterMode  | boolean | true        |                                                                           |         |
-| detailPageMode | string  |             | `modal`, `sidebar`, `page`, `fullscreen`, `sidebar-left`, `sidebar-right` | `modal` |
-|                |         |             |                                                                           |         |
+| Property           | type    | Description                                 | Possible Values                                                           | Default |
+| ------------------ | ------- | ------------------------------------------- | ------------------------------------------------------------------------- | ------- |
+| useRouterMode      | boolean | true                                        |                                                                           |         |
+| dataPaginationMode | string  | the mode for fetching the data from the api | local \ remote                                                            | local   |
+| detailPageMode     | string  |                                             | `modal`, `sidebar`, `page`, `fullscreen`, `sidebar-left`, `sidebar-right` | `modal` |
+|                    |         |                                             |                                                                           |         |
+
+```
+  mode: 'local', // Deprecated use dataPaginationMode
+  dataPaginationMode: 'local',
+  defaultOptions: true,
+  url: null,
+  columns: null,
+  createPath: null,
+  viewPath: null,
+  editPath: null,
+  queryParams: {},
+  stats: false,
+  autoRefresh: false, // or integer in seconds
+  autoRefreshInterval: 20, // in seconds
+  initialDisplayMode: 'table', // table | list | kanban
+  detailPageMode: 'sidebar', // fade | slide | full
+  detailPageLayout: null, // fade | slide | full
+  columnsDisplayed: 10
+```
 
 ### detailPageMode:
 

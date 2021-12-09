@@ -105,7 +105,8 @@
       "manageTitle": "Manage",
       "createNew": "Add",
       "view": "View",
-      "edit": "Edit"
+      "edit": "Edit",
+      "add_a": "Add a(n)"
     },
     "buttons": {
       "yes_delete_it": "Yes i confirm",

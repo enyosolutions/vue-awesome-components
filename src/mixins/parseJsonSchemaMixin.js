@@ -160,7 +160,7 @@ export default {
           subSchema.type = 'group';
           subSchema.default = {};
           subSchema.id = key;
-          subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || 'card'}`;
+          subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || ''}`;
           fields.push(subSchema);
         } else {
           const relationUrl = this.getRelationUrl(prop);

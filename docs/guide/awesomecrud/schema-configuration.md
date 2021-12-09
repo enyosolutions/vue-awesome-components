@@ -1,8 +1,6 @@
 # Configuration of the schema
 
-
 The awesome crud configuration schema.
-
 
 ```
 {
@@ -109,7 +107,6 @@ The awesome crud configuration schema.
               title: 'The field to use as the value in the select',
               example: '_id',
             },
-
             label: {
               type: 'string',
               title: 'The field to use as the Label in the select',
@@ -126,7 +123,6 @@ The awesome crud configuration schema.
             }
           }
           },
-
 
           }
         },
@@ -164,4 +160,3 @@ The awesome crud configuration schema.
   },
 }
 ```
-

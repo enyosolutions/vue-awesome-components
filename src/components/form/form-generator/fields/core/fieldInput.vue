@@ -59,7 +59,7 @@ export default {
   mixins: [abstractField],
   computed: {
     inputType() {
-      if (typeof this.fieldOptions.inputType !== 'undefined') {
+      if (typeof this.fieldOptions.inputType === 'string') {
         return this.fieldOptions.inputType.toLowerCase();
       } else {
         console.warn('Missing inputType', this.fieldOptions, this.fieldOptions.inputType);

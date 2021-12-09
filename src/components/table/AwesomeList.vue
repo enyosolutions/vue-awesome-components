@@ -35,7 +35,7 @@
 
 
             <div class="btn-group float-right aw-list-buttons">
-            <slot name="table-top-actions" class/>
+            <slot name="top-actions" class/>
 
             <div class="btn-group" role="group">
               <popper
@@ -93,20 +93,25 @@
             </template>
 
             <div class="btn-group" role="group">
+              <popper
+                trigger="clickToOpen"
+                :options="{
+              placement: 'bottom',
+              modifiers: { offset: { offset: '0,10px' } }
+            }"
+                ref="filterPopover"
+                v-if="actions && (actions.export || actions.import)"
+            >
               <button
-                  v-if="actions && (actions.export || actions.import)"
-                  id="dropdownMenuButton"
-                  class="btn btn-secondary btn-simple dropdown-toggle"
+                  slot="reference"
                   type="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
+                  class="btn btn-simple dropdown-toggle"
               >
-                <i class="fa fa-plus"/>
                 {{ $t("AwesomeTable.more") }}
               </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <slot name="table-top-more-actions"/>
+
+              <div class="popper card mt-0" style="z-index: 1;">
+               <slot name="table-top-more-actions"/>
                 <button
                     v-if="actions && actions.export"
                     class="btn btn-success btn-simple btn-block"
@@ -124,6 +129,7 @@
                   {{ $t("common.buttons.excel-currentpage") }}
                 </button>
               </div>
+            </popper>
             </div>
           </div>
           </div>
@@ -151,9 +157,10 @@
         </div>
       </div>
     </div>
+    <div class="card-body">
     <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
       <div
-          class="pointer d-flex"
+          class="pointer d-flex "
           v-for="(item, index) in _paginatedItems"
           :key="index"
           :class="itemWrapperClasses"
@@ -161,7 +168,8 @@
       >
         <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
           <div
-              class="card mb-3 aw-list-item flex-fill"
+              class="card mb-3 aw-list-item flex-fill shadow"
+              :class="itemClasses"
               :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
              'height': _itemHeight
           }"
@@ -223,6 +231,7 @@
         </slot>
       </div>
     </div>
+
     <hr v-if="actions.paginate"/>
     <nav class="text-center" v-if="actions.paginate">
       <paginate
@@ -241,6 +250,7 @@
           :next-link-class="'page-link'"
       ></paginate>
     </nav>
+    </div>
   </div>
   </div>
 </template>
@@ -321,6 +331,11 @@ export default {
     imageClasses: {
       type: [Object, String],
       default: ''
+    },
+    itemClasses: {
+      type: [Object, String],
+      default: 'shadow',
+      description: 'classes to put around the item'
     },
     imageStyles: {
       type: [Object, String],
@@ -488,7 +503,6 @@ export default {
     if (this.perRow) {
       this.resetItemsPerRow();
     }
-    this.refreshLocalData();
   },
   beforeDestroy() {
   },
@@ -611,6 +625,7 @@ export default {
 
   .list-responsive {
     width: 100%;
+    margin: 0;
   }
 
   .pagination {
@@ -675,6 +690,9 @@ export default {
       }
     }
   }
+}
+.awesome-list {
+  clear: both;
 }
 
 .aw-list-header {
