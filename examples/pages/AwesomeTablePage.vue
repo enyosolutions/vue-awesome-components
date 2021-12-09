@@ -1,22 +1,16 @@
 <template>
   <div>
     <!-- Latest compiled and minified CSS -->
-    <AutoProps :component="AwesomeDisplay" props="{}"> </AutoProps>
     <h3>Simple table</h3>
-    <pre style="color:white">
-      <AwesomeTable
+    <AwesomeTable
       :columns="['col1', 'col2', 'col3', 'col4']"
       :rows="[
-      {col1: 'qq', col2:'some data', col3: 'oopsie',
-      notDisplayedColumn: 'ghosted'},
-      {col1: 'qq2', col2:'some moore data', col3: 'oopsie',
-      notDisplayedColumn: 'ghosted'},
-      {col1: 'qq3', col2:'a third data', col3: 'oopsie',
-      notDisplayedColumn: 'ghosted'},
+        { col1: 'qq', col2: 'some data', col3: 'oopsie', notDisplayedColumn: 'ghosted' },
+        { col1: 'qq2', col2: 'some moore data', col3: 'oopsie', notDisplayedColumn: 'ghosted' },
+        { col1: 'qq3', col2: 'a third data', col3: 'oopsie', notDisplayedColumn: 'ghosted' }
       ]"
-      :options="{actions: {noActions: true}}"
-      />
-    </pre>
+      :actions="{ noActions: true }"
+    />
 
     <AwesomeTable
       :columns="['col1', 'col2', 'col3']"
@@ -241,7 +235,7 @@ import AwesomeDisplay from '../../src/components/crud/display/AwesomeDisplay.vue
 import AutoProps from '../../src/components/misc/AutoProps.vue';
 
 export default {
-  name: 'AjaxTableDemo',
+  name: 'AwesometableDemo',
   components: { AwesomeTable, AutoProps },
   props: {},
   mounted() {},

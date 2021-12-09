@@ -279,6 +279,7 @@
             :display-header="awFormDisplayHeader"
             :displayMode="detailPageModeCpt"
             :edit-layout-mode="editLayoutMode"
+            :use-custom-layout="mergedOptions && mergedOptions.useCustomLayout"
             :has-next="hasNext"
             :has-previous="hasPrevious"
             :identity="identity"
@@ -325,6 +326,7 @@
             :identity="identity"
             :displayMode="detailPageModeCpt"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
+            :use-custom-layout="mergedOptions && mergedOptions.useCustomLayout"
             createPageLayoutComputed
             :item="selectedItem"
             :bulk-items="selectedItems"
@@ -406,7 +408,7 @@ const defaultOptions = {
   autoRefreshInterval: 20, // in seconds
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
-  detailPageLayout: null, // fade | slide | full
+  detailPageLayout: null,
   columnsDisplayed: 10
 };
 
@@ -476,6 +478,36 @@ export default {
       required: false,
       default: () => [],
       note: 'The layout of the create/edit/view pages'
+    },
+    detailPageMode: {
+      type: String,
+      description: 'the way the detail page shows when you open an item from the list',
+      values: [
+        'modal',
+        'fade',
+        'slide',
+        'sidebar',
+        'sidebar',
+        'sidebar',
+        'fullscreen',
+        'page',
+        'sideform',
+        'bottomform'
+      ],
+      validator: (value) =>
+        !value ||
+        [
+          'modal',
+          'fade',
+          'slide',
+          'sidebar',
+          'sidebar',
+          'sidebar',
+          'fullscreen',
+          'page',
+          'sideform',
+          'bottomform'
+        ].includes(value)
     },
     crudNeedsRefresh: {
       type: Boolean,
@@ -641,36 +673,6 @@ export default {
       type: String,
       title: 'The selector to use for registering scroll events',
       description: 'This prop is used for registering the scroll event (needed for sticky forms)'
-    },
-    detailPageMode: {
-      type: String,
-      description: 'the way the detail page shows when you open an item from the list',
-      values: [
-        'modal',
-        'fade',
-        'slide',
-        'sidebar',
-        'sidebar',
-        'sidebar',
-        'fullscreen',
-        'page',
-        'sideform',
-        'bottomform'
-      ],
-      validator: (value) =>
-        !value ||
-        [
-          'modal',
-          'fade',
-          'slide',
-          'sidebar',
-          'sidebar',
-          'sidebar',
-          'fullscreen',
-          'page',
-          'sideform',
-          'bottomform'
-        ].includes(value)
     }
   },
   data() {

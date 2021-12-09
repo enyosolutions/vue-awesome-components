@@ -394,7 +394,7 @@
                               }"
                             >
                               <VueFormGenerator
-                                :schema.sync="formSchema"
+                                :schema.sync="_formSchemaGrouped"
                                 :model="selectedItem"
                                 :options="formOptions"
                                 ref="form"
@@ -624,8 +624,7 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  responseField: 'body',
-  useCustomLayout: false
+  responseField: 'body'
 };
 
 export default {
@@ -992,6 +991,7 @@ export default {
       }
       return mergedOptions || {};
     },
+
     formSchema() {
       if (!this._schema) {
         return [];
@@ -1022,7 +1022,7 @@ export default {
     },
 
     createFormSchema() {
-      return this.useSimpleCreateForm ? this.simpleFormSchema : this.formSchema;
+      return this.useSimpleCreateForm ? this.simpleFormSchema : this._formSchemaGrouped;
     },
 
     _actions() {
@@ -1034,7 +1034,20 @@ export default {
     },
 
     _formSchemaGrouped() {
-      return { groups: [{ ...this.formSchema, legend: 'home' }] };
+      if (!this.layout || !Array.isArray(this.layout) || !this.layout.length) {
+        return this.formSchema;
+      }
+      return {
+        ...this.formSchema,
+        type: 'group',
+        fields: this.layout.map((group) => ({
+          ...group,
+          type: 'group',
+          legend: group.legend || group.title,
+          styleClasses: `${group.styleClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
+          fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model))
+        }))
+      };
     },
 
     _useCustomLayout() {

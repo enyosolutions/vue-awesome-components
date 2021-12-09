@@ -7,49 +7,86 @@
     </div>
     <section
       v-if="merged.props"
-      class="props"
+      class="props prop-section-docked"
       :class="{
-        'prop-section-docked': dockedComputed,
         'prop-section-folded': foldedComputed
       }"
     >
       <table :is="dockedComputed && !debug ? 'div' : 'table'">
-        <tr :is="rowDisplayMode" class="proprow props-header">
-          <div class="component-name" v-if="dockedComputed">
-            {{ merged.name }}
-          </div>
-          <td :is="colDisplayMode" class="propcol name">
-            Name
-          </td>
-          <td :is="colDisplayMode" class="propcol default">
-            Config
-          </td>
-          <td :is="colDisplayMode" class="propcol default" v-if="debug">
-            Type
-          </td>
-
-          <td :is="colDisplayMode" class="propcol default" v-if="debug">
-            Value
-          </td>
-          <td :is="colDisplayMode" class="propcol notes" v-if="debug">
-            notes
-          </td>
-        </tr>
-        <template v-for="(propinfo, propname) in merged.props">
-          <tr v-if="skipProps.indexOf(propname) === -1" :key="propname" class="proprow" :is="rowDisplayMode">
-            <td :is="colDisplayMode" class="propcol name" :class="{ required: propinfo.required }">
-              <span>{{ propname }}</span>
+        <thead>
+          <tr :is="rowDisplayMode" class="proprow props-header">
+            <div class="component-name" v-if="dockedComputed" @click="isFolded = !foldedComputed">
+              {{ merged.name }} <i class="fa" :class="foldedComputed ? 'fa-plus' : 'fa-times'"></i>
+            </div>
+            <td :is="colDisplayMode" class="propcol name">
+              Name
+            </td>
+            <td :is="colDisplayMode" class="propcol default">
+              Config
+            </td>
+            <td :is="colDisplayMode" class="propcol default" v-if="debug">
+              Type
             </td>
 
-            <td :is="dockedComputed && !debug ? 'div' : 'tr'" class="propcol default">
-              <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
-              <template v-if="propinfo.type === 'string'">
-                <template v-if="propinfo.values && Array.isArray(propinfo.values)">
-                  <select v-model="inputedProps[propname]">
-                    <option v-for="val in propinfo.values" :value="val" v-bind:key="val">{{ val }}</option>
-                  </select>
+            <td :is="colDisplayMode" class="propcol default" v-if="debug">
+              Value
+            </td>
+            <td :is="colDisplayMode" class="propcol notes" v-if="debug">
+              notes
+            </td>
+          </tr>
+        </thead>
+        <tbody v-if="!foldedComputed">
+          <template v-for="(propinfo, propname) in merged.props">
+            <tr v-if="skipProps.indexOf(propname) === -1" :key="propname" class="proprow" :is="rowDisplayMode">
+              <td :is="colDisplayMode" class="propcol name" :class="{ required: propinfo.required }">
+                <span>{{ propname }}</span>
+              </td>
+
+              <td :is="dockedComputed && !debug ? 'div' : 'tr'" class="propcol default">
+                <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
+                <template v-if="propinfo.type === 'string'">
+                  <template v-if="propinfo.values && Array.isArray(propinfo.values)">
+                    <select v-model="inputedProps[propname]">
+                      <option v-for="val in propinfo.values" :value="val" v-bind:key="val">{{ val }}</option>
+                    </select>
+                  </template>
+                  <template v-if="!propinfo.values">
+                    <input
+                      type="text"
+                      class="form-control input-xs"
+                      v-model="inputedProps[propname]"
+                      @input="updateModel"
+                    />
+                  </template>
                 </template>
-                <template v-if="!propinfo.values">
+                <template v-else-if="propinfo.type === 'object' || propinfo.type === 'array'">
+                  <textarea
+                    rows="10"
+                    type="text"
+                    class="form-control input-xs"
+                    :value="JSON.stringify(mergedProps[propname], null, 2)"
+                    @input="($event) => setProp($event, propname, mergedProps[propname])"
+                  />
+                </template>
+                <template v-else-if="propinfo.type == 'boolean'">
+                  <input
+                    type="checkbox"
+                    value="1"
+                    class="form-control"
+                    v-model="inputedProps[propname]"
+                    @input="updateModel"
+                  />
+                </template>
+                <template v-else-if="propinfo.type == 'number'">
+                  <input
+                    type="number"
+                    class="form-control input-xs"
+                    v-model="inputedProps[propname]"
+                    @change="updateModel"
+                  />
+                </template>
+                <template v-else="">
                   <input
                     type="text"
                     class="form-control input-xs"
@@ -57,62 +94,28 @@
                     @input="updateModel"
                   />
                 </template>
-              </template>
-              <template v-else-if="propinfo.type === 'object' || propinfo.type === 'array'">
-                <textarea
-                  rows="10"
-                  type="text"
-                  class="form-control input-xs"
-                  :value="JSON.stringify(mergedProps[propname], null, 2)"
-                  @input="($event) => setProp($event, propname, mergedProps[propname])"
-                />
-              </template>
-              <template v-else-if="propinfo.type == 'boolean'">
-                <input
-                  type="checkbox"
-                  value="1"
-                  class="form-control"
-                  v-model="inputedProps[propname]"
-                  @input="updateModel"
-                />
-              </template>
-              <template v-else-if="propinfo.type == 'number'">
-                <input
-                  type="number"
-                  class="form-control input-xs"
-                  v-model="inputedProps[propname]"
-                  @change="updateModel"
-                />
-              </template>
-              <template v-else="">
-                <input
-                  type="text"
-                  class="form-control input-xs"
-                  v-model="inputedProps[propname]"
-                  @input="updateModel"
-                />
-              </template>
-            </td>
-            <td :is="rowDisplayMode" class="propcol type" v-if="debug">
-              {{ propinfo.type }}
-              {{ propinfo.defaultTypeStr }}
-            </td>
-            <td :is="rowDisplayMode" class="propcol value" v-if="debug">
-              default:
-              <pre>{{ defaultProps[propname] }}</pre>
-              <br />
-              inputed:
-              <pre>{{ inputedProps[propname] }}</pre>
-              <br />
-              merged:
-              <pre>{{ mergedProps[propname] }}</pre>
-              <br />
-            </td>
-            <td :is="colDisplayMode" class="propcol notes" v-if="debug">
-              {{ propinfo.note }}
-            </td>
-          </tr>
-        </template>
+              </td>
+              <td :is="rowDisplayMode" class="propcol type" v-if="debug">
+                {{ propinfo.type }}
+                {{ propinfo.defaultTypeStr }}
+              </td>
+              <td :is="rowDisplayMode" class="propcol value" v-if="debug">
+                default:
+                <pre>{{ defaultProps[propname] }}</pre>
+                <br />
+                inputed:
+                <pre>{{ inputedProps[propname] }}</pre>
+                <br />
+                merged:
+                <pre>{{ mergedProps[propname] }}</pre>
+                <br />
+              </td>
+              <td :is="colDisplayMode" class="propcol notes" v-if="debug">
+                {{ propinfo.note }}
+              </td>
+            </tr>
+          </template>
+        </tbody>
       </table>
     </section>
   </article>
@@ -444,7 +447,6 @@ function getTypeString(variable) {
 .prop-section-docked.prop-section-folded {
   position: fixed;
   right: 0;
-  bottom: 0;
   top: auto;
   height: auto;
   width: 30vw;

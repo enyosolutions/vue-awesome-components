@@ -7,10 +7,12 @@
         identity: 'ticket',
         apiRequestConfig: { perPageField: '_limit', pageField: '_page' },
         options: this.options,
-        model: ticketModel
+        model: ticketModel,
+        layout
       }"
       :skip-props="['translations']"
       :docked="true"
+      :folded="true"
       v-slot="{ userProps }"
     >
       <AwesomeCrud
@@ -95,6 +97,8 @@ export default {
         actions: { create: true, edit: true, delete: true },
         initialDisplayMode: 'table',
         detailPageMode: 'sideform',
+        useCustomLayout: false,
+        viewPageLayout: {},
         customInlineActions: [
           {
             name: 'validate-ride-comment',
@@ -149,7 +153,8 @@ export default {
       Mark Hunt.
       `,
       editField3: null,
-      editField4: null
+      editField4: null,
+      layout: []
     };
   },
   methods: {

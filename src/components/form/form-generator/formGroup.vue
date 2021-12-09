@@ -2,50 +2,52 @@
   <fieldset v-if="fields && groupIsVisible" :is="tag" :class="[groupRowClasses, validationClass]" ref="group">
     <slot name="group-legend" :group="group" :group-legend="groupLegend"></slot>
     <slot name="group-help" :group="group"></slot>
-    <template v-for="(field, index) in fields">
-      <template v-if="fieldVisible(field)">
-        <template v-if="field.type === 'group'">
-          <form-group
-            :fields="field.fields"
-            :group="field"
-            :tag="getGroupTag(field)"
-            :model="model"
-            :options="options"
-            :errors="errors"
-            :event-bus="eventBus"
-            :key="index"
-          >
-            <template slot="group-legend" slot-scope="slotProps">
-              <slot name="group-legend" :group="slotProps.group" :group-legend="slotProps.groupLegend"></slot>
-            </template>
-            <template slot="group-help" slot-scope="slotProps">
-              <slot name="group-help" :group="slotProps.group"></slot>
-            </template>
+    <div class="row m-0">
+      <template v-for="(field, index) in fields">
+        <template v-if="fieldVisible(field)">
+          <template v-if="field.type === 'group'">
+            <form-group
+              :fields="field.fields"
+              :group="field"
+              :tag="getGroupTag(field)"
+              :model="model"
+              :options="options"
+              :errors="errors"
+              :event-bus="eventBus"
+              :key="index"
+            >
+              <template slot="group-legend" slot-scope="slotProps">
+                <slot name="group-legend" :group="slotProps.group" :group-legend="slotProps.groupLegend"></slot>
+              </template>
+              <template slot="group-help" slot-scope="slotProps">
+                <slot name="group-help" :group="slotProps.group"></slot>
+              </template>
 
-            <template slot="element" slot-scope="slotProps">
-              <slot
-                name="element"
-                :field="slotProps.field"
-                :model="slotProps.model"
-                :options="slotProps.options"
-                :errors="slotProps.errors"
-                :eventBus="slotProps.eventBus"
-              ></slot>
-            </template>
-          </form-group>
-        </template>
-        <template v-else>
-          <slot
-            name="element"
-            :field="field"
-            :model="model"
-            :options="options"
-            :errors="errors"
-            :eventBus="eventBus"
-          ></slot>
+              <template slot="element" slot-scope="slotProps">
+                <slot
+                  name="element"
+                  :field="slotProps.field"
+                  :model="slotProps.model"
+                  :options="slotProps.options"
+                  :errors="slotProps.errors"
+                  :eventBus="slotProps.eventBus"
+                ></slot>
+              </template>
+            </form-group>
+          </template>
+          <template v-else>
+            <slot
+              name="element"
+              :field="field"
+              :model="model"
+              :options="options"
+              :errors="errors"
+              :eventBus="eventBus"
+            ></slot>
+          </template>
         </template>
       </template>
-    </template>
+    </div>
   </fieldset>
 </template>
 <script>

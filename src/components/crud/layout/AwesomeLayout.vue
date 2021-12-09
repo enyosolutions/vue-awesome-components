@@ -1,7 +1,7 @@
 <template>
   <div class="awesome-layout">
     <grid-layout
-      :layout.sync="layout"
+      :layout.sync="internalLayout"
       :col-num="12"
       :row-height="80"
       :is-draggable="isDraggable"
@@ -13,7 +13,7 @@
     >
       <grid-item
         class="item"
-        v-for="(item, index) in layout"
+        v-for="(item, index) in internalLayout"
         :x="item.x"
         :y="item.y"
         :w="item.w"
@@ -136,7 +136,11 @@ export default {
       note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
     }
   },
+  watch: {
+    layout: 'layoutWatch'
+  },
   data: () => ({
+    internalLayout: [],
     verticalCompact: true,
     height: 2,
     newBlock: {
@@ -150,6 +154,11 @@ export default {
     }
   }),
   methods: {
+    layoutWatch(newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.internalLayout = newValue;
+      }
+    },
     onLayoutUpdated(items) {
       this.$emit('layout-updated', items);
     },
@@ -160,21 +169,22 @@ export default {
 
     // Add a new item to the grid
     addItemToGrid() {
-      const items = Object.assign([], this.layout);
+      const items = Object.assign([], this.internalLayout);
       items.push({
-        x: (this.layout.length * 3) % 12,
-        y: this.layout.length + 12,
+        x: (this.internalLayout.length * 3) % 12,
+        y: this.internalLayout.length + 12,
         w: 3,
         h: 3,
         i: `aw-layout-item-${uuidv4()}`,
         fields: []
       });
+      this.internalLayout = items;
       this.$emit('layout-updated', items);
     },
 
     // remove item from the grid
     removeItemFromGrid(index) {
-      const items = Object.assign([], this.layout);
+      const items = Object.assign([], this.internalLayout);
 
       // check for existing fields
       if (items[index] && items[index].fields && items[index].fields.length) {
@@ -211,10 +221,6 @@ export default {
   },
 
   mounted() {
-    //
-  },
-
-  watch: {
     //
   }
 };

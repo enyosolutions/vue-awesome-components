@@ -154,9 +154,11 @@ export default {
     },
 
     segmentFieldDefinitionComputed() {
-      let field;
+      if (!this.segmentField) {
+        return '';
+      }
       if (this.columns) {
-        field = this.columns.find((f) => f.field === this.segmentField);
+        const field = this.columns.find((f) => f.field === this.segmentField);
         if (field) {
           return field;
         }

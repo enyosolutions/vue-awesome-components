@@ -193,7 +193,7 @@
           :component="AwesomeCrud"
           :componentProps="{}"
           :skip-props="['translations']"
-          :docked="false"
+          :docked="true"
           v-slot="{ userProps }"
         >
           <AwesomeCrud
@@ -316,7 +316,7 @@
           :component="AwesomeCrud"
           :componentProps="{}"
           :skip-props="['translations']"
-          :docked="false"
+          :docked="true"
           v-slot="{ userProps }"
         >
           <AwesomeCrud

@@ -7,13 +7,16 @@ module.exports = {
       layout: [
         {
           'x': 0, 'y': 0, 'w': 3, 'h': 6, 'i': 0,
+          title: 'informations',
           fields: ['type', 'url', 'test', 'id', 'test2']
         },
         {
           'x': 3, 'y': 0, 'w': 3, 'h': 3, 'i': 1,
+          title: 'informations2',
           fields: ['regionId']
         },
         {
+          title: 'informations3',
           'x': 6, 'y': 0, 'w': 3, 'h': 3, 'i': 2,
           fields: ['userId']
         },
