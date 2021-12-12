@@ -34,7 +34,8 @@ The options property is an option object that controls various behaviors of the 
   autoRefreshInterval: 20, // in seconds
   initialDisplayMode: 'table', // table | list | kanban
   detailPageMode: 'sidebar', // fade | slide | full
-  detailPageLayout: null, // fade | slide | full
+  detailPageLayout: null, // array of group infos  {"legend":"...","fields":["id","identity","pageTitle","icon","name","namePlural"],"cols":"6","wrapperClasses":"card mb-1"},
+
   columnsDisplayed: 10
 ```
 

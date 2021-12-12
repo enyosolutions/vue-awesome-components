@@ -509,6 +509,11 @@ export default {
           'bottomform'
         ].includes(value)
     },
+    detailPageLayout: {
+      type: Array,
+      default: undefined,
+      note: 'Defines the layout of the detail page'
+    },
     crudNeedsRefresh: {
       type: Boolean,
       default: false,
@@ -840,7 +845,7 @@ export default {
     },
 
     _layout() {
-      return this.layout || (this.model && this.model.formOptions && this.model.formOptions.layout);
+      return this.detailPageLayout || (this.model && this.model.formOptions && this.model.formOptions.layout);
     },
     _createFormLayout() {
       return (this.model && this.model.formOptions && this.model.formOptions.createLayout) || this._layout;
@@ -1110,7 +1115,8 @@ export default {
     crudNeedsRefresh: 'refreshComponent',
     needsRefresh: 'refreshComponent',
     '$route.params.id': 'onRouteIdChanged',
-    displayMode: 'onDisplayModeChanged'
+    displayMode: 'onDisplayModeChanged',
+    listDisplayMode: 'onListDisplayModeChanged'
   },
   created() {
     if (process.env.NODE_ENV === 'development') {
@@ -1879,6 +1885,11 @@ export default {
     onDisplayModeChanged(mode) {
       if (['table', 'list', 'kanban'].includes(mode)) {
         this.listDisplayMode = mode;
+      }
+    },
+    onListDisplayModeChanged(mode, oldMode) {
+      if (mode !== oldMode) {
+        this.displayMode = mode;
       }
     }
   },

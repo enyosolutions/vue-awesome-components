@@ -1044,7 +1044,8 @@ export default {
           ...group,
           type: 'group',
           legend: group.legend || group.title,
-          styleClasses: `${group.styleClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
+          wrapperClasses: `${group.wrapperClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
+          styleClasses: `${group.styleClasses || ''}`,
           fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model))
         }))
       };
