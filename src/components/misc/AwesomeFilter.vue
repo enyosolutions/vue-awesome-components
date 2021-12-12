@@ -3,30 +3,25 @@
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">{{ $t('AwesomeFilter.labels.filterData') }}</h6>
       <form class="container" @submit.prevent="addFilter()">
-        <div class="dropdown column">
-          <button
-            class="btn btn-primary btn-block dropdown-toggle chip-button"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
+        <div class="dropdown column  pl-0">
+          <select
+            class="form-control btn-outline-primary"
+            :placeholder="Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields')"
+            @change="selectFilter"
           >
-            {{ Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields') }}
-          </button>
-          <div class="dropdown-menu" aria-labelledby="field">
-            <a href="" @click.prevent="currentField = {}" class="dropdown-item">{{
+            <option value class="text-primary" @click.prevent="currentField = {}">{{
               $t('AwesomeFilter.labels.fields')
-            }}</a>
-            <a
-              href=""
-              @click.prevent="currentField = field"
-              class="dropdown-item"
+            }}</option>
+            <option class="text-center" disabled>_________</option>
+            <option
+              @click="currentField = field"
               v-for="(field, index) in _filterableFields"
               :key="index"
+              :value="field.field"
             >
               {{ field.label }}
-            </a>
-          </div>
+            </option>
+          </select>
         </div>
         <awesome-filter-operator :current-field="currentField" :current-filter.sync="currentOperator" in-popper />
         <awesome-filter-value
@@ -34,17 +29,17 @@
           :current-filter="currentOperator"
           :current-value.sync="currentValue"
         />
+        <div class="awesome-filter-add-block pt-1 ">
+          <button
+            :disabled="!Object.keys(currentField).length"
+            @click.prevent="addFilter()"
+            type="button"
+            class="btn btn-primary btn-block chip-button"
+          >
+            <i class="fa fa-save"></i>
+          </button>
+        </div>
       </form>
-      <div class="awesome-filter-add-block">
-        <button
-          :disabled="!Object.keys(currentField).length"
-          @click.prevent="addFilter()"
-          type="button"
-          class="btn btn-primary btn-block chip-button"
-        >
-          {{ $t('AwesomeFilter.labels.addFilter') }}
-        </button>
-      </div>
     </div>
     <div v-if="permanentFilter || permanentInput">
       <div class="chip-groups">
@@ -81,7 +76,7 @@
               </span>
             </div>
             <div v-else>{{ filter.value }}</div>
-            <button type="button" @click.prevent="removeFilter(filter)">
+            <button type="button" class="btn text-muted" @click.prevent="removeFilter(filter)">
               <i class="fa fa-times-circle"></i>
             </button>
           </div>
@@ -93,6 +88,7 @@
 
 <script>
 import _ from 'lodash';
+import Popper from 'vue-popperjs';
 import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator';
 import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue';
 import i18nMixin from '../../mixins/i18nMixin';
@@ -102,7 +98,8 @@ export default {
   mixins: [i18nMixin],
   components: {
     AwesomeFilterOperator,
-    AwesomeFilterValue
+    AwesomeFilterValue,
+    Popper
   },
   props: {
     advancedFilters: {
@@ -207,13 +204,22 @@ export default {
       if (options.dispatch) {
         this.$emit('update-filter', advancedFilters, selectedFilters);
       }
+    },
+
+    selectFilter(event) {
+      if (event.target.value) {
+        this.currentField = this._filterableFields.find((f) => f.field === event.target.value);
+      } else {
+        this.currentField = {};
+      }
     }
   },
 
   computed: {
     _filterableFields() {
       return this.fields.filter((field) => {
-        return !(field.filterOptions && !field.filterOptions.enabled);
+        // no option defined
+        return !field.filterOptions || !field.filterOptions.enabled;
       });
     }
   },
@@ -265,20 +271,26 @@ export default {
 <style lang="scss">
 .awesome-filter {
   text-align: left;
-  min-width: 350px;
   .aw-field-select-relation-actions {
     display: none;
+  }
+  @media (min-width: 720px) {
+    .container {
+      flex-direction: column;
+    }
   }
   .container {
     display: flex;
     padding: 0;
+    margin-left: 0px;
+    margin-right: 0;
     margin-bottom: 5px;
     flex-direction: row;
     flex-wrap: wrap;
 
     .column {
       padding: 5px;
-      flex-grow: 1;
+      // flex-grow: 1;
 
       .between {
         display: flex;

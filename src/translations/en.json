@@ -41,11 +41,12 @@
       "activeFilter": "Active Filters",
       "addFilter": "Add filter",
       "from": "From",
+      "clear": "--Vider--",
       "to": "To"
     },
     "filters": {
-      "equals": "Equals",
-      "not-equals": "Not equals",
+      "equals": "Equals (=)",
+      "not-equals": "Not equals(<>)",
       "greater-than": "Greater than (>)",
       "greater-or-equals": "Greater or equals (>=)",
       "lesser-than": "Lesser than (<)",

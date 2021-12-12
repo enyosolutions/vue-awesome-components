@@ -18,7 +18,7 @@
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
-          <ListModeSelector v-if="_actions.changeDisplayMode" v-model="displayMode" />
+          <ListModeSelector v-if="_actions.changeDisplayMode" v-model="listDisplayMode" />
 
           <AwesomeTable
             v-if="

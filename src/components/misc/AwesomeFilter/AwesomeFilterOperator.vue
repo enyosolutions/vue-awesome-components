@@ -1,31 +1,17 @@
 <template>
   <div class="dropdown column awesome-filter-operator">
-    <button
-      class="btn dropdown-toggle"
+    <select
+      class="btn form-control btn-outline-primary"
       :class="{
-        'btn-block btn-primary': inPopper,
-        'btn-default p-0 mr-2 ml-2': !inPopper,
         'font-weight-bold': _filterSelected
       }"
-      type="button"
-      data-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="false"
       :disabled="!(currentField && currentField.field) || permanentInput"
+      @change="updateFilter"
     >
-      {{ _filterSelected ? currentFilter.shortText || currentFilter.text : $t('AwesomeFilter.labels.filters') }}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="filter">
-      <a href="" @click.prevent="updateFilter({})" class="dropdown-item">{{ $t('AwesomeFilter.labels.filters') }}</a>
-      <a
-        href=""
-        @click.prevent="updateFilter(filter)"
-        class="dropdown-item"
-        v-for="filter in _getFilters"
-        :key="filter.value"
-        >{{ filter.text }}</a
-      >
-    </div>
+      <option disabled class="dropdown-item">{{ $t('AwesomeFilter.labels.filters') }}</option>
+      <option class="text-center" disabled>_________</option>
+      <option v-for="filter in _getFilters" :key="filter.value" :value="filter.value">{{ formatLabel(filter) }}</option>
+    </select>
   </div>
 </template>
 
@@ -113,8 +99,19 @@ export default {
     }
   }),
   methods: {
-    updateFilter(data) {
-      this.$emit('update:current-filter', data);
+    updateFilter(event) {
+      let selectedFilter = {};
+      if (event.target.value) {
+        selectedFilter = this.filters.find((f) => f.value === event.target.value);
+      }
+
+      this.$emit('update:current-filter', selectedFilter);
+    },
+    formatLabel(filter) {
+      if (this.currentFilter && filter.value === this.currentFilter.value) {
+        return filter.shortText || filter.text;
+      }
+      return filter.text;
     }
   },
   computed: {

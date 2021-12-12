@@ -38,37 +38,19 @@
             <slot name="top-actions" class/>
 
             <div class="btn-group" role="group">
-              <popper
-                trigger="clickToOpen"
-                :options="{
-              placement: 'bottom',
-              modifiers: { offset: { offset: '0,10px' } }
-            }"
-                ref="filterPopover"
-                v-if="actions.filter && actions.advancedFiltering"
-            >
               <button
+                v-if="actions.filter && actions.advancedFiltering"
                   slot="reference"
                   type="button"
-                  class="btn btn-simple dropdown-toggle"
-                  :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
+                  class="btn btn-simple"
+                  :class="{ 'btn-primary': displayAwFilter || advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
+                  @click="displayAwFilter = !displayAwFilter"
               >
                 <i class="fa fa-filter"/>
                 {{ $t('AwesomeTable.buttons.filters') }}
                 {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
               </button>
 
-              <div class="popper card mt-0" style="z-index: 1;">
-                <awesome-filter
-                    class="card-body"
-                    edit-filters
-                    id="advancedFilterComponentDisplay"
-                    :fields="columns"
-                    @update-filter="advancedFiltering"
-                    :advanced-filters="advancedFilters"
-                />
-              </div>
-            </popper>
 
             <template v-if="actions && actions.itemsPerRow">
               <button class="btn btn-sm" @click="setListMode()"
@@ -142,16 +124,25 @@
       </p>
       <div class="card-body">
         <div class="row">
-          <div class="col-sm-6">
-          </div>
-          <div class="col-sm-6">
-            <awesome-filter
+          <div class="col-12">
+               <awesome-filter
+               v-if="displayAwFilter"
+                    class="pl-0  "
+                    edit-filters
+                    id="advancedFilterComponentDisplay"
+                    :fields="columns"
+                    @update-filter="advancedFiltering"
+                    :advanced-filters="advancedFilters"
+                />
+                <awesome-filter
                 v-if="actions.filter"
                 display-filters
                 :fields="columns"
                 @update-filter="advancedFiltering"
                 :advanced-filters="advancedFilters"
             />
+          </div>
+          <div class="col-sm-12 offset-md-6 col-md-6">
             <input  v-if="actions.search" type="text" v-model="search" placeholder="Rechercher" class="form-control">
           </div>
         </div>
@@ -375,6 +366,7 @@ export default {
       data: [],
       advancedFilters: [],
       search: '',
+      displayAwFilter: false
     };
   },
   computed: {
@@ -569,13 +561,15 @@ export default {
     },
 
     advancedFiltering(parsedFilters, filters) {
-      this.$refs['filterPopover'].doClose();
       this.updateParams({
         advancedFilters: _.cloneDeep(filters),
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
         page: 0
       });
       this.getItems({ useSkeleton: true });
+
+      this.$awEmit('advanced-filter', parsedFilters, filters);
+      this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
     },
 
     toggleFilter() {

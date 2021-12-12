@@ -57,6 +57,7 @@
           </div>
           <div class="btn-group btn-group-sm float-right mt-0">
             <slot name="table-top-actions" />
+
             <popper
               trigger="clickToOpen"
               :options="{
@@ -66,19 +67,9 @@
               ref="filterPopover"
               v-if="canHideColumns"
             >
-              <button
-                slot="reference"
-                type="button"
-                class="btn btn-simple dropdown-toggle"
-                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-                aria-haspopup="true"
-                aria-expanded="false"
-                id="advancedFilterButton"
-                @click="toggleAdvancedFilters"
-              >
+              <button slot="reference" type="button" class="btn btn-simple" aria-haspopup="true" aria-expanded="false">
                 {{ $t('AwesomeTable.columns') }}
               </button>
-
               <div class="popper card mt-0" style="z-index: 1;">
                 <button
                   v-for="(col, index) in formattedColumns"
@@ -97,41 +88,21 @@
               </div>
             </popper>
 
-            <popper
-              trigger="clickToOpen"
-              :options="{
-                placement: 'bottom',
-                modifiers: { offset: { offset: '0,10px' } }
-              }"
-              ref="filterPopover"
+            <button
+              slot="reference"
+              type="button"
+              class="btn btn-simple"
+              :class="{ 'btn-primary': advancedFiltersCount || displayAwFilter, 'btn-default': !advancedFiltersCount }"
+              aria-haspopup="true"
+              aria-expanded="false"
+              id="advancedFilterButton"
+              @click="toggleAdvancedFilters"
               v-if="_actions.filter && _actions.advancedFiltering"
             >
-              <button
-                slot="reference"
-                type="button"
-                class="btn btn-simple dropdown-toggle"
-                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-                aria-haspopup="true"
-                aria-expanded="false"
-                id="advancedFilterButton"
-                @click="toggleAdvancedFilters"
-              >
-                <i class="fa fa-filter" />
-                {{ $t('AwesomeTable.buttons.filters') }}
-                {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-              </button>
-
-              <div class="popper card mt-0" style="z-index: 1;">
-                <awesome-filter
-                  class="card-body"
-                  edit-filters
-                  id="advancedFilterComponentDisplay"
-                  :fields="columns"
-                  @update-filter="advancedFiltering"
-                  :advanced-filters="advancedFilters"
-                />
-              </div>
-            </popper>
+              <i class="fa fa-filter" />
+              {{ $t('AwesomeTable.buttons.filters') }}
+              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+            </button>
 
             <popper
               trigger="clickToOpen"
@@ -148,16 +119,7 @@
                     _actions.dropdownActions)
               "
             >
-              <button
-                slot="reference"
-                type="button"
-                class="btn btn-simple dropdown-toggle"
-                :class="{ 'btn-primary': advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-                aria-haspopup="true"
-                aria-expanded="false"
-                id="advancedFilterButton"
-                @click="toggleAdvancedFilters"
-              >
+              <button slot="reference" type="button" class="btn btn-simple dropdown-toggle" id="advancedFilterButton">
                 <i class="fa fa-cog" />
                 {{ $t('AwesomeTable.configuration') }}
               </button>
@@ -228,6 +190,15 @@
         :class="collapsible ? 'collapse show' : ''"
         :id="'awTable-' + this._uid || this.uuid"
       >
+        <awesome-filter
+          v-if="displayAwFilter"
+          edit-filters
+          id="advancedFilterComponentDisplay"
+          :fields="columns"
+          @update-filter="advancedFiltering"
+          :advanced-filters="advancedFilters"
+          class="p-0"
+        />
         <awesome-filter
           display-filters
           id="advancedFilterComponent"
@@ -617,7 +588,8 @@ export default {
       },
       selectedRows: [],
       displayLabelCache: {},
-      clickTimeout: null
+      clickTimeout: null,
+      displayAwFilter: false
     };
   },
   computed: {
@@ -947,7 +919,6 @@ export default {
     },
 
     advancedFiltering(parsedFilters, filters) {
-      this.$refs['filterPopover'].doClose();
       this.updateParams({
         advancedFilters: _.cloneDeep(filters),
         parsedAdvancedFilters: _.cloneDeep(parsedFilters),
@@ -987,7 +958,9 @@ export default {
       });
     },
 
-    toggleAdvancedFilters() {},
+    toggleAdvancedFilters() {
+      this.displayAwFilter = !this.displayAwFilter;
+    },
     // editItem(item) {},
 
     clickOnLine(props, props2) {

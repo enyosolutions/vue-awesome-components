@@ -19,7 +19,10 @@
       <!-- TYPE STRING/TEXT -->
       <input
         v-if="
-          ((currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
+          ((currentField.type === 'text' ||
+            currentField.type === 'html' ||
+            currentField.type === 'string' ||
+            currentField.type === 'url') &&
             !currentField.enum) ||
             permanentInput
         "
@@ -251,8 +254,11 @@ export default {
 <style lang="scss">
 .awesome-filter-value {
   .awesome-vue-select {
-    height: 28px;
+    height: auto;
     padding: 2px;
+    .vs__dropdown-toggle {
+      border: none;
+    }
   }
 
   .vs__selected-options {
