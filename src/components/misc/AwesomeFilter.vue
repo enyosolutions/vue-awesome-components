@@ -88,7 +88,6 @@
 
 <script>
 import _ from 'lodash';
-import Popper from 'vue-popperjs';
 import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator';
 import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue';
 import i18nMixin from '../../mixins/i18nMixin';
@@ -98,8 +97,7 @@ export default {
   mixins: [i18nMixin],
   components: {
     AwesomeFilterOperator,
-    AwesomeFilterValue,
-    Popper
+    AwesomeFilterValue
   },
   props: {
     advancedFilters: {

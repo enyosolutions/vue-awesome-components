@@ -33,7 +33,6 @@ externals['core-js'] = 'core-js';
 // externals['sweetalert2'] = 'sweetalert2';
 // externals['sweetalert2/dist'] = 'sweetalert2/dist';
 // externals['sweetalert2/dist/sweetalert2.js'] = 'sweetalert2/dist/sweetalert2.js';
-console.log('externals()', externals)
 module.exports = {
   lintOnSave: false,
   filenameHashing: false,
