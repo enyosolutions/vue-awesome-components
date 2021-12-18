@@ -24,6 +24,7 @@ be configured.
 - collapse
 - formPagination
 - changeDisplayMode // Show's the controls for switching between table, list and kanban
+- pagination
 
 ## Custom actions List
 
