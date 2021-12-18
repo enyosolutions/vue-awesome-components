@@ -68,7 +68,7 @@ export default {
         if (bool === '1' || bool === 'true') {
           return true;
         }
-        if (bool === 0 || bool === 'false') {
+        if (bool === 0 || bool === '0' || bool === 'false') {
           return false;
         }
         console.warn('[VAC] boolean templates must revolve to a boolean result.', bool, 'was returned for template', text);
@@ -76,6 +76,11 @@ export default {
       }
       catch (err) {
         console.warn('[templateParseBoolean]', err.message);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[templateParseBoolean]', text, err.message);
+        }
+
+
         return false;
       }
     },

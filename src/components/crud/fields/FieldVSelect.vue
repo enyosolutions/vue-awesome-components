@@ -26,6 +26,7 @@
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
       :multiple="multiple || fieldOptions.multiple"
+      :taggable="fieldOptions.taggable"
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
@@ -91,6 +92,7 @@ import vSelect from 'vue-select';
 import _ from 'lodash';
 
 export default {
+  name: 'field-vSelect',
   components: { vSelect },
   mixins: [selectMixin, VueFormGenerator.abstractField],
   props: {

@@ -223,8 +223,8 @@
       </div>
     </div>
 
-    <hr v-if="actions.paginate"/>
-    <nav class="text-center" v-if="actions.paginate">
+    <hr v-if="actions.pagination == undefined || actions.pagination"/>
+    <nav class="text-center" v-if="actions.pagination == undefined || actions.pagination">
       <paginate
           v-model="page"
           :page-count="_pageCount"

@@ -9,19 +9,23 @@ import './main.scss';
 
 import Vue from 'vue';
 import qs from 'qs';
-// eslint-disable-next-line
-import VueI18n from "vue-i18n";
+
 import axios from 'axios';
 import Datetime from 'vue-datetime';
 import FormGenerator from './components/form/form-generator';
 import notificationsMixin from './mixins/notificationsMixin';
 import VueGoodTablePlugin from 'vue-good-table';
 import VueRouter from 'vue-router';
+// eslint-disable-next-line
+import VueI18n from "vue-i18n";
 import Draggable from 'vuedraggable';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+
+import fr from './translations/fr';
+import en from './translations/en';
 
 import App from './App.vue';
 import VueEnyoComponents from './plugin';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Importing Lodash
 import _ from 'lodash';
@@ -81,18 +85,14 @@ Vue.use(VueEnyoComponents,
 
 Vue.config.productionTip = false;
 
-// Vue.use(VueI18n);
-// const i18n = new VueI18n({
-//   locale: "fr", // set locale
-//   messages: {
-//     fr: {
-//       "awesomelist.buttons.increase": "More items per row",
-//       "awesomelist.buttons.decrease": "Less items per row",
-//       "awesomelist.buttons.refresh": "Refresh",
-//       "awesomelist.buttons.itemAction": "Open"
-//     }
-//   } // set locale messages
-// });
+Vue.use(VueI18n);
+const i18n = new VueI18n({
+  locale: 'fr', // set locale
+  messages: {
+    fr,
+    en
+  } // set locale messages
+});
 
 
 const router = new VueRouter({
@@ -151,7 +151,7 @@ Vue.prototype.$http = axios.create({
   }
 });
 window.vm = new Vue({
-  // i18n,
+  i18n,
   router,
   render: h => h(App)
 }).$mount('#app');

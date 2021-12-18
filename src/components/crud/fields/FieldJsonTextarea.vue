@@ -33,6 +33,7 @@ import VueFormGenerator from '../../form/form-generator';
 // You need a specific loader for CSS files
 
 export default {
+  name: 'field-json-textarea',
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {

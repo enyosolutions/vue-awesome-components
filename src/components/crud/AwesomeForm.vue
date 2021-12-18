@@ -975,7 +975,6 @@ export default {
     _mergedOptions() {
       let mergedOptions = merge({}, defaultOptions, this.options, this._model.options);
       if (this.options !== defaultOptions) {
-        console.warn('options are diffrent from the basics', this.options);
         mergedOptions = merge(mergedOptions, this.options);
       }
       if (this.$route && this.$route.query && this.$route.query.filters) {

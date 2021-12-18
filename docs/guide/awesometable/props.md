@@ -31,20 +31,21 @@ pageClass: fullwidth-page
 
 The table can display various type of data. By default the value used it the string;
 
-| Type          | description                                                                     |
-|---------------|---------------------------------------------------------------------------------|
-| string        | Basic string stype                                                              |
-| number        | Number based field                                                              |
-| booelan       | Shows a green tick(✔) or a red cross(❌) depending on the value                  |
-| url           | In app or external url                                                          |
-| image         | Image column (displays the actual image)                                        |
-| date          | Date field ("DD-MM-YYYY")                                                       |
-| datetime      | Date time field (exact format will depend on your browser)                      |
-| checkbox      | Checkox                                                                         |
-| relation      | Date time field (exact format will depend on your browser) <Badge text="beta"/> |
-| object        | Date time field (exact format will depend on your browser)                      |
-| list-of-value | The value is used to find the value in a vuex store                             |
-| list-of-data  | The value is used to find the value in a vuex store                             |
+| Type          | description                                                     |
+| ------------- | --------------------------------------------------------------- |
+| string        | Basic string stype                                              |
+| number        | Number based field                                              |
+| boolean       | Shows a green tick(✔) or a red cross(❌) depending on the value |
+| html          | html                                                            |
+| url           | In app or external url                                          |
+| image         | Image column (displays the actual image)                        |
+| date          | Date field ("DD-MM-YYYY")                                       |
+| datetime      | Date time field (exact format will depend on your browser)      |
+| checkbox      | Checkox                                                         |
+| relation      | relation to another model <Badge text="beta"/>                  |
+| object        | objecrt or array                                                |
+| list-of-value | The value is used to find the value in a vuex store             |
+| list-of-data  | The value is used to find the value in a vuex store             |
 
 ## Styling classes :
 
@@ -55,7 +56,7 @@ The table can display various type of data. By default the value used it the str
 ## events
 
 | Type              | description                                                             |
-|-------------------|-------------------------------------------------------------------------|
+| ----------------- | ----------------------------------------------------------------------- |
 | dataChanged       | after the request to get list of items for the table is sent to the api |
 | crud-list-updated | after the request to get list of items for the table is sent to the api |
 | afterRefresh      | after the local refresh of the table (no api)                           |
@@ -63,9 +64,6 @@ The table can display various type of data. By default the value used it the str
 ## Awesome bus events
 
 | Type               | description                                                              |
-|--------------------|--------------------------------------------------------------------------|
+| ------------------ | ------------------------------------------------------------------------ |
 | before-api-refresh | Before the request to get list of items for the table is sent to the api |
 | table-refreshed    | after the request to get list of items for the table is sent to the api  |
-
-
-

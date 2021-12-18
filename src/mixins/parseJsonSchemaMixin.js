@@ -183,7 +183,7 @@ export default {
           }, { ...prop.field.fieldOptions });
 
           if (prop.relation) {
-            fieldOptions.url = relationUrl || prop.relationUrl || prop.relation;
+            fieldOptions.url = fieldOptions.url || relationUrl || prop.relationUrl || prop.relation;
             fieldOptions.trackBy = relationKey || prop.foreignKey;
             fieldOptions.searchable = true;
           }

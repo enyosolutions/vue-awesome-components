@@ -2,6 +2,7 @@
 import fieldCheckbox from '../fields/core/fieldCheckbox.vue';
 import fieldChecklist from '../fields/core/fieldChecklist.vue';
 import fieldInput from '../fields/core/fieldInput.vue';
+import fieldNumber from '../fields/core/fieldNumber.vue';
 import fieldLabel from '../fields/core/fieldLabel.vue';
 import fieldRadios from '../fields/core/fieldRadios.vue';
 import fieldSelect from '../fields/core/fieldSelect.vue';
@@ -37,5 +38,6 @@ export {
   fieldPikaday,
   fieldStaticMap,
   fieldSwitch,
-  fieldVueMultiSelect
+  fieldVueMultiSelect,
+  fieldNumber
 };
