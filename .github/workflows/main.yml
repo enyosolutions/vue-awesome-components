@@ -31,7 +31,6 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: dependencies
-      uses: actions/setup-node@v2
       run: yarn --frozen-lockfile
       # Runs a single command using the runners shell
     - name: lint
