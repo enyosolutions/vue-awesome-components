@@ -24,6 +24,8 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: dependencies
+      with:
+       node-version: '14'
       run: yarn --frozen-lockfile
       # Runs a single command using the runners shell
     - name: lint
