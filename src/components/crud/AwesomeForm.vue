@@ -156,7 +156,7 @@
                           :item="selectedItem"
                           :parent="parent"
                           location="top"
-                          @customAction="$emit('customAction', $event)"
+                          @customAction="$awEmit('customAction', $event)"
                         />
                       </div>
                       <div
@@ -207,7 +207,7 @@
                         <div class="ml-1 aw-form-pagination" v-if="actions.formPagination && (hasPrevious || hasNext)">
                           <div class="btn-group">
                             <button
-                              @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                              @click="!!hasPrevious && $awEmit('aw-select-previous-item')"
                               class="btn btn-light btn-sm float-left"
                               :disabled="!hasPrevious"
                               :class="!hasPrevious ? 'op-50' : ''"
@@ -217,7 +217,7 @@
                             </button>
 
                             <button
-                              @click="!!hasNext && $emit('aw-select-next-item')"
+                              @click="!!hasNext && $awEmit('aw-select-next-item')"
                               class="btn btn-light btn-sm float-right"
                               :disabled="!hasNext"
                               :class="!hasPrevious ? 'op-50' : ''"
@@ -484,7 +484,7 @@
                             :actions="customInlineActions"
                             :item="selectedItem"
                             location="inline"
-                            @customAction="$emit('customAction', $event)"
+                            @customAction="$awEmit('customAction', $event)"
                           />
                         </template>
 
@@ -1172,7 +1172,7 @@ export default {
         if (this.$route.query.item) {
           this.selectedItem = merge(this.selectedItem, this.$route.query.item);
         }
-        this.$emit('create', this.selectedItem, { reset: false });
+        this.$awEmit('create', this.selectedItem, { reset: false });
 
         return;
       }
@@ -1183,7 +1183,7 @@ export default {
           if (this.$route.query.item) {
             this.selectedItem = merge(this.selectedItem, this.$route.query.item);
           }
-          this.$emit('bulkEdit', this.selectedItem, { reset: false });
+          this.$awEmit('bulkEdit', this.selectedItem, { reset: false });
 
           return;
         }
@@ -1233,10 +1233,10 @@ export default {
 
       setTimeout(() => {
         this.nestedElementsNeedRefresh = false;
-        this.$emit('update:crudNeedsRefresh', false);
-        this.$emit('update:needsRefresh', false);
-        this.$emit('input:crudNeedsRefresh', false);
-        this.$emit('input:needsRefresh', false);
+        this.$awEmit('update:crudNeedsRefresh', false);
+        this.$awEmit('update:needsRefresh', false);
+        this.$awEmit('input:crudNeedsRefresh', false);
+        this.$awEmit('input:needsRefresh', false);
       }, 100);
     },
 
@@ -1309,7 +1309,7 @@ export default {
                 ? get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
-            this.$emit('itemFetched', this.selectedItem); // @deprecated
+            this.$awEmit('itemFetched', this.selectedItem); // @deprecated
             this.$awEmit('item-fetched', {
               component: 'aw-form',
               context: this,
@@ -1322,7 +1322,7 @@ export default {
           .catch(this.apiErrorCallback)
           .finally(() => {
             this.isRefreshing = false;
-            this.$emit('input:needs-refresh', false);
+            this.$awEmit('input:needs-refresh', false);
           });
       }
     },
@@ -1374,13 +1374,13 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.$emit('cancel', this.item, { context: this.mode });
+      this.$awEmit('cancel', this.item, { context: this.mode });
     },
 
     close() {
       //eslint-disable-next-line
       this.closeModal();
-      this.$emit('closeRequested', this.item, { context: this.mode });
+      this.$awEmit('closeRequested', this.item, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1473,7 +1473,7 @@ export default {
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
           this.close();
-          this.$emit('itemCreated', this.selectedItem, {
+          this.$awEmit('itemCreated', this.selectedItem, {
             context: this.mode
           });
         })
@@ -1516,7 +1516,7 @@ export default {
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
           element = merge(element, this.selectedItem);
-          this.$emit('itemsBulkEdited', element);
+          this.$awEmit('itemsBulkEdited', element);
         }
       });
       this.close();
@@ -1580,7 +1580,7 @@ export default {
           });
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
-          this.$emit('itemEdited', this.selectedItem, {
+          this.$awEmit('itemEdited', this.selectedItem, {
             context: this.mode
           });
           this.close();
@@ -1594,29 +1594,29 @@ export default {
     },
 
     createFunction(item) {
-      this.$emit('create', item);
+      this.$awEmit('create', item);
     },
 
     editFunction(item) {
       this.activeNestedTab = 'general';
-      this.$emit('edit', item);
+      this.$awEmit('edit', item);
     },
 
     viewFunction(item) {
-      this.$emit('view', item);
+      this.$awEmit('view', item);
     },
 
     nestedViewFunction(item) {
-      this.$emit('nestedView', item);
+      this.$awEmit('nestedView', item);
       this.openModalDebounced();
     },
 
     deleteFunction(item) {
-      this.$emit('delete', item);
+      this.$awEmit('delete', item);
     },
 
     bulkEditFunction(items) {
-      this.$emit('bulkEdit', items);
+      this.$awEmit('bulkEdit', items);
     },
 
     getNestedItem() {
@@ -1631,8 +1631,8 @@ export default {
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
-          this.$emit('itemFfetched', this.selectedItem); // @deprecated
-          this.$awEemit('item-fetched', {
+          this.$awEmit('itemFfetched', this.selectedItem); // @deprecated
+          this.$awEmit('item-fetched', {
             component: 'aw-form',
             context: this,
             item: this.selectedItem,
@@ -1649,13 +1649,13 @@ export default {
 
     customAction(body) {
       const { action } = body;
-      this.$emit(this.identity + '-custom-action', action);
+      this.$awEmit(this.identity + '-custom-action', action);
       return action && action.action && action.action(body, this);
     },
 
     listUpdated(datas) {
-      this.$emit('list-updated', datas);
-      this.$emit(this.identity + '-list-updated', datas);
+      this.$awEmit('list-updated', datas);
+      this.$awEmit(this.identity + '-list-updated', datas);
     },
 
     renderSidebar() {},
@@ -1667,11 +1667,11 @@ export default {
     renderForm(definition = { component: 'VueFormGenerator', props: {} }) {},
 
     openEditLayoutMode() {
-      this.$emit('open-edit-layout-mode');
+      this.$awEmit('open-edit-layout-mode');
     },
 
     closeEditLayoutMode() {
-      this.$emit('close-edit-layout-mode');
+      this.$awEmit('close-edit-layout-mode');
       //this.editLayoutMode = false;
     },
 
@@ -1688,7 +1688,7 @@ export default {
         fields: this.formSchema.fields.map((f) => f.model)
       };
 
-      this.$emit('layout-resetted', [newLayout]);
+      this.$awEmit('layout-resetted', [newLayout]);
     },
 
     exportLayout() {
@@ -1696,11 +1696,11 @@ export default {
     },
 
     onLayoutUpdated(items) {
-      this.$emit('layout-updated', items);
+      this.$awEmit('layout-updated', items);
     },
 
     onLayoutFieldsUpdated(items) {
-      this.$emit('layout-fields-updated', items);
+      this.$awEmit('layout-fields-updated', items);
     },
 
     getNestedTabsTitle(ns) {
