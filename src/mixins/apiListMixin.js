@@ -214,7 +214,7 @@ export default {
 
     // eslint-disable-next-line
     async refreshLocalData(changed) {
-      if (this.url) {
+      if (this._url) {
         //   this.data = [];
         // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
@@ -227,7 +227,7 @@ export default {
     },
 
     entityChanged() {
-      this.data = this.url ? [] : this.rows;
+      this.data = this._url ? [] : this.rows;
       this.serverParams = {};
       this.getItems({ useSkeleton: true, source: '[apiListMixin] entityChanged' });
     },
@@ -250,7 +250,7 @@ export default {
         return;
       }
 
-      if (!this.url) {
+      if (!this._url) {
         return;
       }
       if (options.useSkeleton) {
@@ -261,10 +261,10 @@ export default {
         console.debug("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
-      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this.url })
+      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this._url })
       return this.$http
         .get(
-          `${this.url}${this.url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
+          `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
           {}
         )
         .then(res => {

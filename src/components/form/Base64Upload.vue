@@ -8,6 +8,7 @@
 
 <script>
 export default {
+  name: 'Base64Upload',
   props: {
     imageSrc: [String, Object],
     inputClass: String,

@@ -15,6 +15,7 @@ export default {
       }
     },
     url: { type: [String, Function], default: '' },
+    apiUrl: { type: [String, Function], default: '' },
     apiRequestConfig: {
       type: Object,
       note: 'This object define the configuration for talking to the api : filters, sort, pagination, etc',
@@ -72,6 +73,11 @@ export default {
       default: () => ({})
     },
   },
+  mounted() {
+    if (this.url) {
+      console.warn('Url is @deprecated. Please use api url instead.');
+    }
+  },
   computed: {
     // @todo delete in future version
     params() {
@@ -88,15 +94,10 @@ export default {
 
 
     _url() {
-      const url =
-        this.url ||
-        (this.mergedOptions && this.mergedOptions.url) ||
-        (this.options && this.options.url) ||
-        (this._model && this._model.url) ||
-        (this.field && this.field.url) ||
-        (this.field && this.field.fieldoptions.url) ||
-
-        `/${this.identity}`;
+      const oldKey = 'url';
+      const newKey = 'apiUrl';
+      const url = this.getApiUrl(newKey) || this.getApiUrl(oldKey);
+      // `/${this.identity}`; // removed because this is magic and it is hazardous (no way to no have an url)
       if (typeof url === 'function') {
         return url({
           parent: this.parent,
@@ -169,6 +170,15 @@ export default {
       if (this.apiRequestPermanentBodyParams) {
         this.selectedItem = _.merge(this.selectedItem, this.apiRequestPermanentBodyParams);
       }
+    },
+
+    getApiUrl(field) {
+      return this[field] ||
+        (this.mergedOptions && this.mergedOptions[field]) ||
+        (this.options && this.options[field]) ||
+        (this._model && this._model[field]) ||
+        (this.field && this.field.urls) ||
+        (this.field && this.field.fieldoptions.url);
     }
   }
 };

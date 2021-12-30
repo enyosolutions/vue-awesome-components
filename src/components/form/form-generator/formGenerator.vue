@@ -12,7 +12,7 @@
     >
       <template slot="group-legend" slot-scope="{ group, groupLegend }">
         <slot name="group-legend" :group="group" :group-legend="groupLegend">
-          <legend v-if="groupLegend"><span v-html="groupLegend"></span></legend>
+          <legend class="aw-form-group-legend" v-if="groupLegend"><span v-html="groupLegend"></span></legend>
         </slot>
       </template>
       <template slot="group-help" slot-scope="{ group }">
@@ -339,7 +339,10 @@ export default {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   } // .form-control
-
+  .aw-form-group-legend {
+    padding-left: 15px;
+    padding-top: 10px;
+  }
   span.help {
     margin-left: 0.3em;
     position: relative;

@@ -1,6 +1,6 @@
 <template>
   <fieldset v-if="fields && groupIsVisible" :is="tag" :class="[groupRowClasses, validationClass]" ref="group">
-    <slot name="group-legend" :group="group" :group-legend="groupLegend"></slot>
+    <slot name="group-legend" :group="group" :group-legend="groupLegend" class="pl-2"></slot>
     <slot name="group-help" :group="group"></slot>
     <div class="row m-0" style="flex:1">
       <template v-for="(field, index) in fields">

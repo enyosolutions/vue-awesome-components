@@ -624,7 +624,8 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  responseField: 'body'
+  responseField: 'body',
+  useCustomLayout: false
 };
 
 export default {
@@ -743,7 +744,7 @@ export default {
         // Only accepts values that contain the string 'cookie-dough'.
         return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
       },
-      description: 'Define what mode should the form be used in (create | edit | view | bulkEdit)'
+      description: 'Define what mode should the form be used in (create| edit | view | bulkEdit '
     },
     displayMode: {
       type: String,
@@ -975,6 +976,7 @@ export default {
     _mergedOptions() {
       let mergedOptions = merge({}, defaultOptions, this.options, this._model.options);
       if (this.options !== defaultOptions) {
+        console.warn('options are diffrent from the basics', this.options);
         mergedOptions = merge(mergedOptions, this.options);
       }
       if (this.$route && this.$route.query && this.$route.query.filters) {
@@ -990,7 +992,6 @@ export default {
       }
       return mergedOptions || {};
     },
-
     formSchema() {
       if (!this._schema) {
         return [];
@@ -1044,7 +1045,9 @@ export default {
           type: 'group',
           legend: group.legend || group.title,
           wrapperClasses: `${group.wrapperClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
-          styleClasses: `${group.styleClasses || ''}`,
+          styleClasses: `${group.classes || group.styleClasses || ''}`,
+          headerClasses: `${group.headerClasses || ''}`,
+          styles: `${group.styles || ''}`,
           fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model))
         }))
       };
@@ -1371,13 +1374,13 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.$awEmit('cancel', this.item, { context: this.mode });
+      this.$emit('cancel', this.item, { context: this.mode });
     },
 
     close() {
       //eslint-disable-next-line
       this.closeModal();
-      this.$awEmit('closeRequested', this.item, { context: this.mode });
+      this.$emit('closeRequested', this.item, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1470,7 +1473,7 @@ export default {
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
           this.close();
-          this.$awEmit('itemCreated', this.selectedItem, {
+          this.$emit('itemCreated', this.selectedItem, {
             context: this.mode
           });
         })
@@ -1513,7 +1516,7 @@ export default {
       this.bulkItems.forEach((element) => {
         if (element[this.primaryKey]) {
           element = merge(element, this.selectedItem);
-          this.$awEmit('itemsBulkEdited', element);
+          this.$emit('itemsBulkEdited', element);
         }
       });
       this.close();
@@ -1577,7 +1580,7 @@ export default {
           });
           this.nestedElementsNeedRefresh = true;
           this.$forceUpdate();
-          this.$awEmit('itemEdited', this.selectedItem, {
+          this.$emit('itemEdited', this.selectedItem, {
             context: this.mode
           });
           this.close();
@@ -1591,16 +1594,16 @@ export default {
     },
 
     createFunction(item) {
-      this.$awEmit('create', item);
+      this.$emit('create', item);
     },
 
     editFunction(item) {
       this.activeNestedTab = 'general';
-      this.$awEmit('edit', item);
+      this.$emit('edit', item);
     },
 
     viewFunction(item) {
-      this.$awEmit('view', item);
+      this.$emit('view', item);
     },
 
     nestedViewFunction(item) {
@@ -1892,6 +1895,14 @@ body.modal-open .bootstrap-datetimepicker-widget {
       }
     }
 
+    .display-mode-sidebar {
+      @media (min-width: 900px) {
+        .modal-dialog {
+          max-width: 650px;
+          margin: 1.75rem auto;
+        }
+      }
+    }
     .modal-dialog {
       &.modal-full,
       &.modal-fullscreen {

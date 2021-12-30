@@ -285,9 +285,9 @@
                 {{ $t('AwesomeTable.bulk.edit') }}
               </button>
             </div>
-            <div slot="table-actions">
+            <div slot="table-actions" v-if="customTableTopActions.length || _actions.dateFilter">
               <date-range-picker
-                v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
+                v-if="_actions.dateFilter"
                 class="form-group vgt-date-range"
                 :placeholder="$t('AwesomeTable.daterange.start')"
                 :date-range="{

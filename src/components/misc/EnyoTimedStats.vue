@@ -115,5 +115,8 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
+.card-statistics {
+  margin-bottom: 1px;
+}
 </style>

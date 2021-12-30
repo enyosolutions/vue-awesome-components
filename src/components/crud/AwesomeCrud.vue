@@ -167,7 +167,7 @@
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :perPage="10"
+            :perPage="listOptions && listOptions.perPage ? listOptions.perPage : 10"
             :segment="segment"
             :segmentField="segmentField"
             :styles="{
@@ -1119,9 +1119,6 @@ export default {
     listDisplayMode: 'onListDisplayModeChanged'
   },
   created() {
-    if (process.env.NODE_ENV === 'development') {
-      window._vue = this;
-    }
     if (!this.$http) {
       try {
         const axios = require('axios');
@@ -1296,15 +1293,6 @@ export default {
       }
 
       this.mergedOptions.columns = this.parseColumns(this.schemaComputed.properties);
-      // now a computed property...
-      // this.mergedOptions.url =
-      //   this.url ||
-      //   (this.options && this.options.url) ||
-      //   (this._model && this._model.url) ||
-      //   `/${this.identity}`;
-      // if (typeof this.mergedOptions.url === 'function') {
-      //   this.mergedOptions.url = this.mergedOptions.url(this.parent, this);
-      // }
 
       if (!this.mergedOptions.exportUrl) {
         this.mergedOptions.exportUrl = `${this._url}/export`;
@@ -1901,6 +1889,10 @@ export default {
 </script>
 <style lang="scss">
 .aw-crud {
+  .aw-button-add {
+    margin-bottom: 5px;
+  }
+
   .vdatetime.form-group {
     margin-bottom: 0;
     width: 100%;

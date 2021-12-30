@@ -141,9 +141,16 @@ export default {
         return;
       }
       const fields = [];
-      const size = Object.keys(schema.properties).length;
+      const numberOfFields = Object.keys(schema.properties).length;
       Object.keys(schema.properties).forEach((key) => {
         const prop = schema.properties[key];
+        if (Array.isArray(prop.type)) {
+          const index = prop.type.indexOf('null');
+          if (index > -1) {
+            prop.type.splice(index, 1);
+          }
+          prop.type = prop.type[0];
+        }
         if (!prop.field) {
           prop.field = {};
         }
@@ -187,6 +194,7 @@ export default {
             fieldOptions.trackBy = relationKey || prop.foreignKey;
             fieldOptions.searchable = true;
           }
+          const classes = this.getFieldClasses(prop, numberOfFields);
           const field = {
             type: (prop.field.type) || this.getFormtype(prop),
             label: prop.title || prop.description || startCase(key),
@@ -202,7 +210,8 @@ export default {
             min: prop.min,
             max: prop.max,
             multi: prop.type === 'array',
-            styleClasses: ((prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
+            styleClasses: classes, // @deprecated
+            classes,
             relation: prop.relation,
             foreignKey: relationKey || prop.foreignKey,
             relationUrl,
@@ -385,5 +394,18 @@ export default {
       });
       return groups;
     },
+
+    /** @description Compute the classes for displaying this field */
+    getFieldClasses(prop, numberOfFields) {
+      let classes = (prop.field.classes || prop.field.styleClasses);
+      if (!prop.field.cols) {
+        classes = `${classes} col-${prop.field.cols}`;
+      }
+      else {
+        const cols = this.layout || numberOfFields > 8 || this.detailPageMode === 'page' || this.detailPageMode === 'sidebar' ? 'col-6' : 'col-12';
+        classes = `${classes} ${cols}`;
+      }
+      return classes;
+    }
   }
 }
