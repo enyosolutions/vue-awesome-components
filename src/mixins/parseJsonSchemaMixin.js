@@ -167,7 +167,7 @@ export default {
           subSchema.type = 'group';
           subSchema.default = {};
           subSchema.id = key;
-          subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || ''}`;
+          subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
           fields.push(subSchema);
         } else {
           const relationUrl = this.getRelationUrl(prop);
@@ -397,13 +397,22 @@ export default {
 
     /** @description Compute the classes for displaying this field */
     getFieldClasses(prop, numberOfFields) {
-      let classes = (prop.field.classes || prop.field.styleClasses);
-      if (!prop.field.cols) {
-        classes = `${classes} col-${prop.field.cols}`;
+      let classes = (prop.field.classes || prop.field.styleClasses || '');
+      if (prop.field.cols) {
+        classes = `${classes} col-${prop.field.cols || ''}`;
       }
       else {
-        const cols = this.layout || numberOfFields > 8 || this.detailPageMode === 'page' || this.detailPageMode === 'sidebar' ? 'col-6' : 'col-12';
-        classes = `${classes} ${cols}`;
+        let cols;
+        if (this.layout || numberOfFields > 8 || this.detailPageMode === 'sidebar') {
+          cols = 'col-6';
+        }
+        else if (this.detailPageMode === 'page') {
+          cols = 'col-md-3';
+        }
+        else {
+          cols = 'col-12';
+        }
+        classes = `${classes} ${cols || ''}`;
       }
       return classes;
     }

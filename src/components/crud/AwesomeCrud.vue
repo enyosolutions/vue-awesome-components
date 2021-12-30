@@ -119,6 +119,7 @@
                   class: 'btn btn-main-style btn btn-simple text-success  btn-block'
                 }"
                 @uploaded="importResponse"
+                @upload-failed="importFailedResponse"
               />
               <button
                 v-if="_actions.import"
@@ -1223,6 +1224,16 @@ export default {
 
     callbackFunctionForBAse64(e) {},
 
+    importFailedResponse(err) {
+      Swal.fire({
+        title: this.$t('common.messages.not_imported', {
+          title: this._title
+        }),
+        type: 'error',
+        text: err.message || err
+      });
+    },
+
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
@@ -1926,7 +1937,7 @@ export default {
       color: #78849e !important;
     }
 
-    .subgroup {
+    .subgroup-auto {
       legend {
         padding-right: 15px;
         font-size: 80%;

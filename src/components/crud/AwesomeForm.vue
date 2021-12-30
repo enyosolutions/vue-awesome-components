@@ -1233,10 +1233,10 @@ export default {
 
       setTimeout(() => {
         this.nestedElementsNeedRefresh = false;
-        this.$awEmit('update:crudNeedsRefresh', false);
-        this.$awEmit('update:needsRefresh', false);
-        this.$awEmit('input:crudNeedsRefresh', false);
-        this.$awEmit('input:needsRefresh', false);
+        this.$emit('update:crudNeedsRefresh', false);
+        this.$emit('update:needsRefresh', false);
+        this.$emit('input:crudNeedsRefresh', false);
+        this.$emit('input:needsRefresh', false);
       }, 100);
     },
 
@@ -1725,9 +1725,6 @@ export default {
 .modal-backdrop.show {
   display: block;
 }
-.vue-form-generator textarea.form-control {
-  min-height: 150px;
-}
 
 .input-group .form-control {
   z-index: 0 !important;
@@ -1740,44 +1737,6 @@ export default {
     white-space: nowrap;
     margin-bottom: -10px;
     margin-top: 10px;
-  }
-}
-
-.vue-form-generator .input-group {
-  z-index: 100;
-}
-.vue-form-generator .multiselect {
-  width: 100%;
-  margin-top: 10px;
-}
-.vue-form-generator {
-  .form-element {
-    label {
-      display: block;
-    }
-    .hint {
-      font-size: 60%;
-      color: #999;
-      font-style: italic;
-      position: absolute;
-      width: calc(100% - 40px);
-      left: 20px;
-      background: white;
-      box-shadow: 0 0 2px #999;
-      transition: all 200ms linear;
-      z-index: 110;
-      padding: 10px;
-      margin-top: 10px;
-      opacity: 0;
-      visibility: hidden;
-    }
-    &:hover {
-      .hint {
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 1s;
-      }
-    }
   }
 }
 
@@ -1833,7 +1792,7 @@ body.modal-open .bootstrap-datetimepicker-widget {
     color: #78849e !important;
   }
 
-  .subgroup {
+  .subgroup-auto {
     legend {
       padding-right: 15px;
       font-size: 80%;
@@ -1868,9 +1827,6 @@ body.modal-open .bootstrap-datetimepicker-widget {
           text-align: left;
         }
       }
-
-      .modal-body-nested {
-      }
     }
   }
 }
@@ -1880,14 +1836,56 @@ body.modal-open .bootstrap-datetimepicker-widget {
   justify-content: flex-end;
 }
 
-.aw-form .aw-display {
-  border-left: 3px solid #eee;
-  padding-left: 3px;
-  min-height: 30px;
-  margin-left: -3px;
+.vue-form-generator {
+  textarea.form-control {
+    min-height: 150px;
+  }
+  .input-group {
+    z-index: 100;
+  }
+  .multiselect {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .form-element {
+    label {
+      display: block;
+    }
+    .hint {
+      font-size: 60%;
+      color: #999;
+      font-style: italic;
+      position: absolute;
+      width: calc(100% - 40px);
+      left: 20px;
+      background: white;
+      box-shadow: 0 0 2px #999;
+      transition: all 200ms linear;
+      z-index: 110;
+      padding: 10px;
+      margin-top: 10px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    &:hover {
+      .hint {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 1s;
+      }
+    }
+  }
 }
 
 .aw-form {
+  .aw-display {
+    border-left: 3px solid #eee;
+    padding-left: 3px;
+    min-height: 30px;
+    margin-left: -3px;
+  }
+
   .modal {
     &.slide {
       .modal-dialog {

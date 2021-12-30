@@ -84,11 +84,15 @@ export default {
       this.$http[this.options.method.toLowerCase()](this.options.targetUrl, formData)
         .then((res) => {
           this.$emit('uploaded', res.data);
+        })
+        .catch((err) => {
+          this.$emit('upload-failed', err.response ? err.response.data : err);
+        })
+        .finally(() => {
           setTimeout(() => {
             this.reset();
           }, 300);
-        })
-        .catch(this.apiErrorCallback);
+        });
     },
     base64(e, file) {
       const reader = new FileReader();
