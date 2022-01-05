@@ -52,7 +52,7 @@
               </button>
 
 
-            <template v-if="actions && actions.itemsPerRow">
+            <template v-if="actions && actions.changeItemsPerRow">
               <button class="btn btn-sm" @click="setListMode()"
                       :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
               >
@@ -150,77 +150,78 @@
     </div>
     <div class="card-body">
     <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-      <div
-          class="pointer d-flex "
-          v-for="(item, index) in _paginatedItems"
-          :key="index"
-          :class="itemWrapperClasses"
-          @click="handleItemClick($event, item)"
-      >
-        <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
-          <div
-              class="card mb-3 aw-list-item flex-fill shadow"
-              :class="itemClasses"
-              :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
-             'height': _itemHeight
-          }"
-          >
-            <img
-                class="card-img-top"
-                v-if="imageField"
-                :src="getItemAtPath(item, imageField)"
-                :alt="getItemAtPath(item, titleField)"
-                :class="imageClasses"
-                :style="imageStyles"
-            />
-            <div class="card-body">
-              <h4 class="card-title aw-list-item-title" style=""
+      <template v-for="(item, index) in _paginatedItems">
+        <div
+            class="pointer d-flex "
+            :key="index"
+            :class="itemWrapperClasses"
+            @click="handleItemClick($event, item)"
+        >
+          <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
+            <div
+                class="card mb-3 aw-list-item flex-fill shadow"
+                :class="itemClasses"
+                :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
+              'height': _itemHeight
+            }"
+            >
+              <img
+                  class="card-img-top"
+                  v-if="imageField"
+                  :src="getItemAtPath(item, imageField)"
+                  :alt="getItemAtPath(item, titleField)"
+                  :class="imageClasses"
+                  :style="imageStyles"
+              />
+              <div class="card-body">
+                <h4 class="card-title aw-list-item-title" style=""
 
-              v-if="getItemAtPath(item, titleField)"
-              v-html="getItemAtPath(item, titleField)"
-              ></h4>
-              <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)"
-              v-html="getItemAtPath(item, subtitleField)"
-              ></h6>
+                v-if="getItemAtPath(item, titleField)"
+                v-html="getItemAtPath(item, titleField)"
+                ></h4>
+                <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)"
+                v-html="getItemAtPath(item, subtitleField)"
+                ></h6>
 
-              <h3 class="card-title aw-list-item-title" style=""
-                  v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
-                {{ item[_modelDisplayField] }}</h3>
+                <h3 class="card-title aw-list-item-title" style=""
+                    v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
+                  {{ item[_modelDisplayField] }}</h3>
 
-              <p class="card-text aw-list-item-description" v-if="getItemAtPath(item, descriptionField)">
-                <AwesomeDisplay
-                    v-bind="getField(descriptionField)"
-                    :value="getItemAtPath(item, descriptionField)"
-                >
-                </AwesomeDisplay>
-              </p>
-              <template v-if="columns && columns.length && !_useClassicLayout">
-                <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                  <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
+                <p class="card-text aw-list-item-description" v-if="getItemAtPath(item, descriptionField)">
                   <AwesomeDisplay
-                      v-bind="getField(key)"
-                      :value="itemData"
-                      :relation="getField(key).relation"
-                      :relation-label="getField(key).relationLabel"
-                      :relation-url="getField(key).relationUrl"
-                      :relation-key="getField(key).relationKey"
+                      v-bind="getField(descriptionField)"
+                      :value="getItemAtPath(item, descriptionField)"
                   >
                   </AwesomeDisplay>
+                </p>
+                <template v-if="columns && columns.length && !_useClassicLayout">
+                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                    <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
+                    <AwesomeDisplay
+                        v-bind="getField(key)"
+                        :value="itemData"
+                        :relation="getField(key).relation"
+                        :relation-label="getField(key).relationLabel"
+                        :relation-url="getField(key).relationUrl"
+                        :relation-key="getField(key).relationKey"
+                    >
+                    </AwesomeDisplay>
+                  </div>
+                </template>
+                <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
+                  <button
+                      @click="handleItemButtonClick($event, item)"
+                      class="btn btn-primary btn-sm "
+                      :class="itemsPerRow > 1 ? 'btn-block': ''"
+                  >
+                    {{ $t("AwesomeList.buttons.itemAction") }}
+                  </button>
                 </div>
-              </template>
-              <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                <button
-                    @click="handleItemButtonClick($event, item)"
-                    class="btn btn-primary btn-sm "
-                    :class="itemsPerRow > 1 ? 'btn-block': ''"
-                >
-                  {{ $t("AwesomeList.buttons.itemAction") }}
-                </button>
               </div>
             </div>
-          </div>
-        </slot>
-      </div>
+          </slot>
+        </div>
+      </template>
     </div>
 
     <hr v-if="actions.pagination == undefined || actions.pagination"/>
@@ -337,7 +338,7 @@ export default {
       default: () => ({
         itemButton: true,
         refresh: true,
-        itemsPerRow: true,
+        changeItemsPerRow: true,
         pagination: true
       })
     },
@@ -426,6 +427,8 @@ export default {
         case 5:
         case 6:
           return 'col-2';
+        case 12:
+          return 'col-1';
       }
     },
 
@@ -442,7 +445,7 @@ export default {
         }
         return this.mode === 'remote'
             ? this.data
-            : this.data.slice(startIndex, startIndex + perPage);
+            : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -600,6 +603,21 @@ export default {
         return result;
       }
       return _.get(item, path);
+    },
+
+    localSearch(items, search) {
+      return items.filter(item => {
+        if(!this.search) {
+          return true;
+        }
+        try {
+          return JSON.stringify(Object.values(item)).match(new RegExp(this.search, 'i'))
+        }
+        catch (err) {
+          console.warn('err', err);
+        }
+        return true
+        })
     }
   }
 };

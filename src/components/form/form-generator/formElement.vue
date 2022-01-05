@@ -1,52 +1,54 @@
 <template>
   <div class="form-element" :class="[fieldRowClasses]">
-    <label v-if="fieldTypeHasLabel" :for="fieldID" :class="field.labelClasses">
-      <slot name="label" :field="field" :getValueFromOption="getValueFromOption"></slot>
-      <slot name="help" :field="field" :getValueFromOption="getValueFromOption"></slot>
-    </label>
-    <template v-if="isViewMode">
-      <awesome-display
-        v-bind="field.displayOptions"
-        :type="viewFieldType"
-        :value="fieldValue"
-        :relation="field.displayOptions.relation"
-        :relation-url="field.displayOptions.relationUrl"
-        :relation-key="field.displayOptions.relationKey"
-        :relation-label="field.displayOptions.relationLabel"
-      >
-      </awesome-display>
-    </template>
-    <div class="field-content" v-else>
-      <div class="field-wrap">
-        <component
-          ref="child"
-          :is="fieldType"
-          :model="model"
-          :schema="field"
-          :form-options="options"
-          :event-bus="eventBus"
-          :field-i-d="fieldID"
-          @field-touched="onFieldTouched"
-          @errors-updated="onChildValidated"
-        ></component>
-        <div v-if="buttonsAreVisible" class="buttons">
-          <button
-            v-for="(btn, index) in field.buttons"
-            @click="buttonClickHandler(btn, field, $event)"
-            :class="btn.classes"
-            :key="index"
-            v-text="btn.label"
-          ></button>
+    <div :class="field.innerClasses">
+      <label v-if="fieldTypeHasLabel" :for="fieldID" :class="field.labelClasses">
+        <slot name="label" :field="field" :getValueFromOption="getValueFromOption"></slot>
+        <slot name="help" :field="field" :getValueFromOption="getValueFromOption"></slot>
+      </label>
+      <template v-if="isViewMode">
+        <awesome-display
+          v-bind="field.displayOptions"
+          :type="viewFieldType"
+          :value="fieldValue"
+          :relation="field.displayOptions.relation"
+          :relation-url="field.displayOptions.relationUrl"
+          :relation-key="field.displayOptions.relationKey"
+          :relation-label="field.displayOptions.relationLabel"
+        >
+        </awesome-display>
+      </template>
+      <div class="field-content" v-else>
+        <div class="field-wrap">
+          <component
+            ref="child"
+            :is="fieldType"
+            :model="model"
+            :schema="field"
+            :form-options="options"
+            :event-bus="eventBus"
+            :field-i-d="fieldID"
+            @field-touched="onFieldTouched"
+            @errors-updated="onChildValidated"
+          ></component>
+          <div v-if="buttonsAreVisible" class="buttons">
+            <button
+              v-for="(btn, index) in field.buttons"
+              @click="buttonClickHandler(btn, field, $event)"
+              :class="btn.classes"
+              :key="index"
+              v-text="btn.label"
+            ></button>
+          </div>
         </div>
+
+        <template v-if="fieldHasHint">
+          <slot name="hint" :field="field" :getValueFromOption="getValueFromOption"></slot>
+        </template>
+
+        <template v-if="fieldHasErrors">
+          <slot name="errors" :childErrors="childErrors" :field="field" :getValueFromOption="getValueFromOption"></slot>
+        </template>
       </div>
-
-      <template v-if="fieldHasHint">
-        <slot name="hint" :field="field" :getValueFromOption="getValueFromOption"></slot>
-      </template>
-
-      <template v-if="fieldHasErrors">
-        <slot name="errors" :childErrors="childErrors" :field="field" :getValueFromOption="getValueFromOption"></slot>
-      </template>
     </div>
   </div>
 </template>
@@ -218,7 +220,8 @@ $errorColor: #f00;
   }
 
   &.required {
-    > label:after {
+    div > label:after,
+    label:after {
       content: '*';
       font-weight: normal;
       color: Red;

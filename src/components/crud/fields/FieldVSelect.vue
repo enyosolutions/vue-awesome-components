@@ -58,13 +58,44 @@
           <i class="fa fa-edit text-info"></i>
         </router-link>
       </template>
-      <router-link
+
+      <Popper
+        trigger="clickToOpen"
+        transition="fade"
+        :append-to-body="true"
+        :options="{
+          placement: 'auto',
+          modifiers: { offset: { offset: '0,10px' } }
+        }"
+        @show="displayEditModal = true"
+        @hide="displayEditModal = false"
+      >
+        <button slot="reference" type="button" class="external-link" @click="displayEditModal = true">
+          &nbsp; <i class="fa fa-plus text-info"></i>
+        </button>
+        <div v-show="displayEditModal" class="vselect-popup-width" ref="vselectPopup">
+          <AwesomeForm
+            :identity="schema.relation"
+            mode="create"
+            :item="{}"
+            displayMode="page"
+            :standalone="false"
+            @closeRequested="
+              displayEditModal = false;
+              loadRemoteEntities();
+            "
+            @cancel="displayEditModal = false"
+            :useSimpleCreateForm="true"
+          ></AwesomeForm>
+        </div>
+      </Popper>
+      <!-- <router-link
         v-if="!schema.relationRoute"
         :to="'/app/' + kebabCase(schema.relation) + '/new'"
         class="external-link"
       >
         <i class="fa fa-plus text-info"></i>
-      </router-link>
+      </router-link> -->
 
       <div
         v-if="schema.relationRoute && isFunction(schema.relationRoute)"
@@ -85,15 +116,20 @@
 </template>
 <script>
 /* eslint-disable */
+import vSelect from 'vue-select';
+import _ from 'lodash';
+import Popper from 'vue-popperjs';
 import VueFormGenerator from '../../form/form-generator';
 import selectMixin from '../../../mixins/selectMixin';
 import apiConfigMixin from '../../../mixins/apiConfigMixin';
-import vSelect from 'vue-select';
-import _ from 'lodash';
 
 export default {
   name: 'field-vSelect',
-  components: { vSelect },
+  components: {
+    vSelect,
+    Popper,
+    AwesomeForm: () => import('../AwesomeForm.vue')
+  },
   mixins: [selectMixin, VueFormGenerator.abstractField],
   props: {
     apiRequestConfig: {
@@ -127,16 +163,19 @@ export default {
     multiple: { type: Boolean, default: false },
     addNewUrl: { type: [String, Function], default: '' }
   }, // 'schema', 'disabled', 'value' are in the abstract field
-  mounted() {
+  async mounted() {
     if (this.schema.fieldOptions && this.schema.fieldOptions.preload) {
       this.preloadFn();
     } else {
       this.onSearch(this.model[this.schema && this.schema.model] || '', () => null);
     }
+
+    console.log('this.awesomeForm', this.awesomeForm);
   },
   data() {
     return {
-      isDataReady: false
+      isDataReady: false,
+      displayEditModal: false
     };
   },
   computed: {
@@ -199,6 +238,31 @@ export default {
 
     _useApiFilter() {
       return this.dataUrl && !this._usePreloadMode;
+    },
+
+    popupCss() {
+      if (this.$refs.vselectPopup) {
+        const dimensions = this.$ref.vselectPopup.getBoundingClientRect();
+        return {
+          position: 'fixed',
+          'z-index': 9999999,
+          top: `calc(50vh - ${dimensions.height / 2}px) / 2)`,
+          left: `calc(50vw - ${dimensions.width / 2}px) / 2)`,
+          width: dimensions.width + 'px',
+          background: '#fff'
+        };
+      }
+      const width = 300;
+      const height = 300;
+      return {
+        position: 'fixed',
+        'z-index': 9999999,
+        top: `calc(50vh - ${height / 2}px)`,
+        left: `calc(50vw - ${width / 2}px)`,
+        width: width + 'px',
+        height: height + 'px',
+        background: '#fff'
+      };
     }
   },
   watch: {
@@ -355,7 +419,7 @@ export default {
       if (this.fieldOptions.taggable) {
         return label || item;
       }
-      return `${item[this._trackBy]} - ${label}`;
+      return `${label} [${item[this._trackBy]}]`;
     },
 
     reduce(item) {
@@ -380,14 +444,53 @@ export default {
         this.apiResponseConfig.totalCountPath != false
         ? _.get(res, this.apiResponseConfig.totalCountPath)
         : res.data.totalCount;
+    },
+
+    getCss() {
+      if (this.$refs.vselectPopup) {
+        const dimensions = this.$ref.vselectPopup.getBoundingClientRect();
+        return {
+          position: 'fixed',
+          'z-index': '9999999',
+          top: `calc(50vh - ${dimensions.height / 2}px) / 2)`,
+          left: `calc(50vw - ${dimensions.width / 2}px) / 2)`,
+          width: dimensions.width + 'px'
+        };
+      }
+      return {};
     }
   }
 };
 </script>
 
 <style lang="scss">
+.vselect-popup-width {
+  min-width: 30vw;
+  border-radius: 15px;
+  background-color: #fff;
+  z-index: 99999999;
+  .modal-content {
+    background-color: #fff;
+    box-shadow: 0 0 1.75rem 0 rgb(58, 59, 69/15%) !important ;
+    border-radius: 15px;
+  }
+  .modal-header {
+    padding: 5px;
+    .modal-title {
+      font-size: 14px;
+    }
+  }
+}
+
 .awesome-vue-select {
   width: 100%;
+  button.external-link {
+    background: transparent;
+    border: none;
+    &:hover {
+      background: transparent;
+    }
+  }
 }
 
 .vue-form-generator .awesome-vue-select button.vs__clear,

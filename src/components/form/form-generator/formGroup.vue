@@ -6,34 +6,36 @@
       <template v-for="(field, index) in fields">
         <template v-if="fieldVisible(field)">
           <template v-if="field.type === 'group'">
-            <div class="wrapper" :class="field.wrapperClasses" :key="index">
-              <form-group
-                :fields="field.fields"
-                :group="field"
-                :tag="getGroupTag(field)"
-                :model="model"
-                :options="options"
-                :errors="errors"
-                :event-bus="eventBus"
-              >
-                <template slot="group-legend" slot-scope="slotProps">
-                  <slot name="group-legend" :group="slotProps.group" :group-legend="slotProps.groupLegend"></slot>
-                </template>
-                <template slot="group-help" slot-scope="slotProps">
-                  <slot name="group-help" :group="slotProps.group"></slot>
-                </template>
+            <div :class="field.cols ? `col-${field.cols}` : ''" :key="index">
+              <div class="wrapper" :class="field.wrapperClasses">
+                <form-group
+                  :fields="field.fields"
+                  :group="field"
+                  :tag="getGroupTag(field)"
+                  :model="model"
+                  :options="options"
+                  :errors="errors"
+                  :event-bus="eventBus"
+                >
+                  <template slot="group-legend" slot-scope="slotProps">
+                    <slot name="group-legend" :group="slotProps.group" :group-legend="slotProps.groupLegend"></slot>
+                  </template>
+                  <template slot="group-help" slot-scope="slotProps">
+                    <slot name="group-help" :group="slotProps.group"></slot>
+                  </template>
 
-                <template slot="element" slot-scope="slotProps">
-                  <slot
-                    name="element"
-                    :field="slotProps.field"
-                    :model="slotProps.model"
-                    :options="slotProps.options"
-                    :errors="slotProps.errors"
-                    :eventBus="slotProps.eventBus"
-                  ></slot>
-                </template>
-              </form-group>
+                  <template slot="element" slot-scope="slotProps">
+                    <slot
+                      name="element"
+                      :field="slotProps.field"
+                      :model="slotProps.model"
+                      :options="slotProps.options"
+                      :errors="slotProps.errors"
+                      :eventBus="slotProps.eventBus"
+                    ></slot>
+                  </template>
+                </form-group>
+              </div>
             </div>
           </template>
           <template v-else>

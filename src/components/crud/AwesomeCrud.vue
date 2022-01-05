@@ -1,5 +1,5 @@
 <template>
-  <div class="content aw-crud" :class="'aw-crud-mode-' + displayMode">
+  <div class="content aw-crud" :class="`aw-crud-mode-${displayMode} aw-crud-${identity}`">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12 awesomecrud-stats-section">
@@ -413,7 +413,7 @@ const defaultOptions = {
   columnsDisplayed: 10
 };
 
-const listOptions = {
+const defaultListOptions = {
   displayFields: [], // list of fields to use for the display
   imageField: '',
   titleField: '',
@@ -591,7 +591,7 @@ export default {
     },
     listOptions: {
       type: Object,
-      default: () => listOptions
+      default: () => defaultListOptions
     },
     kanbanOptions: {
       type: Object,
@@ -1507,11 +1507,7 @@ export default {
         .put(`${this._url}/${item[this.primaryKey]}`, item)
         .then((res) => {
           this.$emit(this.identity + '-item-updated', res.data);
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),

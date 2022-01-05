@@ -130,7 +130,7 @@
                         </template>
                       </slot>
                     </div>
-                    <div class="modal-footer" v-if="!_isEmbedded">
+                    <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="add-modal-footer">
                         <button type="button" class="btn btn-default btn-simple mr-auto" @click="cancel()">
                           {{ $t('AwesomeCrud.buttons.cancel') }}
@@ -264,16 +264,16 @@
                             }}
                           </a>
                         </li>
-                        <template v-for="(ns, index) in nestedModels">
-                          <li v-if="ns && ns.identity" :key="index" class="nav-item nested-model-tab-link">
+                        <template v-for="(nm, index) in nestedModels">
+                          <li v-if="nm && nm.identity" :key="index" class="nav-item nested-model-tab-link">
                             <a
                               class="nav-link"
-                              :class="{ active: activeNestedTab === ns.identity }"
+                              :class="{ active: activeNestedTab === nm.identity }"
                               data-toggle="tab"
-                              @click="activeNestedTab = (ns && ns.identity) || 'general'"
+                              @click="activeNestedTab = (nm && nm.identity) || 'general'"
                             >
-                              <i v-if="ns.icon" :class="ns.icon" />
-                              {{ $t(ns.namePlural || ns.title || ns.identity) }}
+                              <i v-if="nm.icon" :class="nm.icon" />
+                              {{ $t(nm.namePlural || nm.title || nm.identity) }}
                             </a>
                           </li>
                         </template>
@@ -410,31 +410,31 @@
                                 selectedItem
                             "
                           >
-                            <template v-for="ns in nestedModels">
+                            <template v-for="nm in nestedModels">
                               <div
-                                v-if="ns && ns.identity"
-                                :key="ns.$id"
+                                v-if="nm && nm.identity"
+                                :key="nm.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show in': activeNestedTab === ns.identity || nestedLayoutMode === 'list'
+                                  'active show in': activeNestedTab === nm.identity || nestedLayoutMode === 'list'
                                 }"
                               >
                                 <template v-if="nestedLayoutMode === 'list'">
                                   <h3
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
-                                      getNestedActions(ns).collapse
-                                        ? (nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[
-                                            ns.identity
+                                      getNestedActions(nm).collapse
+                                        ? (nestedModelsCollapseState[nm.identity] = !nestedModelsCollapseState[
+                                            nm.identity
                                           ])
                                         : ''
                                     "
                                   >
-                                    {{ getNestedTabsTitle(ns) }}
+                                    {{ getNestedTabsTitle(nm) }}
                                     <i
                                       class="fa"
                                       :class="
-                                        nestedModelsCollapseState[ns.identity] ? 'fa-caret-right' : 'fa-caret-down'
+                                        nestedModelsCollapseState[nm.identity] ? 'fa-caret-right' : 'fa-caret-down'
                                       "
                                     ></i>
                                   </h3>
@@ -442,8 +442,8 @@
                                 </template>
                                 <div
                                   :is="AwesomeCrud"
-                                  :id="'list-collapse-' + ns.identity"
-                                  v-bind="ns"
+                                  :id="'list-collapse-' + nm.identity"
+                                  v-bind="nm"
                                   :parent="selectedItem"
                                   :parentIdentity="(model && model.identity) || identity"
                                   :useRouterMode="false"
@@ -454,8 +454,8 @@
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
                                   class="aw-crud-nested-model"
                                   :class="
-                                    getNestedActions(ns).collapse && nestedLayoutMode === 'list'
-                                      ? !nestedModelsCollapseState[ns.identity]
+                                    getNestedActions(nm).collapse && nestedLayoutMode === 'list'
+                                      ? !nestedModelsCollapseState[nm.identity]
                                         ? 'collapse show'
                                         : 'collapse'
                                       : ''
@@ -469,7 +469,7 @@
                         </div>
                       </slot>
                     </div>
-                    <div class="modal-footer" v-if="!_isEmbedded">
+                    <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="edit-modal-footer">
                         <button
                           v-if="!standalone"
@@ -631,6 +631,10 @@ const defaultOptions = {
 export default {
   name: 'AwesomeForm',
   introduction: 'A component to forms from a json schema',
+  model: {
+    prop: 'item',
+    event: 'change'
+  },
   components: {
     AwesomeCrud: AwesomeCrud,
     /* Column,
@@ -652,7 +656,7 @@ export default {
     // notificationsMixin
   ],
   props: {
-    item: { type: Object, required: true },
+    item: { type: Object, required: false },
     bulkItems: { type: Array, required: false },
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -846,7 +850,12 @@ export default {
     displayHeader: {
       type: Boolean,
       default: true,
-      node: 'Controls if the the header of the modal or the page should be displayed'
+      node: 'Controls if the header of the modal or the page should be displayed'
+    },
+    displayFooter: {
+      type: Boolean,
+      default: true,
+      node: 'Controls if the footer of the modal or the page should be displayed'
     },
     hasNext: {
       type: Boolean,
@@ -974,7 +983,7 @@ export default {
     },
 
     _mergedOptions() {
-      let mergedOptions = merge({}, defaultOptions, this.options, this._model.options);
+      let mergedOptions = merge({}, defaultOptions, this.options, this._model ? this._model.options : {});
       if (this.options !== defaultOptions) {
         console.warn('options are diffrent from the basics', this.options);
         mergedOptions = merge(mergedOptions, this.options);
@@ -1044,7 +1053,8 @@ export default {
           ...group,
           type: 'group',
           legend: group.legend || group.title,
-          wrapperClasses: `${group.wrapperClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
+          wrapperClasses: `${group.wrapperClasses || ''}`,
+          cols: group.cols,
           styleClasses: `${group.classes || group.styleClasses || ''}`,
           headerClasses: `${group.headerClasses || ''}`,
           styles: `${group.styles || ''}`,
@@ -1119,7 +1129,8 @@ export default {
     mode: 'onModeChanged',
     options: 'mergeOptions',
     item: 'refreshComponent',
-    needsRefresh: 'refreshComponent'
+    needsRefresh: 'refreshComponent',
+    selectedItem: 'onChange'
   },
   created() {
     if (!this.$http) {
@@ -1415,7 +1426,8 @@ export default {
     async createItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No url for submitting');
+        this.$emit('save', this.selectedItem);
+        this.$emit('change', this.selectedItem);
         return false;
       }
       if (this.$refs.form) {
@@ -1460,11 +1472,7 @@ export default {
             parentIdentity: this.parentIdentity,
             parent: this.parent
           });
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyCreated', {
               title: this.type
             }),
@@ -1490,6 +1498,7 @@ export default {
       if (!this._url) {
         // eslint-disable-next-line
         console.warn('AWESOMECRUD ERROR:: No url for submitting');
+
         return false;
       }
       if (this.$refs.form) {
@@ -1524,8 +1533,8 @@ export default {
 
     async editItem() {
       if (!this._url) {
-        // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No url for submitting');
+        this.$emit('save', this.selectedItem);
+        this.$emit('change', this.selectedItem);
         return false;
       }
       if (!this.selectedItem[this.primaryKey]) {
@@ -1568,11 +1577,7 @@ export default {
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
           this.$awEmit('item-edited', { data: res.data });
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),
@@ -1703,20 +1708,24 @@ export default {
       this.$awEmit('layout-fields-updated', items);
     },
 
-    getNestedTabsTitle(ns) {
-      if (ns.name) {
-        return ns.name;
+    getNestedTabsTitle(nestedModel) {
+      if (nestedModel.name) {
+        return nestedModel.name;
       }
-      if (ns.title) {
-        return ns.title;
+      if (nestedModel.title) {
+        return nestedModel.title;
       }
-      return this.$te('awForm.labels.tabs.' + ns.identity)
-        ? this.$t('awForm.labels.tabs.' + ns.identity)
-        : this.startCase(ns.identity);
+      return this.$te('awForm.labels.tabs.' + nestedModel.identity)
+        ? this.$t('awForm.labels.tabs.' + nestedModel.identity)
+        : this.startCase(nestedModel.identity);
     },
 
     getNestedActions(nestedModel) {
       return merge({}, defaultActions, nestedModel.actions);
+    },
+
+    onChange(newItem) {
+      this.$emit('change', newItem);
     }
   }
 };

@@ -2,7 +2,7 @@
   <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
     <template v-if="_values && _values.length">
       <template v-for="value in _values">
-        <div :key="value">
+        <div :key="value" :title="getLabel(value) + ' (' + value + ')'" :tooltip="value">
           <span v-if="value" class="badge badge-info pointer" @click="onClick">
             {{ getLabel(value) }}
           </span>
@@ -80,9 +80,8 @@ export default {
     onClick() {
       if (!this.timeoutId) {
         this.timeoutId = setTimeout(() => {
-          // simple click
           this.timeoutId = null;
-        }, 50); //tolerance in ms
+        }, 200); //tolerance in ms
       } else {
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
@@ -161,7 +160,7 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          const result = `${_.get(data, this.relationKey)} - ${this.formatLabel(data, this.relationLabel)}`;
+          const result = `${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }

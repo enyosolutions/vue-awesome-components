@@ -6,6 +6,7 @@ import FieldJsonTextarea from './components/crud/fields/FieldJsonTextarea.vue';
 import FieldDateTime from './components/crud/fields/fieldDateTime.vue';
 import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 import FieldImagePicker from './components/crud/fields/FieldImagePicker.vue';
+import FieldArray from './components/crud/fields/FieldArray.vue';
 // import FieldDateRange from './components/crud/fields/fieldDateRange.vue';
 import AwesomeCrud from './components/crud/AwesomeCrud.vue';
 import AwesomeLayout from './components/crud/layout/AwesomeLayout.vue';
@@ -87,7 +88,9 @@ const install = (Vue, options = {}) => {
   Vue.component('fieldVSelect', FieldVSelect);
   Vue.component('fieldFileInput', FieldFileInput);
   Vue.component('fieldJsonTextarea', FieldJsonTextarea);
+  Vue.component('field-json-textarea', FieldJsonTextarea);
   Vue.component('fieldImagePicker', FieldImagePicker);
+  Vue.component('field-array', FieldArray);
 
   Vue.component('ajax-table', AwesomeTable);
   Vue.component('enyo-ajax-table', AwesomeTable);

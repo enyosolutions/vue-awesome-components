@@ -52,7 +52,8 @@ export default {
             case 'email':
               return 'email';
             case 'date-time':
-              return 'datetime';
+            case 'datetime':
+              return 'date-time';
             default:
               return 'text';
           }
@@ -167,6 +168,7 @@ export default {
           subSchema.type = 'group';
           subSchema.default = {};
           subSchema.id = key;
+          subSchema.cols = prop.field && prop.field.cols;
           subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
           fields.push(subSchema);
         } else {
@@ -212,6 +214,8 @@ export default {
             multi: prop.type === 'array',
             styleClasses: classes, // @deprecated
             classes,
+            innerClasses: '',
+            labelClasses: '',
             relation: prop.relation,
             foreignKey: relationKey || prop.foreignKey,
             relationUrl,
@@ -247,6 +251,10 @@ export default {
             };
           }
 
+
+          if (field.type === 'array') {
+            field.itemsSchema = prop.items;
+          }
 
           if (field.type === 'date') {
             field.type = 'dateTime';

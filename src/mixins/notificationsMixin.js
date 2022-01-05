@@ -19,7 +19,7 @@ export default {
       const payload = isObject(message)
         ? {
           title: message,
-          ...message, // Placement is important to guarantee theat the display is always a notification
+          ...message, // Placement is important to guarantee that the display is always a notification
         }
         : {
           icon: 'fa fa-info',
