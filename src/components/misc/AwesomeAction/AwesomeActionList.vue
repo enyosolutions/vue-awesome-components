@@ -30,13 +30,13 @@
           <button
             slot="reference"
             id="dropdownMenuButton"
-            class="btn btn-outline-secondary ml-1 mr-1 dropdown-toggle"
+            class="btn btn-sm btn-outline-secondary ml-1 mr-1 dropdown-toggle"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <i class="fa fa-info-circle" /> {{ $t('AwesomeTable.actions') }}
+            <i class="fa fa-bars" /> {{ $t('AwesomeTable.actions') }}
           </button>
           <div class="card" style="max-height: 80vh; overflow: auto;z-index:1">
             <template v-for="(action, index) in foldableActions">

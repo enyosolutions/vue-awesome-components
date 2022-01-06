@@ -8,7 +8,7 @@
     :id="fieldID"
     :class="fieldClasses"
     v-attributes="'input'"
-    :multiple="schema.multi"
+    :multiple="schema.multiple || schema.multi"
   >
     <option v-if="!fieldOptions.hideNoneSelectedText" :disabled="schema.required" :value="null">
       {{ fieldOptions.noneSelectedText || '&lt;Nothing selected&gt;' }}

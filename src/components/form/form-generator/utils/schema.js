@@ -18,7 +18,9 @@ const createDefaultObject = (schema, obj = {}) => {
 const getMultipleFields = (schema) => {
   let res = [];
   each(schema.fields, (field) => {
-    if (field.multi === true) res.push(field);
+    if (field.multi === true || field.multiple === true) {
+      res.push(field);
+    }
   });
 
   return res;

@@ -49,6 +49,8 @@ const install = (Vue, options = {}) => {
     if (options.config) {
       Vue.prototype.awComponentsConfig = options.config;
     }
+
+
     if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
       AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
@@ -64,6 +66,7 @@ const install = (Vue, options = {}) => {
     if (options['FieldVSelect'] && options['FieldVSelect'].props) {
       FieldVSelect.props = _.merge(FieldVSelect.props, options['FieldVSelect'].props);
     }
+
   }
 
   Vue.use(FormGenerator, {

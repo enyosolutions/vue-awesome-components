@@ -30,6 +30,11 @@ export default {
           return 'input';
         case 'boolean':
           return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
+        case 'array':
+          if (property.items && property.items.type === 'string') {
+            return 'vSelect';
+          }
+          return 'VSelect';
         default:
           return 'input';
       }
@@ -197,21 +202,24 @@ export default {
             fieldOptions.searchable = true;
           }
           const classes = this.getFieldClasses(prop, numberOfFields);
+          const selectValues = (
+            (fieldOptions.values || this.getSelectEnumFromStore(fieldOptions.enum))) ||
+            (prop.field && prop.field.options) ||
+            (prop.items && prop.items.enum) ||
+            prop.enum
+            ;
           const field = {
             type: (prop.field.type) || this.getFormtype(prop),
             label: prop.title || prop.description || startCase(key),
             placeholder: prop.placeholder,
             values:
-              (
-                (fieldOptions.values || this.getSelectEnumFromStore(fieldOptions.enum))) ||
-              prop.enum ||
-              (prop.items && prop.items.enum) ||
-              [],
+              selectValues,
             hint: prop.description,
             model: prefix + key,
             min: prop.min,
             max: prop.max,
-            multi: prop.type === 'array',
+            multiple: prop.field.multiple || prop.type === 'array',
+            multi: prop.field.multi || prop.type === 'array', // @deprecated
             styleClasses: classes, // @deprecated
             classes,
             innerClasses: '',
@@ -271,12 +279,12 @@ export default {
           }
 
           // default items for selects
-          if (field.type === 'enyoSelect' && !fieldOptions.options) {
+          if ((field.type === 'enyoSelect' || field.type.toLowerCase() === 'vselect') && !fieldOptions.options) {
             field.options = field.values;
           }
 
           // default items for selects
-          if (field.type === 'vSelect' && fieldOptions.store && !fieldOptions.options) {
+          if (field.type.toLowerCase() === 'vselect' && fieldOptions.store && !fieldOptions.options) {
             fieldOptions.options = get(this.$store.state, fieldOptions.store);
           }
 

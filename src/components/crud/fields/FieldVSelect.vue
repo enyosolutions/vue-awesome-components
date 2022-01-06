@@ -25,13 +25,14 @@
     <v-select
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
-      :multiple="multiple || fieldOptions.multiple"
+      :multiple="multiple || fieldOptions.multiple || schema.multiple"
       :taggable="fieldOptions.taggable"
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
       :disabled="disabled || schema.disabled || schema.readonly"
       :required="required"
+      @open="preloadFn"
       @search="onSearch"
       :value="model[schema.model]"
       @input="updateSelected"
@@ -352,9 +353,12 @@ export default {
     },
 
     preloadFn() {
+      if (!this.dataUrl) {
+        return;
+      }
       this.$http
         .get(
-          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam || 'perPage=10000'}`,
+          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam || 'perPage=100'}`,
           {
             params: { ...this.fieldOptions.queryParams }
           }

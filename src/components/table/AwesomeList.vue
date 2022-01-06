@@ -1,11 +1,13 @@
 <template>
-  <div class="aw-list">
+  <div class="aw-list aw-listing">
     <div class="float-left col-6 pl-0">
-      <slot name="list-header-left">
-        <div class="card aw-segment-table-wrapper" v-if="segment">
-          <awesome-segments :field="segment" @change="onSegmentChange" />
-        </div>
-      </slot>
+      <slot name="list-header-left"></slot>
+      <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
+        <awesome-segments :field="segmentFieldDefinitionComputed"
+                      :apiRequestConfig="apiRequestConfig"
+              :apiResponseConfig="apiResponseConfig"
+              @change="onSegmentChange" />
+      </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
       <slot name="list-header-right"></slot>
@@ -42,7 +44,7 @@
                 v-if="actions.filter && actions.advancedFiltering"
                   slot="reference"
                   type="button"
-                  class="btn btn-simple"
+                  class="btn btn-simple btn-sm"
                   :class="{ 'btn-primary': displayAwFilter || advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
                   @click="displayAwFilter = !displayAwFilter"
               >
@@ -53,21 +55,21 @@
 
 
             <template v-if="actions && actions.changeItemsPerRow">
-              <button class="btn btn-sm" @click="setListMode()"
+              <button class="btn btn-sm btn-sm" @click="setListMode()"
                       :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
               >
                 <i :class="'fa fa-list'"/>
 
               </button>
               <button
-                  class="btn"
+                  class="btn btn-sm"
                   :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
                   @click="setMediumGridMode()">
                 <i :class="'fa fa-th-large'"/>
               </button>
 
               <button
-                  class="btn"
+                  class="btn btn-sm"
                   :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
                   @click="setGridMode()">
                 <i :class="'fa fa-th'"/>
@@ -87,7 +89,7 @@
               <button
                   slot="reference"
                   type="button"
-                  class="btn btn-simple dropdown-toggle"
+                  class="btn btn-simple dropdown-toggle btn-sm"
               >
                 {{ $t("AwesomeTable.more") }}
               </button>
@@ -96,7 +98,7 @@
                <slot name="table-top-more-actions"/>
                 <button
                     v-if="actions && actions.export"
-                    class="btn btn-success btn-simple btn-block"
+                    class="btn  btn-sm btn-success btn-simple btn-block"
                     @click="exportCallBack"
                 >
                   <i class="fa fa-file-excel"/>
@@ -104,7 +106,7 @@
                 </button>
 
                 <button
-                    class="btn btn-default btn-simple btn-block"
+                    class="btn btn-sm  btn-default btn-simple btn-block"
                     @click="exportCurrentArrayToExcel"
                 >
                   <i class="fa fa-file-excel"/>
@@ -623,6 +625,8 @@ export default {
 };
 </script>
 <style lang="scss">
+.aw-list {
+    clear: both;
 .aw-list-component {
   .aw-list-item {
     .aw-list {
@@ -757,5 +761,6 @@ export default {
   color: #6c757d;
 }
 
+}
 
 </style>

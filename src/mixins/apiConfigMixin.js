@@ -177,7 +177,7 @@ export default {
         (this.mergedOptions && this.mergedOptions[field]) ||
         (this.options && this.options[field]) ||
         (this._model && this._model[field]) ||
-        (this.field && this.field.urls) ||
+        (this.field && this.field.url) ||
         (this.field && this.field.fieldoptions.url);
     }
   }

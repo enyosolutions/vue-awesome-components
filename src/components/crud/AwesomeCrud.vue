@@ -18,8 +18,11 @@
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
-          <ListModeSelector v-if="_actions.changeDisplayMode" v-model="listDisplayMode" />
-
+          <ListingModeSelector
+            v-if="_actions.changeDisplayMode && !!segmentField"
+            v-model="listDisplayMode"
+            :enabled-modes="enabledListingModes"
+          />
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
@@ -70,6 +73,9 @@
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
+            <template slot="table-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
             <template slot="table-header-right">
               <div class="text-right">
                 <slot name="top-right-buttons">
@@ -85,7 +91,7 @@
                     v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
                     :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
                     :disabled="!canShowCreateButton"
-                    class="btn btn-outline-primary aw-button-add"
+                    class="btn btn-sm btn-outline-primary aw-button-add"
                     @click.prevent="goToCreatePage()"
                     type="button"
                   >
@@ -116,14 +122,14 @@
                   headers: {},
                   base64: false,
                   label: $t('AwesomeCrud.buttons.import'),
-                  class: 'btn btn-main-style btn btn-simple text-success  btn-block'
+                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
                 }"
                 @uploaded="importResponse"
                 @upload-failed="importFailedResponse"
               />
               <button
                 v-if="_actions.import"
-                class="btn text-info btn-link btn-alt-style btn-block"
+                class="btn btn-sm text-info btn-link btn-alt-style btn-block"
                 type="button"
                 @click="exportTemplateCallBack"
               >
@@ -133,7 +139,7 @@
               <button
                 v-if="mergedOptions.useCustomLayout && _actions.editLayout"
                 type="button"
-                class="btn btn-simple btn-default btn-block"
+                class="btn btn-sm btn-simple btn-default btn-block"
                 @click="goToCreatePage({ editLayoutMode: true })"
               >
                 <i class="fa fa-th-large"></i>
@@ -193,6 +199,9 @@
                 />
               </template>
             </template>
+            <template slot="list-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
             <template slot="list-header-right">
               <template v-if="_customTopRightActions">
                 <AwesomeActionList
@@ -206,12 +215,12 @@
                 v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
                 :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
                 :disabled="!canShowCreateButton"
-                class="btn btn-outline-primary aw-button-add"
+                class="btn btn-sm btn-outline-primary aw-button-add"
                 @click.prevent="goToCreatePage()"
                 type="button"
               >
                 <i class="fa fa-plus text-primary" />
-                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                {{ $t('AwesomeCrud.labels.createNew') }}
               </button>
             </template>
           </AwesomeList>
@@ -242,6 +251,17 @@
             @cardChanged="onCardChanged"
             @cardClicked="onCardClicked"
           >
+            <template slot="kanban-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
+            <template slot="kanban-header-right">
+              <AwesomeActionList
+                :actions="_customTopRightActions"
+                location="topright"
+                :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
+                @customAction="onCustomAction"
+              />
+            </template>
             <template slot="top-actions">
               <template v-if="_customTitleBarActions">
                 <AwesomeActionList
@@ -266,7 +286,7 @@
           <button
             v-if="displaySideFormContent && isSideformSticky"
             :disabled="true"
-            class="btn btn-outline-primary aw-button-add invisible"
+            class="btn btn-sm btn-outline-primary aw-button-add invisible"
             type="button"
           >
             <i class="fa fa-plus text-primary" />
@@ -389,8 +409,9 @@ import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
 import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
-import ListModeSelector from './parts/ListModeSelector';
+import ListingModeSelector from './parts/ListingModeSelector';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
+import { Portal, PortalTarget, MountingPortal } from 'portal-vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 
@@ -432,7 +453,10 @@ export default {
     AwesomeList,
     AwesomeKanban,
     AwesomeActionList,
-    ListModeSelector
+    ListingModeSelector,
+    Portal,
+    PortalTarget,
+    MountingPortal
   },
   mixins: [
     uuidMixin,
@@ -679,6 +703,11 @@ export default {
       type: String,
       title: 'The selector to use for registering scroll events',
       description: 'This prop is used for registering the scroll event (needed for sticky forms)'
+    },
+    enabledListingModes: {
+      type: Array,
+      default: () => ['table', 'kanban', 'list'],
+      description: 'The listing modes that are enabled for this component'
     }
   },
   data() {
@@ -1896,10 +1925,6 @@ export default {
 </script>
 <style lang="scss">
 .aw-crud {
-  .aw-button-add {
-    margin-bottom: 5px;
-  }
-
   .vdatetime.form-group {
     margin-bottom: 0;
     width: 100%;

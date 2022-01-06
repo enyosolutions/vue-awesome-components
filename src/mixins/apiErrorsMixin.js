@@ -25,7 +25,7 @@ export default {
       const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `</li>${this.$te(e) ? this.$t(e) : e}</li>`).join('') : '';
       this.$awNotify({
         title: message,
-        html: '<ul>' + subErrorsHtml + '</ul>',
+        message: '<ul>' + subErrorsHtml + '</ul>',
         type: 'warning',
         timer: 3000
       });

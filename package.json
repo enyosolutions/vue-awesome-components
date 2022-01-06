@@ -40,6 +40,7 @@
     "crip-vue-loading": "^1.2.5",
     "jquery": "^3.5.1",
     "lodash": "^4.17.13",
+    "portal-vue": "^2.1.7",
     "sweetalert2": "8.2.6",
     "vue-base64-file-upload": "^1.0.4",
     "vue-chartist": "2.2.1",

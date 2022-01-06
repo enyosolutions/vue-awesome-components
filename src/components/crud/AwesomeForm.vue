@@ -36,9 +36,9 @@
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
-                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                      <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
-                      </h3>
+                      </h5>
 
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
@@ -146,10 +146,10 @@
                 <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
-                      <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
+                      <h5 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t(mode === 'view' ? '' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
-                      </h3>
+                      </h5>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
                         <AwesomeActionList
                           :actions="customTopActions"
@@ -379,9 +379,9 @@
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <!--
                             <template v-if="nestedLayoutMode === 'list'">
-                              <h3 class="nested-model-title text-primary font-italic">
+                              <h5 class="nested-model-title text-primary font-italic">
                                 <b>{{ _editItemTile }}</b>
-                              </h3>
+                              </h5>
                               <hr class="mb-1" />
                             </template>
                             -->
@@ -420,7 +420,7 @@
                                 }"
                               >
                                 <template v-if="nestedLayoutMode === 'list'">
-                                  <h3
+                                  <h5
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
                                       getNestedActions(nm).collapse
@@ -437,7 +437,7 @@
                                         nestedModelsCollapseState[nm.identity] ? 'fa-caret-right' : 'fa-caret-down'
                                       "
                                     ></i>
-                                  </h3>
+                                  </h5>
                                   <hr class="mt-0" />
                                 </template>
                                 <div
@@ -529,9 +529,9 @@
                 <div v-if="mode === 'bulkEdit'" class="modal-content">
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
-                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                      <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
-                      </h3>
+                      </h5>
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"

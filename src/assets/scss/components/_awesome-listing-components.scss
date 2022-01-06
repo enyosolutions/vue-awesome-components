@@ -1,0 +1,15 @@
+.aw-listing {
+  clear: both;
+  .aw-segment-table-wrapper {
+    width: auto;
+    margin-top: inherit;
+    padding: 3px;
+    margin-bottom: 5px;
+    float: left;
+
+    .nav-link {
+      display: block;
+      padding: 0.1rem 0.7rem;
+    }
+  }
+}

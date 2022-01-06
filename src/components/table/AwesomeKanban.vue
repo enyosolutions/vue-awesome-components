@@ -1,14 +1,18 @@
 <template>
-  <div class="aw-kanban">
+  <div class="aw-kanban aw-listing">
     <div class="float-left col-6 pl-0">
-      <slot name="list-header-left">
-        <div class="card aw-segment-table-wrapper" v-if="segment">
-          <awesome-segments :field="segment" @change="onSegmentChange" />
-        </div>
-      </slot>
+      <slot name="kanban-header-left"></slot>
+      <div class="card aw-segment-table-wrapper" v-show="segmentFieldDefinitionComputed">
+        <awesome-segments
+          :field="segmentFieldDefinitionComputed"
+          :apiRequestConfig="apiRequestConfig"
+          :apiResponseConfig="apiResponseConfig"
+          @change="onSegmentChange"
+        />
+      </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
-      <slot name="list-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
+      <slot name="kanban-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
     </div>
 
     <div class="card aw-kanban-card">
@@ -22,7 +26,7 @@
               </div>
               <slot name="top-actions" class />
               <div class="btn-group" role="group">
-                <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
+                <button v-if="actions && actions.refresh" class="btn btn-simple btn-sm p-0" @click="getItems()">
                   <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
                   {{ $t('AwesomeKanban.buttons.refresh') }}
                 </button>
@@ -112,7 +116,7 @@ export default {
      * The field to use to split the data
      */
     splittingField: {
-      type: String
+      type: [String, Object]
     },
     /**
      * List of accepted values for splitting the data
