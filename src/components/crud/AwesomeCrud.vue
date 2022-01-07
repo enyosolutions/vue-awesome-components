@@ -54,7 +54,7 @@
             :savePaginationState="savePaginationState"
             :segment="segment"
             :segmentField="segmentField"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_listingComponentTitle"
             :url="_url"
             :useRouterMode="useRouterMode"
             :uuid="'awtable-' + identity"
@@ -182,7 +182,7 @@
               itemWrapperClasses: 'col-3'
             }"
             :subtitleField="listOptions && listOptions.subtitleField"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_listingComponentTitle"
             :titleField="listOptions && listOptions.titleField"
             :url="_url"
             :useRouterMode="useRouterMode"
@@ -230,7 +230,7 @@
                 (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_listingComponentTitle"
             :columns="kanbanFieldsComputed"
             :fields="_kanbanOptions.fields"
             :identity="identity"
@@ -411,7 +411,6 @@ import AwesomeKanban from '../table/AwesomeKanban';
 import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
 import ListingModeSelector from './parts/ListingModeSelector';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
-import { Portal, PortalTarget, MountingPortal } from 'portal-vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 
@@ -453,10 +452,7 @@ export default {
     AwesomeList,
     AwesomeKanban,
     AwesomeActionList,
-    ListingModeSelector,
-    Portal,
-    PortalTarget,
-    MountingPortal
+    ListingModeSelector
   },
   mixins: [
     uuidMixin,
@@ -782,6 +778,13 @@ export default {
       return '';
     },
 
+    _listingComponentTitle() {
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+      return this.$t('AwesomeCrud.labels.manageTitle') + ' ' + this._titlePlural;
+    },
+
     _name() {
       if (this._model && this._model.name) {
         return this.$te(this._model.name) ? this.$t(this._model.name) : this._model.name;
@@ -871,6 +874,9 @@ export default {
     },
 
     tableColumnsComputed() {
+      if (!this.schemaComputed) {
+        return [];
+      }
       return this.parseColumns(this.schemaComputed.properties);
     },
 
@@ -1045,6 +1051,9 @@ export default {
     },
 
     segmentFieldDefinitionComputed() {
+      if (!this.segmentField) {
+        return '';
+      }
       let field;
       if (this.formSchema && this.formSchema.fields) {
         field = this.formSchema.fields.find((f) => f.model === this.segmentField);
@@ -1332,7 +1341,9 @@ export default {
         return;
       }
 
-      this.mergedOptions.columns = this.parseColumns(this.schemaComputed.properties);
+      if (this.schemaComputed.properties) {
+        this.mergedOptions.columns = this.parseColumns(this.schemaComputed.properties);
+      }
 
       if (!this.mergedOptions.exportUrl) {
         this.mergedOptions.exportUrl = `${this._url}/export`;

@@ -42,7 +42,7 @@ export default {
         }
         if (error.errors) {
           if (error.errors && error.errors.length) {
-            message += '<br/>' + error.errors.map(e => e.message || e).join('<br/>');
+            message += '\n' + error.errors.map(e => e.message || e).join('<br/>');
           }
           else {
             message += JSON.stringify(error.errors);

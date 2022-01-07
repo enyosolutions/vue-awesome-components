@@ -102,15 +102,20 @@ import _ from 'lodash';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
+import relationMixin from '../../mixins/relationMixin';
+
 import KanbanList from '../misc/KanbanList';
+import AwesomeSegments from './parts/AwesomeSegments.vue';
+
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
 export default {
   name: 'AwesomeKanban',
   components: {
-    KanbanList
+    KanbanList,
+    AwesomeSegments
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiListMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin],
   props: {
     /**
      * The field to use to split the data
@@ -288,15 +293,26 @@ export default {
   },
 
   computed: {
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
     titleComputed() {
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.pluralName) {
+        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
           ? this.$t(this._model.singularName)
           : _.startCase(this._model.singularName);
+      }
+
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
       }
 
       if (this.identity) {

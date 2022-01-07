@@ -22,7 +22,7 @@
       "
     >
       <h3 class>
-        <slot name="aw-list-title">{{ _listTitle }}</slot>
+        <slot name="aw-list-title">{{ titleComputed }}</slot>
           <button
                 v-if="actions && actions.refresh"
                 class="btn btn-simple btn-sm"
@@ -374,15 +374,27 @@ export default {
   },
   computed: {
 
-    _listTitle() {
+    titleComputed() {
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.pluralName) {
+        return this.$te(this._model.pluralName)
+            ? this.$t(this._model.pluralName)
+            : _.startCase(this._model.pluralName);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
             ? this.$t(this._model.singularName)
             : _.startCase(this._model.singularName);
+      }
+
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name)
+            ? this.$t(this._model.name)
+            : _.startCase(this._model.name);
       }
 
       if (this.identity) {
@@ -604,6 +616,7 @@ export default {
         })
         return result;
       }
+      console.log('getItemAtPath', item, path)
       return _.get(item, path);
     },
 
