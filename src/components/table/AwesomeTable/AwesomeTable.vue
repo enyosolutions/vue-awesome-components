@@ -59,7 +59,7 @@
               <span class="slider round"></span>
             </label>
           </div>
-          <div class="float-right m-0 p-0">
+          <div class="aw-table-top-actions float-right m-0 p-0">
             <slot name="table-top-actions" />
 
             <popper
@@ -1140,6 +1140,14 @@ export default {
         * {
           color: #495057;
         }
+      }
+    }
+
+    .aw-table-top-actions {
+      display: flex;
+      flex-direction: row;
+      > * {
+        padding: 5px 10px;
       }
     }
   }
