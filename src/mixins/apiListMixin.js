@@ -39,7 +39,7 @@ export default {
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
 
-    title: { type: String, default: '' },
+    title: { type: [String, Boolean], default: '' },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
@@ -201,14 +201,15 @@ export default {
   },
 
   mounted() {
-    this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', () => {
-      this.refreshLocalData();
-    });
+    this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', this.refreshLocalData);
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
   },
-  beforeDestroy() { },
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh', this.refreshLocalData);
+
+  },
   methods: {
     startCase: _.startCase,
 

@@ -15,6 +15,14 @@ toaster.settings({
 export default {
   methods: {
     $awNotify(message) {
+      toaster.settings({
+        timeout: 5000,
+        resetOnHover: true,
+        icon: 'fontAwesome',
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX',
+        position: 'topRight',
+      });
 
       const payload = isObject(message)
         ? {
@@ -25,8 +33,21 @@ export default {
           icon: 'fa fa-info',
           title: message,
         };
+      const type = (payload && payload.type && toaster[payload.type]) || 'info';
+      console.log('izitoast', type, payload);
 
-      toaster[payload.type || 'info'](payload);
+      if (toaster[type]) {
+        toaster[type](payload || '');
+      }
+      else {
+        Swal.fire({
+          title: payload.title,
+          text: payload.message,
+          type: payload.type,
+          showCancelButton: false,
+        })
+        // alert(payload.title);
+      }
     },
 
     $awConfirm(message) {

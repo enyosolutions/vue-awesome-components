@@ -743,6 +743,9 @@ export default {
         return this.$te(this._model.pageTitle) ? this.$t(this._model.pageTitle) : this._model.pageTitle;
       }
 
+      if (this.title === false) {
+        return false;
+      }
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -779,6 +782,9 @@ export default {
     },
 
     _listingComponentTitle() {
+      if (this.title === false) {
+        return false;
+      }
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -1216,11 +1222,7 @@ export default {
     next((vm) => {});
   },
   beforeRouteLeave(to, from, next) {
-    next((vm) => {
-      if (vm && vm.closeModal) {
-        vm.closeModal();
-      }
-    });
+    next((vm) => {});
   },
   beforeRouteUpdate(to, from, next) {
     // if we are on the same component and coming from a detail list
@@ -1265,7 +1267,7 @@ export default {
     importFailedResponse(err) {
       Swal.fire({
         title: this.$t('common.messages.not_imported', {
-          title: this._title
+          title: this._name
         }),
         type: 'error',
         text: err.message || err
@@ -1277,7 +1279,7 @@ export default {
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
           title: this.$t('common.messages.no_data_imported', {
-            title: this._title
+            title: this._name
           }),
           type: 'warning'
         });
@@ -1287,7 +1289,7 @@ export default {
       if (e.properData.length > 0) {
         this.$awNotify({
           title: this.$t('common.messages.successfullyImported', {
-            title: this._title
+            title: this._name
           }),
           type: 'success'
         });
@@ -1302,7 +1304,7 @@ export default {
         setTimeout(() => {
           this.$awNotify({
             title: `${e.improperData.length} ${this.$t('common.messages.not_imported', {
-              title: this._title
+              title: this._name
             })}`,
             message,
             type: 'warning',
@@ -1618,9 +1620,17 @@ export default {
             this.$http
               .delete(`${this._selectedItemUrl}`)
               .then(() => {
+                this.selectedItem = null;
                 this.tableNeedsRefresh = true;
                 this.statsNeedsRefresh = true;
                 this.nestedCrudNeedsRefresh = true;
+                if (this.useRouterMode) {
+                  this.$router.replace(`${this.parentPath}?ts`);
+                }
+                const previousDisplayMode = this.getPreviousDisplayMode();
+                console.log('e', previousDisplayMode);
+                this.setDisplayMode(previousDisplayMode);
+
                 this.$forceUpdate();
               })
               .catch((err) => {
@@ -1663,12 +1673,7 @@ export default {
      * @param options = {context = create | edit }
      */
     onEditDisplayCancelled(item, { context }) {
-      const previousDisplayMode =
-        this.previousDisplayMode &&
-        this.previousDisplayMode !== context &&
-        this.previousDisplayMode !== this.displayMode
-          ? this.previousDisplayMode
-          : this.mergedOptions.initialDisplayMode;
+      const previousDisplayMode = this.getPreviousDisplayMode(context);
       if (this.useRouterMode) {
         let url = this.parentPath.replace('/edit', '');
         if (previousDisplayMode !== 'view') {
@@ -1926,6 +1931,14 @@ export default {
       if (mode !== oldMode) {
         this.displayMode = mode;
       }
+    },
+
+    getPreviousDisplayMode(context) {
+      return this.previousDisplayMode &&
+        this.previousDisplayMode !== context &&
+        this.previousDisplayMode !== this.displayMode
+        ? this.previousDisplayMode
+        : this.mergedOptions.initialDisplayMode;
     }
   },
   beforeDestroy() {

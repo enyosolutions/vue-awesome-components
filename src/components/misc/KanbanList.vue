@@ -133,7 +133,7 @@ export default {
     },
 
     title: {
-      type: String,
+      type: [String, Boolean],
       default: 'Title'
     },
 

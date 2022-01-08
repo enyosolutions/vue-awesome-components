@@ -9,12 +9,14 @@
       :key="refresh"
       :image-src="value"
       @change="onChangeImage"
-    />
+    >
+    </base64-upload>
+
     <div class="image-picker-actions" v-if="value">
-      <button @click.prevent="openImageInTab" type="button" class="btn btn-alt-style btn-sm p-2">
+      <button @click.prevent="openImageInTab" type="button" class="btn btn-sm btn-alt-style btn-sm p-2">
         <i class="fa fa-external-link"></i>
       </button>
-      <button @click.prevent="removeImage" type="button" class="btn btn-alt-style btn-sm p-2">
+      <button @click.prevent="removeImage" type="button" class="btn btn-sm btn-alt-style btn-sm p-2">
         <i class="fa fa-trash"></i>
       </button>
     </div>
@@ -81,6 +83,7 @@ export default {
 }
 .aw-form-field-image-picker {
   position: relative;
+  cursor: pointer;
   .image-picker-actions {
     position: absolute;
     top: 0;

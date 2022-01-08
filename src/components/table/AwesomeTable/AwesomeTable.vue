@@ -270,7 +270,7 @@
             @on-cell-click="clickOnLine"
             @on-selected-rows-change="onSelectionChanged"
           >
-            <div slot="selected-row-actions">
+            <div slot="selected-row-actions" class="">
               <template v-if="customBulkActions">
                 <AwesomeActionList
                   :actions="customBulkActions"
@@ -283,7 +283,7 @@
               </template>
               <button
                 v-if="_actions.bulkDelete && _actions.delete"
-                class="btn btn-sm btn-primary btn-simple"
+                class="btn btn-sm btn-primary ml-2 mr-2"
                 @click="$emit('bulkDelete', selectedRows)"
                 type="button"
               >
@@ -292,7 +292,7 @@
               </button>
               <button
                 v-if="_actions.bulkEdit && _actions.edit"
-                class="btn btn-sm btn-primary btn-simple"
+                class="btn btn-sm btn-primary"
                 @click="$emit('bulkEdit', selectedRows)"
                 type="button"
               >
@@ -360,7 +360,7 @@
                   </slot>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
-                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon"
+                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
                     @click="$emit('view', props.row)"
                     type="button"
                   >
@@ -368,7 +368,7 @@
                   </button>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
-                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon"
+                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
                     @click="$emit('edit', props.row)"
                     type="button"
                   >
@@ -476,7 +476,7 @@ export default {
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
-    title: { type: String, default: '' },
+    title: { type: [String, Boolean], default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
 
@@ -621,6 +621,9 @@ export default {
     },
 
     _tableTitle() {
+      if (this.title === false) {
+        return '';
+      }
       return (
         this.title ||
         (this.$te && this.$te('app.labels.' + this.entity)

@@ -21,7 +21,7 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h3 class>
+      <h3 class="mb-0">
         <slot name="aw-list-title">{{ titleComputed }}</slot>
           <button
                 v-if="actions && actions.refresh"
@@ -124,7 +124,7 @@
       <p class="card-category">
         <slot name="list-subtitle"/>
       </p>
-      <div class="card-body">
+      <div class="">
         <div class="row">
           <div class="col-12">
                <awesome-filter
@@ -161,7 +161,7 @@
         >
           <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
             <div
-                class="card mb-3 aw-list-item flex-fill shadow"
+                class="card mb-3 aw-list-item flex-fill"
                 :class="itemClasses"
                 :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
               'height': _itemHeight
@@ -375,6 +375,9 @@ export default {
   computed: {
 
     titleComputed() {
+      if (this.title === false) {
+        return '';
+      }
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -616,7 +619,6 @@ export default {
         })
         return result;
       }
-      console.log('getItemAtPath', item, path)
       return _.get(item, path);
     },
 

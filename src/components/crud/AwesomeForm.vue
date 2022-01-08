@@ -1,7 +1,7 @@
 <template>
   <div class="content aw-form" :class="'aw-form-' + identity">
     <div class="container-fluid">
-      <div class="row">
+      <div class="row m-0">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
           <div class="text-left">
             <!-- START OF MODAL -->
@@ -932,15 +932,16 @@ export default {
     },
 
     _name() {
-      if (this._model && this._model.name) {
-        if (this.$te(this._model.name)) {
-          const t = this.$t(this._model.name);
+      const name = this.name || (this._model && this._model.name);
+      if (name) {
+        if (this.$te(name)) {
+          const t = this.$t(name);
           if (typeof t === 'string') {
             return t;
           }
         }
         {
-          return startCase(this._model.name);
+          return startCase(name);
         }
       }
 
@@ -952,8 +953,9 @@ export default {
       return '';
     },
     _namePlural() {
-      if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
+      const namePlural = this.namePlural || (this._model && this._model.namePlural);
+      if (namePlural) {
+        return this.$te(namePlural) ? this.$t(namePlural) : startCase(namePlural);
       }
 
       if (this.identity) {

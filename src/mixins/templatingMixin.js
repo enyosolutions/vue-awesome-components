@@ -16,7 +16,7 @@ export default {
       return merge({
         parent: this.parent,
         context: this,
-        currentItem: this.selectedItem,
+        currentItem: this.selectedItem || data,
         items: this.items,
         $state: this.$store && this.$store.state,
         userHasRole: this.userHasRole,

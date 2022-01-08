@@ -43,6 +43,7 @@ import awesomeDisplayMixin from '../../../mixins/displayMixin';
 import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../../mixins/apiConfigMixin';
 import i18nMixin from '../../../mixins/i18nMixin';
+import templatingMixin from '../../../mixins/templatingMixin';
 
 export default {
   name: 'DisplayRelation',
@@ -93,11 +94,7 @@ export default {
     getLabel(value) {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
-    templateParser(source, data) {
-      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-      const compiled = _.template(source);
-      return compiled(data);
-    },
+
     formatLabel(item, passedLabel = null) {
       let field = passedLabel || this._relationLabel;
       let label = '';
@@ -115,7 +112,7 @@ export default {
         return;
       }
 
-      if (this._displayLabelCache[value]) {
+      if (this._displayLabelCache[value] && this._displayLabelCache[value] !== value) {
         return this._displayLabelCache[value];
       }
 
@@ -134,19 +131,25 @@ export default {
         return;
       }
 
-      const result = item[this.relationLabel];
+      const result = item[this.relationLabel] || this.templateParser(this.relationLabel, item);
       if (result) {
         this.$set(this._displayLabelCache, value, result);
       }
-      return result;
+      return result || value;
     },
 
     getApiLabel(value) {
-      if (!this.relationUrl || !value || !this.relationLabel) {
-        return _.isObject(value) && this.relationLabel && value[this.relationLabel] ? value[this.relationLabel] : value;
+      if (!this.relationUrl && value && this.relationLabel) {
+        const computedLocalValue =
+          _.isObject(value) && this.relationLabel
+            ? value[this.relationLabel] || this.templatingMixin(this.relationLabel, value)
+            : null;
+        if (computedLocalValue) {
+          return computedLocalValue;
+        }
       }
       const url = `${this.relationUrl}/${value}`;
-      if (value && this._displayLabelCache[url]) {
+      if (value && this._displayLabelCache[url] && this._displayLabelCache[url] !== value) {
         return this._displayLabelCache[url];
       }
 
@@ -160,13 +163,15 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
+
           const result = `${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }
           return result;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.warn('getApiLabel result', this.relationLabel, err.message);
           this.$set(this._displayLabelCache, url, value);
         });
       this.$set(this._displayLabelCache, url, value);

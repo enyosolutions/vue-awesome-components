@@ -50,7 +50,7 @@ export default {
       default: () => null
     },
 
-    title: { type: String, default: '' },
+    title: { type: [String, Boolean], default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
 
@@ -144,6 +144,9 @@ export default {
 
   methods: {
     getSegmentLabel(segment) {
+      if (!segment) {
+        return '';
+      }
       let label = segment.title || segment.label;
       if (label) {
         return label;
@@ -155,6 +158,9 @@ export default {
     },
 
     getSegmentKey(segment) {
+      if (!segment) {
+        return '';
+      }
       let key = segment.model || segment.field || segment.key || segment.id;
       if (key) {
         return key;
@@ -166,6 +172,9 @@ export default {
     },
 
     onClickOnSegment(segment) {
+      if (!segment) {
+        return '';
+      }
       this.selectedSegment = this.getSegmentKey(segment);
       this.$emit('aw-segment-changed', this.selectedSegment, segment);
       this.$emit('change', {
