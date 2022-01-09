@@ -170,8 +170,6 @@ export default {
     } else {
       this.onSearch(this.model[this.schema && this.schema.model] || '', () => null);
     }
-
-    console.log('this.awesomeForm', this.awesomeForm);
   },
   data() {
     return {

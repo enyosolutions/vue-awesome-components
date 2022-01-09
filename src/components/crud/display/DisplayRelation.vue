@@ -43,7 +43,6 @@ import awesomeDisplayMixin from '../../../mixins/displayMixin';
 import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../../mixins/apiConfigMixin';
 import i18nMixin from '../../../mixins/i18nMixin';
-import templatingMixin from '../../../mixins/templatingMixin';
 
 export default {
   name: 'DisplayRelation',

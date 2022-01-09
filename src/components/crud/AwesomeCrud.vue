@@ -1628,7 +1628,6 @@ export default {
                   this.$router.replace(`${this.parentPath}?ts`);
                 }
                 const previousDisplayMode = this.getPreviousDisplayMode();
-                console.log('e', previousDisplayMode);
                 this.setDisplayMode(previousDisplayMode);
 
                 this.$forceUpdate();

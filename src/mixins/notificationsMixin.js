@@ -34,12 +34,15 @@ export default {
           title: message,
         };
       const type = (payload && payload.type && toaster[payload.type]) || 'info';
-      console.log('izitoast', type, payload);
+
 
       if (toaster[type]) {
         toaster[type](payload || '');
       }
       else {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('missing izitoast', type, payload);
+        }
         Swal.fire({
           title: payload.title,
           text: payload.message,
