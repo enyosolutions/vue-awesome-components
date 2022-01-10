@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "pre-commit": "lint-staged",
+    "precommit": "lint-staged",
     "api": "json-server examples/data/db.js --port 4444 --routes examples/routes.json ",
     "build": "vue-cli-service build",
     "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es src/index.js --report",
@@ -82,7 +83,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
     "execa": "^5.0.0",
-    "husky": "^4.3.0",
+    "husky": "^7.0.4",
     "jquery": "^3.6.0",
     "json-schema-test-data-generator": "https://github.com/enyosolutions-team/json-schema-test-data-generator",
     "json-schema-to-openapi-schema": "^0.4.0",

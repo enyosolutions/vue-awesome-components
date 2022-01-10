@@ -84,7 +84,7 @@ export default {
       }
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ['string', 'number', 'boolean'];
+        const possibleTypes = ['string', 'number', 'boolean', 'array'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];

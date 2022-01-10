@@ -5,6 +5,7 @@
       <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column  pl-0">
           <select
+            ref="filterField"
             class="form-control btn-outline-primary"
             :placeholder="Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields')"
             @change="selectFilter"
@@ -162,6 +163,7 @@ export default {
           this.currentField = {};
           this.currentValue = '';
           this.currentOperator = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
+          this.$refs['filterField'] = '';
         }
         this.parseFilter(this.selectedFilters);
       }
