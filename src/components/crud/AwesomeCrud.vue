@@ -1,4 +1,4 @@
-<template>
+ra<template>
   <div class="content aw-crud" :class="`aw-crud-mode-${displayMode} aw-crud-${identity}`">
     <div class="container-fluid">
       <div class="row">
@@ -249,6 +249,7 @@
             @removeList="onRemoveList"
             @listChanged="onListChanged"
             @cardChanged="onCardChanged"
+            @cardAdded="onCardAdded"
             @cardClicked="onCardClicked"
           >
             <template slot="kanban-header-left">
@@ -869,7 +870,7 @@ export default {
         return columns;
       }
       const hasFielddMapping =
-        this._kanbanOptions && this._kanbanOptions.fields && Object.values(this._kanbanOptions.fields).some((f) => f);
+        this._kanbanOptions && (this._kanbanOptions.titleField || this._kanbanOptions.subtitleField);
       if (this.model && this.model.displayField && !hasFielddMapping) {
         const displayField = allColumns.find((c) => c.field === this.model.displayField);
         if (displayField) {
@@ -1230,6 +1231,11 @@ export default {
       //this.onViewDisplayCancelled();
     }
     next();
+  },
+
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
+    this.scrollTarget.removeEventListener('scroll', this.handleScroll);
   },
 
   methods: {
@@ -1660,7 +1666,8 @@ export default {
 
     onListChanged(item) {},
 
-    onCardChanged(item, listTitle) {},
+    onCardChanged(item, list) {},
+    onCardAdded({ element, newIndex }, list) {},
 
     onCardClicked(item) {
       this.$emit('on-kanban-item-clicked', item);
@@ -1939,10 +1946,6 @@ export default {
         ? this.previousDisplayMode
         : this.mergedOptions.initialDisplayMode;
     }
-  },
-  beforeDestroy() {
-    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
-    this.scrollTarget.removeEventListener('scroll', this.handleScroll);
   }
 };
 </script>

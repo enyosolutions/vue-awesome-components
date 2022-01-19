@@ -49,7 +49,7 @@
           >
             <KanbanList
               v-for="(list, index) in localLists"
-              :id="list.id || list.title"
+              :id="list.id"
               :key="index"
               :title="list.title"
               :items="list.content"
@@ -60,6 +60,13 @@
               :scroll-sensitivity="options.scrollSensitivity"
               :disabled="!options.moveCard"
               :custom-list-actions="actions.customListActions"
+              :imageField="imageField"
+              :titleField="titleField"
+              :subtitleField="subtitleField"
+              :descriptionField="descriptionField"
+              :usersField="usersField"
+              :labelsField="labelsField"
+              :display-labels-cache="displayLabelsCache"
               @remove-list="onRemoveList"
               @customListAction="onCustomListAction"
               @change="onCardChanged"
@@ -103,6 +110,7 @@ import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import relationMixin from '../../mixins/relationMixin';
+import listCardFormatMixin from '../../mixins/listCardFormatMixin';
 
 import KanbanList from '../misc/KanbanList';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
@@ -115,13 +123,27 @@ export default {
     KanbanList,
     AwesomeSegments
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin, listCardFormatMixin],
   props: {
     /**
      * The field to use to split the data
      */
     splittingField: {
       type: [String, Object]
+    },
+    /**
+     * The field to use to sort the data
+     */
+    sortField: {
+      type: [String, Object]
+    },
+    /**
+     * The direction to use to sort the data
+     */
+    sortOrder: {
+      type: String,
+      default: 'asc',
+      validator: (value) => ['asc', 'desc'].includes(value)
     },
     /**
      * List of accepted values for splitting the data
@@ -162,19 +184,29 @@ export default {
         refresh: true,
         addList: true
       })
+    },
+
+    displayOrphansList: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
     localLists: [], // Static list to test
     isAddingList: false,
     newListName: '',
-    isRefreshing: false
+    isRefreshing: false,
+    displayLabelsCache: {}
   }),
   methods: {
     addList() {
       if (this.newListName) {
         if (!_.some(this.localLists, { title: this.newListName })) {
-          this.localLists.push({ title: this.newListName, content: [] });
+          this.localLists.push({
+            id: this.newListName,
+            title: this.newListName,
+            content: []
+          });
           this.newListName = '';
           this.isAddingList = false;
         }
@@ -208,8 +240,9 @@ export default {
     onCardRemoved(item, list) {
       this.$emit('cardRemoved', item, list);
     },
-    onCardAdded(item, list) {
-      this.$emit('cardAdded', item, list);
+    onCardAdded(payload, list) {
+      this.$emit('cardAdded', payload, list);
+      this.changeItemSplittingValue(payload, list);
     },
     onCardMoved(item, list) {
       this.$emit('cardAdded', item, list);
@@ -224,7 +257,9 @@ export default {
         this.localLists = _.cloneDeep(this.lists);
       } else {
         if (this.data && this.data.length) {
-          const list = [{ title: this.entity, content: _.cloneDeep(this.data) }];
+          const list = this.displayOrphansList
+            ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
+            : [];
           this.localLists = _.cloneDeep(list);
         }
       }
@@ -242,23 +277,24 @@ export default {
               return obj[this.splittingField] === filterValue;
             });
           });
+
           content = _.flatten([...content]);
-          if (!_.some(this.localLists, { title: filterValue.toString() })) {
-            this.localLists.push({ title: filterValue.toString(), content });
+          if (!_.some(this.localLists, { id: filterValue, title: filterValue.toString() })) {
+            this.localLists.push({ id: filterValue, title: filterValue.toString(), content });
           }
         });
       }
     },
 
     orderCardInLists() {
-      const sortOrder = this.options.sortOrder ? this.options.sortOrder.toLowerCase() : 'desc';
-      if (this.options.sortField) {
+      const sortOrder = this.sortOrder ? this.sortOrder.toLowerCase() : 'desc';
+      if (this.sortField) {
         this.localLists.forEach((localList) => {
           if (localList.content.length > 1) {
             localList.content = _.orderBy(
               localList.content,
               (item) => {
-                return item[this.options.sortField];
+                return item[this.sortField];
               },
               [sortOrder]
             );
@@ -279,6 +315,17 @@ export default {
           field.fieldOptions.values ||
           field.fieldOptions.options)
       );
+    },
+
+    async changeItemSplittingValue({ element, newIndex }, list) {
+      alert(list.id);
+      element[this.splittingField] = list.id === 'unsorted' || list.id === undefined ? null : list.id;
+      if (this.sortField) {
+        element[this.sortField] = newIndex;
+      }
+
+      await this.$http.put(`${this._url}/${element[this.primaryKey]}`, element);
+      this.getItems();
     }
   },
   created() {

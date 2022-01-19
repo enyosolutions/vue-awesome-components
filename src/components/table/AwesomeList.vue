@@ -170,29 +170,29 @@
               <img
                   class="card-img-top"
                   v-if="imageField"
-                  :src="getItemAtPath(item, imageField)"
-                  :alt="getItemAtPath(item, titleField)"
+                  :src="getItemProperty(item, imageField)"
+                  :alt="getItemProperty(item, titleField)"
                   :class="imageClasses"
                   :style="imageStyles"
               />
               <div class="card-body">
                 <h4 class="card-title aw-list-item-title" style=""
 
-                v-if="getItemAtPath(item, titleField)"
-                v-html="getItemAtPath(item, titleField)"
+                v-if="getItemProperty(item, titleField)"
+                v-html="getItemProperty(item, titleField)"
                 ></h4>
-                <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)"
-                v-html="getItemAtPath(item, subtitleField)"
+                <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)"
+                v-html="getItemProperty(item, subtitleField)"
                 ></h6>
 
                 <h3 class="card-title aw-list-item-title" style=""
                     v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
                   {{ item[_modelDisplayField] }}</h3>
 
-                <p class="card-text aw-list-item-description" v-if="getItemAtPath(item, descriptionField)">
+                <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
                   <AwesomeDisplay
                       v-bind="getField(descriptionField)"
-                      :value="getItemAtPath(item, descriptionField)"
+                      :value="getItemProperty(item, descriptionField)"
                   >
                   </AwesomeDisplay>
                 </p>
@@ -260,9 +260,10 @@ import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
+import templatingMixin from '../../mixins/templatingMixin';
+
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
-import templatingMixin from '../../mixins/templatingMixin';
 
 export default {
   name: 'AwesomeList',
@@ -611,16 +612,6 @@ export default {
       });
     },
 
-    getItemAtPath(item, path) {
-      if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
-        let result = this.templateParseText(path, {currentItem: item});
-        ['p', 'br', 'hr', 'div', 'span', 'img', 'label', 'ul', 'li', 'pre'].forEach (tag => {
-       //   result = result.replace(new RegExp('<(?!' + tag + '\\s?).*/?>', 'g'), '');
-        })
-        return result;
-      }
-      return _.get(item, path);
-    },
 
     localSearch(items, search) {
       return items.filter(item => {

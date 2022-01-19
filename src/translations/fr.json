@@ -17,7 +17,8 @@
       "add": "Ajouter",
       "listName": "Nom de la liste",
       "removeList": "Supprimer la liste",
-      "noData": "Pas de champs sélectionnés"
+      "noData": "Pas de champs sélectionnés",
+      "unsorted": "Non triés."
     },
     "buttons": {
       "filters": "Filtres",

@@ -19,7 +19,7 @@ import VueFormGenerator from '../../form/form-generator';
 import Base64Upload from '../../form/Base64Upload';
 
 export default {
-  name: 'field-FileInput',
+  name: 'field-filePicker',
   components: { Base64Upload },
   mixins: [VueFormGenerator.abstractField],
   data() {

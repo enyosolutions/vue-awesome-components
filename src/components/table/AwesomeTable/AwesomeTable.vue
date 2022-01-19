@@ -340,7 +340,7 @@
                   v-bind="props.column"
                   :apiResponseConfig="apiResponseConfig"
                   :apiRequestHeaders="apiRequestHeaders"
-                  :value="getItemAtPath(props.row, props.column.field)"
+                  :value="getItemProperty(props.row, props.column.field)"
                   :display-label-cache="displayLabelCache"
                   class="pointer text-avoid-overflow"
                 >
@@ -476,7 +476,6 @@ export default {
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
-    title: { type: [String, Boolean], default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
 
@@ -1079,7 +1078,7 @@ export default {
       return item[column.toLowerCase()];
     },
 
-    getItemAtPath: _.get
+    getItemProperty: _.get
   }
 };
 </script>
