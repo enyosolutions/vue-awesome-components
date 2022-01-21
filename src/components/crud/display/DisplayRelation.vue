@@ -6,6 +6,9 @@
           <span v-if="value" class="badge badge-info pointer" @click="onClick">
             {{ getLabel(value) }}
           </span>
+          <span v-if="value" class="copy-link" @click="copy(value)">
+            &nbsp; <i class="fa fa-clone text-info"></i>
+          </span>
           <router-link
             v-if="value && !onClickUrl"
             :to="'/app/' + kebabCase(relation) + '/' + value"
@@ -24,10 +27,6 @@
           >
             &nbsp; <i class="fa fa-external-link text-info"></i>
           </router-link>
-
-          <span v-if="value" class="copy-link" @click="copy(value)">
-            &nbsp; <i class="fa fa-clone text-info"></i>
-          </span>
         </div>
       </template>
     </template>

@@ -33,7 +33,7 @@ export default {
           icon: 'fa fa-info',
           title: message,
         };
-      const type = (payload && payload.type && toaster[payload.type]) || 'info';
+      const type = payload && payload.type && toaster[payload.type] ? type : 'info';
 
 
       if (toaster[type]) {

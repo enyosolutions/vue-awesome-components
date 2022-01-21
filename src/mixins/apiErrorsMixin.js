@@ -22,10 +22,10 @@ export default {
       }
       const errorBody = (err.response && err.response.data) || err.data || err;
       const subErrors = errorBody && errorBody.errors;
-      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `</li>${this.$te(e) ? this.$t(e) : e}</li>`).join('') : '';
+      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `${this.$te(e) ? this.$t(e) : e}\n`).join('') : '';
       this.$awNotify({
         title: message,
-        message: '<ul>' + subErrorsHtml + '</ul>',
+        message: subErrorsHtml,
         type: 'warning',
         timer: 3000
       });

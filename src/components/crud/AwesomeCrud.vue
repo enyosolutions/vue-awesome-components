@@ -400,6 +400,7 @@ import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import uuidMixin from '../../mixins/uuidMixin';
+import modelInterfaceMixin from '../../mixins/modelInterfaceMixin';
 // import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
@@ -463,7 +464,8 @@ export default {
     awesomeFormMixin,
     relationMixin,
     parseJsonSchema,
-    awEmitMixin
+    awEmitMixin,
+    modelInterfaceMixin
     // notificationsMixin
   ],
   props: {
@@ -479,7 +481,7 @@ export default {
     identity: {
       type: String,
       required: true,
-      note: 'Deprecated use identity'
+      note: 'Unique collection identifier'
     },
     model: {
       type: Object,
@@ -1008,7 +1010,13 @@ export default {
           }
         }
       }
-
+      if (!merged.titleField && (!merged.fields || !merged.fields.length)) {
+        if (this.displayField) {
+          merged.titleField = this._model.displayField;
+        } else if (this._model && this._model.displayField) {
+          merged.titleField = this._model.displayField;
+        }
+      }
       return merged;
     },
 
