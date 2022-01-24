@@ -2,12 +2,13 @@
   <div class="aw-kanban aw-listing">
     <div class="float-left col-6 pl-0">
       <slot name="kanban-header-left"></slot>
-      <div class="card aw-segment-table-wrapper" v-show="segmentFieldDefinitionComputed">
+      <div class="card aw-segment-table-wrapper d-none" v-show="segmentFieldDefinitionComputed">
         <awesome-segments
           :field="segmentFieldDefinitionComputed"
           :apiRequestConfig="apiRequestConfig"
           :apiResponseConfig="apiResponseConfig"
           @change="onSegmentChange"
+          @segment-list-changed="onSegmentListChanged"
         />
       </div>
     </div>
@@ -76,7 +77,7 @@
               @cardMoved="onCardMoved"
             ></KanbanList>
           </Draggable>
-          <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
+          <div v-if="actions && actions.addKanbanList" class="card add-list" @click.stop="editForm">
             <div class="card-body">
               <div v-if="!isAddingList" class="card-text">
                 <i class="fa fa-plus"></i>
@@ -111,6 +112,7 @@ import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import relationMixin from '../../mixins/relationMixin';
 import listCardFormatMixin from '../../mixins/listCardFormatMixin';
+import { segmentMixin } from '../../mixins/';
 
 import KanbanList from '../misc/KanbanList';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
@@ -123,7 +125,7 @@ export default {
     KanbanList,
     AwesomeSegments
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin, listCardFormatMixin],
+  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin, listCardFormatMixin, segmentMixin],
   props: {
     /**
      * The field to use to split the data
@@ -196,8 +198,90 @@ export default {
     isAddingList: false,
     newListName: '',
     isRefreshing: false,
-    displayLabelsCache: {}
+    displayLabelsCache: {},
+    splittingFieldApiValues: []
   }),
+
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.Draggable) {
+      /* eslint-disable-next-line */
+      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
+    }
+  },
+  mounted() {
+    this.handleLists();
+  },
+
+  computed: {
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
+    titleComputed() {
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.pluralName) {
+        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
+      }
+
+      if (this._model && this._model.singularName) {
+        return this.$te(this._model.singularName)
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
+      }
+
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return '';
+    },
+    splittingValuesComputed() {
+      return this.splittingValues && Array.isArray(this.splittingValues) && this.splittingValues.length
+        ? this.splittingValues
+        : this.splittingFieldApiValues;
+    },
+    segmentFieldDefinitionComputed() {
+      if (!this.splittingField) {
+        return '';
+      }
+      if (this.columns) {
+        const field = this.columns.find((f) => f.field === this.splittingField);
+        if (field) {
+          return field;
+        }
+      }
+      return '';
+    }
+  },
+
+  watch: {
+    lists() {
+      this.handleLists();
+    },
+    data() {
+      this.handleLists();
+    },
+    splittingField() {
+      this.handleLists();
+    },
+    splittingValuesComputed() {
+      this.handleLists();
+    },
+    'options.sortField'() {
+      this.orderCardInLists();
+    },
+    'options.sortOrder'() {
+      this.orderCardInLists();
+    }
+  },
   methods: {
     addList() {
       if (this.newListName) {
@@ -268,19 +352,33 @@ export default {
     },
 
     filterLists() {
-      if (this.splittingField && this.splittingValues && this.splittingValues.length) {
-        this.splittingValues.forEach((filterValue) => {
+      if (this.splittingField && this.splittingValuesComputed && this.splittingValuesComputed.length) {
+        this.splittingValuesComputed.forEach((filterValue) => {
+          let id = filterValue,
+            title = filterValue.toString();
+          if (typeof filterValue === 'object') {
+            id =
+              (this.segmentFieldDefinitionComputed.relation &&
+                filterValue[this.segmentFieldDefinitionComputed.relationKey]) ||
+              filterValue.id ||
+              filterValue;
+            title =
+              (this.segmentFieldDefinitionComputed.relation &&
+                filterValue[this.segmentFieldDefinitionComputed.relationLabel]) ||
+              filterValue.label ||
+              filterValue;
+          }
           let content = [];
           this.localLists.forEach((localList) => {
-            content.push(_.filter(localList.content, [this.splittingField, filterValue]));
+            content.push(_.filter(localList.content, [this.splittingField, id]));
             _.remove(localList.content, (obj) => {
-              return obj[this.splittingField] === filterValue;
+              return obj[this.splittingField] === id;
             });
           });
 
           content = _.flatten([...content]);
-          if (!_.some(this.localLists, { id: filterValue, title: filterValue.toString() })) {
-            this.localLists.push({ id: filterValue, title: filterValue.toString(), content });
+          if (!_.some(this.localLists, { id, title })) {
+            this.localLists.push({ id, title, content });
           }
         });
       }
@@ -326,69 +424,9 @@ export default {
 
       await this.$http.put(`${this._url}/${element[this.primaryKey]}`, element);
       this.getItems();
-    }
-  },
-  created() {
-    // Check if the component is loaded globally
-    if (!this.$root.$options.components.Draggable) {
-      /* eslint-disable-next-line */
-      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
-    }
-  },
-  mounted() {
-    this.handleLists();
-  },
-
-  computed: {
-    _model() {
-      return this.model || this.getModelFromStore(this.identity);
     },
-    titleComputed() {
-      if (this.title) {
-        return this.$te(this.title) ? this.$t(this.title) : this.title;
-      }
-
-      if (this._model && this._model.pluralName) {
-        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
-      }
-
-      if (this._model && this._model.singularName) {
-        return this.$te(this._model.singularName)
-          ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
-      }
-
-      if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
-      }
-
-      if (this.identity) {
-        return this.$te(`app.labels.${this.identity}`)
-          ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
-      }
-      return '';
-    }
-  },
-
-  watch: {
-    lists() {
-      this.handleLists();
-    },
-    data() {
-      this.handleLists();
-    },
-    splittingField() {
-      this.handleLists();
-    },
-    splittingValues() {
-      this.handleLists();
-    },
-    'options.sortField'() {
-      this.orderCardInLists();
-    },
-    'options.sortOrder'() {
-      this.orderCardInLists();
+    onSegmentListChanged(values) {
+      this.splittingFieldApiValues = values;
     }
   }
 };

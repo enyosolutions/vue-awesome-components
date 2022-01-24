@@ -115,8 +115,11 @@ export default {
     },
 
     getItemProperty(item, path) {
+      if (!item) {
+        return '';
+      }
       if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
-        let result = this.templateParseText(path, { currentItem: item });
+        let result = this.templateParseText(path, { ...item, currentItem: item });
         return result;
       }
       return _.get(item, path);

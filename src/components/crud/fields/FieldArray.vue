@@ -68,11 +68,11 @@
   </div>
 </template>
 <script>
-import VEC from 'vue-aw-components';
+import VueFormGenerator from '../../form/form-generator';
 
 export default {
   name: 'field-array',
-  mixins: [VEC.abstractField],
+  mixins: [VueFormGenerator.abstractField],
   components: {},
   data() {
     return {

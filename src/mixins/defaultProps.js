@@ -37,8 +37,8 @@ export const defaultKanbanOptions = {
     users: '',
   },
   splittingField: '',
-  splittingValues: [],
+  splittingValues: null,
   customListActions: [],
   sortField: '',
-  sortOrder: 'DESC'
+  sortOrder: 'desc'
 };

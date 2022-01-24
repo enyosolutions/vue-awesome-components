@@ -10,7 +10,7 @@
           >{{ $t('AwesomeDefault.messages.all') }}</a
         >
       </li>
-      <li class="nav-item" v-for="(segment, idx) in _segments" :key="idx">
+      <li class="nav-item" v-for="(segment, idx) in _segmentsList" :key="idx">
         <a
           @click="onClickOnSegment(segment)"
           class="nav-link"
@@ -39,11 +39,12 @@ import i18nMixin from '../../../mixins/i18nMixin';
 import awEmitMixin from '../../../mixins/awEmitMixin';
 import uuidMixin from '../../../mixins/uuidMixin';
 import templatingMixin from '../../../mixins/templatingMixin';
+import { segmentMixin } from '../../../mixins/';
 
 export default {
   name: 'AwesomeSegments',
   components: {},
-  mixins: [uuidMixin, i18nMixin, awEmitMixin, templatingMixin],
+  mixins: [uuidMixin, i18nMixin, awEmitMixin, templatingMixin, segmentMixin],
   props: {
     field: {
       type: [Object, String],
@@ -98,7 +99,7 @@ export default {
     };
   },
   computed: {
-    _segments() {
+    _segmentsList() {
       const configSegments =
         _.get(this.field, 'fieldOptions.filterDropdownItems') ||
         _.get(this.field, 'enum') ||
@@ -118,7 +119,11 @@ export default {
       return url || '';
     }
   },
-  watch: {},
+  watch: {
+    _segmentsList() {
+      this.$emit('segment-list-changed', this._segmentsList);
+    }
+  },
   created() {
     if (!this.$t) {
       this.$t = (str) => {
@@ -143,34 +148,6 @@ export default {
   beforeDestroy() {},
 
   methods: {
-    getSegmentLabel(segment) {
-      if (!segment) {
-        return '';
-      }
-      let label = segment.title || segment.label;
-      if (label) {
-        return label;
-      }
-      if (typeof segment === 'string' && segment.indexOf('|') > -1) {
-        return segment.split('|')[1];
-      }
-      return _.startCase(segment.field || segment.name || _.isString(segment) ? segment : this.getSegmentKey(segment));
-    },
-
-    getSegmentKey(segment) {
-      if (!segment) {
-        return '';
-      }
-      let key = segment.model || segment.field || segment.key || segment.id;
-      if (key) {
-        return key;
-      }
-      if (typeof segment === 'string' && segment.indexOf('|') > -1) {
-        return segment.split('|')[0];
-      }
-      return segment;
-    },
-
     onClickOnSegment(segment) {
       if (!segment) {
         return '';

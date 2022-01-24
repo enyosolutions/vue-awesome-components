@@ -11,6 +11,7 @@ export default {
         'url',
         'html',
         'object',
+        'array',
         'date',
         'relation',
         'checkbox',

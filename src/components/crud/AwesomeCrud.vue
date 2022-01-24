@@ -243,7 +243,7 @@ ra<template>
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :useRouterMode="useRouterMode"
             :options="_kanbanOptions.options"
-            :splittingField="_kanbanOptions.splittingField || segmentField"
+            :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
@@ -262,6 +262,17 @@ ra<template>
                 :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
                 @customAction="onCustomAction"
               />
+              <button
+                v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
+                :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
+                :disabled="!canShowCreateButton"
+                class="btn btn-sm btn-outline-primary aw-button-add"
+                @click.prevent="goToCreatePage()"
+                type="button"
+              >
+                <i class="fa fa-plus text-primary" />
+                {{ $t('AwesomeCrud.labels.createNew') }}
+              </button>
             </template>
             <template slot="top-actions">
               <template v-if="_customTitleBarActions">
@@ -731,7 +742,7 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: 'AwesomeCrud'
       },
-      supportedDataDisplayModes: ['table', 'list', 'kanban'],
+      supportedListingDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
       itemsList: [],
       isSideformSticky: false,
@@ -871,15 +882,7 @@ export default {
         columns = _.flatten(columns);
         return columns;
       }
-      const hasFielddMapping =
-        this._kanbanOptions && (this._kanbanOptions.titleField || this._kanbanOptions.subtitleField);
-      if (this.model && this.model.displayField && !hasFielddMapping) {
-        const displayField = allColumns.find((c) => c.field === this.model.displayField);
-        if (displayField) {
-          return [displayField];
-        }
-      }
-      return [];
+      return allColumns;
     },
 
     tableColumnsComputed() {
@@ -1017,6 +1020,9 @@ export default {
           merged.titleField = this._model.displayField;
         }
       }
+      if (!merged.splittingField) {
+        merged.splittingField = this.segmentField;
+      }
       return merged;
     },
 
@@ -1042,7 +1048,7 @@ export default {
     },
 
     showItemsListSectionComputed() {
-      return this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
+      return this.supportedListingDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
     },
 
     currentItemIndex() {
@@ -1127,7 +1133,7 @@ export default {
       return (
         this.canShowCreateButton &&
         !this._isANestedDetailView &&
-        (this.supportedDataDisplayModes.includes(this.displayMode) ||
+        (this.supportedListingDisplayModes.includes(this.displayMode) ||
           (this._displayModeHasPartialDisplay && this.mergedOptions.initialDisplayMode === 'table'))
       );
     },
@@ -1156,7 +1162,7 @@ export default {
     },
 
     _splittingValuesComputed() {
-      return this._kanbanOptions.splittingValues.length
+      return this._kanbanOptions.splittingValues && this._kanbanOptions.splittingValues.length
         ? this._kanbanOptions.splittingValues
         : this.segmentFieldPossibleValues;
     }
@@ -1189,6 +1195,9 @@ export default {
     }
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
+    }
+    if (this.enabledListingModes && !this.enabledListingModes.includes(this.mergedOptions.initialDisplayMode)) {
+      console.warn('Intitial display mode is not in the list of enabled modes', this.mergedOptions.initialDisplayMode);
     }
 
     this.internalOptions = _.cloneDeep(this.mergedOptions);
