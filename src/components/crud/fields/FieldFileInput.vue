@@ -10,6 +10,7 @@
       :image-src="value"
       @change="onChangeImage"
     />
+    <input type="text" class="form-control" placeholder="url" v-model="value" />
   </div>
 </template>
 <script>

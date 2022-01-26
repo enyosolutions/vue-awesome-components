@@ -40,7 +40,8 @@ export default {
     classes: String,
     imageClasses: [String, Array, Object],
     imageStyles: [String, Array, Object],
-    isSafe: { type: Boolean, default: false }
+    isSafe: { type: Boolean, default: false },
+    embed: { type: Boolean, default: false, description: 'Embed the target content into an iframe' }
   },
   data() {
     return {

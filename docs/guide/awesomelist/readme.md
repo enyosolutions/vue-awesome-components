@@ -12,6 +12,8 @@ The Awesome List allows you to create view in a grid style, perfect for search r
 
 ## Props
 
+<ComponentDoc :component="'AwesomeList'" />
+
 ### columns
 
 type: `Array (default: [], required: false)`

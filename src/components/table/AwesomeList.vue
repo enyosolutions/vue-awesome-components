@@ -267,9 +267,6 @@ import AwesomeSegments from './parts/AwesomeSegments.vue';
 
 export default {
   name: 'AwesomeList',
-  token: `
-
-  `,
   components: {
     Paginate, AwesomeDisplay, AwesomeFilter,
     popper: Popper,

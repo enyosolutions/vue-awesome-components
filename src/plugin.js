@@ -90,6 +90,7 @@ const install = (Vue, options = {}) => {
   Vue.component('fieldEnyoSelect', FieldEnyoSelect);
   Vue.component('fieldVSelect', FieldVSelect);
   Vue.component('fieldFileInput', FieldFileInput);
+  Vue.component('fieldFilePicker', FieldFileInput);
   Vue.component('fieldJsonTextarea', FieldJsonTextarea);
   Vue.component('field-json-textarea', FieldJsonTextarea);
   Vue.component('fieldImagePicker', FieldImagePicker);

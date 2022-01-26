@@ -11,6 +11,7 @@
       @change="onChangeImage"
     >
     </base64-upload>
+    <input placeholder="url" type="text" class="form-control" v-model="value" />
 
     <div class="image-picker-actions" v-if="value">
       <button @click.prevent="openImageInTab" type="button" class="btn btn-sm btn-alt-style btn-sm p-2">
