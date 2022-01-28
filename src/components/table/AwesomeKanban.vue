@@ -88,6 +88,7 @@
               :items="list.content"
               :fields="options.fields"
               :columns="columns"
+              :showColumns="options.showColumns"
               group="card"
               :animation="options.animation"
               :scroll-sensitivity="options.scrollSensitivity"
@@ -235,6 +236,10 @@ export default {
     displayOrphansList: {
       type: Boolean,
       default: true
+    },
+    displayColumnsInCards: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({

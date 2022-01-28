@@ -92,7 +92,7 @@
                 }}</small>
               </div>
 
-              <template v-if="columns && columns.length">
+              <template v-if="columns && columns.length && (!hasFormattingData || displayColumnsInCards)">
                 <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
                   {{ key }} :
                   <AwesomeDisplay
@@ -107,7 +107,9 @@
                   </AwesomeDisplay>
                 </div>
               </template>
-              <p v-if="!hasFormattingData" class="card-text">{{ $t('AwesomeKanban.labels.noData') }}</p>
+              <p v-if="!hasFormattingData && !displayColumnsInCards" class="card-text">
+                {{ $t('AwesomeKanban.labels.noData') }}
+              </p>
             </div>
           </div>
         </Draggable>
@@ -195,6 +197,10 @@ export default {
     displayLabelsCache: {
       type: Object,
       default: () => ({})
+    },
+    displayColumnsInCards: {
+      type: Boolean,
+      default: false
     }
   },
   created() {
@@ -258,14 +264,7 @@ export default {
   },
   computed: {
     hasFormattingData() {
-      return (
-        this.titleField ||
-        this.imageField ||
-        this.subtitleField ||
-        this.sescriptionField ||
-        this.labelsField ||
-        this.columns.length
-      );
+      return this.titleField || this.imageField || this.subtitleField || this.sescriptionField || this.labelsField;
     }
   }
 };
