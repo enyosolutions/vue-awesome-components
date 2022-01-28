@@ -21,12 +21,44 @@
         <div class="card-header">
           <h4 class="text-left">
             <slot name="aw-kanban-title">{{ titleComputed }}</slot>
+            <awesome-filter
+              v-if="displayAwFilter"
+              edit-filters
+              id="advancedFilterComponentDisplay"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+              class="p-0"
+            />
+            <awesome-filter
+              display-filters
+              id="advancedFilterComponent"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+            />
             <div class="btn-group btn-group-sm float-right awesome-list-buttons">
               <div v-if="isRefreshing" style="text-align: center">
                 <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
               </div>
               <slot name="top-actions" class />
               <div class="btn-group" role="group">
+                <button
+                  v-if="actions.filter && actions.advancedFiltering"
+                  slot="reference"
+                  type="button"
+                  class="btn btn-simple btn-sm"
+                  :class="{
+                    'btn-primary': displayAwFilter || advancedFiltersCount,
+                    'btn-default': !advancedFiltersCount
+                  }"
+                  @click="displayAwFilter = !displayAwFilter"
+                >
+                  <i class="fa fa-filter" />
+                  {{ $t('AwesomeTable.buttons.filters') }}
+                  {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+                </button>
+
                 <button v-if="actions && actions.refresh" class="btn btn-simple btn-sm p-0" @click="getItems()">
                   <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
                   {{ $t('AwesomeKanban.buttons.refresh') }}
@@ -112,9 +144,12 @@ import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import relationMixin from '../../mixins/relationMixin';
 import listCardFormatMixin from '../../mixins/listCardFormatMixin';
+import advanceFilterMixin from '../../mixins/advanceFilterMixin';
 import { segmentMixin } from '../../mixins/';
 
 import KanbanList from '../misc/KanbanList';
+import AwesomeFilter from '../misc/AwesomeFilter';
+
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
@@ -123,9 +158,18 @@ export default {
   name: 'AwesomeKanban',
   components: {
     KanbanList,
-    AwesomeSegments
+    AwesomeSegments,
+    AwesomeFilter
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiListMixin, relationMixin, listCardFormatMixin, segmentMixin],
+  mixins: [
+    i18nMixin,
+    apiErrorsMixin,
+    apiListMixin,
+    relationMixin,
+    listCardFormatMixin,
+    segmentMixin,
+    advanceFilterMixin
+  ],
   props: {
     /**
      * The field to use to split the data
@@ -199,7 +243,8 @@ export default {
     newListName: '',
     isRefreshing: false,
     displayLabelsCache: {},
-    splittingFieldApiValues: []
+    splittingFieldApiValues: [],
+    displayAwFilter: false
   }),
 
   created() {
@@ -340,7 +385,7 @@ export default {
       if (this.lists && this.lists.length) {
         this.localLists = _.cloneDeep(this.lists);
       } else {
-        if (this.data && this.data.length) {
+        if (this.data && Array.isArray(this.data)) {
           const list = this.displayOrphansList
             ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
             : [];
@@ -352,7 +397,7 @@ export default {
     },
 
     filterLists() {
-      if (this.splittingField && this.splittingValuesComputed && this.splittingValuesComputed.length) {
+      if (this.splittingField && this.splittingValuesComputed && Array.isArray(this.splittingValuesComputed)) {
         this.splittingValuesComputed.forEach((filterValue) => {
           let id = filterValue,
             title = filterValue.toString();
@@ -416,7 +461,6 @@ export default {
     },
 
     async changeItemSplittingValue({ element, newIndex }, list) {
-      alert(list.id);
       element[this.splittingField] = list.id === 'unsorted' || list.id === undefined ? null : list.id;
       if (this.sortField) {
         element[this.sortField] = newIndex;

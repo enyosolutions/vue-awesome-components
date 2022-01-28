@@ -129,6 +129,7 @@
                           />
                         </template>
                       </slot>
+                      <slot name="after-create-form" :selectedItem="selectedItem" />
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="add-modal-footer">
@@ -468,6 +469,7 @@
                           </template>
                         </div>
                       </slot>
+                      <slot name="after-edit-form" :selectedItem="selectedItem" />
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="edit-modal-footer">
@@ -554,6 +556,7 @@
                           />
                         </template>
                       </slot>
+                      <slot name="after-create-form" :selectedItem="selectedItem" />
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
                       <slot name="add-modal-footer">

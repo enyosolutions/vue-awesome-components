@@ -230,6 +230,7 @@ ra<template>
                 (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
+            :actions="_actions"
             :title="_listingComponentTitle"
             :columns="kanbanFieldsComputed"
             :fields="_kanbanOptions.fields"
@@ -303,7 +304,7 @@ ra<template>
           >
             <i class="fa fa-plus text-primary" />
           </button>
-          <AwesomeForm
+          <awesome-form
             v-bind="$props"
             v-if="showViewFormComputed"
             :actions="_actionsBeforeCalculation"
@@ -349,8 +350,10 @@ ra<template>
             @close-edit-layout-mode="onCloseEditLayoutMode"
             @aw-select-previous-item="selectPreviousItem"
             @aw-select-next-item="selectNextItem"
-          />
-          <AwesomeForm
+          >
+            <slot name="after-edit-form" slot="after-edit-form" :selectedItem="selectedItem" />
+          </awesome-form>
+          <awesome-form
             v-bind="$props"
             v-if="showEditFormComputed"
             :mode="displayBottomFormContent ? 'create' : displayMode"
