@@ -95,6 +95,7 @@
     "configuration": "Configuration",
     "columns": "Colonnes",
     "automatique-refresh": "Rafraichir périodiquement",
+    "createFirstItem": "Cliquer ici rajouter votre premier élément",
     "bulk": {
       "row-select": "lignes(s) selectionnées",
       "clear": "vider",

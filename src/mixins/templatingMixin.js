@@ -124,5 +124,16 @@ export default {
       }
       return _.get(item, path);
     },
+
+    parseUrl(url, data) {
+      return this.templateParseUrl(url, {
+        ...this.selectedItem,
+        parent: this.parent,
+        context: this,
+        currentItem: this.selectedItem,
+        items: this.items,
+        ...data,
+      })
+    }
   }
 }

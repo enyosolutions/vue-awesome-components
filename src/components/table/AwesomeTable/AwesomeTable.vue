@@ -396,10 +396,15 @@
             </template>
             <div slot="emptystate">
               <slot name="table-empty-state">
-                {{ $t('AwesomeTable.empty') }}
-                <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
-                  Click here to create your first item <i class="fa fa-plus text-primary"></i> </a
-              ></slot>
+                <div class="text-center">
+                  {{ $t('AwesomeTable.empty') }}
+                  <br />
+                  <i class="fa fa-file-o fa-4x"></i><br />
+                  <a v-if="_actions.create" href="#" @click.prevent="$emit('create')" class="">
+                    {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
+                  </a>
+                </div>
+              </slot>
             </div>
           </vue-good-table>
         </div>
@@ -492,7 +497,8 @@ export default {
         'AwesomeTable.of': 'of',
         'AwesomeTable.page': 'page',
         'AwesomeTable.all': 'all',
-        'AwesomeTable.empty': 'empty'
+        'AwesomeTable.empty': 'empty',
+        'AwesomeTable.createFirstItem': 'Click here to create your first item'
       })
     },
     autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },

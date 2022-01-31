@@ -750,7 +750,8 @@ export default {
       itemsList: [],
       isSideformSticky: false,
       scrollTarget: null,
-      awFormWidth: null
+      awFormWidth: null,
+      previousModelIdentity: null
     };
   },
   computed: {
@@ -1232,6 +1233,7 @@ export default {
     this.parentPath = this.parentPath
       .replace('/view', '')
       .replace('/edit', '')
+      .replace('/new', '')
       .replace('/:id', '');
 
     this.$forceUpdate();
@@ -1261,10 +1263,12 @@ export default {
   methods: {
     $alert: Swal,
     refreshComponent(newVal, preVal) {
-      if (!newVal || newVal === false) {
+      if (!newVal || newVal === false || newVal === preVal) {
         return;
       }
-      if (this.identity) {
+      // needed to avoid unwanted refresh
+      if (this.identity && this.identity !== this.previousModelIdentity) {
+        this.previousModelIdentity = this.identity;
         this.loadModel();
       }
 
@@ -1426,10 +1430,15 @@ export default {
           }
           // if it's a edit or view url
           if (this.$route.params.id) {
+            const matched = this.$route.matched[this.$route.matched.length - 1];
+            if (matched.path.indexOf('/edit') !== -1) {
+              this.setDisplayMode('edit', {});
+            } else {
+              this.setDisplayMode('view', {});
+            }
             this.$http
               .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
               .then((res) => {
-                const matched = this.$route.matched[this.$route.matched.length - 1];
                 const data =
                   this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
                     ? _.get(res, this.apiResponseConfig.dataPath)
@@ -1480,6 +1489,9 @@ export default {
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
       if (this.mergedOptions.createPath) {
+        if (this.mergedOptions.createPath.includes('{{') && this.mergedOptions.createPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.createPath));
+        }
         return this.$router.push(this.mergedOptions.createPath);
       }
       if (options.reset) {
@@ -1524,13 +1536,17 @@ export default {
 
     goToEditPage(item) {
       if (this.mergedOptions.editPath) {
-        return this.$router.push(
-          this.mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
-        );
+        if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKey]) {
+          return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
+        }
+        if (this.mergedOptions.editPath.includes('{{') && this.mergedOptions.editPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.editPath, item));
+        }
+        return this.$router.push(this.mergedOptions.editPath);
       }
-      if (this.useRouterMode) {
-        this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
-        //window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+      const nextPath = `${this.parentPath}/${item[this.primaryKey]}/edit`;
+      if (this.useRouterMode && this.$route.path !== nextPath) {
+        this.$router.push(nextPath);
       }
       this.setDisplayMode('edit', item);
     },
@@ -1540,15 +1556,17 @@ export default {
         return;
       }
       if (this.mergedOptions.viewPath) {
-        if (item && item[this.primaryKey]) {
-          return this.$router.push(
-            this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
-          );
+        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKey]) {
+          return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
+        }
+        if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.viewPath, item));
         }
         return this.$router.push(this.mergedOptions.viewPath);
       }
-      if (this.useRouterMode) {
-        this.$router.push(`${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
+      const nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`;
+      if (this.useRouterMode && this.$route.path !== nextPath) {
+        this.$router.push(nextPath);
       }
       this.setDisplayMode('view', item);
     },

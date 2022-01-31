@@ -133,7 +133,7 @@
 
 .modal-dialog.modal-full-height {
   @include mq($from: wide) {
-    width: 40%;
+    width: 70%;
   }
 
   @include mq($from: tablet, $until: wide) {

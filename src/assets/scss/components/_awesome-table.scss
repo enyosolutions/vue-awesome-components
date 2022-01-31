@@ -16,6 +16,11 @@
   padding: 3px 1px;
   line-height: 1;
 }
+table.vgt-table {
+  .vgt-checkbox-col {
+    vertical-align: middle;
+  }
+}
 
 @media (max-width: 720px) {
   .vgt-global-search {

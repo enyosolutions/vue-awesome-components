@@ -264,7 +264,7 @@ export default {
   },
   computed: {
     hasFormattingData() {
-      return this.titleField || this.imageField || this.subtitleField || this.sescriptionField || this.labelsField;
+      return this.titleField || this.imageField || this.subtitleField || this.descriptionField || this.labelsField;
     }
   }
 };

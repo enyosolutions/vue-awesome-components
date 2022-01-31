@@ -108,6 +108,7 @@ export default {
       }
       if (url && url.indexOf('{{') > -1) {
         return this.templateParseUrl(url, {
+          ...this.selectedItem,
           parent: this.parent,
           context: this,
           currentItem: this.selectedItem,
