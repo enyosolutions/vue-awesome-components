@@ -1266,6 +1266,11 @@ export default {
       if (!newVal || newVal === false || newVal === preVal) {
         return;
       }
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line
+        console.log('refreshComponent', newVal, preVal);
+      }
+
       // needed to avoid unwanted refresh
       if (this.identity && this.identity !== this.previousModelIdentity) {
         this.previousModelIdentity = this.identity;

@@ -123,7 +123,7 @@ export default {
 
     transformStateBooleans(field) {
       ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
-        if (isString(field[prop])) {
+        if (field[prop] && isString(field[prop])) {
           field[prop] = this.templateParseBoolean(field[prop]);
         }
       });
@@ -161,7 +161,7 @@ export default {
           prop.field = {};
         }
         if (prop.field.hidden) {
-          console.warn('hidden is @deprecated, please use visible: false');
+          console.warn('hidden is @deprecated, please use visible: false', key);
           return;
         }
         if (prop.field.visible == false || prop.field.visible == 0) {

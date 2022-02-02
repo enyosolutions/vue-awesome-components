@@ -210,6 +210,7 @@ export default {
   opacity: 0;
   transition: all 50ms linear 100ms;
   position: absolute;
+  padding: 0;
   padding-right: 50px;
   cursor: pointer;
 }

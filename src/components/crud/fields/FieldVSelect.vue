@@ -489,6 +489,7 @@ export default {
   button.external-link {
     background: transparent;
     border: none;
+    padding: 0;
     &:hover {
       background: transparent;
     }
