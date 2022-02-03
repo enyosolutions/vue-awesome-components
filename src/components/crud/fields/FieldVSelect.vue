@@ -76,6 +76,7 @@
         </button>
         <div v-show="displayEditModal" class="vselect-popup-width" ref="vselectPopup">
           <AwesomeForm
+            v-if="displayEditModal"
             :identity="schema.relation"
             mode="create"
             :item="{}"
