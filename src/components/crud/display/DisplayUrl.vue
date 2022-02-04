@@ -1,6 +1,19 @@
 <template>
   <div class="text-avoid-overflow" :class="$props.classes" :style="$props.styles" v-bind="$props">
-    <a :href="$props.value" target="_blank" class="ajax-table-href">{{ $props.value }}</a>
+    <a :href="$props.value" target="_blank" class="ajax-table-href " :class="embed ? 'pull-right' : ''">
+      <span v-if="!embed">
+        {{ $props.value }}
+      </span>
+      <i class="fa fa-external-link"></i>
+    </a>
+    <iframe
+      v-if="embed"
+      v-bind="$props"
+      value=""
+      class="aw-display-iframe "
+      :src="$props.value"
+      frameborder="0"
+    ></iframe>
   </div>
 </template>
 

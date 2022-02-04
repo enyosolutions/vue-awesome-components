@@ -17,7 +17,8 @@
       "add": "Add",
       "listName": "List name",
       "removeList": "Remove list",
-      "noData": "No fields selected"
+      "noData": "No fields selected",
+      "unsorted": "Un sorted"
     },
     "buttons": {
       "filters": "Filters",
@@ -94,6 +95,7 @@
     "configuration": "Configuration",
     "automatique-refresh": "Refresh automatically",
     "columns": "Columns",
+    "createFirstItem": "Click here to create your first item",
     "bulk": {
       "row-select": "row(s) selected",
       "clear": "clear",

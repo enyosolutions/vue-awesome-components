@@ -5,6 +5,7 @@
       <form class="container" @submit.prevent="addFilter()">
         <div class="dropdown column  pl-0">
           <select
+            ref="filterField"
             class="form-control btn-outline-primary"
             :placeholder="Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields')"
             @change="selectFilter"
@@ -45,7 +46,7 @@
       <div class="chip-groups">
         <div class="chip chip-primary dark chip-permanent">
           <div class="chip-content">
-            <span>{{ fieldLabel || field }}</span>
+            <span class="form-control">{{ fieldLabel || field }}</span>
             <awesome-filter-operator
               :current-field="currentField"
               :current-filter.sync="currentOperator"
@@ -66,7 +67,7 @@
       <div class="chip-groups">
         <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in advancedFilters" :key="index">
           <div class="chip-content">
-            <span>{{ filter.field ? filter.field.label : '' }}</span>
+            <span class="form-control">{{ filter.field ? filter.field.label : '' }}</span>
             <strong class="ml-2 mr-2">
               {{ filter.filter ? filter.filter.shortText || filter.filter.text : '' }}
             </strong>
@@ -162,6 +163,7 @@ export default {
           this.currentField = {};
           this.currentValue = '';
           this.currentOperator = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
+          this.$refs['filterField'] = '';
         }
         this.parseFilter(this.selectedFilters);
       }
@@ -334,7 +336,7 @@ export default {
 
   .chip {
     display: inline-flex;
-    background-color: #e0e0e0;
+    background-color: transparent;
     border-color: #e0e0e0;
     font-size: 14px;
     height: 32px;
@@ -390,7 +392,6 @@ export default {
         display: inline-block;
         padding: 2px 4px;
         margin: 0 2px;
-        background-color: rgba(#000000, 0.2);
         flex: 1;
       }
 

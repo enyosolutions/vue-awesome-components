@@ -10,7 +10,7 @@
           >{{ $t('AwesomeDefault.messages.all') }}</a
         >
       </li>
-      <li class="nav-item" v-for="(segment, idx) in _segments" :key="idx">
+      <li class="nav-item" v-for="(segment, idx) in _segmentsList" :key="idx">
         <a
           @click="onClickOnSegment(segment)"
           class="nav-link"
@@ -38,20 +38,27 @@ import _ from 'lodash';
 import i18nMixin from '../../../mixins/i18nMixin';
 import awEmitMixin from '../../../mixins/awEmitMixin';
 import uuidMixin from '../../../mixins/uuidMixin';
+import templatingMixin from '../../../mixins/templatingMixin';
+import { segmentMixin } from '../../../mixins/';
 
 export default {
   name: 'AwesomeSegments',
   components: {},
-  mixins: [uuidMixin, i18nMixin, awEmitMixin],
+  mixins: [uuidMixin, i18nMixin, awEmitMixin, templatingMixin, segmentMixin],
   props: {
     field: {
       type: [Object, String],
       default: () => null
     },
 
-    title: { type: String, default: '' },
+    title: { type: [String, Boolean], default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
+
+    apiResponseConfig: {
+      type: Object,
+      note: 'This object define the configuration for processing data coming from the api : count, data path'
+    },
 
     translations: {
       type: Object,
@@ -87,21 +94,36 @@ export default {
     return {
       totalCount: 0,
       isRefreshing: false,
-      selectedSegment: 'ALL'
+      selectedSegment: 'ALL',
+      segmentOptions: []
     };
   },
   computed: {
-    _segments() {
-      return (
-        this.field &&
-        ((this.field.fieldOptions && this.field.fieldOptions.filterDropdownItems) ||
-          this.field.enum ||
-          this.field.fieldOptions.values ||
-          this.field.fieldOptions.options)
-      );
+    _segmentsList() {
+      const configSegments =
+        _.get(this.field, 'fieldOptions.filterDropdownItems') ||
+        _.get(this.field, 'enum') ||
+        _.get(this.field, 'fieldOptions.values') ||
+        _.get(this.field, 'fieldOptions.option');
+      if (configSegments && configSegments.length) {
+        return configSegments;
+      }
+      return this.segmentOptions;
+    },
+    dataUrl() {
+      // eslint-disable-next-line
+      let url = this.url || this.field.relationUrl;
+      if (url && url.indexOf('{{') > -1) {
+        url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model, context: this });
+      }
+      return url || '';
     }
   },
-  watch: {},
+  watch: {
+    _segmentsList() {
+      this.$emit('segment-list-changed', this._segmentsList);
+    }
+  },
   created() {
     if (!this.$t) {
       this.$t = (str) => {
@@ -118,39 +140,57 @@ export default {
     }
   },
   beforeMount() {},
-  mounted() {},
+  mounted() {
+    if (this.field && this.field.relation) {
+      this.preloadFn();
+    }
+  },
   beforeDestroy() {},
 
   methods: {
-    getSegmentLabel(segment) {
-      let label = segment.title || segment.label;
-      if (label) {
-        return label;
-      }
-      if (typeof segment === 'string' && segment.indexOf('|') > -1) {
-        return segment.split('|')[1];
-      }
-      return _.startCase(segment.field || segment.name || segment);
-    },
-
-    getSegmentKey(segment) {
-      let key = segment.model || segment.field || segment.key || segment.id;
-      if (key) {
-        return key;
-      }
-      if (typeof segment === 'string' && segment.indexOf('|') > -1) {
-        return segment.split('|')[0];
-      }
-      return segment;
-    },
-
     onClickOnSegment(segment) {
+      if (!segment) {
+        return '';
+      }
       this.selectedSegment = this.getSegmentKey(segment);
       this.$emit('aw-segment-changed', this.selectedSegment, segment);
       this.$emit('change', {
         segmentField: this.field.field || this.field.model,
         segmentValue: this.getSegmentKey(segment)
       });
+    },
+
+    preloadFn() {
+      if (!this.dataUrl) {
+        return;
+      }
+      this.$http
+        .get(`${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}$perPage=100'`, {
+          params: { ..._.get(this.field, 'fieldOptions.queryParams') }
+        })
+        .then((res) => {
+          this.segmentOptions = this.getData(res);
+        })
+        .finally(() => {
+          this.isDataReady = true;
+        });
+    },
+
+    getData(res) {
+      const data =
+        this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
+          ? _.get(res, this.apiResponseConfig.dataPath)
+          : res.data;
+      if (Array.isArray(data)) {
+        return data.map((item) => {
+          return this.field.relationKey
+            ? {
+                label: item[this.field.relationLabel],
+                id: item[this.field.relationKey]
+              }
+            : item;
+        });
+      }
     }
   }
 };

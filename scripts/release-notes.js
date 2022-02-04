@@ -49,7 +49,6 @@ const getGitDiff = async (from, to) => {
     `${from}...${to}`,
     '--pretty=%s|%h|%an|%ae'
   ])
-  console.log(result);
   return result.split('\n').map(line => {
     const [message, commit, authorName, authorEmail] = line.split('|')
     return { message, commit, authorName, authorEmail }

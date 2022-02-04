@@ -8,14 +8,14 @@
     :id="fieldID"
     :class="fieldClasses"
     v-attributes="'input'"
-    :multiple="schema.multi"
+    :multiple="schema.multiple || schema.multi"
   >
     <option v-if="!fieldOptions.hideNoneSelectedText" :disabled="schema.required" :value="null">
       {{ fieldOptions.noneSelectedText || '&lt;Nothing selected&gt;' }}
     </option>
 
     <template v-for="item in items">
-      <optgroup v-if="item.group" :label="getGroupName(item)" :key="getItemValue(item)">
+      <optgroup v-if="item && item.group" :label="getGroupName(item)" :key="getItemValue(item)">
         <template v-if="item.ops">
           <option v-for="i in item.ops" :value="getItemValue(i)" :key="getItemValue(i)"> {{ getItemName(i) }}</option>
         </template>
@@ -55,48 +55,49 @@ export default {
       let array = [];
       let arrayElement = {};
 
-      values.forEach((item) => {
-        arrayElement = null;
+      values
+        .filter((value) => value)
+        .forEach((item) => {
+          arrayElement = null;
+          if (item && item.group && isObject(item)) {
+            // There is in a group.
 
-        if (item.group && isObject(item)) {
-          // There is in a group.
+            // Find element with this group.
+            arrayElement = find(array, (i) => i.group === item.group);
 
-          // Find element with this group.
-          arrayElement = find(array, (i) => i.group === item.group);
+            if (arrayElement) {
+              // There is such a group.
 
-          if (arrayElement) {
-            // There is such a group.
+              arrayElement.ops.push({
+                id: item.id,
+                name: item.name
+              });
+            } else {
+              // There is not such a group.
 
-            arrayElement.ops.push({
-              id: item.id,
-              name: item.name
-            });
+              // Initialising.
+              arrayElement = {
+                group: '',
+                ops: []
+              };
+
+              // Set group.
+              arrayElement.group = item.group;
+
+              // Set Group element.
+              arrayElement.ops.push({
+                id: item.id,
+                name: item.name
+              });
+
+              // Add array.
+              array.push(arrayElement);
+            }
           } else {
-            // There is not such a group.
-
-            // Initialising.
-            arrayElement = {
-              group: '',
-              ops: []
-            };
-
-            // Set group.
-            arrayElement.group = item.group;
-
-            // Set Group element.
-            arrayElement.ops.push({
-              id: item.id,
-              name: item.name
-            });
-
-            // Add array.
-            array.push(arrayElement);
+            // There is not in a group.
+            array.push(item);
           }
-        } else {
-          // There is not in a group.
-          array.push(item);
-        }
-      });
+        });
 
       // With Groups.
       return array;

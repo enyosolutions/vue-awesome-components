@@ -13,7 +13,7 @@
       <template v-else>
         <template v-for="(value, key) of $props.value" class="label label-info">
           <div :key="key" class="badge badge-info aw-display-object-item mr-1">
-            <template v-if="multiple">
+            <template>
               {{ (value && value[displayField]) || value }}
             </template>
             <template v-if="!_valueIsArray">
@@ -38,7 +38,7 @@ export default {
       return Array.isArray(this.value);
     },
     _useArrayMode() {
-      return this.multiple && this._valueIsArray;
+      return this.multiple || this._valueIsArray;
     }
   }
 };

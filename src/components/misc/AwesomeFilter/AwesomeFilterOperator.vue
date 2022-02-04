@@ -53,6 +53,18 @@ export default {
         '$isNotNull',
         '$isNotDefined'
       ],
+      object: [
+        '$eq',
+        '$ne',
+        '$like',
+        '$notLike',
+        '$startsWith',
+        '$endsWith',
+        '$substring',
+        '$isNull',
+        '$isNotNull',
+        '$isNotDefined'
+      ],
       datetime: [
         '$eq',
         '$ne',

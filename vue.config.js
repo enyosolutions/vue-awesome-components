@@ -46,8 +46,11 @@ module.exports = {
 
     resolve: {
       alias: {
-        'vue-aw-components': path.resolve(__dirname, 'src')
-      }
+        'vue-aw-components': path.resolve(__dirname, 'src'),
+        vue$: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm.js'),
+
+      },
+      symlinks: false,
     }
   },
 

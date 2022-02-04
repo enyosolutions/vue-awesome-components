@@ -15,18 +15,42 @@ toaster.settings({
 export default {
   methods: {
     $awNotify(message) {
+      toaster.settings({
+        timeout: 5000,
+        resetOnHover: true,
+        icon: 'fontAwesome',
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX',
+        position: 'topRight',
+      });
 
       const payload = isObject(message)
         ? {
           title: message,
-          ...message, // Placement is important to guarantee theat the display is always a notification
+          ...message, // Placement is important to guarantee that the display is always a notification
         }
         : {
           icon: 'fa fa-info',
           title: message,
         };
+      const type = payload && payload.type && toaster[payload.type] ? payload.type : 'info';
 
-      toaster[payload.type || 'info'](payload);
+
+      if (toaster[type]) {
+        toaster[type](payload || '');
+      }
+      else {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('missing izitoast', type, payload);
+        }
+        Swal.fire({
+          title: payload.title,
+          text: payload.message,
+          type: payload.type,
+          showCancelButton: false,
+        })
+        // alert(payload.title);
+      }
     },
 
     $awConfirm(message) {

@@ -30,6 +30,11 @@ export default {
           return 'input';
         case 'boolean':
           return 'select'; // put enyoSelect after debugging all the issues...enyoSelect
+        case 'array':
+          if (property.items && property.items.type === 'string') {
+            return 'vSelect';
+          }
+          return 'VSelect';
         default:
           return 'input';
       }
@@ -52,7 +57,8 @@ export default {
             case 'email':
               return 'email';
             case 'date-time':
-              return 'datetime';
+            case 'datetime':
+              return 'date-time';
             default:
               return 'text';
           }
@@ -78,7 +84,7 @@ export default {
       }
       let { type } = property;
       if (Array.isArray(type)) {
-        const possibleTypes = ['string', 'number', 'boolean'];
+        const possibleTypes = ['string', 'number', 'boolean', 'array'];
         for (let i = 0; i < possibleTypes.length; i++) {
           if (property.type.indexOf(possibleTypes[i]) > -1) {
             type = possibleTypes[i];
@@ -117,7 +123,7 @@ export default {
 
     transformStateBooleans(field) {
       ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
-        if (isString(field[prop])) {
+        if (field[prop] && isString(field[prop])) {
           field[prop] = this.templateParseBoolean(field[prop]);
         }
       });
@@ -141,14 +147,21 @@ export default {
         return;
       }
       const fields = [];
-      const size = Object.keys(schema.properties).length;
+      const numberOfFields = Object.keys(schema.properties).length;
       Object.keys(schema.properties).forEach((key) => {
         const prop = schema.properties[key];
+        if (Array.isArray(prop.type)) {
+          const index = prop.type.indexOf('null');
+          if (index > -1) {
+            prop.type.splice(index, 1);
+          }
+          prop.type = prop.type[0];
+        }
         if (!prop.field) {
           prop.field = {};
         }
         if (prop.field.hidden) {
-          console.warn('hidden is @deprecated, please use visible: false');
+          console.warn('hidden is @deprecated, please use visible: false', key);
           return;
         }
         if (prop.field.visible == false || prop.field.visible == 0) {
@@ -160,7 +173,8 @@ export default {
           subSchema.type = 'group';
           subSchema.default = {};
           subSchema.id = key;
-          subSchema.styleClasses = `subgroup  ${(prop.field.styleClasses) || ''}`;
+          subSchema.cols = prop.field && prop.field.cols;
+          subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
           fields.push(subSchema);
         } else {
           const relationUrl = this.getRelationUrl(prop);
@@ -187,22 +201,29 @@ export default {
             fieldOptions.trackBy = relationKey || prop.foreignKey;
             fieldOptions.searchable = true;
           }
+          const classes = this.getFieldClasses(prop, numberOfFields);
+          const selectValues = (
+            (fieldOptions.values || this.getSelectEnumFromStore(fieldOptions.enum))) ||
+            (prop.field && prop.field.options) ||
+            (prop.items && prop.items.enum) ||
+            prop.enum
+            ;
           const field = {
             type: (prop.field.type) || this.getFormtype(prop),
             label: prop.title || prop.description || startCase(key),
             placeholder: prop.placeholder,
             values:
-              (
-                (fieldOptions.values || this.getSelectEnumFromStore(fieldOptions.enum))) ||
-              prop.enum ||
-              (prop.items && prop.items.enum) ||
-              [],
+              selectValues,
             hint: prop.description,
             model: prefix + key,
             min: prop.min,
             max: prop.max,
-            multi: prop.type === 'array',
-            styleClasses: ((prop.field.classes || prop.field.styleClasses)) || (this.layout || size < 8 ? 'col-12' : 'col-6'),
+            multiple: prop.field.multiple || prop.type === 'array',
+            multi: prop.field.multi || prop.type === 'array', // @deprecated
+            styleClasses: classes, // @deprecated
+            classes,
+            innerClasses: '',
+            labelClasses: '',
             relation: prop.relation,
             foreignKey: relationKey || prop.foreignKey,
             relationUrl,
@@ -239,6 +260,10 @@ export default {
           }
 
 
+          if (field.type === 'array') {
+            field.itemsSchema = prop.items;
+          }
+
           if (field.type === 'date') {
             field.type = 'dateTime';
             if (!fieldOptions.type) {
@@ -254,12 +279,12 @@ export default {
           }
 
           // default items for selects
-          if (field.type === 'enyoSelect' && !fieldOptions.options) {
+          if ((field.type === 'enyoSelect' || field.type.toLowerCase() === 'vselect') && !fieldOptions.options) {
             field.options = field.values;
           }
 
           // default items for selects
-          if (field.type === 'vSelect' && fieldOptions.store && !fieldOptions.options) {
+          if (field.type.toLowerCase() === 'vselect' && fieldOptions.store && !fieldOptions.options) {
             fieldOptions.options = get(this.$store.state, fieldOptions.store);
           }
 
@@ -385,5 +410,27 @@ export default {
       });
       return groups;
     },
+
+    /** @description Compute the classes for displaying this field */
+    getFieldClasses(prop, numberOfFields) {
+      let classes = (prop.field.classes || prop.field.styleClasses || '');
+      if (prop.field.cols) {
+        classes = `${classes} col-${prop.field.cols || ''}`;
+      }
+      else {
+        let cols;
+        if (this.layout || numberOfFields > 8 || this.detailPageMode === 'sidebar') {
+          cols = 'col-6';
+        }
+        else if (this.detailPageMode === 'page') {
+          cols = 'col-md-3';
+        }
+        else {
+          cols = 'col-12';
+        }
+        classes = `${classes} ${cols || ''}`;
+      }
+      return classes;
+    }
   }
 }

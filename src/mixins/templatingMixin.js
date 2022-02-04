@@ -1,6 +1,7 @@
 import { templateSettings, template, isString, isFunction, merge } from 'lodash';
 import rolesMixin from './rolesMixin';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
@@ -16,7 +17,7 @@ export default {
       return merge({
         parent: this.parent,
         context: this,
-        currentItem: this.selectedItem,
+        currentItem: this.selectedItem || data,
         items: this.items,
         $state: this.$store && this.$store.state,
         userHasRole: this.userHasRole,
@@ -111,6 +112,28 @@ export default {
         return !!this.templateParseFunc(fieldData, data);
       }
       return fieldData;
+    },
+
+    getItemProperty(item, path) {
+      if (!item) {
+        return '';
+      }
+      if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
+        let result = this.templateParseText(path, { ...item, currentItem: item });
+        return result;
+      }
+      return _.get(item, path);
+    },
+
+    parseUrl(url, data) {
+      return this.templateParseUrl(url, {
+        ...this.selectedItem,
+        parent: this.parent,
+        context: this,
+        currentItem: this.selectedItem,
+        items: this.items,
+        ...data,
+      })
     }
   }
 }

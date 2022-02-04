@@ -1,11 +1,15 @@
 <template>
-  <div class="aw-table">
+  <div class="aw-table aw-listing">
     <div class="float-left col-6 pl-0">
-      <slot name="table-header-left">
-        <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
-          <awesome-segments :field="segmentFieldDefinitionComputed" @change="onSegmentChange" />
-        </div>
-      </slot>
+      <slot name="table-header-left"> </slot>
+      <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
+        <awesome-segments
+          :apiRequestConfig="apiRequestConfig"
+          :apiResponseConfig="apiResponseConfig"
+          :field="segmentFieldDefinitionComputed"
+          @change="onSegmentChange"
+        />
+      </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
       <slot name="table-header-right"></slot>
@@ -55,7 +59,7 @@
               <span class="slider round"></span>
             </label>
           </div>
-          <div class="btn-group btn-group-sm float-right mt-0">
+          <div class="aw-table-top-actions float-right m-0 p-0">
             <slot name="table-top-actions" />
 
             <popper
@@ -67,7 +71,13 @@
               ref="filterPopover"
               v-if="canHideColumns"
             >
-              <button slot="reference" type="button" class="btn btn-simple" aria-haspopup="true" aria-expanded="false">
+              <button
+                slot="reference"
+                type="button"
+                class="btn btn-sm btn-simple dropdown-toggle"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
                 {{ $t('AwesomeTable.columns') }}
               </button>
               <div class="popper card mt-0" style="z-index: 1;">
@@ -91,7 +101,7 @@
             <button
               slot="reference"
               type="button"
-              class="btn btn-simple"
+              class="btn btn-sm btn-simple mt-0 dropdown-toggle"
               :class="{ 'btn-primary': advancedFiltersCount || displayAwFilter, 'btn-default': !advancedFiltersCount }"
               aria-haspopup="true"
               aria-expanded="false"
@@ -119,7 +129,12 @@
                     _actions.dropdownActions)
               "
             >
-              <button slot="reference" type="button" class="btn btn-simple dropdown-toggle" id="advancedFilterButton">
+              <button
+                slot="reference"
+                type="button"
+                class="btn btn-sm btn-simple dropdown-toggle"
+                id="advancedFilterButton"
+              >
                 <i class="fa fa-cog" />
                 {{ $t('AwesomeTable.configuration') }}
               </button>
@@ -129,7 +144,7 @@
                 <button
                   v-if="_actions.columnsFilters"
                   type="button"
-                  class="btn btn-simple btn-main-style"
+                  class="btn btn-sm btn-simple btn-main-style"
                   :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
                   @click="toggleFilter()"
                 >
@@ -143,7 +158,7 @@
                 <button
                   v-if="_actions && _actions.export"
                   type="button"
-                  class="btn btn-simple text-success btn-main-style btn-block"
+                  class="btn btn-sm btn-simple text-success btn-main-style btn-block"
                   @click="exportCallBack"
                 >
                   <i class="fa fa-file-excel" />
@@ -153,7 +168,7 @@
                 <button
                   v-if="_actions && _actions.exportLocal"
                   type="button"
-                  class="btn btn-simple text-success btn-main-style btn-block"
+                  class="btn btn-sm btn-simple text-success btn-main-style btn-block"
                   @click="exportCurrentArrayToExcel"
                 >
                   <i class="fa fa-file-excel" />
@@ -162,7 +177,7 @@
                 <button
                   v-if="isSaveStateEnabledCpt"
                   type="button"
-                  class="btn btn-simple text-info btn-main-style btn-block"
+                  class="btn btn-sm btn-simple text-info btn-main-style btn-block"
                   @click="clearComponentState"
                 >
                   <i class="fa fa-trash" />
@@ -177,7 +192,7 @@
         </p>
         <button
           v-if="collapsible"
-          class="btn btn-i"
+          class="btn btn-sm btn-i"
           data-toggle="collapse"
           :data-target="'#awTable-' + this._uid || this.uuid"
           style="position: absolute; top: 0; right: 0; padding: 0;"
@@ -255,7 +270,7 @@
             @on-cell-click="clickOnLine"
             @on-selected-rows-change="onSelectionChanged"
           >
-            <div slot="selected-row-actions">
+            <div slot="selected-row-actions" class="">
               <template v-if="customBulkActions">
                 <AwesomeActionList
                   :actions="customBulkActions"
@@ -268,7 +283,7 @@
               </template>
               <button
                 v-if="_actions.bulkDelete && _actions.delete"
-                class="btn btn-primary btn-simple"
+                class="btn btn-sm btn-primary ml-2 mr-2"
                 @click="$emit('bulkDelete', selectedRows)"
                 type="button"
               >
@@ -277,7 +292,7 @@
               </button>
               <button
                 v-if="_actions.bulkEdit && _actions.edit"
-                class="btn btn-primary btn-simple"
+                class="btn btn-sm btn-primary"
                 @click="$emit('bulkEdit', selectedRows)"
                 type="button"
               >
@@ -285,9 +300,9 @@
                 {{ $t('AwesomeTable.bulk.edit') }}
               </button>
             </div>
-            <div slot="table-actions">
+            <div slot="table-actions" v-if="customTableTopActions.length || _actions.dateFilter">
               <date-range-picker
-                v-if="_actions.filter && _actions.dateFilter && canFilterByColumnsCpt"
+                v-if="_actions.dateFilter"
                 class="form-group vgt-date-range"
                 :placeholder="$t('AwesomeTable.daterange.start')"
                 :date-range="{
@@ -310,7 +325,7 @@
                 <button
                   v-if="!optionsComputed.autoSearch"
                   type="button"
-                  class="btn btn-primary btn-add-item "
+                  class="btn btn-sm btn-primary btn-add-item "
                   @click="doRefresh"
                 >
                   <i class="fa fa-search"></i>
@@ -325,7 +340,7 @@
                   v-bind="props.column"
                   :apiResponseConfig="apiResponseConfig"
                   :apiRequestHeaders="apiRequestHeaders"
-                  :value="getItemAtPath(props.row, props.column.field)"
+                  :value="getItemProperty(props.row, props.column.field)"
                   :display-label-cache="displayLabelCache"
                   class="pointer text-avoid-overflow"
                 >
@@ -345,7 +360,7 @@
                   </slot>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
-                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
                     @click="$emit('view', props.row)"
                     type="button"
                   >
@@ -353,7 +368,7 @@
                   </button>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
-                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
                     @click="$emit('edit', props.row)"
                     type="button"
                   >
@@ -361,7 +376,7 @@
                   </button>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.delete, { currentItem: props.row })"
-                    class="btn btn-xs btn-simple btn-awtable-inline-action btn-icon"
+                    class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon"
                     @click="$emit('delete', props.row)"
                     type="button"
                   >
@@ -381,11 +396,15 @@
             </template>
             <div slot="emptystate">
               <slot name="table-empty-state">
-                {{ $t('AwesomeTable.empty') }}
-                <a v-if="_actions.create" href="#" @click.prevent="$emit('create')">
-                  Click here to create your first item
-                </a></slot
-              >
+                <div class="text-center">
+                  {{ $t('AwesomeTable.empty') }}
+                  <br />
+                  <i class="fa fa-file-o fa-4x"></i><br />
+                  <a v-if="_actions.create" href="#" @click.prevent="$emit('create')" class="">
+                    {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
+                  </a>
+                </div>
+              </slot>
             </div>
           </vue-good-table>
         </div>
@@ -462,7 +481,6 @@ export default {
       note:
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
-    title: { type: String, default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
 
@@ -479,7 +497,8 @@ export default {
         'AwesomeTable.of': 'of',
         'AwesomeTable.page': 'page',
         'AwesomeTable.all': 'all',
-        'AwesomeTable.empty': 'empty'
+        'AwesomeTable.empty': 'empty',
+        'AwesomeTable.createFirstItem': 'Click here to create your first item'
       })
     },
     autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },
@@ -607,6 +626,9 @@ export default {
     },
 
     _tableTitle() {
+      if (this.title === false) {
+        return '';
+      }
       return (
         this.title ||
         (this.$te && this.$te('app.labels.' + this.entity)
@@ -1062,7 +1084,7 @@ export default {
       return item[column.toLowerCase()];
     },
 
-    getItemAtPath: _.get
+    getItemProperty: _.get
   }
 };
 </script>
@@ -1128,6 +1150,14 @@ export default {
         }
       }
     }
+
+    .aw-table-top-actions {
+      display: flex;
+      flex-direction: row;
+      > * {
+        padding: 5px 10px;
+      }
+    }
   }
 
   // font-awesome icons
@@ -1183,13 +1213,6 @@ export default {
 
   .aw-table-actions-field {
     white-space: nowrap;
-  }
-
-  .aw-segment-table-wrapper {
-    width: auto;
-    margin-top: inherit;
-    padding: 7px;
-    float: left;
   }
 
   .automatic-refresh-button {

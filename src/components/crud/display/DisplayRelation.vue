@@ -2,9 +2,12 @@
   <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
     <template v-if="_values && _values.length">
       <template v-for="value in _values">
-        <div :key="value">
+        <div :key="value" :title="getLabel(value) + ' (' + value + ')'" :tooltip="value">
           <span v-if="value" class="badge badge-info pointer" @click="onClick">
             {{ getLabel(value) }}
+          </span>
+          <span v-if="value" class="copy-link" @click="copy(value)">
+            &nbsp; <i class="fa fa-clone text-info"></i>
           </span>
           <router-link
             v-if="value && !onClickUrl"
@@ -24,10 +27,6 @@
           >
             &nbsp; <i class="fa fa-external-link text-info"></i>
           </router-link>
-
-          <span v-if="value" class="copy-link" @click="copy(value)">
-            &nbsp; <i class="fa fa-clone text-info"></i>
-          </span>
         </div>
       </template>
     </template>
@@ -80,9 +79,8 @@ export default {
     onClick() {
       if (!this.timeoutId) {
         this.timeoutId = setTimeout(() => {
-          // simple click
           this.timeoutId = null;
-        }, 50); //tolerance in ms
+        }, 200); //tolerance in ms
       } else {
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
@@ -94,11 +92,7 @@ export default {
     getLabel(value) {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
-    templateParser(source, data) {
-      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-      const compiled = _.template(source);
-      return compiled(data);
-    },
+
     formatLabel(item, passedLabel = null) {
       let field = passedLabel || this._relationLabel;
       let label = '';
@@ -116,7 +110,7 @@ export default {
         return;
       }
 
-      if (this._displayLabelCache[value]) {
+      if (this._displayLabelCache[value] && this._displayLabelCache[value] !== value) {
         return this._displayLabelCache[value];
       }
 
@@ -135,19 +129,25 @@ export default {
         return;
       }
 
-      const result = item[this.relationLabel];
+      const result = item[this.relationLabel] || this.templateParser(this.relationLabel, item);
       if (result) {
         this.$set(this._displayLabelCache, value, result);
       }
-      return result;
+      return result || value;
     },
 
     getApiLabel(value) {
-      if (!this.relationUrl || !value || !this.relationLabel) {
-        return _.isObject(value) && this.relationLabel && value[this.relationLabel] ? value[this.relationLabel] : value;
+      if (!this.relationUrl && value && this.relationLabel) {
+        const computedLocalValue =
+          _.isObject(value) && this.relationLabel
+            ? value[this.relationLabel] || this.templatingMixin(this.relationLabel, value)
+            : null;
+        if (computedLocalValue) {
+          return computedLocalValue;
+        }
       }
       const url = `${this.relationUrl}/${value}`;
-      if (value && this._displayLabelCache[url]) {
+      if (value && this._displayLabelCache[url] && this._displayLabelCache[url] !== value) {
         return this._displayLabelCache[url];
       }
 
@@ -161,13 +161,15 @@ export default {
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;
           }
-          const result = `${_.get(data, this.relationKey)} - ${this.formatLabel(data, this.relationLabel)}`;
+
+          const result = `${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
           }
           return result;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.warn('getApiLabel result', this.relationLabel, err.message);
           this.$set(this._displayLabelCache, url, value);
         });
       this.$set(this._displayLabelCache, url, value);
@@ -208,6 +210,7 @@ export default {
   opacity: 0;
   transition: all 50ms linear 100ms;
   position: absolute;
+  padding: 0;
   padding-right: 50px;
   cursor: pointer;
 }

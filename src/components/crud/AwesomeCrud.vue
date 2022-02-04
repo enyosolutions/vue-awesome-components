@@ -1,5 +1,5 @@
-<template>
-  <div class="content aw-crud" :class="'aw-crud-mode-' + displayMode">
+ra<template>
+  <div class="content aw-crud" :class="`aw-crud-mode-${displayMode} aw-crud-${identity}`">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12 awesomecrud-stats-section">
@@ -18,8 +18,11 @@
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
-          <ListModeSelector v-if="_actions.changeDisplayMode" v-model="listDisplayMode" />
-
+          <ListingModeSelector
+            v-if="_actions.changeDisplayMode && !!segmentField"
+            v-model="listDisplayMode"
+            :enabled-modes="enabledListingModes"
+          />
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
@@ -51,7 +54,7 @@
             :savePaginationState="savePaginationState"
             :segment="segment"
             :segmentField="segmentField"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_listingComponentTitle"
             :url="_url"
             :useRouterMode="useRouterMode"
             :uuid="'awtable-' + identity"
@@ -70,6 +73,9 @@
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
+            <template slot="table-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
             <template slot="table-header-right">
               <div class="text-right">
                 <slot name="top-right-buttons">
@@ -85,7 +91,7 @@
                     v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
                     :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
                     :disabled="!canShowCreateButton"
-                    class="btn btn-outline-primary aw-button-add"
+                    class="btn btn-sm btn-outline-primary aw-button-add"
                     @click.prevent="goToCreatePage()"
                     type="button"
                   >
@@ -116,13 +122,14 @@
                   headers: {},
                   base64: false,
                   label: $t('AwesomeCrud.buttons.import'),
-                  class: 'btn btn-main-style btn btn-simple text-success  btn-block'
+                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
                 }"
                 @uploaded="importResponse"
+                @upload-failed="importFailedResponse"
               />
               <button
                 v-if="_actions.import"
-                class="btn text-info btn-link btn-alt-style btn-block"
+                class="btn btn-sm text-info btn-link btn-alt-style btn-block"
                 type="button"
                 @click="exportTemplateCallBack"
               >
@@ -132,7 +139,7 @@
               <button
                 v-if="mergedOptions.useCustomLayout && _actions.editLayout"
                 type="button"
-                class="btn btn-simple btn-default btn-block"
+                class="btn btn-sm btn-simple btn-default btn-block"
                 @click="goToCreatePage({ editLayoutMode: true })"
               >
                 <i class="fa fa-th-large"></i>
@@ -167,7 +174,7 @@
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :perPage="10"
+            :perPage="listOptions && listOptions.perPage ? listOptions.perPage : 10"
             :segment="segment"
             :segmentField="segmentField"
             :styles="{
@@ -175,7 +182,7 @@
               itemWrapperClasses: 'col-3'
             }"
             :subtitleField="listOptions && listOptions.subtitleField"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :title="_listingComponentTitle"
             :titleField="listOptions && listOptions.titleField"
             :url="_url"
             :useRouterMode="useRouterMode"
@@ -192,6 +199,9 @@
                 />
               </template>
             </template>
+            <template slot="list-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
             <template slot="list-header-right">
               <template v-if="_customTopRightActions">
                 <AwesomeActionList
@@ -205,12 +215,12 @@
                 v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
                 :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
                 :disabled="!canShowCreateButton"
-                class="btn btn-outline-primary aw-button-add"
+                class="btn btn-sm btn-outline-primary aw-button-add"
                 @click.prevent="goToCreatePage()"
                 type="button"
               >
                 <i class="fa fa-plus text-primary" />
-                {{ $t('AwesomeCrud.labels.createNew') }} {{ _name }}
+                {{ $t('AwesomeCrud.labels.createNew') }}
               </button>
             </template>
           </AwesomeList>
@@ -220,7 +230,8 @@
                 (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
-            :title="_title || $t('AwesomeCrud.labels.manageTitle') + ' ' + _titlePlural"
+            :actions="_actions"
+            :title="_listingComponentTitle"
             :columns="kanbanFieldsComputed"
             :fields="_kanbanOptions.fields"
             :identity="identity"
@@ -233,14 +244,37 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :useRouterMode="useRouterMode"
             :options="_kanbanOptions.options"
-            :splittingField="_kanbanOptions.splittingField || segmentField"
+            :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
             @listChanged="onListChanged"
             @cardChanged="onCardChanged"
+            @cardAdded="onCardAdded"
             @cardClicked="onCardClicked"
           >
+            <template slot="kanban-header-left">
+              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+            </template>
+            <template slot="kanban-header-right">
+              <AwesomeActionList
+                :actions="_customTopRightActions"
+                location="topright"
+                :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
+                @customAction="onCustomAction"
+              />
+              <button
+                v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
+                :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
+                :disabled="!canShowCreateButton"
+                class="btn btn-sm btn-outline-primary aw-button-add"
+                @click.prevent="goToCreatePage()"
+                type="button"
+              >
+                <i class="fa fa-plus text-primary" />
+                {{ $t('AwesomeCrud.labels.createNew') }}
+              </button>
+            </template>
             <template slot="top-actions">
               <template v-if="_customTitleBarActions">
                 <AwesomeActionList
@@ -265,12 +299,12 @@
           <button
             v-if="displaySideFormContent && isSideformSticky"
             :disabled="true"
-            class="btn btn-outline-primary aw-button-add invisible"
+            class="btn btn-sm btn-outline-primary aw-button-add invisible"
             type="button"
           >
             <i class="fa fa-plus text-primary" />
           </button>
-          <AwesomeForm
+          <awesome-form
             v-bind="$props"
             v-if="showViewFormComputed"
             :actions="_actionsBeforeCalculation"
@@ -316,8 +350,10 @@
             @close-edit-layout-mode="onCloseEditLayoutMode"
             @aw-select-previous-item="selectPreviousItem"
             @aw-select-next-item="selectNextItem"
-          />
-          <AwesomeForm
+          >
+            <slot name="after-edit-form" slot="after-edit-form" :selectedItem="selectedItem" />
+          </awesome-form>
+          <awesome-form
             v-bind="$props"
             v-if="showEditFormComputed"
             :mode="displayBottomFormContent ? 'create' : displayMode"
@@ -378,6 +414,7 @@ import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import uuidMixin from '../../mixins/uuidMixin';
+import modelInterfaceMixin from '../../mixins/modelInterfaceMixin';
 // import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import { defaultActions, defaultKanbanOptions } from '../../mixins/defaultProps';
@@ -388,7 +425,7 @@ import AwesomeForm from './AwesomeForm.vue';
 import AwesomeList from '../table/AwesomeList';
 import AwesomeKanban from '../table/AwesomeKanban';
 import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
-import ListModeSelector from './parts/ListModeSelector';
+import ListingModeSelector from './parts/ListingModeSelector';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -412,7 +449,7 @@ const defaultOptions = {
   columnsDisplayed: 10
 };
 
-const listOptions = {
+const defaultListOptions = {
   displayFields: [], // list of fields to use for the display
   imageField: '',
   titleField: '',
@@ -431,7 +468,7 @@ export default {
     AwesomeList,
     AwesomeKanban,
     AwesomeActionList,
-    ListModeSelector
+    ListingModeSelector
   },
   mixins: [
     uuidMixin,
@@ -441,7 +478,8 @@ export default {
     awesomeFormMixin,
     relationMixin,
     parseJsonSchema,
-    awEmitMixin
+    awEmitMixin,
+    modelInterfaceMixin
     // notificationsMixin
   ],
   props: {
@@ -457,7 +495,7 @@ export default {
     identity: {
       type: String,
       required: true,
-      note: 'Deprecated use identity'
+      note: 'Unique collection identifier'
     },
     model: {
       type: Object,
@@ -590,7 +628,7 @@ export default {
     },
     listOptions: {
       type: Object,
-      default: () => listOptions
+      default: () => defaultListOptions
     },
     kanbanOptions: {
       type: Object,
@@ -678,6 +716,11 @@ export default {
       type: String,
       title: 'The selector to use for registering scroll events',
       description: 'This prop is used for registering the scroll event (needed for sticky forms)'
+    },
+    enabledListingModes: {
+      type: Array,
+      default: () => ['table', 'kanban', 'list'],
+      description: 'The listing modes that are enabled for this component'
     }
   },
   data() {
@@ -702,12 +745,13 @@ export default {
         validateAfterChanged: true,
         fieldIdPrefix: 'AwesomeCrud'
       },
-      supportedDataDisplayModes: ['table', 'list', 'kanban'],
+      supportedListingDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
       itemsList: [],
       isSideformSticky: false,
       scrollTarget: null,
-      awFormWidth: null
+      awFormWidth: null,
+      previousModelIdentity: null
     };
   },
   computed: {
@@ -717,6 +761,9 @@ export default {
         return this.$te(this._model.pageTitle) ? this.$t(this._model.pageTitle) : this._model.pageTitle;
       }
 
+      if (this.title === false) {
+        return false;
+      }
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -750,6 +797,16 @@ export default {
           : _.startCase(this.identity + 's');
       }
       return '';
+    },
+
+    _listingComponentTitle() {
+      if (this.title === false) {
+        return false;
+      }
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+      return this.$t('AwesomeCrud.labels.manageTitle') + ' ' + this._titlePlural;
     },
 
     _name() {
@@ -829,18 +886,13 @@ export default {
         columns = _.flatten(columns);
         return columns;
       }
-      const hasFielddMapping =
-        this._kanbanOptions && this._kanbanOptions.fields && Object.values(this._kanbanOptions.fields).some((f) => f);
-      if (this.model && this.model.displayField && !hasFielddMapping) {
-        const displayField = allColumns.find((c) => c.field === this.model.displayField);
-        if (displayField) {
-          return [displayField];
-        }
-      }
-      return [];
+      return allColumns;
     },
 
     tableColumnsComputed() {
+      if (!this.schemaComputed) {
+        return [];
+      }
       return this.parseColumns(this.schemaComputed.properties);
     },
 
@@ -965,7 +1017,16 @@ export default {
           }
         }
       }
-
+      if (!merged.titleField && (!merged.fields || !merged.fields.length)) {
+        if (this.displayField) {
+          merged.titleField = this._model.displayField;
+        } else if (this._model && this._model.displayField) {
+          merged.titleField = this._model.displayField;
+        }
+      }
+      if (!merged.splittingField) {
+        merged.splittingField = this.segmentField;
+      }
       return merged;
     },
 
@@ -991,7 +1052,7 @@ export default {
     },
 
     showItemsListSectionComputed() {
-      return this.supportedDataDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
+      return this.supportedListingDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
     },
 
     currentItemIndex() {
@@ -1015,6 +1076,9 @@ export default {
     },
 
     segmentFieldDefinitionComputed() {
+      if (!this.segmentField) {
+        return '';
+      }
       let field;
       if (this.formSchema && this.formSchema.fields) {
         field = this.formSchema.fields.find((f) => f.model === this.segmentField);
@@ -1073,7 +1137,7 @@ export default {
       return (
         this.canShowCreateButton &&
         !this._isANestedDetailView &&
-        (this.supportedDataDisplayModes.includes(this.displayMode) ||
+        (this.supportedListingDisplayModes.includes(this.displayMode) ||
           (this._displayModeHasPartialDisplay && this.mergedOptions.initialDisplayMode === 'table'))
       );
     },
@@ -1102,7 +1166,7 @@ export default {
     },
 
     _splittingValuesComputed() {
-      return this._kanbanOptions.splittingValues.length
+      return this._kanbanOptions.splittingValues && this._kanbanOptions.splittingValues.length
         ? this._kanbanOptions.splittingValues
         : this.segmentFieldPossibleValues;
     }
@@ -1119,9 +1183,6 @@ export default {
     listDisplayMode: 'onListDisplayModeChanged'
   },
   created() {
-    if (process.env.NODE_ENV === 'development') {
-      window._vue = this;
-    }
     if (!this.$http) {
       try {
         const axios = require('axios');
@@ -1138,6 +1199,9 @@ export default {
     }
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
+    }
+    if (this.enabledListingModes && !this.enabledListingModes.includes(this.mergedOptions.initialDisplayMode)) {
+      console.warn('Intitial display mode is not in the list of enabled modes', this.mergedOptions.initialDisplayMode);
     }
 
     this.internalOptions = _.cloneDeep(this.mergedOptions);
@@ -1169,6 +1233,7 @@ export default {
     this.parentPath = this.parentPath
       .replace('/view', '')
       .replace('/edit', '')
+      .replace('/new', '')
       .replace('/:id', '');
 
     this.$forceUpdate();
@@ -1180,11 +1245,7 @@ export default {
     next((vm) => {});
   },
   beforeRouteLeave(to, from, next) {
-    next((vm) => {
-      if (vm && vm.closeModal) {
-        vm.closeModal();
-      }
-    });
+    next((vm) => {});
   },
   beforeRouteUpdate(to, from, next) {
     // if we are on the same component and coming from a detail list
@@ -1194,13 +1255,25 @@ export default {
     next();
   },
 
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
+    this.scrollTarget.removeEventListener('scroll', this.handleScroll);
+  },
+
   methods: {
     $alert: Swal,
     refreshComponent(newVal, preVal) {
-      if (!newVal || newVal === false) {
+      if (!newVal || newVal === false || newVal === preVal) {
         return;
       }
-      if (this.identity) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line
+        console.log('refreshComponent', newVal, preVal);
+      }
+
+      // needed to avoid unwanted refresh
+      if (this.identity && this.identity !== this.previousModelIdentity) {
+        this.previousModelIdentity = this.identity;
         this.loadModel();
       }
 
@@ -1226,12 +1299,22 @@ export default {
 
     callbackFunctionForBAse64(e) {},
 
+    importFailedResponse(err) {
+      Swal.fire({
+        title: this.$t('common.messages.not_imported', {
+          title: this._name
+        }),
+        type: 'error',
+        text: err.message || err
+      });
+    },
+
     importResponse(e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
           title: this.$t('common.messages.no_data_imported', {
-            title: this._title
+            title: this._name
           }),
           type: 'warning'
         });
@@ -1241,7 +1324,7 @@ export default {
       if (e.properData.length > 0) {
         this.$awNotify({
           title: this.$t('common.messages.successfullyImported', {
-            title: this._title
+            title: this._name
           }),
           type: 'success'
         });
@@ -1256,7 +1339,7 @@ export default {
         setTimeout(() => {
           this.$awNotify({
             title: `${e.improperData.length} ${this.$t('common.messages.not_imported', {
-              title: this._title
+              title: this._name
             })}`,
             message,
             type: 'warning',
@@ -1295,16 +1378,9 @@ export default {
         return;
       }
 
-      this.mergedOptions.columns = this.parseColumns(this.schemaComputed.properties);
-      // now a computed property...
-      // this.mergedOptions.url =
-      //   this.url ||
-      //   (this.options && this.options.url) ||
-      //   (this._model && this._model.url) ||
-      //   `/${this.identity}`;
-      // if (typeof this.mergedOptions.url === 'function') {
-      //   this.mergedOptions.url = this.mergedOptions.url(this.parent, this);
-      // }
+      if (this.schemaComputed.properties) {
+        this.mergedOptions.columns = this.parseColumns(this.schemaComputed.properties);
+      }
 
       if (!this.mergedOptions.exportUrl) {
         this.mergedOptions.exportUrl = `${this._url}/export`;
@@ -1359,10 +1435,15 @@ export default {
           }
           // if it's a edit or view url
           if (this.$route.params.id) {
+            const matched = this.$route.matched[this.$route.matched.length - 1];
+            if (matched.path.indexOf('/edit') !== -1) {
+              this.setDisplayMode('edit', {});
+            } else {
+              this.setDisplayMode('view', {});
+            }
             this.$http
               .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
               .then((res) => {
-                const matched = this.$route.matched[this.$route.matched.length - 1];
                 const data =
                   this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
                     ? _.get(res, this.apiResponseConfig.dataPath)
@@ -1413,6 +1494,9 @@ export default {
 
     goToCreatePage(options = { reset: true, editLayoutMode: false }) {
       if (this.mergedOptions.createPath) {
+        if (this.mergedOptions.createPath.includes('{{') && this.mergedOptions.createPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.createPath));
+        }
         return this.$router.push(this.mergedOptions.createPath);
       }
       if (options.reset) {
@@ -1457,13 +1541,17 @@ export default {
 
     goToEditPage(item) {
       if (this.mergedOptions.editPath) {
-        return this.$router.push(
-          this.mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
-        );
+        if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKey]) {
+          return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
+        }
+        if (this.mergedOptions.editPath.includes('{{') && this.mergedOptions.editPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.editPath, item));
+        }
+        return this.$router.push(this.mergedOptions.editPath);
       }
-      if (this.useRouterMode) {
-        this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
-        //window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
+      const nextPath = `${this.parentPath}/${item[this.primaryKey]}/edit`;
+      if (this.useRouterMode && this.$route.path !== nextPath) {
+        this.$router.push(nextPath);
       }
       this.setDisplayMode('edit', item);
     },
@@ -1473,15 +1561,17 @@ export default {
         return;
       }
       if (this.mergedOptions.viewPath) {
-        if (item && item[this.primaryKey]) {
-          return this.$router.push(
-            this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
-          );
+        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKey]) {
+          return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
+        }
+        if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
+          return this.$router.push(this.parseUrl(this.mergedOptions.viewPath, item));
         }
         return this.$router.push(this.mergedOptions.viewPath);
       }
-      if (this.useRouterMode) {
-        this.$router.push(`${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`);
+      const nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`;
+      if (this.useRouterMode && this.$route.path !== nextPath) {
+        this.$router.push(nextPath);
       }
       this.setDisplayMode('view', item);
     },
@@ -1508,11 +1598,7 @@ export default {
         .put(`${this._url}/${item[this.primaryKey]}`, item)
         .then((res) => {
           this.$emit(this.identity + '-item-updated', res.data);
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),
@@ -1583,9 +1669,16 @@ export default {
             this.$http
               .delete(`${this._selectedItemUrl}`)
               .then(() => {
+                this.selectedItem = null;
                 this.tableNeedsRefresh = true;
                 this.statsNeedsRefresh = true;
                 this.nestedCrudNeedsRefresh = true;
+                if (this.useRouterMode) {
+                  this.$router.replace(`${this.parentPath}?ts`);
+                }
+                const previousDisplayMode = this.getPreviousDisplayMode();
+                this.setDisplayMode(previousDisplayMode);
+
                 this.$forceUpdate();
               })
               .catch((err) => {
@@ -1616,7 +1709,8 @@ export default {
 
     onListChanged(item) {},
 
-    onCardChanged(item, listTitle) {},
+    onCardChanged(item, list) {},
+    onCardAdded({ element, newIndex }, list) {},
 
     onCardClicked(item) {
       this.$emit('on-kanban-item-clicked', item);
@@ -1628,12 +1722,7 @@ export default {
      * @param options = {context = create | edit }
      */
     onEditDisplayCancelled(item, { context }) {
-      const previousDisplayMode =
-        this.previousDisplayMode &&
-        this.previousDisplayMode !== context &&
-        this.previousDisplayMode !== this.displayMode
-          ? this.previousDisplayMode
-          : this.mergedOptions.initialDisplayMode;
+      const previousDisplayMode = this.getPreviousDisplayMode(context);
       if (this.useRouterMode) {
         let url = this.parentPath.replace('/edit', '');
         if (previousDisplayMode !== 'view') {
@@ -1891,11 +1980,15 @@ export default {
       if (mode !== oldMode) {
         this.displayMode = mode;
       }
+    },
+
+    getPreviousDisplayMode(context) {
+      return this.previousDisplayMode &&
+        this.previousDisplayMode !== context &&
+        this.previousDisplayMode !== this.displayMode
+        ? this.previousDisplayMode
+        : this.mergedOptions.initialDisplayMode;
     }
-  },
-  beforeDestroy() {
-    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
-    this.scrollTarget.removeEventListener('scroll', this.handleScroll);
   }
 };
 </script>
@@ -1934,7 +2027,7 @@ export default {
       color: #78849e !important;
     }
 
-    .subgroup {
+    .subgroup-auto {
       legend {
         padding-right: 15px;
         font-size: 80%;

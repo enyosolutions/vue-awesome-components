@@ -110,7 +110,10 @@ export default {
           params: { listOfValues: this.fieldOptions.queryParams && this.fieldOptions.queryParams.listOfValues || false, search: searchString }
         });
         promise.then(res => {
-          this.apiOptions = res.data.body;
+          this.apiOptions = this.apiResponseConfig &&
+            this.apiResponseConfig.dataPath
+            ? _.get(res, this.apiResponseConfig.dataPath)
+            : res.data.body;
           this.isLoading = false;
           /* eslint-disable-next-line */
         }).catch(err => {

@@ -140,6 +140,14 @@
         :url="currentField.relationUrl"
         v-model="value"
       />
+      <!-- ADD SELECT FOR object / array -->
+      <input
+        v-if="currentField.type === 'object'"
+        v-model.number="value"
+        type="text"
+        class="form-control input-group-sm"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
+      />
     </div>
   </div>
 </template>
@@ -218,6 +226,7 @@ export default {
     value(newValue) {
       this.updateValue(newValue);
     },
+
     currentField(newField) {
       if (newField && typeof newField === 'object' && Object.keys(newField).length) {
         if (newField.type === 'datetime' || newField.type === 'date') {

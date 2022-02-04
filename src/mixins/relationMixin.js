@@ -12,6 +12,9 @@ export default {
   },
   methods: {
     getModelFromStore(modelId, modelsStorePath = null) {
+      if (!modelId) {
+        return;
+      }
       modelsStorePath = modelsStorePath || this.modelsStorePath;
       // if vuex is installed
       if (this.$store && this.$store.state) {

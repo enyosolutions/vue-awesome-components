@@ -60,35 +60,39 @@
           <div class="card" v-for="(data, index) in items" :key="index" @click="cardClicked(data)">
             <img
               class="card-img-top"
-              v-if="fields && fields.image && data[fields.image]"
-              :src="data[fields.image]"
-              :alt="data[fields.title]"
+              v-if="imageField && getItemProperty(data, imageField)"
+              :src="getItemProperty(data, imageField)"
+              :alt="getItemProperty(data, titleField)"
             />
             <div class="card-body">
-              <div v-if="fields && fields.users && data[fields.users]" class="pull-right">
-                <img
-                  v-for="(user, index) in data[fields.users]"
-                  :key="index"
-                  class="kanban-user-img"
-                  :alt="user.label"
-                  :title="user.label"
-                  :src="user.src"
-                />
-              </div>
-              <h5 class="card-title" v-if="fields && fields.title && data[fields.title]">
-                {{ data[fields.title] }}
+              <template v-if="usersField && getItemProperty(data, usersField)">
+                <div class="pull-right">
+                  <img
+                    v-for="(user, index) in getItemUsers(data, usersField)"
+                    :key="index"
+                    class="kanban-user-img"
+                    :alt="user.label"
+                    :title="user.label"
+                    :src="user.src || user"
+                  />
+                </div>
+              </template>
+              <h5 class="card-title" v-if="getItemProperty(data, titleField)">
+                {{ getItemProperty(data, titleField) }}
               </h5>
-              <h6 v-if="fields && fields.subtitle && data[fields.subtitle]" class="card-subtitle mb-2 text-muted">
-                {{ data[fields.subtitle] }}
+              <h6 v-if="getItemProperty(data, subtitleField)" class="card-subtitle mb-2 text-muted">
+                {{ getItemProperty(data, subtitleField) }}
               </h6>
-              <p class="card-text" v-if="fields && fields.description && data[fields.description]">
-                {{ data[fields.description] }}
+              <p class="card-text" v-if="getItemProperty(data, descriptionField)">
+                {{ getItemProperty(data, descriptionField) }}
               </p>
-              <div v-if="fields && fields.labels && data[fields.labels]" class="pull-right">
-                <small v-for="label in data[fields.labels]" :key="label" class="badge badge-primary">{{ label }}</small>
+              <div v-if="getItemProperty(data, labelsField)" class="pull-right">
+                <small v-for="label in getItemProperty(data, labelsField)" :key="label" class="badge badge-primary">{{
+                  label
+                }}</small>
               </div>
 
-              <template v-if="columns && columns.length">
+              <template v-if="columns && columns.length && (!hasFormattingData || displayColumnsInCards)">
                 <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
                   {{ key }} :
                   <AwesomeDisplay
@@ -98,11 +102,14 @@
                     :relation-label="getField(key).relationLabel"
                     :relation-url="getField(key).relationUrl"
                     :relation-key="getField(key).relationKey"
+                    :display-label-cache="displayLabelsCache"
                   >
                   </AwesomeDisplay>
                 </div>
               </template>
-              <p v-if="!hasData" class="card-text">{{ $t('AwesomeKanban.labels.noData') }}</p>
+              <p v-if="!hasFormattingData && !displayColumnsInCards" class="card-text">
+                {{ $t('AwesomeKanban.labels.noData') }}
+              </p>
             </div>
           </div>
         </Draggable>
@@ -115,6 +122,8 @@
 import _ from 'lodash';
 import Vue from 'vue';
 import i18nMixin from '../../mixins/i18nMixin';
+import templatingMixin from '../../mixins/templatingMixin';
+import listCardFormatMixin from '../../mixins/listCardFormatMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 
 export default {
@@ -122,7 +131,7 @@ export default {
   components: {
     AwesomeDisplay
   },
-  mixins: [i18nMixin],
+  mixins: [i18nMixin, listCardFormatMixin, templatingMixin],
   props: {
     /**
      * The id of the list
@@ -133,7 +142,7 @@ export default {
     },
 
     title: {
-      type: String,
+      type: [String, Boolean],
       default: 'Title'
     },
 
@@ -166,20 +175,7 @@ export default {
      * */
     scrollSensitivity: {
       type: Number,
-      default: 200
-    },
-    /**
-     * The fields allowed to show
-     * */
-    fields: {
-      default: () => ({
-        image: '',
-        title: '',
-        subtitle: '',
-        description: '',
-        users: '',
-        labels: ''
-      })
+      default: 150
     },
 
     /*
@@ -196,6 +192,15 @@ export default {
     customListActions: {
       type: Array,
       default: () => []
+    },
+
+    displayLabelsCache: {
+      type: Object,
+      default: () => ({})
+    },
+    displayColumnsInCards: {
+      type: Boolean,
+      default: false
     }
   },
   created() {
@@ -247,20 +252,19 @@ export default {
 
     cardClicked(data) {
       this.$emit('cardClicked', data);
+    },
+
+    getItemUsers(data, usersField) {
+      const usersImages = this.getItemProperty(data, usersField);
+      if (typeof usersImages === 'string') {
+        return [usersImages];
+      }
+      return usersImages;
     }
   },
   computed: {
-    hasData() {
-      return Object.keys(this.fields) || this.columns.length;
-      /*
-      let count = 0;
-      Object.keys(this.fields).forEach((field) => {
-        if (this.fields[field]) {
-          count++;
-        }
-      });
-      return count > 0;
-      */
+    hasFormattingData() {
+      return this.titleField || this.imageField || this.subtitleField || this.descriptionField || this.labelsField;
     }
   }
 };

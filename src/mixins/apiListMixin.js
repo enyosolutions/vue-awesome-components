@@ -39,7 +39,7 @@ export default {
         'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
 
-    title: { type: String, default: '' },
+    title: { type: [String, Boolean], default: '' },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
     create: { type: Function, default: undefined },
@@ -201,20 +201,21 @@ export default {
   },
 
   mounted() {
-    this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', () => {
-      this.refreshLocalData();
-    });
+    this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', this.refreshLocalData);
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
   },
-  beforeDestroy() { },
+  beforeDestroy() {
+    this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh', this.refreshLocalData);
+
+  },
   methods: {
     startCase: _.startCase,
 
     // eslint-disable-next-line
     async refreshLocalData(changed) {
-      if (this.url) {
+      if (this._url) {
         //   this.data = [];
         // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
@@ -227,7 +228,7 @@ export default {
     },
 
     entityChanged() {
-      this.data = this.url ? [] : this.rows;
+      this.data = this._url ? [] : this.rows;
       this.serverParams = {};
       this.getItems({ useSkeleton: true, source: '[apiListMixin] entityChanged' });
     },
@@ -250,7 +251,7 @@ export default {
         return;
       }
 
-      if (!this.url) {
+      if (!this._url) {
         return;
       }
       if (options.useSkeleton) {
@@ -261,10 +262,10 @@ export default {
         console.debug("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
-      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this.url })
+      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this._url })
       return this.$http
         .get(
-          `${this.url}${this.url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
+          `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
           {}
         )
         .then(res => {

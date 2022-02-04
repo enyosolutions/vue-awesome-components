@@ -127,7 +127,7 @@
           }"
           :apiRequestConfig="{ perPageField: '_limit', pageField: '_page' }"
           :options="{
-            actions: { itemsPerRow: false }
+            actions: { changeItemsPerRow: false }
           }"
         ></AwesomeList>
       </div>

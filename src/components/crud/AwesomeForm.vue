@@ -1,7 +1,7 @@
 <template>
   <div class="content aw-form" :class="'aw-form-' + identity">
     <div class="container-fluid">
-      <div class="row">
+      <div class="row m-0">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
           <div class="text-left">
             <!-- START OF MODAL -->
@@ -36,9 +36,9 @@
                 <div v-if="mode === 'create'" class="modal-content">
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
-                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                      <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
-                      </h3>
+                      </h5>
 
                       <div
                         v-if="_useCustomLayout && actions.editLayout"
@@ -129,8 +129,9 @@
                           />
                         </template>
                       </slot>
+                      <slot name="after-create-form" :selectedItem="selectedItem" />
                     </div>
-                    <div class="modal-footer" v-if="!_isEmbedded">
+                    <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="add-modal-footer">
                         <button type="button" class="btn btn-default btn-simple mr-auto" @click="cancel()">
                           {{ $t('AwesomeCrud.buttons.cancel') }}
@@ -146,17 +147,17 @@
                 <div v-if="mode === 'edit' || mode === 'view' || _isANestedDetailView" class="modal-content">
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
-                      <h3 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
+                      <h5 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
                         {{ $t(mode === 'view' ? '' : 'AwesomeCrud.labels.edit') }} {{ _name }}
                         <b>{{ _editItemTile }}</b>
-                      </h3>
+                      </h5>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
                         <AwesomeActionList
                           :actions="customTopActions"
                           :item="selectedItem"
                           :parent="parent"
                           location="top"
-                          @customAction="$emit('customAction', $event)"
+                          @customAction="$awEmit('customAction', $event)"
                         />
                       </div>
                       <div
@@ -207,7 +208,7 @@
                         <div class="ml-1 aw-form-pagination" v-if="actions.formPagination && (hasPrevious || hasNext)">
                           <div class="btn-group">
                             <button
-                              @click="!!hasPrevious && $emit('aw-select-previous-item')"
+                              @click="!!hasPrevious && $awEmit('aw-select-previous-item')"
                               class="btn btn-light btn-sm float-left"
                               :disabled="!hasPrevious"
                               :class="!hasPrevious ? 'op-50' : ''"
@@ -217,7 +218,7 @@
                             </button>
 
                             <button
-                              @click="!!hasNext && $emit('aw-select-next-item')"
+                              @click="!!hasNext && $awEmit('aw-select-next-item')"
                               class="btn btn-light btn-sm float-right"
                               :disabled="!hasNext"
                               :class="!hasPrevious ? 'op-50' : ''"
@@ -264,16 +265,16 @@
                             }}
                           </a>
                         </li>
-                        <template v-for="(ns, index) in nestedModels">
-                          <li v-if="ns && ns.identity" :key="index" class="nav-item nested-model-tab-link">
+                        <template v-for="(nm, index) in nestedModels">
+                          <li v-if="nm && nm.identity" :key="index" class="nav-item nested-model-tab-link">
                             <a
                               class="nav-link"
-                              :class="{ active: activeNestedTab === ns.identity }"
+                              :class="{ active: activeNestedTab === nm.identity }"
                               data-toggle="tab"
-                              @click="activeNestedTab = (ns && ns.identity) || 'general'"
+                              @click="activeNestedTab = (nm && nm.identity) || 'general'"
                             >
-                              <i v-if="ns.icon" :class="ns.icon" />
-                              {{ $t(ns.namePlural || ns.title || ns.identity) }}
+                              <i v-if="nm.icon" :class="nm.icon" />
+                              {{ $t(nm.namePlural || nm.title || nm.identity) }}
                             </a>
                           </li>
                         </template>
@@ -379,9 +380,9 @@
                           <template v-if="formSchema && formSchema.fields && !_useCustomLayout">
                             <!--
                             <template v-if="nestedLayoutMode === 'list'">
-                              <h3 class="nested-model-title text-primary font-italic">
+                              <h5 class="nested-model-title text-primary font-italic">
                                 <b>{{ _editItemTile }}</b>
-                              </h3>
+                              </h5>
                               <hr class="mb-1" />
                             </template>
                             -->
@@ -410,40 +411,40 @@
                                 selectedItem
                             "
                           >
-                            <template v-for="ns in nestedModels">
+                            <template v-for="nm in nestedModels">
                               <div
-                                v-if="ns && ns.identity"
-                                :key="ns.$id"
+                                v-if="nm && nm.identity"
+                                :key="nm.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show in': activeNestedTab === ns.identity || nestedLayoutMode === 'list'
+                                  'active show in': activeNestedTab === nm.identity || nestedLayoutMode === 'list'
                                 }"
                               >
                                 <template v-if="nestedLayoutMode === 'list'">
-                                  <h3
+                                  <h5
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
-                                      getNestedActions(ns).collapse
-                                        ? (nestedModelsCollapseState[ns.identity] = !nestedModelsCollapseState[
-                                            ns.identity
+                                      getNestedActions(nm).collapse
+                                        ? (nestedModelsCollapseState[nm.identity] = !nestedModelsCollapseState[
+                                            nm.identity
                                           ])
                                         : ''
                                     "
                                   >
-                                    {{ getNestedTabsTitle(ns) }}
+                                    {{ getNestedTabsTitle(nm) }}
                                     <i
                                       class="fa"
                                       :class="
-                                        nestedModelsCollapseState[ns.identity] ? 'fa-caret-right' : 'fa-caret-down'
+                                        nestedModelsCollapseState[nm.identity] ? 'fa-caret-right' : 'fa-caret-down'
                                       "
                                     ></i>
-                                  </h3>
+                                  </h5>
                                   <hr class="mt-0" />
                                 </template>
                                 <div
                                   :is="AwesomeCrud"
-                                  :id="'list-collapse-' + ns.identity"
-                                  v-bind="ns"
+                                  :id="'list-collapse-' + nm.identity"
+                                  v-bind="nm"
                                   :parent="selectedItem"
                                   :parentIdentity="(model && model.identity) || identity"
                                   :useRouterMode="false"
@@ -454,8 +455,8 @@
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
                                   class="aw-crud-nested-model"
                                   :class="
-                                    getNestedActions(ns).collapse && nestedLayoutMode === 'list'
-                                      ? !nestedModelsCollapseState[ns.identity]
+                                    getNestedActions(nm).collapse && nestedLayoutMode === 'list'
+                                      ? !nestedModelsCollapseState[nm.identity]
                                         ? 'collapse show'
                                         : 'collapse'
                                       : ''
@@ -468,8 +469,9 @@
                           </template>
                         </div>
                       </slot>
+                      <slot name="after-edit-form" :selectedItem="selectedItem" />
                     </div>
-                    <div class="modal-footer" v-if="!_isEmbedded">
+                    <div class="modal-footer" v-if="!_isEmbedded && displayFooter">
                       <slot name="edit-modal-footer">
                         <button
                           v-if="!standalone"
@@ -484,7 +486,7 @@
                             :actions="customInlineActions"
                             :item="selectedItem"
                             location="inline"
-                            @customAction="$emit('customAction', $event)"
+                            @customAction="$awEmit('customAction', $event)"
                           />
                         </template>
 
@@ -529,9 +531,9 @@
                 <div v-if="mode === 'bulkEdit'" class="modal-content">
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
-                      <h3 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
+                      <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
                         {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
-                      </h3>
+                      </h5>
                       <button
                         v-if="!standalone && !_isEmbedded"
                         type="button"
@@ -554,6 +556,7 @@
                           />
                         </template>
                       </slot>
+                      <slot name="after-create-form" :selectedItem="selectedItem" />
                     </div>
                     <div class="modal-footer" v-if="!_isEmbedded">
                       <slot name="add-modal-footer">
@@ -624,12 +627,17 @@ const defaultOptions = {
   queryParams: {},
   stats: false,
   autoRefresh: false, // or integer in seconds
-  responseField: 'body'
+  responseField: 'body',
+  useCustomLayout: false
 };
 
 export default {
   name: 'AwesomeForm',
   introduction: 'A component to forms from a json schema',
+  model: {
+    prop: 'item',
+    event: 'change'
+  },
   components: {
     AwesomeCrud: AwesomeCrud,
     /* Column,
@@ -651,7 +659,7 @@ export default {
     // notificationsMixin
   ],
   props: {
-    item: { type: Object, required: true },
+    item: { type: Object, required: false },
     bulkItems: { type: Array, required: false },
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -743,7 +751,7 @@ export default {
         // Only accepts values that contain the string 'cookie-dough'.
         return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
       },
-      description: 'Define what mode should the form be used in (create | edit | view | bulkEdit)'
+      description: 'Define what mode should the form be used in (create| edit | view | bulkEdit '
     },
     displayMode: {
       type: String,
@@ -845,7 +853,12 @@ export default {
     displayHeader: {
       type: Boolean,
       default: true,
-      node: 'Controls if the the header of the modal or the page should be displayed'
+      node: 'Controls if the header of the modal or the page should be displayed'
+    },
+    displayFooter: {
+      type: Boolean,
+      default: true,
+      node: 'Controls if the footer of the modal or the page should be displayed'
     },
     hasNext: {
       type: Boolean,
@@ -922,15 +935,16 @@ export default {
     },
 
     _name() {
-      if (this._model && this._model.name) {
-        if (this.$te(this._model.name)) {
-          const t = this.$t(this._model.name);
+      const name = this.name || (this._model && this._model.name);
+      if (name) {
+        if (this.$te(name)) {
+          const t = this.$t(name);
           if (typeof t === 'string') {
             return t;
           }
         }
         {
-          return startCase(this._model.name);
+          return startCase(name);
         }
       }
 
@@ -942,8 +956,9 @@ export default {
       return '';
     },
     _namePlural() {
-      if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
+      const namePlural = this.namePlural || (this._model && this._model.namePlural);
+      if (namePlural) {
+        return this.$te(namePlural) ? this.$t(namePlural) : startCase(namePlural);
       }
 
       if (this.identity) {
@@ -973,8 +988,9 @@ export default {
     },
 
     _mergedOptions() {
-      let mergedOptions = merge({}, defaultOptions, this.options, this._model.options);
+      let mergedOptions = merge({}, defaultOptions, this.options, this._model ? this._model.options : {});
       if (this.options !== defaultOptions) {
+        console.warn('options are diffrent from the basics', this.options);
         mergedOptions = merge(mergedOptions, this.options);
       }
       if (this.$route && this.$route.query && this.$route.query.filters) {
@@ -990,7 +1006,6 @@ export default {
       }
       return mergedOptions || {};
     },
-
     formSchema() {
       if (!this._schema) {
         return [];
@@ -1043,8 +1058,11 @@ export default {
           ...group,
           type: 'group',
           legend: group.legend || group.title,
-          wrapperClasses: `${group.wrapperClasses || ''} ${group.cols ? `col-${group.cols}` : ''}`,
-          styleClasses: `${group.styleClasses || ''}`,
+          wrapperClasses: `${group.wrapperClasses || ''}`,
+          cols: group.cols,
+          styleClasses: `${group.classes || group.styleClasses || ''}`,
+          headerClasses: `${group.headerClasses || ''}`,
+          styles: `${group.styles || ''}`,
           fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model))
         }))
       };
@@ -1116,7 +1134,8 @@ export default {
     mode: 'onModeChanged',
     options: 'mergeOptions',
     item: 'refreshComponent',
-    needsRefresh: 'refreshComponent'
+    needsRefresh: 'refreshComponent',
+    selectedItem: 'onChange'
   },
   created() {
     if (!this.$http) {
@@ -1169,7 +1188,7 @@ export default {
         if (this.$route.query.item) {
           this.selectedItem = merge(this.selectedItem, this.$route.query.item);
         }
-        this.$emit('create', this.selectedItem, { reset: false });
+        this.$awEmit('create', this.selectedItem, { reset: false });
 
         return;
       }
@@ -1180,7 +1199,7 @@ export default {
           if (this.$route.query.item) {
             this.selectedItem = merge(this.selectedItem, this.$route.query.item);
           }
-          this.$emit('bulkEdit', this.selectedItem, { reset: false });
+          this.$awEmit('bulkEdit', this.selectedItem, { reset: false });
 
           return;
         }
@@ -1306,7 +1325,7 @@ export default {
                 ? get(res, this.apiResponseConfig.dataPath)
                 : res.data;
             this.selectedItem = data;
-            this.$emit('itemFetched', this.selectedItem); // @deprecated
+            this.$awEmit('itemFetched', this.selectedItem); // @deprecated
             this.$awEmit('item-fetched', {
               component: 'aw-form',
               context: this,
@@ -1319,7 +1338,7 @@ export default {
           .catch(this.apiErrorCallback)
           .finally(() => {
             this.isRefreshing = false;
-            this.$emit('input:needs-refresh', false);
+            this.$awEmit('input:needs-refresh', false);
           });
       }
     },
@@ -1412,7 +1431,8 @@ export default {
     async createItem() {
       if (!this._url) {
         // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No url for submitting');
+        this.$emit('save', this.selectedItem);
+        this.$emit('change', this.selectedItem);
         return false;
       }
       if (this.$refs.form) {
@@ -1457,11 +1477,7 @@ export default {
             parentIdentity: this.parentIdentity,
             parent: this.parent
           });
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyCreated', {
               title: this.type
             }),
@@ -1487,6 +1503,7 @@ export default {
       if (!this._url) {
         // eslint-disable-next-line
         console.warn('AWESOMECRUD ERROR:: No url for submitting');
+
         return false;
       }
       if (this.$refs.form) {
@@ -1521,8 +1538,8 @@ export default {
 
     async editItem() {
       if (!this._url) {
-        // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No url for submitting');
+        this.$emit('save', this.selectedItem);
+        this.$emit('change', this.selectedItem);
         return false;
       }
       if (!this.selectedItem[this.primaryKey]) {
@@ -1565,11 +1582,7 @@ export default {
         .put(`${this._selectedItemUrl}`, this.selectedItem)
         .then((res) => {
           this.$awEmit('item-edited', { data: res.data });
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
+          this.$awNotify({
             title: this.$t('AwesomeDefault.messages.successfullyModified', {
               title: this.type
             }),
@@ -1604,16 +1617,16 @@ export default {
     },
 
     nestedViewFunction(item) {
-      this.$emit('nestedView', item);
+      this.$awEmit('nestedView', item);
       this.openModalDebounced();
     },
 
     deleteFunction(item) {
-      this.$emit('delete', item);
+      this.$awEmit('delete', item);
     },
 
     bulkEditFunction(items) {
-      this.$emit('bulkEdit', items);
+      this.$awEmit('bulkEdit', items);
     },
 
     getNestedItem() {
@@ -1628,8 +1641,8 @@ export default {
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? get(res, this.apiResponseConfig.dataPath)
               : res.data.body;
-          this.$emit('itemFfetched', this.selectedItem); // @deprecated
-          this.$awEemit('item-fetched', {
+          this.$awEmit('itemFfetched', this.selectedItem); // @deprecated
+          this.$awEmit('item-fetched', {
             component: 'aw-form',
             context: this,
             item: this.selectedItem,
@@ -1646,13 +1659,13 @@ export default {
 
     customAction(body) {
       const { action } = body;
-      this.$emit(this.identity + '-custom-action', action);
+      this.$awEmit(this.identity + '-custom-action', action);
       return action && action.action && action.action(body, this);
     },
 
     listUpdated(datas) {
-      this.$emit('list-updated', datas);
-      this.$emit(this.identity + '-list-updated', datas);
+      this.$awEmit('list-updated', datas);
+      this.$awEmit(this.identity + '-list-updated', datas);
     },
 
     renderSidebar() {},
@@ -1664,11 +1677,11 @@ export default {
     renderForm(definition = { component: 'VueFormGenerator', props: {} }) {},
 
     openEditLayoutMode() {
-      this.$emit('open-edit-layout-mode');
+      this.$awEmit('open-edit-layout-mode');
     },
 
     closeEditLayoutMode() {
-      this.$emit('close-edit-layout-mode');
+      this.$awEmit('close-edit-layout-mode');
       //this.editLayoutMode = false;
     },
 
@@ -1685,7 +1698,7 @@ export default {
         fields: this.formSchema.fields.map((f) => f.model)
       };
 
-      this.$emit('layout-resetted', [newLayout]);
+      this.$awEmit('layout-resetted', [newLayout]);
     },
 
     exportLayout() {
@@ -1693,27 +1706,31 @@ export default {
     },
 
     onLayoutUpdated(items) {
-      this.$emit('layout-updated', items);
+      this.$awEmit('layout-updated', items);
     },
 
     onLayoutFieldsUpdated(items) {
-      this.$emit('layout-fields-updated', items);
+      this.$awEmit('layout-fields-updated', items);
     },
 
-    getNestedTabsTitle(ns) {
-      if (ns.name) {
-        return ns.name;
+    getNestedTabsTitle(nestedModel) {
+      if (nestedModel.name) {
+        return nestedModel.name;
       }
-      if (ns.title) {
-        return ns.title;
+      if (nestedModel.title) {
+        return nestedModel.title;
       }
-      return this.$te('awForm.labels.tabs.' + ns.identity)
-        ? this.$t('awForm.labels.tabs.' + ns.identity)
-        : this.startCase(ns.identity);
+      return this.$te('awForm.labels.tabs.' + nestedModel.identity)
+        ? this.$t('awForm.labels.tabs.' + nestedModel.identity)
+        : this.startCase(nestedModel.identity);
     },
 
     getNestedActions(nestedModel) {
       return merge({}, defaultActions, nestedModel.actions);
+    },
+
+    onChange(newItem) {
+      this.$emit('change', newItem);
     }
   }
 };
@@ -1721,9 +1738,6 @@ export default {
 <style lang="scss" scoped>
 .modal-backdrop.show {
   display: block;
-}
-.vue-form-generator textarea.form-control {
-  min-height: 150px;
 }
 
 .input-group .form-control {
@@ -1737,44 +1751,6 @@ export default {
     white-space: nowrap;
     margin-bottom: -10px;
     margin-top: 10px;
-  }
-}
-
-.vue-form-generator .input-group {
-  z-index: 100;
-}
-.vue-form-generator .multiselect {
-  width: 100%;
-  margin-top: 10px;
-}
-.vue-form-generator {
-  .form-element {
-    label {
-      display: block;
-    }
-    .hint {
-      font-size: 60%;
-      color: #999;
-      font-style: italic;
-      position: absolute;
-      width: calc(100% - 40px);
-      left: 20px;
-      background: white;
-      box-shadow: 0 0 2px #999;
-      transition: all 200ms linear;
-      z-index: 110;
-      padding: 10px;
-      margin-top: 10px;
-      opacity: 0;
-      visibility: hidden;
-    }
-    &:hover {
-      .hint {
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 1s;
-      }
-    }
   }
 }
 
@@ -1830,7 +1806,7 @@ body.modal-open .bootstrap-datetimepicker-widget {
     color: #78849e !important;
   }
 
-  .subgroup {
+  .subgroup-auto {
     legend {
       padding-right: 15px;
       font-size: 80%;
@@ -1865,9 +1841,6 @@ body.modal-open .bootstrap-datetimepicker-widget {
           text-align: left;
         }
       }
-
-      .modal-body-nested {
-      }
     }
   }
 }
@@ -1877,14 +1850,56 @@ body.modal-open .bootstrap-datetimepicker-widget {
   justify-content: flex-end;
 }
 
-.aw-form .aw-display {
-  border-left: 3px solid #eee;
-  padding-left: 3px;
-  min-height: 30px;
-  margin-left: -3px;
+.vue-form-generator {
+  textarea.form-control {
+    min-height: 150px;
+  }
+  .input-group {
+    z-index: 100;
+  }
+  .multiselect {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .form-element {
+    label {
+      display: block;
+    }
+    .hint {
+      font-size: 60%;
+      color: #999;
+      font-style: italic;
+      position: absolute;
+      width: calc(100% - 40px);
+      left: 20px;
+      background: white;
+      box-shadow: 0 0 2px #999;
+      transition: all 200ms linear;
+      z-index: 110;
+      padding: 10px;
+      margin-top: 10px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    &:hover {
+      .hint {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 1s;
+      }
+    }
+  }
 }
 
 .aw-form {
+  .aw-display {
+    border-left: 3px solid #eee;
+    padding-left: 3px;
+    min-height: 30px;
+    margin-left: -3px;
+  }
+
   .modal {
     &.slide {
       .modal-dialog {
@@ -1892,6 +1907,14 @@ body.modal-open .bootstrap-datetimepicker-widget {
       }
     }
 
+    .display-mode-sidebar {
+      @media (min-width: 900px) {
+        .modal-dialog {
+          max-width: 650px;
+          margin: 1.75rem auto;
+        }
+      }
+    }
     .modal-dialog {
       &.modal-full,
       &.modal-fullscreen {

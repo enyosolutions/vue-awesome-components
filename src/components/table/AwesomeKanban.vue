@@ -1,14 +1,19 @@
 <template>
-  <div class="aw-kanban">
+  <div class="aw-kanban aw-listing">
     <div class="float-left col-6 pl-0">
-      <slot name="list-header-left">
-        <div class="card aw-segment-table-wrapper" v-if="segment">
-          <awesome-segments :field="segment" @change="onSegmentChange" />
-        </div>
-      </slot>
+      <slot name="kanban-header-left"></slot>
+      <div class="card aw-segment-table-wrapper d-none" v-show="segmentFieldDefinitionComputed">
+        <awesome-segments
+          :field="segmentFieldDefinitionComputed"
+          :apiRequestConfig="apiRequestConfig"
+          :apiResponseConfig="apiResponseConfig"
+          @change="onSegmentChange"
+          @segment-list-changed="onSegmentListChanged"
+        />
+      </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
-      <slot name="list-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
+      <slot name="kanban-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
     </div>
 
     <div class="card aw-kanban-card">
@@ -16,13 +21,45 @@
         <div class="card-header">
           <h4 class="text-left">
             <slot name="aw-kanban-title">{{ titleComputed }}</slot>
+            <awesome-filter
+              v-if="displayAwFilter"
+              edit-filters
+              id="advancedFilterComponentDisplay"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+              class="p-0"
+            />
+            <awesome-filter
+              display-filters
+              id="advancedFilterComponent"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+            />
             <div class="btn-group btn-group-sm float-right awesome-list-buttons">
               <div v-if="isRefreshing" style="text-align: center">
                 <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
               </div>
               <slot name="top-actions" class />
               <div class="btn-group" role="group">
-                <button v-if="actions && actions.refresh" class="btn btn-simple" @click="getItems()">
+                <button
+                  v-if="actions.filter && actions.advancedFiltering"
+                  slot="reference"
+                  type="button"
+                  class="btn btn-simple btn-sm"
+                  :class="{
+                    'btn-primary': displayAwFilter || advancedFiltersCount,
+                    'btn-default': !advancedFiltersCount
+                  }"
+                  @click="displayAwFilter = !displayAwFilter"
+                >
+                  <i class="fa fa-filter" />
+                  {{ $t('AwesomeTable.buttons.filters') }}
+                  {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+                </button>
+
+                <button v-if="actions && actions.refresh" class="btn btn-simple btn-sm p-0" @click="getItems()">
                   <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
                   {{ $t('AwesomeKanban.buttons.refresh') }}
                 </button>
@@ -45,17 +82,25 @@
           >
             <KanbanList
               v-for="(list, index) in localLists"
-              :id="list.id || list.title"
+              :id="list.id"
               :key="index"
               :title="list.title"
               :items="list.content"
               :fields="options.fields"
               :columns="columns"
+              :showColumns="options.showColumns"
               group="card"
               :animation="options.animation"
               :scroll-sensitivity="options.scrollSensitivity"
               :disabled="!options.moveCard"
               :custom-list-actions="actions.customListActions"
+              :imageField="imageField"
+              :titleField="titleField"
+              :subtitleField="subtitleField"
+              :descriptionField="descriptionField"
+              :usersField="usersField"
+              :labelsField="labelsField"
+              :display-labels-cache="displayLabelsCache"
               @remove-list="onRemoveList"
               @customListAction="onCustomListAction"
               @change="onCardChanged"
@@ -65,7 +110,7 @@
               @cardMoved="onCardMoved"
             ></KanbanList>
           </Draggable>
-          <div v-if="actions && actions.addList" class="card add-list" @click.stop="editForm">
+          <div v-if="actions && actions.addKanbanList" class="card add-list" @click.stop="editForm">
             <div class="card-body">
               <div v-if="!isAddingList" class="card-text">
                 <i class="fa fa-plus"></i>
@@ -98,21 +143,54 @@ import _ from 'lodash';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
+import relationMixin from '../../mixins/relationMixin';
+import listCardFormatMixin from '../../mixins/listCardFormatMixin';
+import advanceFilterMixin from '../../mixins/advanceFilterMixin';
+import { segmentMixin } from '../../mixins/';
+
 import KanbanList from '../misc/KanbanList';
+import AwesomeFilter from '../misc/AwesomeFilter';
+
+import AwesomeSegments from './parts/AwesomeSegments.vue';
+
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
 export default {
   name: 'AwesomeKanban',
   components: {
-    KanbanList
+    KanbanList,
+    AwesomeSegments,
+    AwesomeFilter
   },
-  mixins: [i18nMixin, apiErrorsMixin, apiListMixin],
+  mixins: [
+    i18nMixin,
+    apiErrorsMixin,
+    apiListMixin,
+    relationMixin,
+    listCardFormatMixin,
+    segmentMixin,
+    advanceFilterMixin
+  ],
   props: {
     /**
      * The field to use to split the data
      */
     splittingField: {
-      type: String
+      type: [String, Object]
+    },
+    /**
+     * The field to use to sort the data
+     */
+    sortField: {
+      type: [String, Object]
+    },
+    /**
+     * The direction to use to sort the data
+     */
+    sortOrder: {
+      type: String,
+      default: 'asc',
+      validator: (value) => ['asc', 'desc'].includes(value)
     },
     /**
      * List of accepted values for splitting the data
@@ -153,19 +231,116 @@ export default {
         refresh: true,
         addList: true
       })
+    },
+
+    displayOrphansList: {
+      type: Boolean,
+      default: true
+    },
+    displayColumnsInCards: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
     localLists: [], // Static list to test
     isAddingList: false,
     newListName: '',
-    isRefreshing: false
+    isRefreshing: false,
+    displayLabelsCache: {},
+    splittingFieldApiValues: [],
+    displayAwFilter: false
   }),
+
+  created() {
+    // Check if the component is loaded globally
+    if (!this.$root.$options.components.Draggable) {
+      /* eslint-disable-next-line */
+      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
+    }
+  },
+  mounted() {
+    this.handleLists();
+  },
+
+  computed: {
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
+    titleComputed() {
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.pluralName) {
+        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
+      }
+
+      if (this._model && this._model.singularName) {
+        return this.$te(this._model.singularName)
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
+      }
+
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+      }
+
+      if (this.identity) {
+        return this.$te(`app.labels.${this.identity}`)
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
+      }
+      return '';
+    },
+    splittingValuesComputed() {
+      return this.splittingValues && Array.isArray(this.splittingValues) && this.splittingValues.length
+        ? this.splittingValues
+        : this.splittingFieldApiValues;
+    },
+    segmentFieldDefinitionComputed() {
+      if (!this.splittingField) {
+        return '';
+      }
+      if (this.columns) {
+        const field = this.columns.find((f) => f.field === this.splittingField);
+        if (field) {
+          return field;
+        }
+      }
+      return '';
+    }
+  },
+
+  watch: {
+    lists() {
+      this.handleLists();
+    },
+    data() {
+      this.handleLists();
+    },
+    splittingField() {
+      this.handleLists();
+    },
+    splittingValuesComputed() {
+      this.handleLists();
+    },
+    'options.sortField'() {
+      this.orderCardInLists();
+    },
+    'options.sortOrder'() {
+      this.orderCardInLists();
+    }
+  },
   methods: {
     addList() {
       if (this.newListName) {
         if (!_.some(this.localLists, { title: this.newListName })) {
-          this.localLists.push({ title: this.newListName, content: [] });
+          this.localLists.push({
+            id: this.newListName,
+            title: this.newListName,
+            content: []
+          });
           this.newListName = '';
           this.isAddingList = false;
         }
@@ -199,8 +374,9 @@ export default {
     onCardRemoved(item, list) {
       this.$emit('cardRemoved', item, list);
     },
-    onCardAdded(item, list) {
-      this.$emit('cardAdded', item, list);
+    onCardAdded(payload, list) {
+      this.$emit('cardAdded', payload, list);
+      this.changeItemSplittingValue(payload, list);
     },
     onCardMoved(item, list) {
       this.$emit('cardAdded', item, list);
@@ -214,8 +390,10 @@ export default {
       if (this.lists && this.lists.length) {
         this.localLists = _.cloneDeep(this.lists);
       } else {
-        if (this.data && this.data.length) {
-          const list = [{ title: this.entity, content: _.cloneDeep(this.data) }];
+        if (this.data && Array.isArray(this.data)) {
+          const list = this.displayOrphansList
+            ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
+            : [];
           this.localLists = _.cloneDeep(list);
         }
       }
@@ -224,32 +402,47 @@ export default {
     },
 
     filterLists() {
-      if (this.splittingField && this.splittingValues && this.splittingValues.length) {
-        this.splittingValues.forEach((filterValue) => {
+      if (this.splittingField && this.splittingValuesComputed && Array.isArray(this.splittingValuesComputed)) {
+        this.splittingValuesComputed.forEach((filterValue) => {
+          let id = filterValue,
+            title = filterValue.toString();
+          if (typeof filterValue === 'object') {
+            id =
+              (this.segmentFieldDefinitionComputed.relation &&
+                filterValue[this.segmentFieldDefinitionComputed.relationKey]) ||
+              filterValue.id ||
+              filterValue;
+            title =
+              (this.segmentFieldDefinitionComputed.relation &&
+                filterValue[this.segmentFieldDefinitionComputed.relationLabel]) ||
+              filterValue.label ||
+              filterValue;
+          }
           let content = [];
           this.localLists.forEach((localList) => {
-            content.push(_.filter(localList.content, [this.splittingField, filterValue]));
+            content.push(_.filter(localList.content, [this.splittingField, id]));
             _.remove(localList.content, (obj) => {
-              return obj[this.splittingField] === filterValue;
+              return obj[this.splittingField] === id;
             });
           });
+
           content = _.flatten([...content]);
-          if (!_.some(this.localLists, { title: filterValue.toString() })) {
-            this.localLists.push({ title: filterValue.toString(), content });
+          if (!_.some(this.localLists, { id, title })) {
+            this.localLists.push({ id, title, content });
           }
         });
       }
     },
 
     orderCardInLists() {
-      const sortOrder = this.options.sortOrder ? this.options.sortOrder.toLowerCase() : 'desc';
-      if (this.options.sortField) {
+      const sortOrder = this.sortOrder ? this.sortOrder.toLowerCase() : 'desc';
+      if (this.sortField) {
         this.localLists.forEach((localList) => {
           if (localList.content.length > 1) {
             localList.content = _.orderBy(
               localList.content,
               (item) => {
-                return item[this.options.sortField];
+                return item[this.sortField];
               },
               [sortOrder]
             );
@@ -270,58 +463,19 @@ export default {
           field.fieldOptions.values ||
           field.fieldOptions.options)
       );
-    }
-  },
-  created() {
-    // Check if the component is loaded globally
-    if (!this.$root.$options.components.Draggable) {
-      /* eslint-disable-next-line */
-      console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
-    }
-  },
-  mounted() {
-    this.handleLists();
-  },
+    },
 
-  computed: {
-    titleComputed() {
-      if (this.title) {
-        return this.$te(this.title) ? this.$t(this.title) : this.title;
+    async changeItemSplittingValue({ element, newIndex }, list) {
+      element[this.splittingField] = list.id === 'unsorted' || list.id === undefined ? null : list.id;
+      if (this.sortField) {
+        element[this.sortField] = newIndex;
       }
 
-      if (this._model && this._model.singularName) {
-        return this.$te(this._model.singularName)
-          ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
-      }
-
-      if (this.identity) {
-        return this.$te(`app.labels.${this.identity}`)
-          ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
-      }
-      return '';
-    }
-  },
-
-  watch: {
-    lists() {
-      this.handleLists();
+      await this.$http.put(`${this._url}/${element[this.primaryKey]}`, element);
+      this.getItems();
     },
-    data() {
-      this.handleLists();
-    },
-    splittingField() {
-      this.handleLists();
-    },
-    splittingValues() {
-      this.handleLists();
-    },
-    'options.sortField'() {
-      this.orderCardInLists();
-    },
-    'options.sortOrder'() {
-      this.orderCardInLists();
+    onSegmentListChanged(values) {
+      this.splittingFieldApiValues = values;
     }
   }
 };

@@ -15,31 +15,30 @@ export default {
       );
     },
 
-    $awEmit(event, data, ...args) {
+    $awEmit(event, ...args) {
       this.$emit(
         event,
+        ...args,
         {
           source: this.formatComponentName(),
           context: this,
-          item: this.selectedItem,
+          item: Object.assign({}, { ...this.selectedItem }),
           identity: this.identity,
           parent: this.parent,
-          ...data
         },
-        ...args
+
       );
       this.$awEventBus &&
         this.$awEventBus.$emit(
           event,
+          ...args,
           {
             source: this.formatComponentName(),
             context: this,
-            item: this.selectedItem,
+            item: Object.assign({}, { ...this.selectedItem }),
             identity: this.identity,
             parent: this.parent,
-            ...data
           },
-          ...args
         );
     }
   }

@@ -22,10 +22,10 @@ export default {
       }
       const errorBody = (err.response && err.response.data) || err.data || err;
       const subErrors = errorBody && errorBody.errors;
-      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `</li>${this.$te(e) ? this.$t(e) : e}</li>`).join('') : '';
+      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `${this.$te(e) ? this.$t(e) : e}\n`).join('') : '';
       this.$awNotify({
         title: message,
-        html: '<ul>' + subErrorsHtml + '</ul>',
+        message: subErrorsHtml,
         type: 'warning',
         timer: 3000
       });
@@ -42,7 +42,7 @@ export default {
         }
         if (error.errors) {
           if (error.errors && error.errors.length) {
-            message += '<br/>' + error.errors.map(e => e.message || e).join('<br/>');
+            message += '\n' + error.errors.map(e => e.message || e).join('<br/>');
           }
           else {
             message += JSON.stringify(error.errors);

@@ -19,7 +19,7 @@ be configured.
 - columnsFilters
 - bulkDelete
 - bulkEdit
-- itemsPerRow
+- changeItemsPerRow
 - editLayout
 - collapse
 - formPagination

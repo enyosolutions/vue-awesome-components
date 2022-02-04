@@ -21,35 +21,43 @@
       </template>
 
       <div class="dropdown awesome-action-list-dropdown">
-        <button
-          id="dropdownMenuButton"
-          class="btn btn-outline-secondary ml-1 mr-1 dropdown-toggle"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
+        <popper
+          trigger="clickToOpen"
+          :options="{
+            placement: 'bottom'
+          }"
         >
-          <i class="fa fa-info-circle" /> {{ $t('AwesomeTable.actions') }}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="max-height: 100vh; overflow: auto;">
-          <template v-for="(action, index) in foldableActions">
-            <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
-              <AwesomeAction
-                v-bind="{ ...action, class: undefined }"
-                :classes="action.class || action.classes"
-                :key="index"
-                :index="index"
-                :items="items"
-                :item="item"
-                :columns="columns"
-                :location="location"
-                :parent="parent"
-                @customAction="$emit('customAction', $event)"
-                @permanent-filtering="$emit('permanent-filtering', $event)"
-              />
+          <button
+            slot="reference"
+            id="dropdownMenuButton"
+            class="btn btn-sm btn-outline-secondary ml-1 mr-1 dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="fa fa-bars" /> {{ $t('AwesomeTable.actions') }}
+          </button>
+          <div class="card" style="max-height: 80vh; overflow: auto;z-index:1">
+            <template v-for="(action, index) in foldableActions">
+              <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
+                <AwesomeAction
+                  v-bind="{ ...action, class: undefined }"
+                  :classes="action.class || action.classes"
+                  :key="index"
+                  :index="index"
+                  :items="items"
+                  :item="item"
+                  :columns="columns"
+                  :location="location"
+                  :parent="parent"
+                  @customAction="$emit('customAction', $event)"
+                  @permanent-filtering="$emit('permanent-filtering', $event)"
+                />
+              </template>
             </template>
-          </template>
-        </div>
+          </div>
+        </popper>
       </div>
     </template>
     <!-- ENd dropdown zone -->
@@ -77,11 +85,13 @@
 </template>
 
 <script>
+import Popper from 'vue-popperjs';
 import AwesomeAction from './AwesomeAction';
 export default {
   name: 'AwesomeActionList',
   components: {
-    AwesomeAction
+    AwesomeAction,
+    Popper
   },
   props: {
     actions: {

@@ -16,6 +16,7 @@ import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 
 import AwesomeTable from './components/table/AwesomeTable/AwesomeTable.vue';
 import AwesomeKanban from './components/table/AwesomeKanban.vue';
+import AwesomeList from './components/table/AwesomeList.vue';
 
 import FormGenerator from './components/form/form-generator';
 import { abstractField } from './components/form/form-generator';
@@ -37,6 +38,8 @@ const VueAwesomeComponents = {
   AutoProps,
   AwesomeForm,
   AwesomeTable,
+  AwesomeList,
+  AwesomeKanban,
   AwesomeCrud,
   EnyoCard,
   EnyoCrudComponent: AwesomeCrud,
@@ -64,12 +67,13 @@ export {
   apiErrorsMixin,
   AutoProps,
   AwesomeForm,
-  AwesomeTable as AjaxTable,
-  AwesomeTable,
   AwesomeCrud as EnyoCrudComponent,
   AwesomeCrud as CrudComponent,
   AwesomeCrud,
   AwesomeKanban,
+  AwesomeList,
+  AwesomeTable,
+  AwesomeTable as AjaxTable,
   EnyoCard,
   EnyoCrudStatsSection,
   EnyoSelect,

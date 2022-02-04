@@ -17,7 +17,8 @@
       "add": "Ajouter",
       "listName": "Nom de la liste",
       "removeList": "Supprimer la liste",
-      "noData": "Pas de champs sélectionnés"
+      "noData": "Pas de champs sélectionnés",
+      "unsorted": "Non triés."
     },
     "buttons": {
       "filters": "Filtres",
@@ -94,6 +95,7 @@
     "configuration": "Configuration",
     "columns": "Colonnes",
     "automatique-refresh": "Rafraichir périodiquement",
+    "createFirstItem": "Cliquer ici rajouter votre premier élément",
     "bulk": {
       "row-select": "lignes(s) selectionnées",
       "clear": "vider",

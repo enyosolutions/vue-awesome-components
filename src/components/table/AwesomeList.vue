@@ -1,11 +1,13 @@
 <template>
-  <div class="aw-list">
+  <div class="aw-list aw-listing">
     <div class="float-left col-6 pl-0">
-      <slot name="list-header-left">
-        <div class="card aw-segment-table-wrapper" v-if="segment">
-          <awesome-segments :field="segment" @change="onSegmentChange" />
-        </div>
-      </slot>
+      <slot name="list-header-left"></slot>
+      <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
+        <awesome-segments :field="segmentFieldDefinitionComputed"
+                      :apiRequestConfig="apiRequestConfig"
+              :apiResponseConfig="apiResponseConfig"
+              @change="onSegmentChange" />
+      </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
       <slot name="list-header-right"></slot>
@@ -19,8 +21,8 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h3 class>
-        <slot name="aw-list-title">{{ _listTitle }}</slot>
+      <h3 class="mb-0">
+        <slot name="aw-list-title">{{ titleComputed }}</slot>
           <button
                 v-if="actions && actions.refresh"
                 class="btn btn-simple btn-sm"
@@ -42,7 +44,7 @@
                 v-if="actions.filter && actions.advancedFiltering"
                   slot="reference"
                   type="button"
-                  class="btn btn-simple"
+                  class="btn btn-simple btn-sm"
                   :class="{ 'btn-primary': displayAwFilter || advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
                   @click="displayAwFilter = !displayAwFilter"
               >
@@ -52,22 +54,22 @@
               </button>
 
 
-            <template v-if="actions && actions.itemsPerRow">
-              <button class="btn btn-sm" @click="setListMode()"
+            <template v-if="actions && actions.changeItemsPerRow">
+              <button class="btn btn-sm btn-sm" @click="setListMode()"
                       :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
               >
                 <i :class="'fa fa-list'"/>
 
               </button>
               <button
-                  class="btn"
+                  class="btn btn-sm"
                   :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
                   @click="setMediumGridMode()">
                 <i :class="'fa fa-th-large'"/>
               </button>
 
               <button
-                  class="btn"
+                  class="btn btn-sm"
                   :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
                   @click="setGridMode()">
                 <i :class="'fa fa-th'"/>
@@ -87,7 +89,7 @@
               <button
                   slot="reference"
                   type="button"
-                  class="btn btn-simple dropdown-toggle"
+                  class="btn btn-simple dropdown-toggle btn-sm"
               >
                 {{ $t("AwesomeTable.more") }}
               </button>
@@ -96,7 +98,7 @@
                <slot name="table-top-more-actions"/>
                 <button
                     v-if="actions && actions.export"
-                    class="btn btn-success btn-simple btn-block"
+                    class="btn  btn-sm btn-success btn-simple btn-block"
                     @click="exportCallBack"
                 >
                   <i class="fa fa-file-excel"/>
@@ -104,7 +106,7 @@
                 </button>
 
                 <button
-                    class="btn btn-default btn-simple btn-block"
+                    class="btn btn-sm  btn-default btn-simple btn-block"
                     @click="exportCurrentArrayToExcel"
                 >
                   <i class="fa fa-file-excel"/>
@@ -122,7 +124,7 @@
       <p class="card-category">
         <slot name="list-subtitle"/>
       </p>
-      <div class="card-body">
+      <div class="">
         <div class="row">
           <div class="col-12">
                <awesome-filter
@@ -150,77 +152,78 @@
     </div>
     <div class="card-body">
     <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-      <div
-          class="pointer d-flex "
-          v-for="(item, index) in _paginatedItems"
-          :key="index"
-          :class="itemWrapperClasses"
-          @click="handleItemClick($event, item)"
-      >
-        <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
-          <div
-              class="card mb-3 aw-list-item flex-fill shadow"
-              :class="itemClasses"
-              :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
-             'height': _itemHeight
-          }"
-          >
-            <img
-                class="card-img-top"
-                v-if="imageField"
-                :src="getItemAtPath(item, imageField)"
-                :alt="getItemAtPath(item, titleField)"
-                :class="imageClasses"
-                :style="imageStyles"
-            />
-            <div class="card-body">
-              <h4 class="card-title aw-list-item-title" style=""
+      <template v-for="(item, index) in _paginatedItems">
+        <div
+            class="pointer d-flex "
+            :key="index"
+            :class="itemWrapperClasses"
+            @click="handleItemClick($event, item)"
+        >
+          <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
+            <div
+                class="card mb-3 aw-list-item flex-fill"
+                :class="itemClasses"
+                :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
+              'height': _itemHeight
+            }"
+            >
+              <img
+                  class="card-img-top"
+                  v-if="imageField"
+                  :src="getItemProperty(item, imageField)"
+                  :alt="getItemProperty(item, titleField)"
+                  :class="imageClasses"
+                  :style="imageStyles"
+              />
+              <div class="card-body">
+                <h4 class="card-title aw-list-item-title" style=""
 
-              v-if="getItemAtPath(item, titleField)"
-              v-html="getItemAtPath(item, titleField)"
-              ></h4>
-              <h6 class="card-title aw-list-item-subtitle" v-if="getItemAtPath(item, subtitleField)"
-              v-html="getItemAtPath(item, subtitleField)"
-              ></h6>
+                v-if="getItemProperty(item, titleField)"
+                v-html="getItemProperty(item, titleField)"
+                ></h4>
+                <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)"
+                v-html="getItemProperty(item, subtitleField)"
+                ></h6>
 
-              <h3 class="card-title aw-list-item-title" style=""
-                  v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
-                {{ item[_modelDisplayField] }}</h3>
+                <h3 class="card-title aw-list-item-title" style=""
+                    v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
+                  {{ item[_modelDisplayField] }}</h3>
 
-              <p class="card-text aw-list-item-description" v-if="getItemAtPath(item, descriptionField)">
-                <AwesomeDisplay
-                    v-bind="getField(descriptionField)"
-                    :value="getItemAtPath(item, descriptionField)"
-                >
-                </AwesomeDisplay>
-              </p>
-              <template v-if="columns && columns.length && !_useClassicLayout">
-                <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                  <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
+                <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
                   <AwesomeDisplay
-                      v-bind="getField(key)"
-                      :value="itemData"
-                      :relation="getField(key).relation"
-                      :relation-label="getField(key).relationLabel"
-                      :relation-url="getField(key).relationUrl"
-                      :relation-key="getField(key).relationKey"
+                      v-bind="getField(descriptionField)"
+                      :value="getItemProperty(item, descriptionField)"
                   >
                   </AwesomeDisplay>
+                </p>
+                <template v-if="columns && columns.length && !_useClassicLayout">
+                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                    <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
+                    <AwesomeDisplay
+                        v-bind="getField(key)"
+                        :value="itemData"
+                        :relation="getField(key).relation"
+                        :relation-label="getField(key).relationLabel"
+                        :relation-url="getField(key).relationUrl"
+                        :relation-key="getField(key).relationKey"
+                    >
+                    </AwesomeDisplay>
+                  </div>
+                </template>
+                <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
+                  <button
+                      @click="handleItemButtonClick($event, item)"
+                      class="btn btn-primary btn-sm "
+                      :class="itemsPerRow > 1 ? 'btn-block': ''"
+                  >
+                    {{ $t("AwesomeList.buttons.itemAction") }}
+                  </button>
                 </div>
-              </template>
-              <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                <button
-                    @click="handleItemButtonClick($event, item)"
-                    class="btn btn-primary btn-sm "
-                    :class="itemsPerRow > 1 ? 'btn-block': ''"
-                >
-                  {{ $t("AwesomeList.buttons.itemAction") }}
-                </button>
               </div>
             </div>
-          </div>
-        </slot>
-      </div>
+          </slot>
+        </div>
+      </template>
     </div>
 
     <hr v-if="actions.pagination == undefined || actions.pagination"/>
@@ -257,15 +260,13 @@ import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay';
 import AwesomeFilter from '../misc/AwesomeFilter';
+import templatingMixin from '../../mixins/templatingMixin';
+
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
-import templatingMixin from '../../mixins/templatingMixin';
 
 export default {
   name: 'AwesomeList',
-  token: `
-
-  `,
   components: {
     Paginate, AwesomeDisplay, AwesomeFilter,
     popper: Popper,
@@ -337,7 +338,7 @@ export default {
       default: () => ({
         itemButton: true,
         refresh: true,
-        itemsPerRow: true,
+        changeItemsPerRow: true,
         pagination: true
       })
     },
@@ -371,15 +372,30 @@ export default {
   },
   computed: {
 
-    _listTitle() {
+    titleComputed() {
+      if (this.title === false) {
+        return '';
+      }
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+
+      if (this._model && this._model.pluralName) {
+        return this.$te(this._model.pluralName)
+            ? this.$t(this._model.pluralName)
+            : _.startCase(this._model.pluralName);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
             ? this.$t(this._model.singularName)
             : _.startCase(this._model.singularName);
+      }
+
+      if (this._model && this._model.name) {
+        return this.$te(this._model.name)
+            ? this.$t(this._model.name)
+            : _.startCase(this._model.name);
       }
 
       if (this.identity) {
@@ -426,6 +442,8 @@ export default {
         case 5:
         case 6:
           return 'col-2';
+        case 12:
+          return 'col-1';
       }
     },
 
@@ -442,7 +460,7 @@ export default {
         }
         return this.mode === 'remote'
             ? this.data
-            : this.data.slice(startIndex, startIndex + perPage);
+            : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -591,20 +609,27 @@ export default {
       });
     },
 
-    getItemAtPath(item, path) {
-      if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
-        let result = this.templateParseText(path, {currentItem: item});
-        ['p', 'br', 'hr', 'div', 'span', 'img', 'label', 'ul', 'li', 'pre'].forEach (tag => {
-       //   result = result.replace(new RegExp('<(?!' + tag + '\\s?).*/?>', 'g'), '');
+
+    localSearch(items, search) {
+      return items.filter(item => {
+        if(!this.search) {
+          return true;
+        }
+        try {
+          return JSON.stringify(Object.values(item)).match(new RegExp(this.search, 'i'))
+        }
+        catch (err) {
+          console.warn('err', err);
+        }
+        return true
         })
-        return result;
-      }
-      return _.get(item, path);
     }
   }
 };
 </script>
 <style lang="scss">
+.aw-list {
+    clear: both;
 .aw-list-component {
   .aw-list-item {
     .aw-list {
@@ -739,5 +764,6 @@ export default {
   color: #6c757d;
 }
 
+}
 
 </style>
