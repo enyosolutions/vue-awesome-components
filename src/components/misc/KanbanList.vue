@@ -77,10 +77,10 @@
                   />
                 </div>
               </template>
-              <h5 class="card-title" v-if="getItemProperty(data, titleField)">
+              <h5 class="card-title text-truncate" v-if="getItemProperty(data, titleField)">
                 {{ getItemProperty(data, titleField) }}
               </h5>
-              <h6 v-if="getItemProperty(data, subtitleField)" class="card-subtitle mb-2 text-muted">
+              <h6 v-if="getItemProperty(data, subtitleField)" class="card-subtitle mb-2 text-muted text-truncate">
                 {{ getItemProperty(data, subtitleField) }}
               </h6>
               <p class="card-text" v-if="getItemProperty(data, descriptionField)">

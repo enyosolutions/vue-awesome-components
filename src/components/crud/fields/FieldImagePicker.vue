@@ -11,13 +11,13 @@
       @change="onChangeImage"
     >
     </base64-upload>
-    <input placeholder="url" type="text" class="form-control" v-model="value" />
+    <input placeholder="url" type="text" class="form-control mt-1 image-picker-input" v-model="value" />
 
     <div class="image-picker-actions" v-if="value">
-      <button @click.prevent="openImageInTab" type="button" class="btn btn-sm btn-alt-style btn-sm p-2">
+      <button @click.prevent="openImageInTab" type="button" class="btn">
         <i class="fa fa-external-link"></i>
       </button>
-      <button @click.prevent="removeImage" type="button" class="btn btn-sm btn-alt-style btn-sm p-2">
+      <button @click.prevent="removeImage" type="button" class="btn">
         <i class="fa fa-trash"></i>
       </button>
     </div>
@@ -95,10 +95,12 @@ export default {
     justify-content: flex-end;
     align-items: flex-start;
     padding: 5px;
-    button {
+    > button {
       color: #fff;
       background: var(--primary, #fff);
       border-color: var(--primary, #fff) !important;
+      padding: 1px !important;
+      font-size: 13px;
     }
   }
 }

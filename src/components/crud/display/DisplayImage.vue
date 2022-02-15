@@ -9,7 +9,7 @@
         :style="$props.imageStyles"
       />
       <div class="image-actions" v-if="value">
-        <button @click.prevent="openImageInTab($props.src)" type="button" class="btn btn-alt-style btn-sm p-2">
+        <button @click.prevent="openImageInTab($props.src)" type="button" class="btn btn-sm p-2">
           <i class="fa fa-external-link"></i>
         </button>
       </div>

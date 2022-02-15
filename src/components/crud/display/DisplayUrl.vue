@@ -1,6 +1,12 @@
 <template>
   <div class="text-avoid-overflow" :class="$props.classes" :style="$props.styles" v-bind="$props">
-    <a :href="$props.value" target="_blank" class="ajax-table-href " :class="embed ? 'pull-right' : ''">
+    <a
+      v-if="$props.value"
+      :href="$props.value"
+      target="_blank"
+      class="ajax-table-href "
+      :class="embed ? 'pull-right' : ''"
+    >
       <span v-if="!embed">
         {{ $props.value }}
       </span>

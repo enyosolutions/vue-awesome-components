@@ -95,8 +95,7 @@ export default {
 
     _url() {
       const oldKey = 'url';
-      const newKey = 'apiUrl';
-      const url = this.getApiUrl(newKey) || this.getApiUrl(oldKey);
+      const url = this.apiUrl || this.url || this.getApiUrl(oldKey);
       // `/${this.identity}`; // removed because this is magic and it is hazardous (no way to no have an url)
       if (typeof url === 'function') {
         return url({
@@ -106,7 +105,7 @@ export default {
           items: this.items
         });
       }
-      if (url && url.indexOf('{{') > -1) {
+      if (url && url.includes('{{')) {
         return this.templateParseUrl(url, {
           ...this.selectedItem,
           parent: this.parent,
