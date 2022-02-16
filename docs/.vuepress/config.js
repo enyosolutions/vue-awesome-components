@@ -92,6 +92,10 @@ module.exports = {
         path: '/guide/awesomeBus/'
       },
       {
+        title: 'Api',
+        path: '/guide/api/props.md'
+      },
+      {
         title: 'EnyoStats',
         path: '/guide/enyostats'
       },
@@ -103,10 +107,7 @@ module.exports = {
         title: 'Enyo Select',
         path: '/guide/enyoselect'
       },
-      {
-        title: 'Api',
-        path: '/guide/api/props.md'
-      },
+
       {
         title: "Next steps",
         path: "/guide/next-steps.md"

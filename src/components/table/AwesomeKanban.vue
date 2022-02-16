@@ -368,15 +368,16 @@ export default {
       this.$emit('listChanged', item);
     },
 
-    onCardChanged(item, list) {
-      this.$emit('cardChanged', item, list);
+    onCardChanged(item, targetList, orderedListItems) {
+      this.$emit('cardChanged', item, targetList, orderedListItems);
+      this.reorderListItems(orderedListItems);
     },
     onCardRemoved(item, list) {
       this.$emit('cardRemoved', item, list);
     },
-    onCardAdded(payload, list) {
-      this.$emit('cardAdded', payload, list);
-      this.changeItemSplittingValue(payload, list);
+    onCardAdded(payload, list, orderedListItems) {
+      this.$emit('cardAdded', payload, list, orderedListItems);
+      this.changeItemSplittingValue(payload, list, orderedListItems);
     },
     onCardMoved(item, list) {
       this.$emit('cardAdded', item, list);
@@ -435,7 +436,7 @@ export default {
     },
 
     orderCardInLists() {
-      const sortOrder = this.sortOrder ? this.sortOrder.toLowerCase() : 'desc';
+      const sortOrder = this.sortOrder ? this.sortOrder.toLowerCase() : 'asc';
       if (this.sortField) {
         this.localLists.forEach((localList) => {
           if (localList.content.length > 1) {
@@ -465,15 +466,32 @@ export default {
       );
     },
 
-    async changeItemSplittingValue({ element, newIndex }, list) {
-      element[this.splittingField] = list.id === 'unsorted' || list.id === undefined ? null : list.id;
+    async changeItemSplittingValue({ element, newIndex }, targetList, orderedList) {
+      element[this.splittingField] = targetList.id === 'unsorted' || targetList.id === undefined ? null : targetList.id;
       if (this.sortField) {
-        element[this.sortField] = newIndex;
+        delete element[this.sortField];
       }
-
-      await this.$http.put(`${this._url}/${element[this.primaryKey]}`, element);
-      this.getItems();
+      const urlparts = this._url.split('?');
+      if (urlparts.length > 1) {
+        urlparts[0] = `${urlparts[0]}/${element[this.primaryKey]}`;
+      }
+      await this.$http.put(urlparts.join('?'), element);
     },
+
+    async reorderListItems(orderedList) {
+      if (this.sortField && orderedList) {
+        const promises = orderedList.map((item, index) => {
+          const urlparts = this._url.split('?');
+          delete item[this.splittingField];
+          if (urlparts.length > 1) {
+            urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
+          }
+          return this.$http.put(urlparts.join('?'), { ...item, [this.sortField]: index });
+        });
+        await Promise.all(promises);
+      }
+    },
+
     onSegmentListChanged(values) {
       this.splittingFieldApiValues = values;
     }

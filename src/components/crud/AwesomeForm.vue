@@ -1,7 +1,7 @@
 <template>
   <div class="content aw-form" :class="'aw-form-' + identity">
-    <div class="container-fluid">
-      <div class="row m-0">
+    <div class="">
+      <div class="row mr-0 ml-0">
         <div class="col-12" :class="displayMode === 'page' ? 'p-0' : ''">
           <div class="text-left">
             <!-- START OF MODAL -->
@@ -37,7 +37,9 @@
                   <form @submit.prevent="createItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
+                        <slot name="create-form-title" :item="selectedItem"
+                          >{{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}</slot
+                        >
                       </h5>
 
                       <div
@@ -148,8 +150,10 @@
                   <form @submit.prevent="editItem()">
                     <div class="modal-header bg-primary text-white" v-if="shouldDisplayHeaderCpt">
                       <h5 v-if="mode === 'view' || mode === 'edit'" class="text-left modal-title mt-0">
-                        {{ $t(mode === 'view' ? '' : 'AwesomeCrud.labels.edit') }} {{ _name }}
-                        <b>{{ _editItemTile }}</b>
+                        <slot :name="`${mode}-form-title`" :item="selectedItem"
+                          >{{ $t(mode === 'view' ? '' : 'AwesomeCrud.labels.edit') }} {{ _name }}
+                          <b>{{ _editItemTile }}</b></slot
+                        >
                       </h5>
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
                         <AwesomeActionList
@@ -249,11 +253,11 @@
                     >
                       <ul
                         v-if="nestedModels && nestedModels.length && mode !== 'create' && nestedLayoutMode !== 'list'"
-                        class="nav nav-tabs mt-0 mb-4"
+                        class="nav nav-tabs mt-0"
                       >
                         <li class="nav-item">
                           <a
-                            class="nav-link"
+                            class="nav-link pointer"
                             data-toggle="tab"
                             :class="{ active: activeNestedTab === 'general' }"
                             @click="activeNestedTab = 'general'"
@@ -268,7 +272,7 @@
                         <template v-for="(nm, index) in nestedModels">
                           <li v-if="nm && nm.identity" :key="index" class="nav-item nested-model-tab-link">
                             <a
-                              class="nav-link"
+                              class="nav-link pointer"
                               :class="{ active: activeNestedTab === nm.identity }"
                               data-toggle="tab"
                               @click="activeNestedTab = (nm && nm.identity) || 'general'"
@@ -453,7 +457,7 @@
                                   @input:needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @input:nested-crud-needs-refresh="(state) => (nestedElementsNeedRefresh = state)"
                                   @update:nestedElementsNeedRefresh="(state) => (nestedElementsNeedRefresh = state)"
-                                  class="aw-crud-nested-model"
+                                  class="aw-crud-nested-model nested-list"
                                   :class="
                                     getNestedActions(nm).collapse && nestedLayoutMode === 'list'
                                       ? !nestedModelsCollapseState[nm.identity]
@@ -532,7 +536,9 @@
                   <form @submit.prevent="bulkEditItems()">
                     <div class="modal-header bg-primary text-white">
                       <h5 class="text-left mt-0 modal-title" :title="$t('AwesomeCrud.labels.add_a') + ' '.title">
-                        {{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}
+                        <slot name="bulk-form-title" :item="selectedItem"
+                          >{{ $t('AwesomeCrud.labels.add_a') }} {{ _name || _title }}</slot
+                        >
                       </h5>
                       <button
                         v-if="!standalone && !_isEmbedded"
@@ -1077,8 +1083,12 @@ export default {
         return '';
       }
 
-      if (this._model && this._model.displayField && this.selectedItem[this._model.displayField]) {
-        return this.selectedItem[this._model.displayField];
+      if (this._model && this._model.displayField) {
+        const label = this.getItemProperty(this.selectedItem, this._model.displayField);
+        if (label) {
+          return label;
+        }
+        return this.selectedItem[this.primaryKey] || '';
       }
 
       if (this.selectedItem[this.primaryKey]) {

@@ -40,5 +40,5 @@ export const defaultKanbanOptions = {
   splittingValues: null,
   customListActions: [],
   sortField: '',
-  sortOrder: 'desc'
+  sortOrder: 'asc'
 };

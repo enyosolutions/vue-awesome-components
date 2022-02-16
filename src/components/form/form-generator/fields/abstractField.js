@@ -228,7 +228,7 @@ export default {
         changed = true;
       }
       if (changed) {
-        this.eventBus && this.eventBus.$emit('model-updated', newValue, this.schema.model);
+        // this.eventBus && this.eventBus.$emit('model-updated', newValue, this.schema.model);
 
         if (isFunction(this.schema.onChanged)) {
           this.schema.onChanged.call(this, this.model, newValue, oldValue, this.schema);

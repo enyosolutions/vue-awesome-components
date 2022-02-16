@@ -1,9 +1,6 @@
-
-
 .btn-main-style {
   @extend .btn-primary !optional;
 }
-
 
 .btn-alt-style {
   color: var(--secondary);
@@ -11,8 +8,7 @@
 }
 
 .btn-link:hover,
-.btn-link:focus
- {
+.btn-link:focus {
   text-decoration: none;
 }
 
@@ -29,4 +25,5 @@
 button.btn.aw-button-add {
   // background-color:  !important;
   color: var(--primary) !important;
+  margin-bottom: 3px;
 }

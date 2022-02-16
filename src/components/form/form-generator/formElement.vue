@@ -94,6 +94,11 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.model && typeof this.model === 'object' && this.field.value) {
+      // set the value
+    }
+  },
   data() {
     return {
       childErrors: [],

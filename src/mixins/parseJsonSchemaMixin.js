@@ -130,13 +130,37 @@ export default {
     },
 
     transformStateFunctions(field) {
-      ['visible', 'required', 'readonly', 'disabled'].forEach(prop => {
+      ['visible', 'required', 'readonly', 'disabled', 'value'].forEach(prop => {
 
         if (isFunction(field[prop])) {
           field[prop] = this.templateParseFunc(field[prop]);
         }
       });
     },
+
+
+    transformStateValue(field, parentType) {
+      ['value', 'default'].forEach(prop => {
+        if (field[prop] && field[prop].includes('{{')) {
+          field[prop] = this.templateParseText(field[prop]);
+
+          // @todo improve value casting
+          switch (parentType) {
+            case 'integer':
+              field[prop] = parseInt(field[prop], 10);
+              break;
+            case 'number':
+              field[prop] = parseFloat(field[prop]);
+              break;
+            case 'date':
+              field[prop] = new Date(field[prop]);
+              break;
+          }
+        }
+      });
+    },
+
+
 
     parseSchema(schema, prefix = '') {
       if (!schema.properties) {
@@ -290,6 +314,7 @@ export default {
 
           this.transformStateBooleans(field);
           this.transformStateFunctions(field);
+          this.transformStateValue(field, prop.type);
 
           if (field.required) {
 

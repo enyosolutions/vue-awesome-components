@@ -1,8 +1,8 @@
 ra<template>
   <div class="content aw-crud" :class="`aw-crud-mode-${displayMode} aw-crud-${identity}`">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12 awesomecrud-stats-section">
+    <div class="">
+      <div class="row mr-0 ml-0">
+        <div class="col-12 awesomecrud-stats-section p-0">
           <div v-if="showStatsSectionComputed" class="row">
             <EnyoCrudStatsSection
               :url="_url + '/stats'"
@@ -14,7 +14,7 @@ ra<template>
         </div>
 
         <div
-          class="awesomecrud-list-table-section"
+          class="awesomecrud-list-table-section p-0"
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
@@ -289,7 +289,7 @@ ra<template>
         </div>
 
         <div
-          class="awesomecrud-detail-section"
+          class="awesomecrud-detail-section  p-0"
           :class="{
             'col-6': displaySideFormContent,
             'col-12': !displaySideFormContent,
@@ -2050,10 +2050,13 @@ export default {
     right: 12px;
   }
 
-  .nested-tab {
+  .nested-tab,
+  .nested-list {
     .container-fluid {
       padding-left: 0;
       padding-right: 0;
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 
