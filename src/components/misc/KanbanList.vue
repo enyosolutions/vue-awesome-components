@@ -219,16 +219,16 @@ export default {
     },
 
     cardChanged(item) {
-      this.$emit('change', item, { id: this.id, title: this.title });
+      this.$emit('change', item, { id: this.id, title: this.title }, this.items);
       if (item) {
         if (item.added) {
-          this.$emit('cardAdded', item.added, { id: this.id, title: this.title });
+          this.$emit('cardAdded', item.added, { id: this.id, title: this.title }, this.items);
         }
         if (item.removed) {
-          this.$emit('cardRemoved', item.removed, { id: this.id, title: this.title });
+          this.$emit('cardRemoved', item.removed, { id: this.id, title: this.title }, this.items);
         }
         if (item.moved) {
-          this.$emit('cardMoved', item.moved, { id: this.id, title: this.title });
+          this.$emit('cardMoved', item.moved, { id: this.id, title: this.title }, this.items);
         }
       }
     },
