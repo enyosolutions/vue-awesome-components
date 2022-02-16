@@ -150,7 +150,7 @@ export default {
       if (value && this._displayLabelCache[url] && this._displayLabelCache[url] !== value) {
         return this._displayLabelCache[url];
       }
-
+      // console.log('getApiLabel', url);
       this.$http
         .get(url)
         .then((res) => {

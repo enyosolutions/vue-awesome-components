@@ -258,6 +258,7 @@ export default {
       /* eslint-disable-next-line */
       console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
     }
+    this.reorderListItemsDebounced = _.debounce(this.reorderListItems, 200);
   },
   mounted() {
     this.handleLists();
@@ -370,7 +371,7 @@ export default {
 
     onCardChanged(item, targetList, orderedListItems) {
       this.$emit('cardChanged', item, targetList, orderedListItems);
-      this.reorderListItems(orderedListItems);
+      this.reorderListItemsDebounced(orderedListItems);
     },
     onCardRemoved(item, list) {
       this.$emit('cardRemoved', item, list);
@@ -472,9 +473,7 @@ export default {
         delete element[this.sortField];
       }
       const urlparts = this._url.split('?');
-      if (urlparts.length > 1) {
-        urlparts[0] = `${urlparts[0]}/${element[this.primaryKey]}`;
-      }
+      urlparts[0] = `${urlparts[0]}/${element[this.primaryKey]}`;
       await this.$http.put(urlparts.join('?'), element);
     },
 
@@ -483,9 +482,7 @@ export default {
         const promises = orderedList.map((item, index) => {
           const urlparts = this._url.split('?');
           delete item[this.splittingField];
-          if (urlparts.length > 1) {
-            urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
-          }
+          urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
           return this.$http.put(urlparts.join('?'), { ...item, [this.sortField]: index });
         });
         await Promise.all(promises);
