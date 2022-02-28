@@ -141,7 +141,7 @@ export default {
 
     transformStateValue(field, parentType) {
       ['value', 'default'].forEach(prop => {
-        if (field[prop] && field[prop].includes('{{')) {
+        if (field[prop] && (typeof field[prop] === 'string') && field[prop].includes('{{')) {
           field[prop] = this.templateParseText(field[prop]);
 
           // @todo improve value casting
