@@ -341,7 +341,6 @@
                   :apiResponseConfig="apiResponseConfig"
                   :apiRequestHeaders="apiRequestHeaders"
                   :value="getItemProperty(props.row, props.column.field)"
-                  :display-label-cache="displayLabelCache"
                   class="pointer text-avoid-overflow"
                 >
                 </awesome-display>

@@ -44,10 +44,12 @@ const install = (Vue, options = {}) => {
 
 
     //    const { exclude } = options;
-    Vue.prototype.awComponentsConfig = {};
+    Vue.prototype.awComponentsConfig = {
+      displayLabelsCache: {}
+    };
 
     if (options.config) {
-      Vue.prototype.awComponentsConfig = options.config;
+      Vue.prototype.awComponentsConfig = _.merge(Vue.prototype.awComponentsConfig, options.config);
     }
 
 

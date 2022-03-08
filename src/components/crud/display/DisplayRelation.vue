@@ -59,7 +59,7 @@ export default {
     },
 
     _displayLabelCache() {
-      return this.displayLabelCache || this.internalCache || {};
+      return this.displayLabelCache || this.awComponentsConfig.displayLabelsCache || this.internalCache || {};
     },
 
     _values() {
@@ -84,13 +84,25 @@ export default {
       } else {
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
-        this.copy(this.value);
+        this.goToRelation(this.value);
       }
     },
     kebabCase: _.kebabCase,
     isFunction: _.isFunction,
     getLabel(value) {
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
+    },
+
+    goToRelation(value) {
+      if (value && this.onClickUrl) {
+        if (_.isFunction(this.onClickUrl)) {
+          return this.onClickUrl(value);
+        }
+        return this.$router.push(this.onClickUrl + '/' + value);
+      } else if (value) {
+        this.$router.push('/app/' + this.kebabCase(this.relation) + '/' + value);
+      }
+      return;
     },
 
     formatLabel(item, passedLabel = null) {

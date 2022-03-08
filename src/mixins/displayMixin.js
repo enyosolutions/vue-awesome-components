@@ -31,7 +31,7 @@ export default {
     multiple: Boolean, // allow displaying an array of objects.
     storePath: String,
     store: Array,
-    displayLabelCache: { type: Object, default: () => ({}) },
+    displayLabelCache: { type: Object, default: () => (null) },
     onClickUrl: [String, Function],
     tag: { type: [String, Object], default: 'div' },
     prefix: String,

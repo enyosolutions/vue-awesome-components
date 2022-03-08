@@ -721,6 +721,17 @@ export default {
       type: Array,
       default: () => ['table', 'kanban', 'list'],
       description: 'The listing modes that are enabled for this component'
+    },
+    postCreateAction: {
+      type: String,
+      values: () => ['list', 'edit', 'view'],
+      validation: () => ['list', 'edit', 'view'],
+      description: 'The location to redirect after a successful create'
+    },
+    postEditAction: {
+      type: String,
+      default: () => ['list', 'edit', 'view'],
+      description: 'The location to redirect after a successful edit'
     }
   },
   data() {

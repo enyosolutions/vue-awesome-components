@@ -1,19 +1,21 @@
 <template>
-	<label>
-		<input
-			type="checkbox"
-			v-model="value"
-			:autocomplete="fieldOptions.autocomplete"
-			:disabled="disabled"
-			:name="inputName"
-			:id="fieldID"/>
-		<span
-			class="label"
-			:data-on="fieldOptions.textOn || 'On'"
-			:data-off="fieldOptions.textOff || 'Off'"
-			:for="fieldID"></span>
-		<span class="handle"></span>
-	</label>
+  <label>
+    <input
+      type="checkbox"
+      v-model="value"
+      :autocomplete="fieldOptions.autocomplete"
+      :disabled="disabled"
+      :name="inputName"
+      :id="fieldID"
+    />
+    <span
+      class="label"
+      :data-on="fieldOptions.textOn || 'On'"
+      :data-off="fieldOptions.textOff || 'Off'"
+      :for="fieldID"
+    ></span>
+    <span class="handle"></span>
+  </label>
 </template>
 
 <script>
@@ -54,7 +56,7 @@ $field-switch-height: 30px;
     height: $field-switch-height;
     padding: 0;
     margin: 0 10px 10px 0;
-    border-radius: $field-switch-height / 2;
+    border-radius: calc($field-switch-height / 2);
     box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
     cursor: pointer;
   }
@@ -113,15 +115,15 @@ $field-switch-height: 30px;
     position: absolute;
     top: 1px;
     left: 1px;
-    width: $field-switch-height - 2px;
-    height: $field-switch-height - 2px;
+    width: calc($field-switch-height - 2px);
+    height: calc($field-switch-height - 2px);
     background: linear-gradient(to bottom, #ffffff 40%, #f0f0f0);
     background-image: -webkit-linear-gradient(top, #ffffff 40%, #f0f0f0);
     border-radius: 100%;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
   }
   .handle:before {
-    content: "";
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -134,7 +136,7 @@ $field-switch-height: 30px;
     box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
   }
   input:checked ~ .handle {
-    left: $field-switch-width - ($field-switch-height - 1px);
+    left: calc($field-switch-width - ($field-switch-height - 1px));
     left: calc(100% - (#{$field-switch-height} - 1px));
     box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
   }

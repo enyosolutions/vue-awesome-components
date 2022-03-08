@@ -170,10 +170,17 @@ export default {
 
   watch: {
     needsRefresh: 'refreshLocalData',
-    apiQueryParams() {
+    apiQueryParams(newValue, oldValue) {
+      if (newValue === oldValue) {
+        return;
+      }
       // not sure this is needed...
-      // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
-      // this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line
+        console.log('apiQueryParams refreshed', newValue, oldValue);
+      }
+      this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+      this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
     },
     entity: 'entityChanged',
     // store: changed => {},
