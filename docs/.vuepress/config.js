@@ -42,6 +42,28 @@ module.exports = {
         ]
       },
       {
+        title: 'Awesome Table',
+        children: [
+          '/guide/awesometable/',
+          '/guide/awesometable/props',
+          '/guide/awesometable/saving-config-state',
+          '/guide/awesometable/events',
+          '/guide/awesometable/examples'
+        ]
+      },
+      {
+        title: 'Awesome Kanban',
+        path: '/guide/awesomekanban/'
+      },
+      {
+        title: 'Awesome List',
+        path: '/guide/awesomelist/'
+      },
+      {
+        title: 'Awesome Form',
+        path: '/guide/awesomeform/',
+      },
+      {
         title: 'Awesome Crud',
         children: [
           '/guide/awesomecrud/',
@@ -58,30 +80,8 @@ module.exports = {
         ]
       },
       {
-        title: 'Awesome Table',
-        children: [
-          '/guide/awesometable/',
-          '/guide/awesometable/props',
-          '/guide/awesometable/saving-config-state',
-          '/guide/awesometable/events',
-          '/guide/awesometable/examples'
-        ]
-      },
-      {
-        title: 'Awesome Form',
-        path: '/guide/awesomeform/',
-      },
-      {
         title: 'Nested models',
         path: '/guide/nestedmodels/'
-      },
-      {
-        title: 'Awesome Kanban',
-        path: '/guide/awesomekanban/'
-      },
-      {
-        title: 'Awesome List',
-        path: '/guide/awesomelist/'
       },
       {
         title: 'Awesome Layout',

@@ -45,8 +45,8 @@ export default {
 </script>
 
 <style lang="scss">
-$field-switch-width: 120px;
-$field-switch-height: 30px;
+$field-switch-width: 70px;
+$field-switch-height: 25px;
 
 .vue-form-generator .field-switch {
   .field-wrap label {
@@ -56,7 +56,7 @@ $field-switch-height: 30px;
     height: $field-switch-height;
     padding: 0;
     margin: 0 10px 10px 0;
-    border-radius: calc($field-switch-height / 2);
+    border-radius: 10px;
     box-shadow: inset 0 -1px white, inset 0 1px 1px rgba(0, 0, 0, 0.05);
     cursor: pointer;
   }
@@ -101,7 +101,7 @@ $field-switch-height: 30px;
     opacity: 0;
   }
   input:checked ~ .label {
-    background: #e1b42b;
+    background: var(--primary);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
   }
   input:checked ~ .label:before {
@@ -115,12 +115,11 @@ $field-switch-height: 30px;
     position: absolute;
     top: 1px;
     left: 1px;
-    width: calc($field-switch-height - 2px);
-    height: calc($field-switch-height - 2px);
+    width: $field-switch-height - 2px;
+    height: $field-switch-height - 2px;
     background: linear-gradient(to bottom, #ffffff 40%, #f0f0f0);
     background-image: -webkit-linear-gradient(top, #ffffff 40%, #f0f0f0);
-    border-radius: 100%;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10%;
   }
   .handle:before {
     content: '';
@@ -136,7 +135,7 @@ $field-switch-height: 30px;
     box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
   }
   input:checked ~ .handle {
-    left: calc($field-switch-width - ($field-switch-height - 1px));
+    left: $field-switch-width - ($field-switch-height - 1px);
     left: calc(100% - (#{$field-switch-height} - 1px));
     box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
   }

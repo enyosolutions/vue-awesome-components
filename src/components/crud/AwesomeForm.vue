@@ -446,7 +446,7 @@
                                   <hr class="mt-0" />
                                 </template>
                                 <div
-                                  :is="model.component ? model.component : AwesomeCrud"
+                                  :is="nm && nm.component ? nm.component : AwesomeCrud"
                                   :id="'list-collapse-' + nm.identity"
                                   v-bind="nm"
                                   :parent="selectedItem"
@@ -880,6 +880,10 @@ export default {
       type: Boolean,
       default: false,
       note: 'If the form layout can be changed'
+    },
+    displayFields: {
+      type: Array,
+      note: 'The fields that should be displayed in the form'
     }
   },
   data() {
@@ -1020,15 +1024,17 @@ export default {
       parsedFormSchema.styleClasses = 'row';
       parsedFormSchema.mode = this.mode;
       if (parsedFormSchema.fields) {
-        parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
-          if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
-            field.styleClasses = `${field.styleClasses || ''} col-12`;
-          }
-          if (parsedFormSchema.mode === 'bulkEdit') {
-            field.required = false;
-          }
-          return field;
-        });
+        parsedFormSchema.fields = parsedFormSchema.fields
+          .filter((field) => !this.displayFields || this.displayFields.includes(field.model))
+          .map((field) => {
+            if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
+              field.styleClasses = `${field.styleClasses || ''} col-12`;
+            }
+            if (parsedFormSchema.mode === 'bulkEdit') {
+              field.required = false;
+            }
+            return field;
+          });
       }
       return parsedFormSchema;
     },
