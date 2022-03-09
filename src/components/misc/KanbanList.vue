@@ -19,7 +19,7 @@
             <div class="dropdown-menu" aria-labelledby="filter">
               <template v-for="(action, index) in customListActions">
                 <a
-                  href="#"
+                  href="javascript:void(0)"
                   class="dropdown-item"
                   :key="index"
                   :class="action.class"

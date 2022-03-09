@@ -4,7 +4,7 @@
       <li class="nav-item">
         <a
           class="nav-link"
-          href="#"
+          href="javascript:void(0)"
           :class="!selectedSegment || selectedSegment === '' || selectedSegment === 'ALL' ? 'active' : ''"
           @click="onClickOnSegment('ALL')"
           >{{ $t('AwesomeDefault.messages.all') }}</a
@@ -15,7 +15,7 @@
           @click="onClickOnSegment(segment)"
           class="nav-link"
           :class="getSegmentKey(segment) === selectedSegment ? 'active' : ''"
-          href="#"
+          href="javascript:void(0)"
           >{{ getSegmentLabel(segment) }}</a
         >
       </li>

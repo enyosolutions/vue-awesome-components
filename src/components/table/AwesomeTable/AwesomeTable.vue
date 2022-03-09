@@ -399,7 +399,7 @@
                   {{ $t('AwesomeTable.empty') }}
                   <br />
                   <i class="fa fa-file-o fa-4x"></i><br />
-                  <a v-if="_actions.create" href="#" @click.prevent="$emit('create')" class="">
+                  <a v-if="_actions.create" href="javascript:void(0)" @click.prevent="$emit('create')" class="">
                     {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
                   </a>
                 </div>
