@@ -243,7 +243,7 @@
               placeholder: this.$t('AwesomeTable.searchInput')
             }"
             :pagination-options="{
-              enabled: optionsComputed && optionsComputed.pagination,
+              enabled: _actions && _actions.pagination,
               nextLabel: this.$t('AwesomeTable.next'),
               prevLabel: this.$t('AwesomeTable.prev'),
               rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),

@@ -69,6 +69,16 @@ export default {
       return Array.isArray(this.$props.value) ? this.$props.value : [this.$props.value];
     }
   },
+  mounted() {
+    if (this.relationUrl && this.value) {
+      this.$awEventBus &&
+        this.$awEventBus.$on(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
+    }
+  },
+  beforeDestroy() {
+    this.$awEventBus &&
+      this.$awEventBus.$off(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
+  },
   data() {
     return {
       internalCache: {},
@@ -113,11 +123,11 @@ export default {
       } else {
         label = _.get(item, field, '');
       }
-
       return label;
     },
 
     getStoreLabel(value) {
+      alert('getStoreLabel not implemented', value);
       if (!value) {
         return;
       }
@@ -159,10 +169,12 @@ export default {
         }
       }
       const url = `${this.relationUrl}/${value}`;
-      if (value && this._displayLabelCache[url] && this._displayLabelCache[url] !== value) {
+      //  && this._displayLabelCache[url] !== value
+      if (value && this._displayLabelCache[url]) {
         return this._displayLabelCache[url];
       }
       // console.log('getApiLabel', url);
+      this.$set(this._displayLabelCache, url, value);
       this.$http
         .get(url)
         .then((res) => {
@@ -177,14 +189,18 @@ export default {
           const result = `${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
             this.$set(this._displayLabelCache, url, result);
+          } else {
+            this.$set(this._displayLabelCache, url, value);
           }
+          this.$awEventBus && this.$awEventBus.$emit(`displayRelation-${this.relationUrl}-${this.value}`);
+          this.$forceUpdate();
           return result;
         })
         .catch((err) => {
           console.warn('getApiLabel result', this.relationLabel, err.message);
           this.$set(this._displayLabelCache, url, value);
         });
-      this.$set(this._displayLabelCache, url, value);
+
       return this._displayLabelCache[url];
     },
     copyToClipboard(str) {
@@ -206,6 +222,10 @@ export default {
           this.$te('awesome-display.value-copied') ? this.$t('awesome-display.value-copied') : 'Value copied'
         );
       }
+    },
+
+    updateComponent() {
+      this.$forceUpdate();
     }
   }
 };

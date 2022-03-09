@@ -213,7 +213,7 @@
                           <div class="btn-group">
                             <button
                               @click="!!hasPrevious && $awEmit('aw-select-previous-item')"
-                              class="btn btn-light btn-sm float-left"
+                              class="btn btn-light btn-sm float-left btn-navigation-header"
                               :disabled="!hasPrevious"
                               :class="!hasPrevious ? 'op-50' : ''"
                               type="button"
@@ -223,7 +223,7 @@
 
                             <button
                               @click="!!hasNext && $awEmit('aw-select-next-item')"
-                              class="btn btn-light btn-sm float-right"
+                              class="btn btn-light btn-sm float-right btn-navigation-header"
                               :disabled="!hasNext"
                               :class="!hasPrevious ? 'op-50' : ''"
                               type="button"
@@ -446,7 +446,7 @@
                                   <hr class="mt-0" />
                                 </template>
                                 <div
-                                  :is="AwesomeCrud"
+                                  :is="model.component ? model.component : AwesomeCrud"
                                   :id="'list-collapse-' + nm.identity"
                                   v-bind="nm"
                                   :parent="selectedItem"
@@ -1388,7 +1388,7 @@ export default {
       }
       if (this.parentPath && this.useRouterMode) {
         // window.history.pushState({}, null, `${this.parentPath}`);
-        this.$router.replace(`${this.parentPath}`);
+        //  this.$router.replace(`${this.parentPath}`);
       }
       this.selectedItem = {};
       setTimeout(() => {
@@ -1400,13 +1400,15 @@ export default {
 
     cancel() {
       //eslint-disable-next-line
-      this.$awEmit('cancel', this.item, { context: this.mode });
+      this.$awEmit('cancel', this.selectedItem || this.item, { context: this.mode });
     },
 
     close() {
+      this.$awEmit('closeRequested', this.selectedItem && this.selectedItem.id ? this.selectedItem : this.item, {
+        context: this.mode
+      });
       //eslint-disable-next-line
       this.closeModal();
-      this.$awEmit('closeRequested', this.item, { context: this.mode });
     },
 
     goToEditPage(item) {
@@ -1479,10 +1481,12 @@ export default {
       return this.$http
         .post(this._url, this.selectedItem)
         .then((res) => {
+          this.selectedItem = get(res, this.apiResponseConfig.dataPath);
+
           this.$awEmit('item-created', {
             component: 'aw-form',
             context: this,
-            item: res.data,
+            item: this.selectedItem,
             identity: this.identity,
             parentIdentity: this.parentIdentity,
             parent: this.parent
@@ -1914,6 +1918,17 @@ body.modal-open .bootstrap-datetimepicker-widget {
     &.slide {
       .modal-dialog {
         margin: 0;
+      }
+    }
+
+    .modal-header.bg-primary {
+      .btn-navigation-header {
+        background: #fff !important;
+        opacity: 1;
+        &[disabled] {
+          opacity: 0.2;
+          background: #eee !important;
+        }
       }
     }
 

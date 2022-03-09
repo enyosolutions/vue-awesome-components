@@ -94,8 +94,7 @@ export default {
 
 
     _url() {
-      const oldKey = 'url';
-      const url = this.apiUrl || this.url || this.getApiUrl(oldKey);
+      const url = this.apiUrl || this.url || this.getApiUrl('apiUrl') || this.getApiUrl('url');
       // `/${this.identity}`; // removed because this is magic and it is hazardous (no way to no have an url)
       if (typeof url === 'function') {
         return url({

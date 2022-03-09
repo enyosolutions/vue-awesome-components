@@ -302,11 +302,26 @@ export default {
       type: [Number, String],
       default: undefined
     },
-    imageField: String,
-    titleField: String,
-    subtitleField: String,
-    descriptionField: String,
-    displayFields: Array,
+    imageField: {
+      type: String,
+      description:'The field to use for the image'
+    },
+    titleField: {
+      type: String,
+      description:'The field to use for the title'
+    },
+    subtitleField: {
+      type: String,
+      description:'The field to use for the subtitle'
+    },
+    descriptionField: {
+      type: String,
+      description:'The field to use for the description'
+    },
+    displayFields: {
+      type: Array,
+      description:'The fields to display on the card'
+    },
     translations: {
       type: Object,
       default: () => ({
@@ -322,7 +337,8 @@ export default {
     },
     imageClasses: {
       type: [Object, String],
-      default: ''
+      default: '',
+      'description': 'classes to put around the image'
     },
     itemClasses: {
       type: [Object, String],
@@ -331,7 +347,8 @@ export default {
     },
     imageStyles: {
       type: [Object, String],
-      default: ''
+      default: '',
+      'description': 'styles to put around the image'
     },
     actions: {
       type: Object,

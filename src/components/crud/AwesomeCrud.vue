@@ -722,16 +722,19 @@ export default {
       default: () => ['table', 'kanban', 'list'],
       description: 'The listing modes that are enabled for this component'
     },
-    postCreateAction: {
+    postCreateDisplayMode: {
       type: String,
-      values: () => ['list', 'edit', 'view'],
-      validation: () => ['list', 'edit', 'view'],
-      description: 'The location to redirect after a successful create'
+      values: ['list', 'edit', 'view'],
+      validator: (value) => ['list', 'edit', 'view'].includes(value),
+      description: 'The location to redirect after a successful create',
+      default: 'list'
     },
-    postEditAction: {
+    postEditDisplayMode: {
       type: String,
-      default: () => ['list', 'edit', 'view'],
-      description: 'The location to redirect after a successful edit'
+      values: ['list', 'edit', 'view'],
+      validator: (value) => ['list', 'edit', 'view'].includes(value),
+      description: 'The location to redirect after a successful edit',
+      default: 'view'
     }
   },
   data() {
@@ -1217,7 +1220,9 @@ export default {
 
     this.internalOptions = _.cloneDeep(this.mergedOptions);
     this.loadModel();
-    this.displayMode = this.mergedOptions.initialDisplayMode;
+    if (!this.displayMode) {
+      this.displayMode = this.mergedOptions.initialDisplayMode;
+    }
     this.listDisplayMode = this.mergedOptions.initialDisplayMode;
 
     if (this._isNested && this.nestedDisplayMode) {
@@ -1430,7 +1435,6 @@ export default {
           }
         });
       }
-
       if (!this._url) {
         return;
       }
@@ -1550,7 +1554,7 @@ export default {
       this.bulkDeleteFunction(items);
     },
 
-    goToEditPage(item) {
+    goToEditPage(item, options) {
       if (this.mergedOptions.editPath) {
         if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKey]) {
           return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
@@ -1564,7 +1568,7 @@ export default {
       if (this.useRouterMode && this.$route.path !== nextPath) {
         this.$router.push(nextPath);
       }
-      this.setDisplayMode('edit', item);
+      this.setDisplayMode('edit', item, options);
     },
 
     goToViewPage(item) {
@@ -1735,13 +1739,19 @@ export default {
     onEditDisplayCancelled(item, { context }) {
       const previousDisplayMode = this.getPreviousDisplayMode(context);
       if (this.useRouterMode) {
-        let url = this.parentPath.replace('/edit', '');
-        if (previousDisplayMode !== 'view') {
-          url = url.replace(`${item ? item[this.primaryKey] : ''}`, '');
+        if (previousDisplayMode === 'view') {
+          this.goToViewPage(item);
+        } else if (previousDisplayMode === 'edit') {
+          this.goToEditPage(item);
         } else {
-          url = `${this.parentPath}/${item ? item[this.primaryKey] : ''}`;
+          let url = this.parentPath
+            .replace('/edit', '')
+            .replace('/view', '')
+            .replace('/:id', '')
+            .replace(`${item ? item[this.primaryKey] : ''}`, '');
+
+          this.$router.push(url);
         }
-        this.$router.push(url);
       }
 
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
@@ -1749,8 +1759,9 @@ export default {
 
     onViewDisplayCancelled(item) {
       if (this.useRouterMode) {
-        const url = this.parentPath
+        let url = this.parentPath
           .replace('/edit', '')
+          .replace('/view', '')
           .replace('/:id', '')
           .replace(`${item ? item[this.primaryKey] : ''}`, '');
         this.$router.push(url);
@@ -1759,16 +1770,15 @@ export default {
         this.previousDisplayMode && this.previousDisplayMode !== 'edit' && this.previousDisplayMode !== this.displayMode
           ? this.previousDisplayMode
           : this.mergedOptions.initialDisplayMode;
-
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
-    },
-
-    onItemCreated(item) {
-      this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
     },
 
     onItemsBulkEdited(item) {
       this.bulkEditFunction(item);
+    },
+
+    onItemCreated(item) {
+      //   this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
     },
 
     onItemEdited(...args) {
@@ -1933,6 +1943,7 @@ export default {
     },
 
     onRouteIdChanged(newVal, previousVal) {
+      // console.log('route id changed', newVal, previousVal);
       if (this.useRouterMode && newVal && previousVal && previousVal !== newVal) {
         this.setDisplayMode(this.displayMode, { [this.primaryKey]: this.$route.params.id });
       }
@@ -1994,6 +2005,23 @@ export default {
     },
 
     getPreviousDisplayMode(context) {
+      // must be the correct display mode and a mode that is not disabled in the actions
+      if (
+        context === 'create' &&
+        this.postCreateDisplayMode &&
+        (this._actions[this.postCreateDisplayMode] === undefined || this._actions[this.postCreateDisplayMode])
+      ) {
+        return this.postCreateDisplayMode;
+      }
+
+      // must be the correct display mode and a mode that is not disabled in the actions
+      if (
+        context === 'edit' &&
+        this.postEditDisplayMode &&
+        (this._actions[this.postEditDisplayMode] === undefined || this._actions[this.postEditDisplayMode])
+      ) {
+        return this.postEditDisplayMode;
+      }
       return this.previousDisplayMode &&
         this.previousDisplayMode !== context &&
         this.previousDisplayMode !== this.displayMode
