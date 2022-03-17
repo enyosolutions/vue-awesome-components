@@ -68,5 +68,3 @@ Vue.use(VueAwesomeComponents, {
 });
 
 ```
-
-## props

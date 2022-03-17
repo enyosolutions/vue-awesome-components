@@ -172,7 +172,8 @@
     ]
   },
   "lint-staged": {
-    "*.{js,vue}": "yarn lint --fix"
+    "*.{js,vue}": "yarn lint --fix",
+    "docs/*": "./deployDoc.sh"
   },
   "postcss": {
     "plugins": {
