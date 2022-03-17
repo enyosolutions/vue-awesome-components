@@ -422,6 +422,9 @@ export default {
       if (this.fieldOptions.taggable) {
         return label || item;
       }
+      if (this.awComponentsConfig.hideIdsInSelect) {
+        return `${label}`;
+      }
       return `${label} [${item[this._trackBy]}]`;
     },
 

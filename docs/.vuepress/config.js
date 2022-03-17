@@ -42,6 +42,10 @@ module.exports = {
         ]
       },
       {
+        title: 'Global configuration',
+        path: '/guide/cookbook/global-configuration.md'
+      },
+      {
         title: 'Awesome Table',
         children: [
           '/guide/awesometable/',
