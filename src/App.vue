@@ -22,19 +22,19 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="/awesometable">AwesomeTable</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/awesomelist">Awesomelist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/awesometable">AwesomeTable</a>
+            <a class="nav-link" href="/awesomekanban">Awesome Kanban</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/awesomecrud">Awesome crud</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/awesomecrud-advanced">Awesome Crud advanced</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/awesomekanban">Awesome Kanban</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/awesomelayout">Awesome Layout</a>

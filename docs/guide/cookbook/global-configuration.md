@@ -68,3 +68,10 @@ Vue.use(VueAwesomeComponents, {
 });
 
 ```
+
+## props
+
+| Props           | description        |
+| --------------- | ------------------ |
+| hideIdsInSelect | Basic string stype |
+| primaryKey      | Number based field |

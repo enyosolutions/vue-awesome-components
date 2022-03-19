@@ -52,7 +52,6 @@ const install = (Vue, options = {}) => {
       Vue.prototype.awComponentsConfig = _.merge(Vue.prototype.awComponentsConfig, options.config);
     }
 
-
     if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
       AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
@@ -105,7 +104,6 @@ const install = (Vue, options = {}) => {
   Vue.component('AwesomeLayout', AwesomeLayout);
 
   Vue.component('AwesomeForm', AwesomeForm);
-
 
   Vue.component('crud-component', AwesomeCrud);
   Vue.component('awesome-crud', AwesomeCrud);
