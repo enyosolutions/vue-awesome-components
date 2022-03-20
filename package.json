@@ -1,8 +1,8 @@
 {
   "name": "vue-aw-components",
   "contributors": [],
-  "version": "1.29.3",
-  "main": "dist/vac.common.js",
+  "version": "1.29.4",
+  "main": "lib/vac.common.js",
   "module": "src/index.js",
   "files": [
     "src",
@@ -13,8 +13,9 @@
     "precommit": "lint-staged",
     "api": "json-server examples/data/db.js --port 4444 --routes examples/routes.json ",
     "build": "vue-cli-service build",
-    "build:prod": "vue-cli-service build --mode production --no-clean --target lib --format es src/index.js --report",
-    "build:lib": "vue-cli-service build  --target lib --name vac src/index.js --report",
+    "build:prod": "vue-cli-service build --mode production",
+    "build:watch": "vue-cli-service build --mode production",
+    "build:lib": "bili",
     "dev": "vue-cli-service serve",
     "docs:build": "vuepress build docs",
     "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
@@ -26,7 +27,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "dayjs": "^1.9.7",
+    "dayjs": "^1.11.0",
     "izitoast": "^1.4.0",
     "qs": "^6.6.0",
     "uuid": "^8.3.0"
@@ -43,6 +44,7 @@
     "lodash": "^4.17.13",
     "portal-vue": "^2.1.7",
     "sweetalert2": "8.2.6",
+    "vue": "^2.6.14",
     "vue-base64-file-upload": "^1.0.4",
     "vue-chartist": "2.2.1",
     "vue-datetime": "^1.0.0-beta.10",
@@ -62,8 +64,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-export-namespace-from": "^7.16.7",
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@vue/babel-preset-app": "^5.0.3",
     "@vue/cli": "^4.3.1",
-    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-babel": "^5.0.3",
     "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-plugin-unit-mocha": "^4.4.4",
     "@vue/cli-service": "^4.3.1",
@@ -72,13 +78,18 @@
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.1.0",
+    "babel-plugin-polyfill-corejs2": "^0.3.1",
+    "babel-plugin-polyfill-corejs3": "^0.5.2",
+    "babel-plugin-polyfill-regenerator": "^0.3.1",
     "babel-preset-vue": "^2.0.2",
+    "bili": "^5.0.5",
     "bootstrap": "^4.3.1",
     "chai": "^4.1.2",
     "chartist": "^0.11.0",
     "chartist-plugin-pointlabels": "^0.0.6",
     "chartist-plugin-tooltips": "^0.0.17",
     "core-js": "2",
+    "core-js-compat": "^3.21.1",
     "crip-vue-loading": "^1.2.5",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
@@ -96,10 +107,12 @@
     "minimist": "^1.2.5",
     "node-sass": "4",
     "prettier-package-json": "^2.1.3",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-vue": "5.1.9",
     "sass-loader": "^7.1.0",
     "side-channel": "^1.0.4",
     "sweetalert2": "8.2.6",
-    "vue": "2.6.11",
+    "vue": "2.6.14",
     "vue-chartist": "2.2.1",
     "vue-datetime": "^1.0.0-beta.10",
     "vue-good-table": "^2.14.4",
@@ -111,7 +124,7 @@
     "vue-popperjs": "^2.3.0",
     "vue-router": "^3.0.1",
     "vue-select": "^3.10.3",
-    "vue-template-compiler": "2.6.11",
+    "vue-template-compiler": "^2.6.14",
     "vue2-daterange-picker": "^0.6.8",
     "vuedraggable": "^2.24.3",
     "vuejs-paginate": "^2.1.0",
@@ -122,8 +135,7 @@
   },
   "browserslist": [
     "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
+    "last 2 versions"
   ],
   "eslintConfig": {
     "root": true,
@@ -136,6 +148,7 @@
     ],
     "rules": {
       "vue/no-reserved-keys": 0,
+      "vue/no-v-for-template-key-on-child": 0,
       "quotes": [
         "error",
         "single"
