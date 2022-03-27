@@ -17,7 +17,7 @@
 <script>
 import VueFormGenerator from '../../form/form-generator';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+const customParseFormat = require('dayjs/plugin/customParseFormat.js');
 dayjs.extend(customParseFormat);
 import _ from 'lodash';
 import { Datetime } from 'vue-datetime';

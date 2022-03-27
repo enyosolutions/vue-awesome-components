@@ -6,11 +6,12 @@
   "module": "src/index.js",
   "files": [
     "src",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "pre-commit": "lint-staged",
     "precommit": "lint-staged",
+    "post-commit": "./deployDoc.sh",
     "api": "json-server examples/data/db.js --port 4444 --routes examples/routes.json ",
     "build": "vue-cli-service build",
     "build:prod": "vue-cli-service build --mode production",
@@ -20,6 +21,7 @@
     "docs:build": "vuepress build docs",
     "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
     "docs:dev": "vuepress dev docs",
+    "demo:deploy": " scp -r dist/* jenkins:/apps/vue-enyo-components.dev/dist/",
     "lint": "vue-cli-service lint --fix",
     "lint:fix": "vue-cli-service lint --fix",
     "serve": "vue-cli-service serve",
@@ -112,7 +114,7 @@
     "sass-loader": "^7.1.0",
     "side-channel": "^1.0.4",
     "sweetalert2": "8.2.6",
-    "vue": "2.6.14",
+    "vue": "^2.6.14",
     "vue-chartist": "2.2.1",
     "vue-datetime": "^1.0.0-beta.10",
     "vue-good-table": "^2.14.4",
@@ -124,6 +126,7 @@
     "vue-popperjs": "^2.3.0",
     "vue-router": "^3.0.1",
     "vue-select": "^3.10.3",
+    "vue-server-renderer": "2.6.14",
     "vue-template-compiler": "^2.6.14",
     "vue2-daterange-picker": "^0.6.8",
     "vuedraggable": "^2.24.3",
@@ -185,8 +188,7 @@
     ]
   },
   "lint-staged": {
-    "src/*.{js,vue}": "yarn lint --fix",
-    "docs/**/*": "./deployDoc.sh"
+    "src/*.{js,vue}": "yarn lint --fix"
   },
   "postcss": {
     "plugins": {

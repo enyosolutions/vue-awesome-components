@@ -129,7 +129,7 @@ export default {
   },
   props: {
     component: {
-      type: Object,
+      type: [Object, String],
       required: true
     },
     documentation: {

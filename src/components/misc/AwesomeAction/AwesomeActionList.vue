@@ -86,7 +86,7 @@
 
 <script>
 import Popper from 'vue-popperjs';
-import AwesomeAction from './AwesomeAction';
+import AwesomeAction from './AwesomeAction.vue';
 export default {
   name: 'AwesomeActionList',
   components: {

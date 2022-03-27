@@ -1,9 +1,9 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { isObject } from 'lodash';
-import toaster from 'izitoast';
+import iziToast from 'izitoast';
 
 
-toaster.settings({
+iziToast.settings({
   timeout: 5000,
   resetOnHover: true,
   icon: 'fontAwesome',
@@ -15,7 +15,7 @@ toaster.settings({
 export default {
   methods: {
     $awNotify(message) {
-      toaster.settings({
+      iziToast.settings({
         timeout: 5000,
         resetOnHover: true,
         icon: 'fontAwesome',
@@ -33,11 +33,11 @@ export default {
           icon: 'fa fa-info',
           title: message,
         };
-      const type = payload && payload.type && toaster[payload.type] ? payload.type : 'info';
+      const type = payload && payload.type && iziToast[payload.type] ? payload.type : 'info';
 
 
-      if (toaster[type]) {
-        toaster[type](payload || '');
+      if (iziToast[type]) {
+        iziToast[type](payload || '');
       }
       else {
         if (process.env.NODE_ENV === 'development') {

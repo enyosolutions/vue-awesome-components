@@ -1,5 +1,4 @@
 module.exports = {
-  presets: [
-    '@vue/app'
-  ]
+  presets: [],
+  'plugins': ['@babel/plugin-proposal-export-namespace-from']
 }

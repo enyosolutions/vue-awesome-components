@@ -412,11 +412,12 @@
   </div>
 </template>
 <script>
+import _ from 'lodash';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { VueGoodTable } from 'vue-good-table';
 import dayjs from 'dayjs';
-import localeData from 'dayjs/plugin/localeData';
+const localeData = require('dayjs/plugin/localeData');
 dayjs.extend(localeData);
 import Popper from 'vue-popperjs';
 import { Skeleton } from 'vue-loading-skeleton';
@@ -429,10 +430,9 @@ import uuidMixin from '../../../mixins/uuidMixin';
 
 import { defaultActions } from '../../../mixins/defaultProps';
 
-import _ from 'lodash';
-import AwesomeDisplay from '../../crud/display/AwesomeDisplay';
-import AwesomeFilter from '../../misc/AwesomeFilter';
-import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList';
+import AwesomeDisplay from '../../crud/display/AwesomeDisplay.vue';
+import AwesomeFilter from '../../misc/AwesomeFilter.vue';
+import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList.vue';
 import AwesomeSegments from '../parts/AwesomeSegments.vue';
 
 export default {

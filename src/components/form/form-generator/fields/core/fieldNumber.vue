@@ -4,7 +4,7 @@
 
 <script>
 import abstractField from '../abstractField';
-import fieldInput from './fieldInput';
+import fieldInput from './fieldInput.vue';
 
 export default {
   name: 'field-number',

@@ -11,9 +11,10 @@
 <script>
 import VueFormGenerator from '../../form/form-generator';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-dayjs.extend(customParseFormat);
+const customParseFormat = require('dayjs/plugin/customParseFormat.js');
 import $ from 'jquery';
+
+dayjs.extend(customParseFormat);
 
 const inputFormat = 'YYYY-MM-DDThh:mm:ssZ';
 

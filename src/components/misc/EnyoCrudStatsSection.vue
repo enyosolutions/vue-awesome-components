@@ -1,20 +1,18 @@
 <template>
   <div class="col-12">
     <div class="row">
-      <template v-for="(stat, index) in stats">
-        <div class="filter-box col-md-3 cl-xs-6" :key="stat.label">
-          <div class="card card-statistics" :class="stat.color || getColor(index)">
-            <div class="box text-center">
-              <h3 class="font-light text-white mt-1">
-                {{ stat.value }}
-              </h3>
-              <h6 class="text-white">
-                {{ $t(stat.label) }}
-              </h6>
-            </div>
+      <div v-for="(stat, index) in stats" class="filter-box col-md-3 cl-xs-6" :key="stat.label">
+        <div class="card card-statistics" :class="stat.color || getColor(index)">
+          <div class="box text-center">
+            <h3 class="font-light text-white mt-1">
+              {{ stat.value }}
+            </h3>
+            <h6 class="text-white">
+              {{ $t(stat.label) }}
+            </h6>
           </div>
         </div>
-      </template>
+      </div>
     </div>
   </div>
 </template>

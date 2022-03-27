@@ -124,7 +124,7 @@ import Vue from 'vue';
 import i18nMixin from '../../mixins/i18nMixin';
 import templatingMixin from '../../mixins/templatingMixin';
 import listCardFormatMixin from '../../mixins/listCardFormatMixin';
-import AwesomeDisplay from '../crud/display/AwesomeDisplay';
+import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 
 export default {
   name: 'KanbanList',

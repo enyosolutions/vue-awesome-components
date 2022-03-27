@@ -15,5 +15,3 @@ configuration area (eg. the general):
 ### Table display configuration
 
 The table configuration is found in
-
-

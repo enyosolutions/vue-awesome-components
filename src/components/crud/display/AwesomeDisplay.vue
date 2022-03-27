@@ -47,6 +47,13 @@
     :relationLabel="relationLabel"
     :value="$props.value"
   ></display-relation>
+  <div
+    v-else-if="$props.component"
+    :is="$props.component"
+    class="aw-display aw-display-custom"
+    v-bind="$props"
+    :value="$props.value"
+  ></div>
   <display-default class="aw-display" v-else v-bind="$props" :value="$props.value"></display-default>
 </template>
 
@@ -54,15 +61,15 @@
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 import apiConfigMixin from '../../../mixins/apiConfigMixin';
 
-import DisplayImage from './DisplayImage';
-import DisplayBoolean from './DisplayBoolean';
-import DisplayDate from './DisplayDate';
-import DisplayUrl from './DisplayUrl';
-import DisplayHtml from './DisplayHtml';
-import DisplayObject from './DisplayObject';
-import DisplayRelation from './DisplayRelation';
-import DisplayCheckbox from './DisplayCheckbox';
-import DisplayDefault from './DisplayDefault';
+import DisplayImage from './DisplayImage.vue';
+import DisplayBoolean from './DisplayBoolean.vue';
+import DisplayDate from './DisplayDate.vue';
+import DisplayUrl from './DisplayUrl.vue';
+import DisplayHtml from './DisplayHtml.vue';
+import DisplayObject from './DisplayObject.vue';
+import DisplayRelation from './DisplayRelation.vue';
+import DisplayCheckbox from './DisplayCheckbox.vue';
+import DisplayDefault from './DisplayDefault.vue';
 
 export default {
   name: 'AwesomeDisplay',

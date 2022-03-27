@@ -617,9 +617,9 @@ import GroupedForm from "./layout/GroupedForm.vue";
 */
 
 import 'vue-good-table/dist/vue-good-table.css';
-import AwesomeCrud from './AwesomeCrud';
-import AwesomeLayout from './layout/AwesomeLayout';
-import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
+import AwesomeCrud from './AwesomeCrud.vue';
+import AwesomeLayout from './layout/AwesomeLayout.vue';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList.vue';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 const defaultOptions = {
@@ -703,7 +703,7 @@ export default {
       type: Array,
       required: false,
       default: () => [],
-      note: 'An array describing the data that is linked to the nested model. Serves for displaying a detailed object'
+      note: '@deprecated, use nested models'
     },
     nestedModels: {
       type: Array,
@@ -982,6 +982,9 @@ export default {
     _selectedItemUrl() {
       let url;
       if (!this.selectedItem || !this.selectedItem[this.primaryKey]) {
+        if (this._url) {
+          return this._url;
+        }
         return undefined;
       }
       if (this._url.indexOf('?') > -1) {
@@ -1332,7 +1335,7 @@ export default {
       }
 
       // todo call only if
-      if (this.item && this.item[this.primaryKey]) {
+      if ((this.item && this.item[this.primaryKey]) || this._selectedItemUrl) {
         this.$http
           .get(`${this._selectedItemUrl}`)
           .then((res) => {

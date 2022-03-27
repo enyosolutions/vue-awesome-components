@@ -1,8 +1,5 @@
 ---
-{
-"title": "Nested models",
-"lang": "en-US"
-}
+{ 'title': 'Nested models', 'lang': 'en-US' }
 ---
 
 # Nested models
@@ -21,6 +18,13 @@ To create nested component, simply add the `nestedModels` property (an array) an
 
 ## Props
 
-| Property           | type    | Description                                                    | Possible Values | Default |
-|--------------------|---------|----------------------------------------------------------------|-----------------|---------|
-| initiallyCollapsed | boolean | Allow you to set the nested element to be collapsed by default | `true`, `false` | `false` |
+| Property           | type          | Description                                                                                                                  | Possible Values | Default   |
+| ------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------- | --------- |
+| initiallyCollapsed | boolean       | Allow you to set the nested element to be collapsed by default                                                               | `true`, `false` | `false`   |
+| component          | string/object | Allow you to the type of component to use to render the component. See the Model definition to see all the available fields. |                 | undefined |
+
+## Examples
+
+```
+
+```

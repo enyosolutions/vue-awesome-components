@@ -89,8 +89,8 @@
 
 <script>
 import _ from 'lodash';
-import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator';
-import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue';
+import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator.vue';
+import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue.vue';
 import i18nMixin from '../../mixins/i18nMixin';
 
 export default {

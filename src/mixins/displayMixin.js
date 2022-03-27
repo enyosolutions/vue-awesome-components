@@ -2,7 +2,7 @@ export default {
   props: {
     options: {
     },
-    value: [String, Boolean, Array, Object, Number],
+    value: [String, Boolean, Array, Object, Number, Date, Function],
     type: {
       type: String,
       values: [
@@ -22,6 +22,8 @@ export default {
     format: [String, Function],
     inputFormat: String,
     field: String,
+
+    component: [String, Object],
 
     relation: String,
     relationUrl: String,

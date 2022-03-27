@@ -8,13 +8,13 @@
   >
     <div :class="$props.classes" :style="$props.styles">
       <template v-if="!_useArrayMode && !multiple">
-        {{ displayField ? value && value[displayField] : value }}
+        {{ _value }}
       </template>
       <template v-else>
         <template v-for="(value, key) of $props.value" class="label label-info">
           <div :key="key" class="badge badge-info aw-display-object-item mr-1">
             <template>
-              {{ (value && value[displayField]) || value }}
+              {{ getValue(value) }}
             </template>
             <template v-if="!_valueIsArray">
               <label>{{ key }}:</label>
@@ -29,16 +29,29 @@
 
 <script>
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
+import templatingMixin from '../../../mixins/templatingMixin';
 
 export default {
   name: 'DisplayObject',
-  mixins: [awesomeDisplayMixin],
+  mixins: [awesomeDisplayMixin, templatingMixin],
   computed: {
     _valueIsArray() {
       return Array.isArray(this.value);
     },
     _useArrayMode() {
       return this.multiple || this._valueIsArray;
+    },
+    _value() {
+      return this.getValue(this.value);
+    }
+  },
+  methods: {
+    getValue(value) {
+      const data = this.displayField && value !== undefined ? value[this.displayField] : value;
+      if (this.format && this.format.includes('{{')) {
+        return this.templateParser(this.format, { value: data, currentItem: value });
+      }
+      return data;
     }
   }
 };

@@ -24,7 +24,7 @@ const install = (Vue, options = {}) => {
   Vue.component('VueFormGenerator', component);
 };
 
-const VueFormGenerator = {
+const FormGenerator = {
   component,
   schema,
   validators,
@@ -33,5 +33,5 @@ const VueFormGenerator = {
   install
 };
 
-export default VueFormGenerator;
+export default FormGenerator;
 export { component, schema, validators, abstractField, fieldsLoader, install };

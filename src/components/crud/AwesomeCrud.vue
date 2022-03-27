@@ -406,7 +406,7 @@ ra<template>
 </template>
 <script>
 import _ from 'lodash';
-import qs from 'qs';
+import Qs from 'qs';
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
@@ -422,10 +422,10 @@ import Swal from 'sweetalert2/dist/sweetalert2.js';
 import AwesomeTable from '../table/AwesomeTable/AwesomeTable.vue';
 import EnyoCrudStatsSection from '../misc/EnyoCrudStatsSection.vue';
 import AwesomeForm from './AwesomeForm.vue';
-import AwesomeList from '../table/AwesomeList';
-import AwesomeKanban from '../table/AwesomeKanban';
-import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList';
-import ListingModeSelector from './parts/ListingModeSelector';
+import AwesomeList from '../table/AwesomeList.vue';
+import AwesomeKanban from '../table/AwesomeKanban.vue';
+import AwesomeActionList from '../misc/AwesomeAction/AwesomeActionList.vue';
+import ListingModeSelector from './parts/ListingModeSelector.vue';
 import { createDefaultObject } from '../form/form-generator/utils/schema';
 
 import 'vue-good-table/dist/vue-good-table.css';
@@ -1526,7 +1526,7 @@ export default {
       }
       this.setDisplayMode('create', this.selectedItem);
       if (this.useRouterMode && !options.reset) {
-        this.$router.push(`${this.parentPath}/new?${qs.stringify(this.$route.query)}`);
+        this.$router.push(`${this.parentPath}/new?${Qs.stringify(this.$route.query)}`);
       }
 
       return;

@@ -1,6 +1,6 @@
 <template>
   <div class="form-element" :class="[fieldRowClasses]">
-    <div :class="field.innerClasses">
+    <div :class="field.innerClasses" class="form-inner-div">
       <label v-if="fieldTypeHasLabel" :for="fieldID" :class="field.labelClasses">
         <slot name="label" :field="field" :getValueFromOption="getValueFromOption"></slot>
         <slot name="help" :field="field" :getValueFromOption="getValueFromOption"></slot>
@@ -56,7 +56,7 @@
 import { get as objGet, isArray, isFunction, isNil } from 'lodash';
 import { slugifyFormID } from './utils/schema';
 import formMixin from './formMixin.js';
-import AwesomeDisplay from '../../crud/display/AwesomeDisplay';
+import AwesomeDisplay from '../../crud/display/AwesomeDisplay.vue';
 
 export default {
   name: 'form-element',
@@ -211,6 +211,9 @@ $errorColor: #f00;
   // margin: 0.5rem 0.26rem;
   margin-bottom: 1rem;
 
+  .form-inner-div {
+    height: inherit;
+  }
   label {
     font-weight: 400;
     & > :first-child {

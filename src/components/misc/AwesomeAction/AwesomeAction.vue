@@ -86,7 +86,7 @@
 
 <script>
 import i18nMixin from '../../../mixins/i18nMixin';
-import AwesomeFilter from '../AwesomeFilter';
+import AwesomeFilter from '../AwesomeFilter.vue';
 
 export default {
   name: 'AwesomeAction',

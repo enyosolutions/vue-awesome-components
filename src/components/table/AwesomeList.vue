@@ -258,10 +258,10 @@ import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
-import AwesomeDisplay from '../crud/display/AwesomeDisplay';
-import AwesomeFilter from '../misc/AwesomeFilter';
 import templatingMixin from '../../mixins/templatingMixin';
 
+import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
+import AwesomeFilter from '../misc/AwesomeFilter.vue';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
 

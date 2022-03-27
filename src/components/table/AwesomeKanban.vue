@@ -148,8 +148,8 @@ import listCardFormatMixin from '../../mixins/listCardFormatMixin';
 import advanceFilterMixin from '../../mixins/advanceFilterMixin';
 import { segmentMixin } from '../../mixins/';
 
-import KanbanList from '../misc/KanbanList';
-import AwesomeFilter from '../misc/AwesomeFilter';
+import KanbanList from '../misc/KanbanList.vue';
+import AwesomeFilter from '../misc/AwesomeFilter.vue';
 
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 

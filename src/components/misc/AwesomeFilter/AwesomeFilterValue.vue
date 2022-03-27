@@ -157,8 +157,8 @@ import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import dayjs from 'dayjs';
 import i18nMixin from '../../../mixins/i18nMixin';
-import localeData from 'dayjs/plugin/localeData';
-import FieldVSelect from '../../crud/fields/FieldVSelect';
+const localeData = require('dayjs/plugin/localeData');
+import FieldVSelect from '../../crud/fields/FieldVSelect.vue';
 
 dayjs.extend(localeData);
 export default {

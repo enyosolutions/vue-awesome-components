@@ -127,7 +127,6 @@ export default {
     },
 
     getStoreLabel(value) {
-      alert('getStoreLabel not implemented', value);
       if (!value) {
         return;
       }

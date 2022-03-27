@@ -17,6 +17,7 @@
       v-bind="$props"
       value=""
       class="aw-display-iframe "
+      :class="$props.classes"
       :src="$props.value"
       frameborder="0"
     ></iframe>

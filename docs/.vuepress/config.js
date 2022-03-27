@@ -42,6 +42,13 @@ module.exports = {
         ]
       },
       {
+        title: 'Using models',
+        children: [
+          '/guide/awesomecrud/using-models.md',
+          '/guide/awesomecrud/schema-configuration.md',
+        ]
+      },
+      {
         title: 'Global configuration',
         path: '/guide/cookbook/global-configuration.md'
       },

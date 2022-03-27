@@ -27,7 +27,7 @@
 import VueFormGenerator from '../../form/form-generator';
 
 // You need a specific loader for CSS files
-import Base64Upload from '../../form/Base64Upload';
+import Base64Upload from '../../form/Base64Upload.vue';
 
 export default {
   components: { Base64Upload },

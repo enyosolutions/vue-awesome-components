@@ -477,7 +477,7 @@ export default {
   z-index: 99999999;
   .modal-content {
     background-color: #fff;
-    box-shadow: 0 0 1.75rem 0 rgb(58, 59, 69/15%) !important ;
+    box-shadow: 0 0 1.75rem 0 rgba(58, 59, 69, 0.15) !important ;
     border-radius: 15px;
   }
   .modal-header {

@@ -128,7 +128,7 @@ export default {
           }
         ]
       },
-      nestedSchemas: [
+      nestedModels: [
         {
           name: 'user-view#tickets',
           label: '',

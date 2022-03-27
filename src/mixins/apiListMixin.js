@@ -2,7 +2,7 @@
  * Mixin for components that render lists from an arg or an api
  */
 
-import qs from 'qs';
+import Qs from 'qs';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
@@ -272,7 +272,7 @@ export default {
       this.$awEmit('before-api-refresh', { component: 'aw-table', url: this._url })
       return this.$http
         .get(
-          `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${qs.stringify(this._translatedServerParams, {})}`,
+          `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${Qs.stringify(this._translatedServerParams, {})}`,
           {}
         )
         .then(res => {
@@ -450,7 +450,7 @@ export default {
         return;
       }
 
-      // window.history.pushState({}, null, '?' + qs.stringify(this.routeQueryParams));
+      // window.history.pushState({}, null, '?' + Qs.stringify(this.routeQueryParams));
       console.log('Final push to router', { ...options, query: this.routeQueryParams });
 
       this.$router.push({ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }).catch(err => {

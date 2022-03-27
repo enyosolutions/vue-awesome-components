@@ -4,7 +4,8 @@
 
 <script>
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+// require is needed because plugins are not correctly inserted
+const customParseFormat = require('dayjs/plugin/customParseFormat.js');
 dayjs.extend(customParseFormat);
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
