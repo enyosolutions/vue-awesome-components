@@ -666,6 +666,7 @@ export default {
   ],
   props: {
     item: { type: Object, required: false },
+    itemId: { type: [String, Number], required: false },
     bulkItems: { type: Array, required: false },
     title: { type: [String, Boolean], required: false, default: undefined },
     pageTitle: { type: [String, Boolean], required: false, default: undefined },
@@ -981,7 +982,7 @@ export default {
 
     _selectedItemUrl() {
       let url;
-      if (!this.selectedItem || !this.selectedItem[this.primaryKey]) {
+      if (!this.itemIdComputed) {
         if (this._url) {
           return this._url;
         }
@@ -989,9 +990,9 @@ export default {
       }
       if (this._url.indexOf('?') > -1) {
         url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
-        url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
+        url = `${url.pathname}/${this.itemIdComputed}${url.search}`;
       } else {
-        url = `${this._url}/${this.selectedItem[this.primaryKey]}`;
+        url = `${this._url}/${this.itemIdComputed}`;
       }
       return url;
     },
@@ -1088,7 +1089,7 @@ export default {
     },
 
     _editItemTile() {
-      if (!this.selectedItem) {
+      if (!this.itemIdComputed) {
         return '';
       }
 
@@ -1097,13 +1098,9 @@ export default {
         if (label) {
           return label;
         }
-        return this.selectedItem[this.primaryKey] || '';
       }
 
-      if (this.selectedItem[this.primaryKey]) {
-        return this.selectedItem[this.primaryKey];
-      }
-      return '';
+      return this.itemIdComputed;
     },
 
     _schema() {
@@ -1143,6 +1140,21 @@ export default {
 
     shouldDisplayHeaderCpt() {
       return !['page', 'sidebar', 'sideform'].includes(this.displayMode) || this.displayHeader;
+    },
+
+    itemIdComputed() {
+      let itemId;
+      if (this.selectedItem && this.selectedItem[this.primaryKey]) {
+        itemId = this.selectedItem[this.primaryKey];
+      } else if (this.item && this.item[this.primaryKey]) {
+        itemId = this.selectedItem[this.primaryKey];
+      } else if (this.itemId) {
+        itemId = this.itemId;
+      }
+      if (typeof itemId === 'string' && itemId.includes('{{')) {
+        return this.templateParseText(itemId, { currentItem: this.selectedItem });
+      }
+      return itemId;
     }
   },
   watch: {
@@ -1285,6 +1297,7 @@ export default {
       }
       this.loadModel();
     },
+
     mergeOptions() {
       /** @fix deletePermitted is not used. Cross check with the intranet, and delete*/
       if (this.options && this.options.deletePermitted && this.actions.delete) {
@@ -1335,7 +1348,7 @@ export default {
       }
 
       // todo call only if
-      if ((this.item && this.item[this.primaryKey]) || this._selectedItemUrl) {
+      if (this.itemIdComputed) {
         this.$http
           .get(`${this._selectedItemUrl}`)
           .then((res) => {
@@ -1424,13 +1437,15 @@ export default {
       if (!this._mergedOptions.editPath) {
         if (this.useRouterMode) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
-          this.$router.push(`${this.parentPath}/${item[this.primaryKey]}/edit`);
+          this.$router.push(`${this.parentPath}/${item[this.primaryKey] || this.itemIdComputed}/edit`);
         }
         this.editFunction(item);
         return;
       }
       this.$router.push(
-        this._mergedOptions.editPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        this._mergedOptions.editPath
+          .replace(':id', item[this.primaryKey] || this.itemIdComputed)
+          .replace('{{id}}', item[this.primaryKey] || this.itemIdComputed)
       );
     },
 
@@ -1438,14 +1453,16 @@ export default {
       if (!this._mergedOptions.viewPath) {
         if (this.useRouterMode) {
           // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
-          this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
+          this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey] || this.itemIdComputed}`);
         }
         this.activeNestedTab = 'general';
         this.viewFunction(item);
         return;
       }
       this.$router.push(
-        this._mergedOptions.viewPath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+        this._mergedOptions.viewPath
+          .replace(':id', item[this.primaryKey] || this.itemIdComputed)
+          .replace('{{id}}', item[this.primaryKey] || this.itemIdComputed)
       );
     },
 
@@ -1488,7 +1505,7 @@ export default {
         parent: this.parent
       });
       return this.$http
-        .post(this._url, this.selectedItem)
+        .post(this._url, this.selectedItem, { timeout: this.apiTimeout })
         .then((res) => {
           this.selectedItem = get(res, this.apiResponseConfig.dataPath);
 
@@ -1565,7 +1582,7 @@ export default {
         this.$emit('change', this.selectedItem);
         return false;
       }
-      if (!this.selectedItem[this.primaryKey]) {
+      if (!this.selectedItem[this.primaryKey] && !this.itemIdComputed) {
         // eslint-disable-next-line
         console.warn('AWESOMECRUD ERROR:: No primary key on this item', this.selectedItem, this.primaryKey);
         return false;
@@ -1602,7 +1619,7 @@ export default {
         return;
       }
       this.$http
-        .put(`${this._selectedItemUrl}`, this.selectedItem)
+        .put(`${this._selectedItemUrl}`, this.selectedItem, { timeout: this.apiTimeout })
         .then((res) => {
           this.$awEmit('item-edited', { data: res.data });
           this.$awNotify({

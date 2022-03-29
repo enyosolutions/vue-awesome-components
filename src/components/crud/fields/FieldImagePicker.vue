@@ -11,7 +11,13 @@
       @change="onChangeImage"
     >
     </base64-upload>
-    <input placeholder="url" type="text" class="form-control mt-1 image-picker-input" v-model="value" />
+    <input
+      placeholder="url"
+      v-if="valueIsNotObject"
+      type="text"
+      class="form-control mt-1 image-picker-input"
+      v-model="value"
+    />
 
     <div class="image-picker-actions" v-if="value">
       <button @click.prevent="openImageInTab" type="button" class="btn">
@@ -42,6 +48,9 @@ export default {
   computed: {
     placeholderComputed() {
       return this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder);
+    },
+    valueIsNotObject() {
+      return !this.value || typeof this.value !== 'object';
     }
   },
   watch: {

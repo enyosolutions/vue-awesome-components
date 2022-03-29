@@ -17,7 +17,7 @@ export default {
     readonly: [String, Boolean],
     imageStyle: Object,
     type: { type: String, default: 'text' },
-    placeholder: { type: String, default: 'Click or drop a file' },
+    placeholder: { type: String, default: 'Drag and drop a file (or click here)' },
     accept: { type: String, default: '' }
   },
   data() {

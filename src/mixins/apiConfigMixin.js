@@ -16,6 +16,7 @@ export default {
     },
     url: { type: [String, Function], default: '' },
     apiUrl: { type: [String, Function], default: '' },
+    apiTimeout: { type: [String, Number], default: 20000, description: 'the duration after with the request will be considered as failed' },
     apiRequestConfig: {
       type: Object,
       note: 'This object define the configuration for talking to the api : filters, sort, pagination, etc',
