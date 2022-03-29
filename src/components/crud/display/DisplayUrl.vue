@@ -13,7 +13,7 @@
       <i class="fa fa-external-link"></i>
     </a>
     <iframe
-      v-if="embed"
+      v-if="embed && $props.value"
       v-bind="$props"
       value=""
       class="aw-display-iframe "

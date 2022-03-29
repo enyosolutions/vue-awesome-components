@@ -6,27 +6,29 @@
           <span v-if="value" class="badge badge-info pointer" @click="onClick">
             {{ getLabel(value) }}
           </span>
-          <span v-if="value" class="copy-link" @click="copy(value)">
-            &nbsp; <i class="fa fa-clone text-info"></i>
-          </span>
-          <router-link
-            v-if="value && !onClickUrl"
-            :to="'/app/' + kebabCase(relation) + '/' + value"
-            class="external-link"
-          >
-            &nbsp; <i class="fa fa-external-link text-info"></i>
-          </router-link>
+          <template v-if="displayActions">
+            <span v-if="value" class="copy-link" @click="copy(value)">
+              &nbsp; <i class="fa fa-clone text-info"></i>
+            </span>
+            <router-link
+              v-if="value && !onClickUrl"
+              :to="'/app/' + kebabCase(relation) + '/' + value"
+              class="external-link"
+            >
+              &nbsp; <i class="fa fa-external-link text-info"></i>
+            </router-link>
 
-          <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
-            &nbsp; <i class="fa fa-external-link text-info"></i>
-          </div>
-          <router-link
-            v-if="value && onClickUrl && !isFunction(onClickUrl)"
-            :to="onClickUrl + '/' + value"
-            class="external-link"
-          >
-            &nbsp; <i class="fa fa-external-link text-info"></i>
-          </router-link>
+            <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
+              &nbsp; <i class="fa fa-external-link text-info"></i>
+            </div>
+            <router-link
+              v-if="value && onClickUrl && !isFunction(onClickUrl)"
+              :to="onClickUrl + '/' + value"
+              class="external-link"
+            >
+              &nbsp; <i class="fa fa-external-link text-info"></i>
+            </router-link>
+          </template>
         </div>
       </template>
     </template>
@@ -87,6 +89,9 @@ export default {
   },
   methods: {
     onClick() {
+      if (!this.isClickable) {
+        return;
+      }
       if (!this.timeoutId) {
         this.timeoutId = setTimeout(() => {
           this.timeoutId = null;

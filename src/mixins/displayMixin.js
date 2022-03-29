@@ -35,6 +35,14 @@ export default {
     store: Array,
     displayLabelCache: { type: Object, default: () => (null) },
     onClickUrl: [String, Function],
+    displayActions: {
+      type: [Boolean, Number], default: true,
+      description: 'display contextual actions when hovering the item '
+    },
+    isClickable: {
+      type: [Boolean, Number], default: true,
+      description: 'Whether it\'s possible to click on the item'
+    },
     tag: { type: [String, Object], default: 'div' },
     prefix: String,
     suffix: String,
