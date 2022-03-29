@@ -25,48 +25,36 @@
         class="proprow"
         :id="'comp-prop-' + propinfo.name"
       >
-        <slot name="prop-row" v-bind:prop="propinfo">
-          <td class="propcol name" :class="{ required: propinfo.required }">
-            <a :href="'#comp-prop-' + propinfo.name" class="prop-anchor"><i class="fa fa-link"></i></a>
-            <slot name="prop-col-name" v-bind:prop="propinfo">
-              <span>{{ propinfo.name }}</span>
-              <span v-if="propinfo.required" style="color:red; font-weight:bold">*</span>
-            </slot>
-          </td>
-          <td class="propcol type">
-            <slot name="prop-col-type" v-bind:prop="propinfo">
-              {{ propinfo.type }}
-            </slot>
-          </td>
-          <td class="propcol default">
-            <slot name="prop-col-values" v-bind:prop="propinfo">
-              <template v-if="propinfo.values">
-                <template v-if="Array.isArray(propinfo.values)">
-                  <span class="badge badge-primary" v-for="val in propinfo.values" :value="val" v-bind:key="val">{{
-                    val
-                  }}</span>
-                </template>
-                <template v-else>
-                  <span>{{ propinfo.values }}</span>
-                </template>
-              </template>
-            </slot>
-          </td>
-          <td class="propcol default">
-            <slot name="prop-col-default" v-bind:prop="propinfo">
-              <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
-              <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap;">{{
-                propinfo.default
-              }}</code>
-              <span v-else>{{ propinfo.default }}</span>
-            </slot>
-          </td>
-          <td class="propcol notes">
-            <slot name="prop-col-description" v-bind:prop="propinfo">
-              {{ propinfo.note || propinfo.description }}
-            </slot>
-          </td>
-        </slot>
+        <td class="propcol name" :class="{ required: propinfo.required }">
+          <a :href="'#comp-prop-' + propinfo.name" class="prop-anchor"><i class="fa fa-link"></i></a>
+          <span>{{ propinfo.name }}</span>
+          <span v-if="propinfo.required" style="color:red; font-weight:bold">*</span>
+        </td>
+        <td class="propcol type">
+          {{ propinfo.type }}
+        </td>
+        <td class="propcol default">
+          <template v-if="propinfo.values">
+            <template v-if="Array.isArray(propinfo.values)">
+              <span class="badge badge-primary" v-for="val in propinfo.values" :value="val" v-bind:key="val">{{
+                val
+              }}</span>
+            </template>
+            <template v-else>
+              <span>{{ propinfo.values }}</span>
+            </template>
+          </template>
+        </td>
+        <td class="propcol default">
+          <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
+          <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap;">{{
+            propinfo.default
+          }}</code>
+          <span v-else>{{ propinfo.default }}</span>
+        </td>
+        <td class="propcol notes">
+          {{ propinfo.note || propinfo.description }}
+        </td>
       </tr>
     </table>
   </article>
@@ -107,8 +95,8 @@ export default {
   },
   methods: {
     async process(component, documentation, ignoreMixins) {
-      let VueAwesomeComponents = await import('../../../src');
       let _component;
+      let VueAwesomeComponents = await import('../../../src');
       if (typeof component === 'string' && VueAwesomeComponents[component]) {
         _component = VueAwesomeComponents[component];
       } else {
@@ -123,6 +111,7 @@ export default {
       if (m.token) m.token = this.sanitize(m.token);
       if (m.description) m.description = marked(m.description);
       if (!(ignoreMixins || this.ignoreMixins)) {
+        console.log('component', component, m.mixins);
         if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
       }
       if (m.props) {

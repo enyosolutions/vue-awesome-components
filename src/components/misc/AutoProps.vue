@@ -86,7 +86,7 @@
                     @change="updateModel"
                   />
                 </template>
-                <template v-else="">
+                <template v-else>
                   <input
                     type="text"
                     class="form-control input-xs"
