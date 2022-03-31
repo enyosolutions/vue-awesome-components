@@ -12,15 +12,16 @@
       </span>
       <i class="fa fa-external-link"></i>
     </a>
-    <iframe
-      v-if="embed && $props.value"
-      v-bind="$props"
-      value=""
-      class="aw-display-iframe "
-      :class="$props.classes"
-      :src="$props.value"
-      frameborder="0"
-    ></iframe>
+    <template v-if="embed && $props.value">
+      <iframe
+        v-bind="$props"
+        value=""
+        class="aw-display-iframe "
+        :class="$props.classes"
+        :src="$props.value"
+        frameborder="0"
+      ></iframe>
+    </template>
   </div>
 </template>
 
