@@ -20,6 +20,7 @@ export const defaultActions = {
   editLayout: true,
   collapse: true,
   formPagination: true,
+  pagination: true,
   changDisplayMode: true,
 };
 

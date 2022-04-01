@@ -171,7 +171,7 @@ export default {
   watch: {
     needsRefresh: 'refreshLocalData',
     apiQueryParams(newValue, oldValue) {
-      if (newValue === oldValue) {
+      if (!newValue || JSON.stringify(newValue) === JSON.stringify(oldValue)) {
         return;
       }
       // not sure this is needed...
@@ -269,13 +269,14 @@ export default {
         console.debug("[getItems]", this.showSkeleton, options.source, this._translatedServerParams);
       }
       this.isRefreshing = true;
-      this.$awEmit('before-api-refresh', { component: 'aw-table', url: this._url })
+      this.$awEmit('before-api-refresh', { component: 'aw-listing', url: this._url })
       return this.$http
         .get(
           `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${Qs.stringify(this._translatedServerParams, {})}`,
           {}
         )
         .then(res => {
+          this.$awEmit('after-api-refresh', { response: res, component: 'aw-listing', url: this._url })
           this.data =
             this.apiResponseConfig &&
               this.apiResponseConfig.dataPath
@@ -288,9 +289,9 @@ export default {
               ? _.get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
           this.$emit('crud-list-updated', this.data); // @deprecated
-          this.$awEmit('table-refreshed', { component: 'aw-table', url: this.url, data: this.data })
+          this.$awEmit('table-refreshed', { component: 'aw-listing', url: this.url, data: this.data })
           this.$emit('dataChanged', this.data); // @deprecated
-          this.$awEmit('data-changed', { component: 'aw-table', url: this.url, data: this.data })
+          this.$awEmit('data-changed', { component: 'aw-listing', url: this.url, data: this.data })
         })
 
         .catch(err => {
@@ -517,7 +518,8 @@ export default {
       CsvString = `data:application/csv,${encodeURIComponent(CsvString)}`;
       const x = document.createElement('A');
       x.setAttribute('href', CsvString);
-      x.setAttribute('download', `${this.entity || this.$options.name}.csv`);
+      x.setAttribute('download', `${this.entity || this.identity || this.name || this.title || this.$options.name
+        }.csv`);
       document.body.appendChild(x);
       x.click();
     },

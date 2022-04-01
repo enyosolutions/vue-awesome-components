@@ -243,7 +243,7 @@
               placeholder: this.$t('AwesomeTable.searchInput')
             }"
             :pagination-options="{
-              enabled: _actions && _actions.pagination,
+              enabled: (_actions ? _actions.pagination : true),
               nextLabel: this.$t('AwesomeTable.next'),
               prevLabel: this.$t('AwesomeTable.prev'),
               rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
@@ -461,10 +461,12 @@ export default {
   props: {
     columns: {
       type: Array,
+      description: 'The columns to display in the table',
       default: () => []
     },
     columnsDisplayed: {
       type: Number,
+      description: 'The number of columns to display by default',
       default: 10
     },
     parent: {
