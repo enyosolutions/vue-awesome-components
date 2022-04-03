@@ -179,12 +179,13 @@ export default {
         // eslint-disable-next-line
         console.log('apiQueryParams refreshed', newValue, oldValue);
       }
-      this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+      this.serverParams = _.merge({}, this.apiQueryParams, this.serverParams);
       this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
     },
     entity: 'entityChanged',
     // store: changed => {},
     rows: 'refreshLocalData',
+    url: 'refreshLocalData',
     $route(to) {
       this.connectRouteToPagination(to);
     }
@@ -527,15 +528,17 @@ export default {
     saveComponentState() {
       if (this.isSaveStateEnabledCpt && this.uuid && window.localStorage) {
         try {
+          const columnsState = { ...this.columnsState };
+          delete columnsState.__ACTIONS;
           localStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
             routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
-            columnsState: this.saveColumnsState ? this.columnsState : undefined,
+            columnsState: this.saveColumnsState ? columnsState : undefined,
             columnFilters: this.saveColumnsState ? this.columnFilters : undefined,
             advancedFilters: this.saveColumnsState ? this.advancedFilters : undefined,
           }));
         }
         catch (err) {
-          console.warn(err.message);
+          console.warn('saveComponentState', err.message);
         }
       }
     },

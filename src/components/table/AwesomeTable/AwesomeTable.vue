@@ -101,7 +101,7 @@
             <button
               slot="reference"
               type="button"
-              class="btn btn-sm btn-simple mt-0 dropdown-toggle"
+              class="btn btn-sm btn-simple mt-0"
               :class="{ 'btn-primary': advancedFiltersCount || displayAwFilter, 'btn-default': !advancedFiltersCount }"
               aria-haspopup="true"
               aria-expanded="false"
@@ -133,7 +133,7 @@
                 slot="reference"
                 type="button"
                 class="btn btn-sm btn-simple dropdown-toggle"
-                id="advancedFilterButton"
+                id="configurationButton"
               >
                 <i class="fa fa-cog" />
                 {{ $t('AwesomeTable.configuration') }}
@@ -243,7 +243,7 @@
               placeholder: this.$t('AwesomeTable.searchInput')
             }"
             :pagination-options="{
-              enabled: (_actions ? _actions.pagination : true),
+              enabled: _actions ? _actions.pagination : true,
               nextLabel: this.$t('AwesomeTable.next'),
               prevLabel: this.$t('AwesomeTable.prev'),
               rowsPerPageLabel: this.$t('AwesomeTable.rows_per_page'),
@@ -783,7 +783,10 @@ export default {
       this.columnsState;
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter((col) => this.columnsState[col.field]);
-
+        // if there are no columns displayed, show all
+        if (!cols.length || (cols.length === 1 && this.columnsState.__ACTIONS)) {
+          cols.push(...this.formattedColumns);
+        }
         if (!this.columnsState.__ACTIONS) {
           const actions = this.formattedColumns.find((col) => col.field === '__ACTIONS');
           if (actions) {

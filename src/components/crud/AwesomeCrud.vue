@@ -729,14 +729,14 @@ export default {
     },
     postCreateDisplayMode: {
       type: String,
-      values: ['list', 'edit', 'view'],
+      values: ['listing', 'edit', 'view'],
       validator: (value) => ['list', 'edit', 'view'].includes(value),
       description: 'The location to redirect after a successful create',
       default: 'list'
     },
     postEditDisplayMode: {
       type: String,
-      values: ['list', 'edit', 'view'],
+      values: ['listing', 'edit', 'view'],
       validator: (value) => ['list', 'edit', 'view'].includes(value),
       description: 'The location to redirect after a successful edit',
       default: 'view'
@@ -1486,7 +1486,7 @@ export default {
 
     /** @param mode: string */
     setDisplayMode(mode, item, options = { refresh: true }) {
-      // console.warn('setDisplayMode', mode, item);
+      console.warn('setDisplayMode', mode, item);
       if (['edit', 'view'].indexOf(mode) > -1) {
         this.$awEmit('aw-form-open');
         const { ...data } = item;
@@ -2010,28 +2010,40 @@ export default {
     },
 
     getPreviousDisplayMode(context) {
-      // must be the correct display mode and a mode that is not disabled in the actions
+      const displayMode =
+        this.previousDisplayMode &&
+        this.previousDisplayMode !== context &&
+        this.previousDisplayMode !== this.displayMode
+          ? this.previousDisplayMode
+          : this.mergedOptions.initialDisplayMode;
+      // must be the correct display mode and (a listing more or a mode that is not disabled in the actions)
       if (
         context === 'create' &&
         this.postCreateDisplayMode &&
-        (this._actions[this.postCreateDisplayMode] === undefined || this._actions[this.postCreateDisplayMode])
+        (this.postCreateDisplayMode == 'listing' ||
+          this._actions[this.postCreateDisplayMode] === undefined ||
+          this._actions[this.postCreateDisplayMode])
       ) {
-        return this.postCreateDisplayMode;
+        // temporary fix for create page
+
+        return this.postCreateDisplayMode === 'list' || this.postCreateDisplayMode === 'listing'
+          ? displayMode
+          : this.postCreateDisplayMode;
       }
 
-      // must be the correct display mode and a mode that is not disabled in the actions
+      // must be the correct display mode and (a listing more or a mode that is not disabled in the actions)
       if (
         context === 'edit' &&
         this.postEditDisplayMode &&
-        (this._actions[this.postEditDisplayMode] === undefined || this._actions[this.postEditDisplayMode])
+        (this.postCreateDisplayMode == 'listing' ||
+          this._actions[this.postEditDisplayMode] === undefined ||
+          this._actions[this.postEditDisplayMode])
       ) {
-        return this.postEditDisplayMode;
+        return this.postCreateDisplayMode === 'list' || this.postCreateDisplayMode === 'listing'
+          ? displayMode
+          : this.postEditDisplayMode;
       }
-      return this.previousDisplayMode &&
-        this.previousDisplayMode !== context &&
-        this.previousDisplayMode !== this.displayMode
-        ? this.previousDisplayMode
-        : this.mergedOptions.initialDisplayMode;
+      return displayMode;
     }
   }
 };

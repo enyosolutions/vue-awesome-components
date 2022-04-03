@@ -146,7 +146,7 @@ export default {
     },
     processProps(props) {
       const keys = Array.isArray(props) ? props : Object.keys(props);
-      return keys.reduce((map, k) => {
+      return keys.sort().reduce((map, k) => {
         const v = new Proxy(props[k] || {}, this.basicArrayProxy);
         let objInfo = {};
 

@@ -9,7 +9,7 @@ export const defaultActions = {
   export: false,
   exportLocal: false,
   import: false,
-  dateFilter: true,
+  dateFilter: false,
   refresh: true,
   autoRefresh: true,
   advancedFiltering: true,
