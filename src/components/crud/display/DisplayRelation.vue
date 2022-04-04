@@ -61,7 +61,12 @@ export default {
     },
 
     _displayLabelCache() {
-      return this.displayLabelCache || this.awComponentsConfig.displayLabelsCache || this.internalCache || {};
+      return (
+        this.displayLabelCache ||
+        (this.awComponentsConfig && this.awComponentsConfig.displayLabelsCache) ||
+        this.internalCache ||
+        {}
+      );
     },
 
     _values() {

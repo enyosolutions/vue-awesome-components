@@ -14,16 +14,17 @@
 </template>
 
 <script>
+import { uniqueId } from 'lodash';
 import Group from './Group.vue';
 // import Row from "./Row.vue";
 import layoutMixin from '../../../mixins/layoutMixin';
 import formLayoutMixin from '../../../mixins/formLayoutMixin';
 import i18nMixin from '../../../mixins/i18nMixin';
-import { uniqueId } from 'lodash';
+import VueFormGenerator from '../../form/form-generator';
 
 export default {
   name: 'GroupedForm',
-  components: { Group },
+  components: { Group, VueFormGeneratorhttps://lmcrc.dev.enyosolutions.com/?page_id=6&preview_id=6&preview_nonce=c48134aadc&preview=true&_thumbnail_id=25 },
   mixins: [i18nMixin, layoutMixin, formLayoutMixin],
   props: {
     id: { type: String, default: '' },

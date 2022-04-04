@@ -604,6 +604,7 @@ import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
+import modelInterfaceMixin from '../../mixins/modelInterfaceMixin';
 
 // import notificationsMixin from '../../mixins/notificationsMixin';
 
@@ -615,6 +616,8 @@ import Tabs from "./layout/Tabs.vue";
 import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
 */
+
+import VueFormGenerator from '../form/form-generator';
 
 import 'vue-good-table/dist/vue-good-table.css';
 import AwesomeCrud from './AwesomeCrud.vue';
@@ -652,12 +655,14 @@ export default {
     GroupedForm,
     */
     AwesomeLayout,
-    AwesomeActionList
+    AwesomeActionList,
+    VueFormGenerator
   },
   mixins: [
     i18nMixin,
     apiErrorsMixin,
     apiConfigMixin,
+    modelInterfaceMixin,
     awesomeFormMixin,
     relationMixin,
     parseJsonSchema,

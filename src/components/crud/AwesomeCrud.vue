@@ -1,4 +1,4 @@
-ra<template>
+<template>
   <div class="content aw-crud" :class="`aw-crud-mode-${displayMode} aw-crud-${identity}`">
     <div class="">
       <div class="row mr-0 ml-0">
@@ -478,13 +478,14 @@ export default {
   mixins: [
     uuidMixin,
     i18nMixin,
+    modelInterfaceMixin,
     apiErrorsMixin,
     apiConfigMixin,
     awesomeFormMixin,
     relationMixin,
     parseJsonSchema,
-    awEmitMixin,
-    modelInterfaceMixin
+    awEmitMixin
+
     // notificationsMixin
   ],
   props: {
@@ -1078,7 +1079,10 @@ export default {
       return (
         this.itemsList &&
         this.selectedItem &&
-        _.findIndex(this.itemsList, (data) => data[this.primaryKey] == this.selectedItem[this.primaryKey])
+        _.findIndex(
+          this.itemsList,
+          (data) => data[this.primaryKeyFieldCpt] == this.selectedItem[this.primaryKeyFieldCpt]
+        )
       );
     },
 
@@ -1547,7 +1551,9 @@ export default {
     goToDeletePage(item) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(
-          this.mergedOptions.deletePath.replace(':id', item[this.primaryKey]).replace('{{id}}', item[this.primaryKey])
+          this.mergedOptions.deletePath
+            .replace(':id', item[this.primaryKeyFieldCpt])
+            .replace('{{id}}', item[this.primaryKeyFieldCpt])
         );
       }
 
@@ -1561,15 +1567,15 @@ export default {
 
     goToEditPage(item, options) {
       if (this.mergedOptions.editPath) {
-        if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKey]) {
-          return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKey]));
+        if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
+          return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKeyFieldCpt]));
         }
         if (this.mergedOptions.editPath.includes('{{') && this.mergedOptions.editPath.includes('}}')) {
           return this.$router.push(this.parseUrl(this.mergedOptions.editPath, item));
         }
         return this.$router.push(this.mergedOptions.editPath);
       }
-      const nextPath = `${this.parentPath}/${item[this.primaryKey]}/edit`;
+      const nextPath = `${this.parentPath}/${item[this.primaryKeyFieldCpt]}/edit`;
       if (this.useRouterMode && this.$route.path !== nextPath) {
         this.$router.push(nextPath);
       }
@@ -1581,15 +1587,15 @@ export default {
         return;
       }
       if (this.mergedOptions.viewPath) {
-        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKey]) {
-          return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKey]));
+        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
+          return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKeyFieldCpt]));
         }
         if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
           return this.$router.push(this.parseUrl(this.mergedOptions.viewPath, item));
         }
         return this.$router.push(this.mergedOptions.viewPath);
       }
-      const nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKey]}`;
+      const nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
       if (this.useRouterMode && this.$route.path !== nextPath) {
         this.$router.push(nextPath);
       }
@@ -1615,7 +1621,7 @@ export default {
 
     bulkEditFunction(item) {
       this.$http
-        .put(`${this._url}/${item[this.primaryKey]}`, item)
+        .put(`${this._url}/${item[this.primaryKeyFieldCpt]}`, item)
         .then((res) => {
           this.$emit(this.identity + '-item-updated', res.data);
           this.$awNotify({
@@ -1753,7 +1759,7 @@ export default {
             .replace('/edit', '')
             .replace('/view', '')
             .replace('/:id', '')
-            .replace(`${item ? item[this.primaryKey] : ''}`, '');
+            .replace(`${item ? item[this.primaryKeyFieldCpt] : ''}`, '');
 
           this.$router.push(url);
         }
@@ -1768,7 +1774,7 @@ export default {
           .replace('/edit', '')
           .replace('/view', '')
           .replace('/:id', '')
-          .replace(`${item ? item[this.primaryKey] : ''}`, '');
+          .replace(`${item ? item[this.primaryKeyFieldCpt] : ''}`, '');
         this.$router.push(url);
       }
       const previousDisplayMode =
@@ -1868,7 +1874,7 @@ export default {
       if (this.hasPrevious && this.itemsList[this.currentItemIndex - 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex - 1];
         if (this.useRouterMode) {
-          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}`);
         }
       }
     },
@@ -1877,7 +1883,7 @@ export default {
       if (this.hasNext && this.itemsList[this.currentItemIndex + 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex + 1];
         if (this.useRouterMode) {
-          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKey]}`);
+          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}`);
         }
       }
     },
@@ -1950,7 +1956,7 @@ export default {
     onRouteIdChanged(newVal, previousVal) {
       // console.log('route id changed', newVal, previousVal);
       if (this.useRouterMode && newVal && previousVal && previousVal !== newVal) {
-        this.setDisplayMode(this.displayMode, { [this.primaryKey]: this.$route.params.id });
+        this.setDisplayMode(this.displayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
       }
     },
 
@@ -1970,7 +1976,7 @@ export default {
             .replace(`/${this.$route.params.id}`, '')
             .replace('/:id', '');
         } else {
-          this.selectedItem = { [this.primaryKey]: this.$route.params.id };
+          this.selectedItem = { [this.primaryKeyFieldCpt]: this.$route.params.id };
           if (this.$route.query.item) {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
           }

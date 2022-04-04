@@ -12,14 +12,7 @@ export default {
   mixins: [apiConfigMixin, awEmitMixin],
   props: {
     rows: { type: Array, default: () => [] },
-    primaryKey: {
-      type: String,
-      default: function () {
-        return (this.awComponentsConfig && this.awComponentsConfig.primaryKey) || 'id';
-      },
-      description: 'Which field to use as primary key. By default it\'s `id` but it can be `_id`  or anything that you want',
 
-    },
     url: { type: String, default: '' },
 
     useRouterMode: {
