@@ -1,16 +1,20 @@
 <template>
-  <div class="input-group field-file-input">
-    <base64-upload
-      :disabled="schema.disabled"
-      :readonly="schema.readonly"
-      :type="type"
-      :placeholder="placeholderComputed"
-      :inputClass="inputClass"
-      :key="refresh"
-      :image-src="value"
-      @change="onChangeImage"
-    />
-    <input v-if="valueIsNotObject" type="text" class="form-control" placeholder="url" v-model="value" />
+  <div class="input-group field-file-input row">
+    <div class="col-6">
+      <base64-upload
+        :disabled="schema.disabled"
+        :readonly="schema.readonly"
+        :type="type"
+        :placeholder="placeholderComputed"
+        :inputClass="inputClass"
+        :key="refresh"
+        :image-src="value"
+        @change="onChangeImage"
+      />
+    </div>
+    <div class="col-6">
+      <input v-if="valueIsNotObject" type="text" class="form-control" placeholder="url" v-model="value" />
+    </div>
   </div>
 </template>
 <script>
@@ -36,6 +40,9 @@ export default {
   computed: {
     placeholderComputed() {
       return this.placeholder || (this.schema && this.schema.fieldOptions && this.schema.fieldOptions.placeholder);
+    },
+    valueIsNotObject() {
+      return !this.value || typeof this.value !== 'object';
     }
   },
   watch: {

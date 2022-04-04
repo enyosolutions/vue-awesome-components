@@ -74,6 +74,8 @@ export default {
   position: relative;
   cursor: pointer;
   z-index: 2;
+  overflow: hidden;
+  height: 100%;
 }
 .upload-icon {
   position: absolute;
@@ -83,10 +85,12 @@ export default {
 }
 .base64-upload p {
   width: 100%;
+  height: 100%;
   border: 1px solid #ccc;
   border-radius: 3px;
   text-align: left;
   padding: 5px;
+  overflow: hidden;
 }
 img {
   width: 100%;

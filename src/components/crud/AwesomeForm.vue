@@ -617,7 +617,7 @@ import Row from "./layout/Row.vue";
 import GroupedForm from "./layout/GroupedForm.vue";
 */
 
-import VueFormGenerator from '../form/form-generator';
+import VueFormGenerator from '../form/form-generator/formGenerator.vue';
 
 import 'vue-good-table/dist/vue-good-table.css';
 import AwesomeCrud from './AwesomeCrud.vue';

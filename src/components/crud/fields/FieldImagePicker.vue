@@ -1,23 +1,18 @@
 <template>
-  <div class="input-group field-file-input aw-form-field-image-picker">
-    <base64-upload
-      :disabled="schema.disabled"
-      :readonly="schema.readonly"
-      :type="type"
-      :placeholder="placeholderComputed"
-      :inputClass="inputClass"
-      :key="refresh"
-      :image-src="value"
-      @change="onChangeImage"
-    >
-    </base64-upload>
-    <input
-      placeholder="url"
-      v-if="valueIsNotObject"
-      type="text"
-      class="form-control mt-1 image-picker-input"
-      v-model="value"
-    />
+  <div class="input-group field-file-input aw-form-field-image-picker row">
+    <div class="col-6 m-0 p-0">
+      <base64-upload
+        :disabled="schema.disabled"
+        :readonly="schema.readonly"
+        :type="type"
+        :placeholder="placeholderComputed"
+        :inputClass="inputClass"
+        :key="refresh"
+        :image-src="value"
+        @change="onChangeImage"
+      >
+      </base64-upload>
+    </div>
 
     <div class="image-picker-actions" v-if="value">
       <button @click.prevent="openImageInTab" type="button" class="btn">
@@ -26,6 +21,15 @@
       <button @click.prevent="removeImage" type="button" class="btn">
         <i class="fa fa-trash"></i>
       </button>
+    </div>
+    <div class="col-6">
+      <input
+        placeholder="url"
+        v-if="valueIsNotObject"
+        type="text"
+        class="form-control image-picker-input p-0 m-0"
+        v-model="value"
+      />
     </div>
   </div>
 </template>
