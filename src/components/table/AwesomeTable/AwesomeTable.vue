@@ -36,7 +36,7 @@
             ></div>
           </div>
         </div>
-        <h3 class="card-title aw-table-header text-left">
+        <h3 class="card-title aw-table-title text-left">
           <slot name="table-title">
             {{ _tableTitle }}
           </slot>

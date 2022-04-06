@@ -21,8 +21,8 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
-      <h3 class="mb-0">
-        <slot name="aw-list-title">{{ titleComputed }}</slot>
+      <h3 class="mb-0 aw-list-title">
+        <slot name="list-title">{{ titleComputed }}</slot>
           <button
                 v-if="actions && actions.refresh"
                 class="btn btn-simple btn-sm"

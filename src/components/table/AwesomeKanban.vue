@@ -19,8 +19,8 @@
     <div class="card aw-kanban-card">
       <div class="d-block">
         <div class="card-header">
-          <h4 class="text-left">
-            <slot name="aw-kanban-title">{{ titleComputed }}</slot>
+          <h3 class="text-left aw-kanban-title">
+            <slot name="kanban-title">{{ titleComputed }}</slot>
             <awesome-filter
               v-if="displayAwFilter"
               edit-filters
@@ -65,7 +65,7 @@
                 </button>
               </div>
             </div>
-          </h4>
+          </h3>
         </div>
       </div>
       <div class="card-body">
