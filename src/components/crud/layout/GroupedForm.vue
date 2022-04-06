@@ -24,7 +24,7 @@ import VueFormGenerator from '../../form/form-generator';
 
 export default {
   name: 'GroupedForm',
-  components: { Group, VueFormGeneratorhttps://lmcrc.dev.enyosolutions.com/?page_id=6&preview_id=6&preview_nonce=c48134aadc&preview=true&_thumbnail_id=25 },
+  components: { Group, VueFormGenerator },
   mixins: [i18nMixin, layoutMixin, formLayoutMixin],
   props: {
     id: { type: String, default: '' },

@@ -45,7 +45,9 @@ const install = (Vue, options = {}) => {
 
     //    const { exclude } = options;
     Vue.prototype.awComponentsConfig = {
-      displayLabelsCache: {}
+      displayLabelsCache: {
+        relationsAreClickable: true
+      }
     };
 
     if (options.config) {
@@ -74,6 +76,7 @@ const install = (Vue, options = {}) => {
     fields: _.values(FormGenerator.fieldsLoader),
     options,
   });
+
 
   Vue.component('enyo-card', EnyoCard);
   Vue.component('enyo-stats-card', EnyoStatsCard);

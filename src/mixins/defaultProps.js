@@ -21,7 +21,7 @@ export const defaultActions = {
   collapse: true,
   formPagination: true,
   pagination: true,
-  changDisplayMode: true,
+  changeDisplayMode: true,
 };
 
 export const defaultKanbanOptions = {

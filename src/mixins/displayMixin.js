@@ -40,7 +40,7 @@ export default {
       description: 'display contextual actions when hovering the item '
     },
     isClickable: {
-      type: [Boolean, Number], default: true,
+      type: [Boolean, Number], default: undefined,
       description: 'Whether it\'s possible to click on the item'
     },
     tag: { type: [String, Object], default: 'div' },

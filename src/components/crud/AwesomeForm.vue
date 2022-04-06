@@ -278,7 +278,7 @@
                               @click="activeNestedTab = (nm && nm.identity) || 'general'"
                             >
                               <i v-if="nm.icon" :class="nm.icon" />
-                              {{ $t(nm.namePlural || nm.title || nm.identity) }}
+                              {{ getNestedTabsTitle(nm) }}
                             </a>
                           </li>
                         </template>
@@ -1759,11 +1759,17 @@ export default {
     },
 
     getNestedTabsTitle(nestedModel) {
-      if (nestedModel.name) {
-        return nestedModel.name;
+      if (nestedModel.tabTitle) {
+        return nestedModel.tabTitle;
+      }
+      if (nestedModel.namePlural) {
+        return nestedModel.namePlural;
       }
       if (nestedModel.title) {
         return nestedModel.title;
+      }
+      if (nestedModel.name) {
+        return nestedModel.name;
       }
       return this.$te('awForm.labels.tabs.' + nestedModel.identity)
         ? this.$t('awForm.labels.tabs.' + nestedModel.identity)

@@ -18,6 +18,7 @@
           v-show="showItemsListSectionComputed"
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
+          <!-- duplicate for when there is segment -->
           <ListingModeSelector
             v-if="_actions.changeDisplayMode && !!segmentField"
             v-model="listDisplayMode"
@@ -75,7 +76,11 @@
             @data-changed="onDataChanged"
           >
             <template slot="table-header-left">
-              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+              <ListingModeSelector
+                v-if="_actions.changeDisplayMode && !segmentField"
+                v-model="listDisplayMode"
+                :enabled-modes="enabledListingModes"
+              />
             </template>
             <template slot="table-header-right">
               <div class="text-right">
@@ -202,7 +207,11 @@
               </template>
             </template>
             <template slot="list-header-left">
-              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+              <ListingModeSelector
+                v-if="_actions.changeDisplayMode && !segmentField"
+                v-model="listDisplayMode"
+                :enabled-modes="enabledListingModes"
+              />
             </template>
             <template slot="list-header-right">
               <template v-if="_customTopRightActions">
@@ -257,7 +266,11 @@
             @cardClicked="onCardClicked"
           >
             <template slot="kanban-header-left">
-              <ListingModeSelector v-if="_actions.changeDisplayMode && !segmentField" v-model="listDisplayMode" />
+              <ListingModeSelector
+                v-if="_actions.changeDisplayMode && !segmentField"
+                v-model="listDisplayMode"
+                :enabled-modes="enabledListingModes"
+              />
             </template>
             <template slot="kanban-header-right">
               <AwesomeActionList
@@ -1039,7 +1052,7 @@ export default {
       }
       if (!merged.titleField && (!merged.fields || !merged.fields.length)) {
         if (this.displayField) {
-          merged.titleField = this._model.displayField;
+          merged.titleField = this.displayField;
         } else if (this._model && this._model.displayField) {
           merged.titleField = this._model.displayField;
         }
@@ -1223,8 +1236,13 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
-    if (this.enabledListingModes && !this.enabledListingModes.includes(this.mergedOptions.initialDisplayMode)) {
+    if (
+      this.enabledListingModes &&
+      this.enabledListingModes.length &&
+      !this.enabledListingModes.includes(this.mergedOptions.initialDisplayMode)
+    ) {
       console.warn('Intitial display mode is not in the list of enabled modes', this.mergedOptions.initialDisplayMode);
+      this.mergedOptions.initialDisplayMode = this.enabledListingModes[0];
     }
 
     this.internalOptions = _.cloneDeep(this.mergedOptions);

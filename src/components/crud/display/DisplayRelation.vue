@@ -3,7 +3,12 @@
     <template v-if="_values && _values.length">
       <template v-for="value in _values">
         <div :key="value" :title="getLabel(value) + ' (' + value + ')'" :tooltip="value">
-          <span v-if="value" class="badge badge-info pointer" @click="onClick">
+          <span
+            v-if="value"
+            class="badge badge-info pointer"
+            @click="onClick"
+            :class="_relationIsClickable ? 'pointer' : ''"
+          >
             {{ getLabel(value) }}
           </span>
           <template v-if="displayActions">
@@ -74,6 +79,13 @@ export default {
         return this.$props.value;
       }
       return Array.isArray(this.$props.value) ? this.$props.value : [this.$props.value];
+    },
+
+    _relationIsClickable() {
+      return (
+        this.isClickable ||
+        (this.isClickable === undefined && this.awComponentsConfig && this.awComponentsConfig.relationsAreClickable)
+      );
     }
   },
   mounted() {
@@ -86,6 +98,11 @@ export default {
     this.$awEventBus &&
       this.$awEventBus.$off(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
   },
+  watch: {
+    relationUrl(newValue) {
+      console.warn('relationUrl', newValue);
+    }
+  },
   data() {
     return {
       internalCache: {},
@@ -94,7 +111,7 @@ export default {
   },
   methods: {
     onClick() {
-      if (!this.isClickable) {
+      if (!this._relationIsClickable) {
         return;
       }
       if (!this.timeoutId) {
@@ -177,7 +194,11 @@ export default {
           return computedLocalValue;
         }
       }
-      const url = `${this.relationUrl}/${value}`;
+      if (!this.relationUrl) {
+        return value;
+      }
+      const [path, params] = this.relationUrl.split('?');
+      const url = `${path}/${value}?${params || ''}`;
       //  && this._displayLabelCache[url] !== value
       if (value && this._displayLabelCache[url]) {
         return this._displayLabelCache[url];
@@ -206,7 +227,7 @@ export default {
           return result;
         })
         .catch((err) => {
-          console.warn('getApiLabel result', this.relationLabel, err.message);
+          console.warn('getApiLabel result [', this.relationUrl.length, ']', url, this.relationLabel, err.message);
           this.$set(this._displayLabelCache, url, value);
         });
 

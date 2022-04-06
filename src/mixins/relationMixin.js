@@ -23,8 +23,13 @@ export default {
           // we should search every where not just in the state. This is for backward compatibility
           const models = _.get(this.$store, modelsStorePath) || _.get(this.$store.state, modelsStorePath);
           // if we have a list
-          if (models && Array.isArray(models)) {
-            return models.find((model) => model.identity === modelId || model.modelName === modelId);
+          if (models) {
+            if (Array.isArray(models)) {
+              return models.find((model) => model.identity === modelId || model.modelName === modelId);
+            }
+            if (typeof models === 'object') {
+              return models[modelId] || models[modelId];
+            }
           }
         }
         else {

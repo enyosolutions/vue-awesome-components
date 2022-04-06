@@ -16,7 +16,8 @@ Vue.use(VueAwesomeComponents, {
     extendedRolesStorePath: 'user.extendedRoles',
     primaryKey: 'id',
     hideIdsInSelect: false,
-    displayLabelsCache: {}
+    displayLabelsCache: {},
+    relationsAreClickable: true
   },
   AwesomeCrud: {
     props: {
