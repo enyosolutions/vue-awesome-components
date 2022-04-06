@@ -391,7 +391,7 @@
                             </template>
                             -->
                             <div
-                              class="tab-pane nested-tab fade"
+                              class="tab-pane nested-tab main-tab fade"
                               :class="{
                                 'active show':
                                   !activeNestedTab || activeNestedTab === 'general' || nestedLayoutMode === 'list',
