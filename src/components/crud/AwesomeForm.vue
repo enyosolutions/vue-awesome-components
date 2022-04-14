@@ -264,9 +264,9 @@
                             @click="activeNestedTab = 'general'"
                           >
                             {{
-                              $te('app.labels.' + identity)
-                                ? $te('app.labels.' + identity)
-                                : startCase(name || title || identity)
+                              $te('app.nestedtab.labels.' + identity)
+                                ? $te('app.nestedtab.labels.' + identity)
+                                : startCase(tabTitle || name || title || identity)
                             }}
                           </a>
                         </li>
@@ -675,7 +675,6 @@ export default {
     itemId: { type: [String, Number], required: false },
     bulkItems: { type: Array, required: false },
     title: { type: [String, Boolean], required: false, default: undefined },
-    pageTitle: { type: [String, Boolean], required: false, default: undefined },
     name: { type: [String, Boolean], required: false, default: undefined },
     namePlural: { type: [String, Boolean], required: false, default: undefined },
     identity: { type: String, required: true },

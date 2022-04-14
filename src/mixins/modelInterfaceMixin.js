@@ -18,8 +18,11 @@ export default {
     },
     identity: { type: String, required: true },
     displayField: { type: String },
-    name: { type: String },
-    pluralName: { type: String },
+    title: { type: [String, Boolean] },
+    name: { type: [String, Boolean] },
+    pluralName: { type: [String, Boolean] },
+    tabTitle: { type: [String, Boolean], required: false, default: undefined },
+    pageTitle: { type: [String, Boolean], required: false, default: undefined },
   },
   computed: {
     primaryKeyFieldCpt() {
