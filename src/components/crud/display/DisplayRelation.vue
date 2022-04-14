@@ -45,6 +45,7 @@
 
 <script>
 import _ from 'lodash';
+
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
 import apiConfigMixin from '../../../mixins/apiConfigMixin';

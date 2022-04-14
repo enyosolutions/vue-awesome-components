@@ -1,28 +1,30 @@
 # Events
 
-| Type              | description                                                             |
-|-------------------|-------------------------------------------------------------------------|
-| dataChanged       | after the request to get list of items for the table is sent to the api |
-| crud-list-updated | after the request to get list of items for the table is sent to the api |
-| afterRefresh      | after the local refresh of the table (no api)                           |
-| permanent-filter  | When a permanent filter is used                           |
-| advanced-filter   | When a permanent filter is used                           |
-| onRowClicked            |                            |
-| onRowDoubleClicked            |                            |
-| customAction            |                            |
-| bulkDelete            |                           |
-| bulkEdit            |                           |
-| view            |                           |
-| edit            |                           |
-| delete            |                           |
-| create            |                           |
-| updateAutoRefresh            |                           |
-| refresh            |                           |
+| Type               | description                                                             |
+| ------------------ | ----------------------------------------------------------------------- |
+| dataChanged        | after the request to get list of items for the table is sent to the api |
+| crud-list-updated  | after the request to get list of items for the table is sent to the api |
+| afterRefresh       | after the local refresh of the table (no api)                           |
+| permanent-filter   | When a permanent filter is used                                         |
+| advanced-filter    | When a permanent filter is used                                         |
+| onRowClicked       |                                                                         |
+| onRowDoubleClicked |                                                                         |
+| customAction       |                                                                         |
+| bulkDelete         |                                                                         |
+| bulkEdit           |                                                                         |
+| view               |                                                                         |
+| edit               |                                                                         |
+| delete             |                                                                         |
+| create             |                                                                         |
+| updateAutoRefresh  |                                                                         |
+| refresh            |                                                                         |
+| onRowClicked       |                                                                         |
+| onRowDoubleClicked |                                                                         |
 
 ## Events sent via awesomeBus
 
 | Type               | description                                                              |
-|--------------------|--------------------------------------------------------------------------|
+| ------------------ | ------------------------------------------------------------------------ |
 | before-api-refresh | Before the request to get list of items for the table is sent to the api |
 | table-refreshed    | after the request to get list of items for the table is sent to the api  |
 
@@ -49,7 +51,7 @@ Additionally for the button to appear the special `__ACTIONS` column must be add
 
 ## edit
 
-Called when the `edit` button is clicked  <i class="fa fa-edit"></i> . For this but``
+Called when the `edit` button is clicked <i class="fa fa-edit"></i> . For this but``
 ton to appear :
 
 - the special `__ACTIONS` column must be added to the list of columns
@@ -57,7 +59,7 @@ ton to appear :
 
 ## delete
 
-Called when the ## delete button is clicked  <i class="fa fa-edit"></i> . For this button to appear :
+Called when the ## delete button is clicked <i class="fa fa-edit"></i> . For this button to appear :
 
 - the special `__ACTIONS` column must be added to the list of columns
 - The ## delete action must be set to `true` (it is by default)
@@ -70,16 +72,17 @@ Called when the a custom action button is clicked. For the button to appear :
 
 The `customAction` event return an object with various properties to help you treat the action.
 
-| Property   |     Type      |     Usage      |
-|----------|---------------|---------------|
-| action | Object | the action definition that was passed at the creation of the action |
-| location | string (inline | tabletop)| The location of the action |
-| item | Object | the object being clicked on if the action is an inline action |
-| id | string | the unique id of the button being clicked on (its basically the name of the action plus the index of the row) |
+| Property | Type           | Usage                                                                                                         |
+| -------- | -------------- | ------------------------------------------------------------------------------------------------------------- |
+| action   | Object         | the action definition that was passed at the creation of the action                                           |
+| location | string (inline | tabletop)                                                                                                     | The location of the action |
+| item     | Object         | the object being clicked on if the action is an inline action                                                 |
+| id       | string         | the unique id of the button being clicked on (its basically the name of the action plus the index of the row) |
 
 ## afterRefresh
 
 Emitted after the refresh of the page has completed.
+
 > Note: this event is only fired if the refresh was called by the user
 
 This event return the current list of items in the body.
@@ -92,5 +95,3 @@ list of items received from the api.
 
 This is useful for having table that will independently talk to a endpoint, while being able to access that data outside
 of the table if needed.
-
-

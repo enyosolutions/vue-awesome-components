@@ -30,7 +30,7 @@
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
       :options="computedOptions"
-      :disabled="disabled || schema.disabled || schema.readonly"
+      :disabled="isDisabled"
       :required="required"
       @open="preloadFn"
       @search="onSearch"
@@ -40,14 +40,14 @@
       :getOptionLabel="formatLabel"
     ></v-select>
     <div
-      v-if="(schema.relation || schema.relationRoute) && !fieldOptions.disableRelationActions"
+      v-if="(schema.relation || schema.relationRoute) && !fieldOptions.disableRelationActions && !isDisabled"
       class="aw-field-select-relation-actions"
     >
       <template v-if="model && model[schema.model]">
         <router-link
           v-if="!schema.relationRoute"
           :to="'/app/' + kebabCase(schema.relation) + '/' + model[schema.model] + ''"
-          class="external-link"
+          class="external-link pr-1"
         >
           <i class="fa fa-eye text-info"></i>
         </router-link>
@@ -72,7 +72,7 @@
         @hide="displayEditModal = false"
       >
         <button slot="reference" type="button" class="external-link" @click="displayEditModal = true">
-          &nbsp; <i class="fa fa-plus text-info"></i>
+          <i class="fa fa-plus text-info"></i>
         </button>
         <div v-show="displayEditModal" class="vselect-popup-width" ref="vselectPopup">
           <AwesomeForm
@@ -263,6 +263,10 @@ export default {
         height: height + 'px',
         background: '#fff'
       };
+    },
+
+    isDisabled() {
+      return this.disabled || this.schema.disabled || this.schema.readonly;
     }
   },
   watch: {
@@ -496,6 +500,18 @@ export default {
     padding: 0;
     &:hover {
       background: transparent;
+    }
+  }
+
+  .aw-field-select-relation-actions {
+    width: auto;
+    position: absolute;
+    top: 0;
+    right: 17px;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
     }
   }
 }

@@ -1807,6 +1807,7 @@ export default {
     },
 
     onItemCreated(item) {
+      this.$awEmit('aw-table-needs-refresh');
       //   this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
     },
 
@@ -1815,6 +1816,7 @@ export default {
       this.$awEmit('aw-table-needs-refresh');
     },
     onItemDeleted(...args) {
+      this.$awEmit('aw-table-needs-refresh');
       // eslint-disable-next-line
     },
     onItemViewed(...args) {

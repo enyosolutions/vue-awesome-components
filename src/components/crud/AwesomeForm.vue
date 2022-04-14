@@ -14,7 +14,8 @@
                 fade: displayMode === 'fade' || displayMode === 'modal' || displayMode === 'fullscreen',
                 'page  fade': displayMode === 'page',
                 show: this.show,
-                ['display-mode-' + displayMode]: true
+                ['display-mode-' + displayMode]: true,
+                ['nested-display-mode-' + nestedDisplayMode]: true
               }"
               tabindex="-1"
               role="dialog"

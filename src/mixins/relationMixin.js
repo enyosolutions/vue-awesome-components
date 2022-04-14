@@ -38,42 +38,51 @@ export default {
       }
       return;
     },
+    getRelation(prop) {
+      return (prop.field && prop.field.relation) || prop.relation
+    },
     getRelationUrl(prop) {
-      if (!prop.relationUrl && !prop.relation) {
+      const relation = this.getRelation(prop);
+      const relationUrl = (prop.field && prop.field.relationUrl) || prop.relationUrl;
+      if (!relationUrl && !relation) {
         return;
       }
-      if (prop.relationUrl) {
-        return prop.relationUrl;
+      if (relationUrl) {
+        return relationUrl;
       } else {
-        let model = this.getModelFromStore(prop.relation);
+        let model = this.getModelFromStore(relation);
         if (!model) {
-          console.warn('[relationMixin][raceCondition] model not found for', prop.relation, 'in', this.modelsStorePath);
+          console.warn('[relationMixin][raceCondition] model not found for', relation, 'in', this.modelsStorePath);
         }
         return model ? model.url || model.apiUrl : '';
       }
     },
     getRelationKey(prop) {
-      if (!prop.relationKey && !prop.relation) {
+      const relation = this.getRelation(prop);
+      const relationKey = (prop.field && prop.field.relationKey) || prop.relationKey;
+      if (!relationKey && !relation) {
         return;
       }
-      if (prop.relationKey) {
-        return prop.relationKey;
+      if (relationKey) {
+        return relationKey;
       }
       if (prop.foreignKey) {
         return prop.foreignKey;
       } else {
-        const model = this.getModelFromStore(prop.relation);
+        const model = this.getModelFromStore(relation);
         return model ? model.primaryKeyField || this.primaryKey : this.primaryKey;
       }
     },
     getRelationLabel(prop) {
-      if (!prop.relationLabel && !prop.relation) {
+      const relation = this.getRelation(prop);
+      const relationLabel = (prop.field && prop.field.relationLabel) || prop.relationLabel;
+      if (!relationLabel && !relation) {
         return;
       }
-      if (prop.relationLabel) {
-        return prop.relationLabel;
+      if (relationLabel) {
+        return relationLabel;
       } else {
-        const model = this.getModelFromStore(prop.relation);
+        const model = this.getModelFromStore(relation);
         return model ? model.displayField || 'label' : 'label';
       }
     },
