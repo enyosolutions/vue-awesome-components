@@ -13,8 +13,13 @@ Vue.use(VueAwesomeComponents);
 ## OR
 Vue.use(VueAwesomeComponents, {
   config: {
-    primaryKey: '_id',
+    primaryKey: 'id',
     hideIdsInSelect: false,
+    displayLabelsCache: {},
+    relationsAreClickable: true,
+    modelsStorePath: '',
+    rolesStorePath: '',
+    extendedRolesStorePath: '',
     ...
   }
 });

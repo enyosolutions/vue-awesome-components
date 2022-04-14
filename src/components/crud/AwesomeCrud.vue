@@ -1816,7 +1816,6 @@ export default {
       this.$awEmit('aw-table-needs-refresh');
     },
     onItemDeleted(...args) {
-      this.$awEmit('aw-table-needs-refresh');
       // eslint-disable-next-line
     },
     onItemViewed(...args) {

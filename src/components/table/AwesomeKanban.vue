@@ -229,7 +229,7 @@ export default {
       type: Object,
       default: () => ({
         refresh: true,
-        addList: true
+        addKanbanList: true
       })
     },
 

@@ -1150,12 +1150,12 @@ export default {
 
     itemIdComputed() {
       let itemId;
-      if (this.selectedItem && this.selectedItem[this.primaryKey]) {
-        itemId = this.selectedItem[this.primaryKey];
+      if (this.itemId) {
+        itemId = this.itemId;
       } else if (this.item && this.item[this.primaryKey]) {
         itemId = this.selectedItem[this.primaryKey];
-      } else if (this.itemId) {
-        itemId = this.itemId;
+      } else if (this.selectedItem && this.selectedItem[this.primaryKey]) {
+        itemId = this.selectedItem[this.primaryKey];
       }
       if (typeof itemId === 'string' && itemId.includes('{{')) {
         return this.templateParseText(itemId, { currentItem: this.selectedItem });

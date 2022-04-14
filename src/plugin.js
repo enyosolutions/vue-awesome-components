@@ -45,9 +45,13 @@ const install = (Vue, options = {}) => {
 
     //    const { exclude } = options;
     Vue.prototype.awComponentsConfig = {
-      displayLabelsCache: {
-        relationsAreClickable: true
-      }
+      displayLabelsCache: {},
+      relationsAreClickable: true,
+      primaryKey: 'id',
+      modelsStorePath: '',
+      rolesStorePath: '',
+      extendedRolesStorePath: '',
+      hideIdsInSelect: false,
     };
 
     if (options.config) {
