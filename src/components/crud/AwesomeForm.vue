@@ -1535,12 +1535,12 @@ export default {
             }),
             type: 'success'
           });
-          this.nestedElementsNeedRefresh = true;
-          this.$forceUpdate();
-          this.close();
           this.$awEmit('itemCreated', this.selectedItem, {
             context: this.mode
           });
+          this.nestedElementsNeedRefresh = true;
+          this.$forceUpdate();
+          this.close();
         })
         .catch(this.apiErrorCallback)
         .finally(() => {

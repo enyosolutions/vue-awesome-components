@@ -86,6 +86,7 @@
               displayEditModal = false;
               loadRemoteEntities();
             "
+            @itemCreated="onNewItemCreated"
             @cancel="displayEditModal = false"
             :useSimpleCreateForm="true"
           ></AwesomeForm>
@@ -468,6 +469,10 @@ export default {
         };
       }
       return {};
+    },
+
+    onNewItemCreated(item) {
+      this.updateSelected(item);
     }
   }
 };
