@@ -294,6 +294,12 @@ export default {
               fieldOptions.type = 'date';
             }
           }
+          if (field.type === 'number') {
+            // if there is no step and the type is number
+            if (!fieldOptions.step && prop.type === 'number') {
+              fieldOptions.step = '0.00001';
+            }
+          }
 
           if (field.type === 'time') {
             field.type = 'dateTime';

@@ -10,5 +10,7 @@ export default {
     descriptionField: { type: String, default: '' },
     usersField: { type: String, default: '' },
     labelsField: { type: String, default: '' },
+    userTitleField: { type: String, default: '' },
+    userImageField: { type: String, default: '' },
   },
 }

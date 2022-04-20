@@ -99,6 +99,8 @@
               :subtitleField="subtitleField"
               :descriptionField="descriptionField"
               :usersField="usersField"
+              :userTitleField="userTitleField"
+              :userImageField="userImageField"
               :labelsField="labelsField"
               :display-labels-cache="displayLabelsCache"
               @remove-list="onRemoveList"

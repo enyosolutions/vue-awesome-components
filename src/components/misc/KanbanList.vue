@@ -54,6 +54,8 @@
           :group="group"
           :animation="animation"
           ghost-class="moving-card"
+          :delay="300"
+          :delay-on-touch-only="true"
           :scroll-sensitivity="scrollSensitivity"
           @change="cardChanged"
         >
@@ -71,9 +73,9 @@
                     v-for="(user, index) in getItemUsers(data, usersField)"
                     :key="index"
                     class="kanban-user-img"
-                    :alt="user.label"
-                    :title="user.label"
-                    :src="user.src || user"
+                    :alt="getItemProperty(user, userTitleField)"
+                    :title="getItemProperty(user, userTitleField)"
+                    :src="getItemProperty(user, userImageField) || (user && user.src) || user"
                   />
                 </div>
               </template>
@@ -256,10 +258,10 @@ export default {
 
     getItemUsers(data, usersField) {
       const usersImages = this.getItemProperty(data, usersField);
-      if (typeof usersImages === 'string') {
-        return [usersImages];
+      if (Array.isArray(usersImages)) {
+        return usersImages;
       }
-      return usersImages;
+      return [usersImages];
     }
   },
   computed: {

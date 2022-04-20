@@ -264,7 +264,7 @@ export default {
 .awesome-filter-value {
   .awesome-vue-select {
     height: auto;
-    padding: 2px;
+    padding: 0px;
     .vs__dropdown-toggle {
       border: none;
     }
@@ -277,7 +277,7 @@ export default {
     white-space: nowrap;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
-
+    min-width: 100px;
     &::-webkit-scrollbar {
       display: none;
     }

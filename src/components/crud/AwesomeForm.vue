@@ -44,7 +44,7 @@
                       </h5>
 
                       <div
-                        v-if="_useCustomLayout && actions.editLayout"
+                        v-if="_useCustomLayout && _actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
                         style="flex: auto"
                       >
@@ -166,7 +166,7 @@
                         />
                       </div>
                       <div
-                        v-if="_useCustomLayout && actions.editLayout"
+                        v-if="_useCustomLayout && _actions.editLayout"
                         class="btn-group m-0 aw-form-header-actions"
                         style="flex: auto"
                       >
@@ -210,7 +210,7 @@
 
                       <!-- create a subcomponent -->
                       <template v-if="!editLayoutMode && (mode === 'edit' || mode === 'view' || _isANestedDetailView)">
-                        <div class="ml-1 aw-form-pagination" v-if="actions.formPagination && (hasPrevious || hasNext)">
+                        <div class="ml-1 aw-form-pagination" v-if="_actions.formPagination && (hasPrevious || hasNext)">
                           <div class="btn-group">
                             <button
                               @click="!!hasPrevious && $awEmit('aw-select-previous-item')"
@@ -496,7 +496,7 @@
                         </template>
 
                         <button
-                          v-if="actions.delete && !_mergedOptions.noActions"
+                          v-if="_actions.delete && !_mergedOptions.noActions"
                           type="button"
                           class="btn btn-danger btn-main-style ml-2"
                           @click.prevent.stop="deleteFunction(selectedItem)"
@@ -508,7 +508,7 @@
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
                         <button
-                          v-if="mode === 'view' && actions.edit && !_mergedOptions.noActions"
+                          v-if="mode === 'view' && _actions.edit && !_mergedOptions.noActions"
                           type="button"
                           class="btn btn-info btn-main-style ml-2"
                           @click.prevent.stop="editFunction(selectedItem)"
@@ -1061,11 +1061,18 @@ export default {
     },
 
     _actions() {
-      return merge(
+      const actions = merge(
         {},
         defaultActions,
         this.actions || (this._mergedOptions && this._mergedOptions.actions) // old location kept for BC
       );
+
+      Object.entries(actions).forEach(([field, fieldData]) => {
+        if (typeof fieldData !== 'boolean') {
+          actions[field] = this.templateParseConditionalField(fieldData);
+        }
+      });
+      return actions;
     },
 
     _formSchemaGrouped() {
