@@ -1,7 +1,7 @@
 {
   "name": "vue-aw-components",
   "contributors": [],
-  "version": "1.30.12",
+  "version": "1.30.13",
   "main": "lib/vac.common.js",
   "module": "src/index.js",
   "files": [
