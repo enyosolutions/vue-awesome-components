@@ -236,7 +236,7 @@
           :margin-pages="2"
           :click-handler="onPaginationChange"
           :prev-text="'<< '"
-          :next-text="' >>'"`
+          :next-text="' >>'"
           :container-class="'pagination'"
           :page-class="'page-item'"
           :prev-class="'page-item'"
