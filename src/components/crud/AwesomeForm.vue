@@ -1224,7 +1224,7 @@ export default {
     if (this.$route && this.useRouterMode) {
       const matched = this.$route.matched[this.$route.matched.length - 1];
 
-      if (this.$route.params.id === 'create' || this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
+      if (this.$route.path.endsWith('/new') || this.$route.path.endsWith('/create')) {
         if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
           delete this.$route.params.id;
         }

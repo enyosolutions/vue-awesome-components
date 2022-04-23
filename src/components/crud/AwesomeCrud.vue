@@ -1470,7 +1470,8 @@ export default {
         if (this.$route && this.$route.params) {
           // if it's a create url
 
-          if (this.$route.params.id === 'new' || this.$route.path.endsWith('/new')) {
+          if (this.$route.path.endsWith('/create') || this.$route.path.endsWith('/new')) {
+            delete this.$route.params.id;
             this.setDisplayMode('create');
             this.$forceUpdate();
             return;
@@ -1982,7 +1983,7 @@ export default {
     initializeSelectedItem() {
       if (this.$route.params.id) {
         this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
-        if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
+        if (this.$route.params.id && (this.$route.path.endsWith('/create') || this.$route.path.endsWith('/new'))) {
           delete this.$route.params.id;
           if (this.$route.query.item) {
             this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
