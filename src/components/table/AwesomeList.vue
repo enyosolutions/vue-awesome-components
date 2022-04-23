@@ -151,81 +151,82 @@
       </div>
     </div>
     <div class="card-body">
-    <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-      <template v-for="(item, index) in _paginatedItems">
-        <div
-            class="pointer d-flex "
-            :key="index"
-            :class="itemWrapperClasses"
-            @click="handleItemClick($event, item)"
-        >
-          <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
+      <slot name="list-items">
+        <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+          <template v-for="(item, index) in _paginatedItems">
             <div
-                class="card mb-3 aw-list-item flex-fill"
-                :class="itemClasses"
-                :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
-              'height': _itemHeight
-            }"
+                class="pointer d-flex "
+                :key="index"
+                :class="itemWrapperClasses"
+                @click="handleItemClick($event, item)"
             >
-              <img
-                  class="card-img-top"
-                  v-if="imageField"
-                  :src="getItemProperty(item, imageField)"
-                  :alt="getItemProperty(item, titleField)"
-                  :class="imageClasses"
-                  :style="imageStyles"
-              />
-              <div class="card-body">
-                <h4 class="card-title aw-list-item-title" style=""
+              <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
+                <div
+                    class="card mb-3 aw-list-item flex-fill"
+                    :class="itemClasses"
+                    :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
+                  'height': _itemHeight
+                }"
+                >
+                  <img
+                      class="card-img-top"
+                      v-if="imageField"
+                      :src="getItemProperty(item, imageField)"
+                      :alt="getItemProperty(item, titleField)"
+                      :class="imageClasses"
+                      :style="imageStyles"
+                  />
+                  <div class="card-body">
+                    <h4 class="card-title aw-list-item-title" style=""
 
-                v-if="getItemProperty(item, titleField)"
-                v-html="getItemProperty(item, titleField)"
-                ></h4>
-                <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)"
-                v-html="getItemProperty(item, subtitleField)"
-                ></h6>
+                    v-if="getItemProperty(item, titleField)"
+                    v-html="getItemProperty(item, titleField)"
+                    ></h4>
+                    <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)"
+                    v-html="getItemProperty(item, subtitleField)"
+                    ></h6>
 
-                <h3 class="card-title aw-list-item-title" style=""
-                    v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
-                  {{ item[_modelDisplayField] }}</h3>
+                    <h3 class="card-title aw-list-item-title" style=""
+                        v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
+                      {{ item[_modelDisplayField] }}</h3>
 
-                <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
-                  <AwesomeDisplay
-                      v-bind="getField(descriptionField)"
-                      :value="getItemProperty(item, descriptionField)"
-                  >
-                  </AwesomeDisplay>
-                </p>
-                <template v-if="columns && columns.length && !_useClassicLayout">
-                  <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                    <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
-                    <AwesomeDisplay
-                        v-bind="getField(key)"
-                        :value="itemData"
-                        :relation="getField(key).relation"
-                        :relation-label="getField(key).relationLabel"
-                        :relation-url="getField(key).relationUrl"
-                        :relation-key="getField(key).relationKey"
-                    >
-                    </AwesomeDisplay>
+                    <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
+                      <AwesomeDisplay
+                          v-bind="getField(descriptionField)"
+                          :value="getItemProperty(item, descriptionField)"
+                      >
+                      </AwesomeDisplay>
+                    </p>
+                    <template v-if="columns && columns.length && !_useClassicLayout">
+                      <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                        <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
+                        <AwesomeDisplay
+                            v-bind="getField(key)"
+                            :value="itemData"
+                            :relation="getField(key).relation"
+                            :relation-label="getField(key).relationLabel"
+                            :relation-url="getField(key).relationUrl"
+                            :relation-key="getField(key).relationKey"
+                        >
+                        </AwesomeDisplay>
+                      </div>
+                    </template>
+                    <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
+                      <button
+                          @click="handleItemButtonClick($event, item)"
+                          class="btn btn-primary btn-sm "
+                          :class="itemsPerRow > 1 ? 'btn-block': ''"
+                      >
+                        {{ $t("AwesomeList.buttons.itemAction") }}
+                      </button>
+                    </div>
                   </div>
-                </template>
-                <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                  <button
-                      @click="handleItemButtonClick($event, item)"
-                      class="btn btn-primary btn-sm "
-                      :class="itemsPerRow > 1 ? 'btn-block': ''"
-                  >
-                    {{ $t("AwesomeList.buttons.itemAction") }}
-                  </button>
                 </div>
-              </div>
+              </slot>
             </div>
-          </slot>
+          </template>
         </div>
-      </template>
-    </div>
-
+      </slot>
     <hr v-if="actions.pagination == undefined || actions.pagination"/>
     <nav class="text-center" v-if="actions.pagination == undefined || actions.pagination">
       <paginate
@@ -235,7 +236,7 @@
           :margin-pages="2"
           :click-handler="onPaginationChange"
           :prev-text="'<< '"
-          :next-text="' >>'"
+          :next-text="' >>'"`
           :container-class="'pagination'"
           :page-class="'page-item'"
           :prev-class="'page-item'"
@@ -249,7 +250,6 @@
   </div>
 </template>
 <script>
-
 import Popper from 'vue-popperjs';
 import Paginate from 'vuejs-paginate';
 import _ from 'lodash';
@@ -264,13 +264,14 @@ import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../misc/AwesomeFilter.vue';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 
-
 export default {
   name: 'AwesomeList',
   components: {
-    Paginate, AwesomeDisplay, AwesomeFilter,
+    Paginate,
+    AwesomeDisplay,
+    AwesomeFilter,
     popper: Popper,
-    AwesomeSegments,
+    AwesomeSegments
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin, templatingMixin],
   props: {
@@ -304,23 +305,23 @@ export default {
     },
     imageField: {
       type: String,
-      description:'The field to use for the image'
+      description: 'The field to use for the image'
     },
     titleField: {
       type: String,
-      description:'The field to use for the title'
+      description: 'The field to use for the title'
     },
     subtitleField: {
       type: String,
-      description:'The field to use for the subtitle'
+      description: 'The field to use for the subtitle'
     },
     descriptionField: {
       type: String,
-      description:'The field to use for the description'
+      description: 'The field to use for the description'
     },
     displayFields: {
       type: Array,
-      description:'The fields to display on the card'
+      description: 'The fields to display on the card'
     },
     translations: {
       type: Object,
@@ -328,7 +329,7 @@ export default {
         'AwesomeList.buttons.increase': 'More items per row',
         'AwesomeList.buttons.decrease': 'Less items per row',
         'AwesomeList.buttons.refresh': 'Refresh',
-        'AwesomeList.buttons.itemAction': 'Open',
+        'AwesomeList.buttons.itemAction': 'Open'
       })
     },
     styles: {
@@ -338,7 +339,7 @@ export default {
     imageClasses: {
       type: [Object, String],
       default: '',
-      'description': 'classes to put around the image'
+      description: 'classes to put around the image'
     },
     itemClasses: {
       type: [Object, String],
@@ -348,7 +349,7 @@ export default {
     imageStyles: {
       type: [Object, String],
       default: '',
-      'description': 'styles to put around the image'
+      description: 'styles to put around the image'
     },
     actions: {
       type: Object,
@@ -366,16 +367,15 @@ export default {
         maxHeight: '',
         pagination: true,
         customInlineActions: [], // {key, label, action: function(item, context{}}
-        customBulkActions: [],
+        customBulkActions: []
       })
     },
     model: {
       type: Object,
       required: false,
       default: undefined,
-      note:
-          'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
-    },
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+    }
   },
   data() {
     return {
@@ -388,7 +388,6 @@ export default {
     };
   },
   computed: {
-
     titleComputed() {
       if (this.title === false) {
         return '';
@@ -398,36 +397,29 @@ export default {
       }
 
       if (this._model && this._model.pluralName) {
-        return this.$te(this._model.pluralName)
-            ? this.$t(this._model.pluralName)
-            : _.startCase(this._model.pluralName);
+        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
-            ? this.$t(this._model.singularName)
-            : _.startCase(this._model.singularName);
+          ? this.$t(this._model.singularName)
+          : _.startCase(this._model.singularName);
       }
 
       if (this._model && this._model.name) {
-        return this.$te(this._model.name)
-            ? this.$t(this._model.name)
-            : _.startCase(this._model.name);
+        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
-            ? this.$t(`app.labels.${this.identity}`)
-            : _.startCase(this.identity);
+          ? this.$t(`app.labels.${this.identity}`)
+          : _.startCase(this.identity);
       }
       return '';
     },
 
     _itemHeight() {
-      const height =
-          this.itemsPerRow === 1
-              ? this.listModeItemHeight
-              : this.gridModeItemHeight;
+      const height = this.itemsPerRow === 1 ? this.listModeItemHeight : this.gridModeItemHeight;
       if (!height) {
         return 'auto';
       }
@@ -436,9 +428,7 @@ export default {
 
     _pageCount() {
       const perPage = parseInt(this.serverParams.perPage) || this.perPage;
-      return perPage && this.totalCount
-          ? Math.ceil(this.totalCount / perPage)
-          : 0;
+      return perPage && this.totalCount ? Math.ceil(this.totalCount / perPage) : 0;
     },
 
     itemWrapperClasses() {
@@ -466,18 +456,15 @@ export default {
 
     _paginatedItems: {
       get() {
-        const currentPage =
-            this.serverParams && this.serverParams.page
-                ? this.serverParams.page
-                : 1;
-        const perPage = parseInt(this.serverParams.perPage) || this.perPage
+        const currentPage = this.serverParams && this.serverParams.page ? this.serverParams.page : 1;
+        const perPage = parseInt(this.serverParams.perPage) || this.perPage;
         const startIndex = (currentPage - 1) * perPage;
         if (!this.data) {
           return [];
         }
         return this.mode === 'remote'
-            ? this.data
-            : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
+          ? this.data
+          : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
       },
       set(d) {
         //eslint-disable-next-line
@@ -486,10 +473,7 @@ export default {
     },
 
     _useClassicLayout() {
-      return this.imageField ||
-          this.titleField ||
-          this.subtitleField ||
-          this.descriptionField;
+      return this.imageField || this.titleField || this.subtitleField || this.descriptionField;
     },
 
     advancedFiltersCount() {
@@ -513,36 +497,33 @@ export default {
 
     _model() {
       return this.model || this.getModelFromStore(this.identity);
-    },
+    }
   },
   watch: {
-    'perRow': 'resetItemsPerRow',
+    perRow: 'resetItemsPerRow',
     rows: 'refreshLocalData',
     search(newVal) {
       this.onSearch({ searchTerm: newVal });
     }
   },
-  created() {
-  },
-  beforeMount() {
-  },
+  created() {},
+  beforeMount() {},
   mounted() {
     if (this.perRow) {
       this.resetItemsPerRow();
     }
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   methods: {
     getAllowedFields(item) {
       let fields = {};
-      Object.keys(item).forEach(key => {
-        this.columns.forEach(column => {
+      Object.keys(item).forEach((key) => {
+        this.columns.forEach((column) => {
           if (column.field === key) {
-            fields = Object.assign(fields, _.pick(item, [key]))
+            fields = Object.assign(fields, _.pick(item, [key]));
           }
-        })
-      })
+        });
+      });
       return fields;
     },
 
@@ -586,7 +567,6 @@ export default {
       this.$emit('itemButtonClicked', item);
     },
 
-
     onPaginationChange(page) {
       this.serverParams.page = page;
       if (this.mode !== 'remote') {
@@ -626,161 +606,156 @@ export default {
       });
     },
 
-
     localSearch(items, search) {
-      return items.filter(item => {
-        if(!this.search) {
+      return items.filter((item) => {
+        if (!this.search) {
           return true;
         }
         try {
-          return JSON.stringify(Object.values(item)).match(new RegExp(this.search, 'i'))
-        }
-        catch (err) {
+          return JSON.stringify(Object.values(item)).match(new RegExp(this.search, 'i'));
+        } catch (err) {
           console.warn('err', err);
         }
-        return true
-        })
+        return true;
+      });
     }
   }
 };
 </script>
 <style lang="scss">
 .aw-list {
-    clear: both;
-.aw-list-component {
-  .aw-list-item {
-    .aw-list {
-      &-item {
-        &-title {
-          color: var(--primary);
-          font-weight: bold;
-        }
-      }
-    }
-  }
-
-  .list-responsive {
-    width: 100%;
-    margin: 0;
-  }
-
-  .pagination {
-    justify-content: center;
-  }
-
-  .aw-list-item {
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-
-    .card-body {
-      min-height: 50px;
-    }
-  }
-
-  .col-12 {
-    .aw-list-item {
-      .card-img-top {
-        height: 100%;
-        width: 30%;
-      }
-
-      .aw-list-item-action {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding-bottom: 10px;
-        padding-right: 10px;
-        text-align: right;
-
-        button {
-          color: #fff;
-        }
-      }
-    }
-  }
-
-  .col-2,
-  .col-3,
-  .col-4,
-  .col-6 {
-    .aw-list-item {
-      .card-img-top {
-        height: 60%;
-      }
-
-
-      .aw-list-item-action {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: white;
-
-        button {
-          color: #fff;
-        }
-      }
-    }
-  }
-}
-.awesome-list {
   clear: both;
-}
+  .aw-list-component {
+    .aw-list-item {
+      .aw-list {
+        &-item {
+          &-title {
+            color: var(--primary);
+            font-weight: bold;
+          }
+        }
+      }
+    }
 
-.aw-list-header {
-  width: 100%;
-  text-align: left;
-}
+    .list-responsive {
+      width: 100%;
+      margin: 0;
+    }
 
-.ajax-table-img {
-  max-height: 50px;
-}
+    .pagination {
+      justify-content: center;
+    }
 
-.ajax-table-checkbox {
-  height: 18px;
-  width: 18px;
-}
+    .aw-list-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
 
-.text-avoid-overflow {
-  max-width: 30vw;
-}
+      .card-body {
+        min-height: 50px;
+      }
+    }
 
-.vgt-date-range {
-  height: 32px;
+    .col-12 {
+      .aw-list-item {
+        .card-img-top {
+          height: 100%;
+          width: 30%;
+        }
 
-  .form-control {
-    padding: 6px 12px;
+        .aw-list-item-action {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          padding-bottom: 10px;
+          padding-right: 10px;
+          text-align: right;
+
+          button {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-6 {
+      .aw-list-item {
+        .card-img-top {
+          height: 60%;
+        }
+
+        .aw-list-item-action {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          padding-top: 5px;
+          padding-bottom: 5px;
+          background-color: white;
+
+          button {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+  .awesome-list {
+    clear: both;
+  }
+
+  .aw-list-header {
+    width: 100%;
+    text-align: left;
+  }
+
+  .ajax-table-img {
+    max-height: 50px;
+  }
+
+  .ajax-table-checkbox {
+    height: 18px;
+    width: 18px;
+  }
+
+  .text-avoid-overflow {
+    max-width: 30vw;
+  }
+
+  .vgt-date-range {
     height: 32px;
-    font-size: 12px;
+
+    .form-control {
+      padding: 6px 12px;
+      height: 32px;
+      font-size: 12px;
+    }
   }
-}
 
-.daterangepicker.dropdown-menu {
-  visibility: visible;
-  opacity: 1;
-}
+  .daterangepicker.dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+  }
 
-.ajax-table-header.card-header.colored-header {
-  color: white;
-
-  * {
+  .ajax-table-header.card-header.colored-header {
     color: white;
+
+    * {
+      color: white;
+    }
+  }
+
+  // font-awesome icons
+  .font-awesome-pencil {
+    color: #17a2b8;
+  }
+
+  .font-awesome {
+    color: #6c757d;
   }
 }
-
-// font-awesome icons
-.font-awesome-pencil {
-  color: #17a2b8;
-}
-
-.font-awesome {
-  color: #6c757d;
-}
-
-}
-
 </style>
