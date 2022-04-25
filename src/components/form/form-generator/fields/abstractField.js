@@ -127,6 +127,9 @@ export default {
       if (isFunction(this.$parent.getValueFromOption)) {
         return this.$parent.getValueFromOption(field, option, defaultValue);
       } else {
+        if (!field) {
+          return;
+        }
         // Environnement de test ?
         if (isNil(field[option])) {
           return defaultValue;

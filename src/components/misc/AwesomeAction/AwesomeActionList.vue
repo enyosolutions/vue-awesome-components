@@ -117,7 +117,8 @@ export default {
     },
     parent: {
       type: Object,
-      note: 'The parent of the current element (in case of nested)'
+      note: 'The parent of the current element (in case of nested)',
+      default: () => null
     },
     useDropdown: {
       type: Boolean,

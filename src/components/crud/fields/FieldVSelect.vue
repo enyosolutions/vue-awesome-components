@@ -25,7 +25,7 @@
     <v-select
       v-if="!isAjax || isDataReady"
       v-bind="fieldOptions"
-      :multiple="multiple || fieldOptions.multiple || schema.multiple"
+      :multiple="multiple || fieldOptions.multiple || (schema && schema.multiple)"
       :taggable="fieldOptions.taggable"
       :label="fieldOptions.label || 'label'"
       :filterable="!_useApiFilter"
@@ -167,10 +167,14 @@ export default {
     addNewUrl: { type: [String, Function], default: '' }
   }, // 'schema', 'disabled', 'value' are in the abstract field
   async mounted() {
-    if (this.schema.fieldOptions && this.schema.fieldOptions.preload) {
-      this.preloadFn();
-    } else {
-      this.onSearch(this.model[this.schema && this.schema.model] || '', () => null);
+    if (this.schema) {
+      if (this.schema.fieldOptions && this.schema.fieldOptions.preload) {
+        this.preloadFn();
+      } else {
+        if (this.model) {
+          this.onSearch(this.model[this.schema.model] || '', () => null);
+        }
+      }
     }
   },
   data() {
@@ -214,10 +218,8 @@ export default {
     _trackBy() {
       return (
         this.$props.trackBy ||
-        this.fieldOptions.trackBy ||
-        this.fieldOptions.relationKey ||
-        this.schema.relationKey ||
-        this.schema.foreignKey
+        (this.fieldOptions && (this.fieldOptions.trackBy || this.fieldOptions.relationKey)) ||
+        (this.schema && (this.schema.relationKey || this.schema.foreignKey))
       );
     },
 
