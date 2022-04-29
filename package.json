@@ -1,7 +1,7 @@
 {
   "name": "vue-aw-components",
   "contributors": [],
-  "version": "1.30.15",
+  "version": "1.31.0",
   "main": "lib/vac.common.js",
   "module": "src/index.js",
   "files": [
@@ -49,7 +49,6 @@
     "sweetalert2": "8.2.6",
     "vue": "^2.6.14",
     "vue-chartist": "2.2.1",
-    "vue-datetime": "^1.0.0-beta.10",
     "vue-good-table": "^2.14.4",
     "vue-grid-layout": "^2.3.8",
     "vue-i18n": "^8.1.0",
@@ -61,8 +60,7 @@
     "vue-select": "^3.10.3",
     "vue2-daterange-picker": "^0.6.3",
     "vuedraggable": "^2.24.3",
-    "vuejs-paginate": "^2.1.0",
-    "weekstart": "^1.0.1"
+    "vuejs-paginate": "^2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -104,7 +102,6 @@
     "lint-staged": "^10.5.1",
     "lodash": "^4.17.21",
     "lodash-webpack-plugin": "^0.11.5",
-    "luxon": "^2.1.1",
     "marked": "^1.1.1",
     "minimist": "^1.2.5",
     "node-sass": "4",
@@ -116,7 +113,6 @@
     "sweetalert2": "8.2.6",
     "vue": "^2.6.14",
     "vue-chartist": "2.2.1",
-    "vue-datetime": "^1.0.0-beta.10",
     "vue-good-table": "^2.14.4",
     "vue-grid-layout": "^2.3.8",
     "vue-i18n": "^8.1.0",
@@ -133,8 +129,7 @@
     "vuejs-paginate": "^2.1.0",
     "vuepress": "^1.7.1",
     "vuex": "^3.1.0",
-    "webpack-bundle-analyzer": "^3.7.0",
-    "weekstart": "^1.0.1"
+    "webpack-bundle-analyzer": "^3.7.0"
   },
   "browserslist": [
     "> 1%",
