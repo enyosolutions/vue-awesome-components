@@ -30,19 +30,12 @@ import EnyoCrudStatsSection from './components/misc/EnyoCrudStatsSection.vue';
 import notificationsMixin from './mixins/notificationsMixin.js';
 
 
-
-
-import {
-  Datetime
-} from 'vue-datetime';
 /**
  * You can register global components here and use them as a plugin in your main Vue instance
  */
 
 const install = (Vue, options = {}) => {
   if (options) {
-
-
     //    const { exclude } = options;
     Vue.prototype.awComponentsConfig = {
       displayLabelsCache: {},
@@ -87,7 +80,6 @@ const install = (Vue, options = {}) => {
   Vue.component('enyo-stats', EnyoCrudStatsSection);
   Vue.component('enyo-table-and-charts-card', TableAndChartsCard);
 
-  Vue.component('datetime', Datetime); //todo better re
 
   Vue.component('upload-button', UploadButton);
   Vue.component('enyo-select', EnyoSelect);

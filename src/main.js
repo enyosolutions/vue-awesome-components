@@ -11,7 +11,6 @@ import Vue from 'vue';
 import qs from 'qs';
 
 import axios from 'axios';
-import Datetime from 'vue-datetime';
 import FormGenerator from './components/form/form-generator';
 import notificationsMixin from './mixins/notificationsMixin';
 import VueGoodTablePlugin from 'vue-good-table';
@@ -36,7 +35,6 @@ Vue.use(VueGoodTablePlugin);
 Vue.use(VueRouter);
 
 Vue.component('Draggable', Draggable);
-Vue.component('datetime', Datetime);
 Vue.component('vue-form-generator', FormGenerator, []);
 Vue.mixin(notificationsMixin);
 
