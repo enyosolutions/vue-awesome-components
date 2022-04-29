@@ -38,7 +38,8 @@
       @input="updateSelected"
       :reduce="reduce"
       :getOptionLabel="formatLabel"
-    ></v-select>
+    >
+    </v-select>
     <div
       v-if="(schema.relation || schema.relationRoute) && !fieldOptions.disableRelationActions && !isDisabled"
       class="aw-field-select-relation-actions"
@@ -102,14 +103,14 @@
 
       <div
         v-if="schema.relationRoute && isFunction(schema.relationRoute)"
-        @click="addNewUrl('new')"
+        @click="schema.relationRoute('new')"
         class="external-link"
       >
         &nbsp; <i class="fa fa-plus text-info"></i>
       </div>
       <router-link
         v-if="schema.relationRoute && !isFunction(schema.relationRoute)"
-        :to="addNewUrl + '/new'"
+        :to="schema.relationRoute + '/new'"
         class="external-link"
       >
         &nbsp; <i class="fa fa-plus text-info"></i>

@@ -20,7 +20,7 @@
       <div class="d-block">
         <div class="card-header">
           <h3 class="text-left aw-kanban-title">
-            <slot name="kanban-title">{{ titleComputed }}</slot>
+            <slot name="kanban-title">{{ titleComputed }} ({{ totalCount }})</slot>
             <awesome-filter
               v-if="displayAwFilter"
               edit-filters

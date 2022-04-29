@@ -37,9 +37,7 @@
           </div>
         </div>
         <h3 class="card-title aw-table-title text-left">
-          <slot name="table-title">
-            {{ _tableTitle }}
-          </slot>
+          <slot name="table-title"> {{ _tableTitle }} ({{ totalCount }}) </slot>
 
           <div
             v-if="_actions && _actions.refresh"

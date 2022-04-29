@@ -22,7 +22,7 @@
       "
     >
       <h3 class="mb-0 aw-list-title">
-        <slot name="list-title">{{ titleComputed }}</slot>
+        <slot name="list-title">{{ titleComputed }} ({{ totalCount }})</slot>
           <button
                 v-if="actions && actions.refresh"
                 class="btn btn-simple btn-sm"
