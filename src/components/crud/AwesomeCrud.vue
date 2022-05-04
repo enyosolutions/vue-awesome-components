@@ -258,6 +258,7 @@
             :options="_kanbanOptions.options"
             :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
+            :mode="dataPaginationModeComputed"
             @customListAction="onCustomListAction"
             @removeList="onRemoveList"
             @listChanged="onListChanged"

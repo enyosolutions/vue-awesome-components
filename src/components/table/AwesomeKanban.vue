@@ -21,22 +21,6 @@
         <div class="card-header">
           <h3 class="text-left aw-kanban-title">
             <slot name="kanban-title">{{ titleComputed }} ({{ totalCount }})</slot>
-            <awesome-filter
-              v-if="displayAwFilter"
-              edit-filters
-              id="advancedFilterComponentDisplay"
-              :fields="columns"
-              @update-filter="advancedFiltering"
-              :advanced-filters="advancedFilters"
-              class="p-0"
-            />
-            <awesome-filter
-              display-filters
-              id="advancedFilterComponent"
-              :fields="columns"
-              @update-filter="advancedFiltering"
-              :advanced-filters="advancedFilters"
-            />
             <div class="btn-group btn-group-sm float-right awesome-list-buttons">
               <div v-if="isRefreshing" style="text-align: center">
                 <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
@@ -64,6 +48,32 @@
                   {{ $t('AwesomeKanban.buttons.refresh') }}
                 </button>
               </div>
+            </div>
+            <awesome-filter
+              v-if="displayAwFilter"
+              edit-filters
+              id="advancedFilterComponentDisplay"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+              class="p-0"
+            />
+            <awesome-filter
+              display-filters
+              id="advancedFilterComponent"
+              :fields="columns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+            />
+
+            <div class="col-sm-12 offset-md-6 col-md-6 p-0">
+              <input
+                v-if="actions.search"
+                type="text"
+                v-model="search"
+                class="form-control"
+                :placeholder="$t('AwesomeTable.searchInput')"
+              />
             </div>
           </h3>
         </div>
@@ -174,6 +184,10 @@ export default {
     advanceFilterMixin
   ],
   props: {
+    perPage: {
+      type: [String, Number],
+      default: 200
+    },
     /**
      * The field to use to split the data
      */
@@ -251,7 +265,8 @@ export default {
     isRefreshing: false,
     displayLabelsCache: {},
     splittingFieldApiValues: [],
-    displayAwFilter: false
+    displayAwFilter: false,
+    search: ''
   }),
 
   created() {
@@ -333,6 +348,9 @@ export default {
     },
     'options.sortOrder'() {
       this.orderCardInLists();
+    },
+    search(newVal) {
+      this.onSearch({ searchTerm: newVal });
     }
   },
   methods: {

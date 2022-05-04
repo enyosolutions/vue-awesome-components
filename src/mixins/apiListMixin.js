@@ -416,7 +416,7 @@ export default {
         return;
       }
       let search = params.searchTerm;
-      this.updateParams({ search, page: 1 });
+      this.updateParams({ search, page: 0 });
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onSearch' });
     },
 
