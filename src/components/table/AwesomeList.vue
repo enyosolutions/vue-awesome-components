@@ -151,11 +151,30 @@
       </div>
     </div>
     <div class="card-body">
-      <slot name="list-items">
+        <slot name="list-empty-state">
+                <template v-if="!_paginatedItems || !_paginatedItems.length">
+                <div
+                class="text-center">
+                  <i v-if="isRefreshing" class="fa fa-spinner fa-spin fa-3x"></i>
+                  <template v-else>
+                    {{ $t('AwesomeTable.empty') }}
+                    <br />
+                    <i class="fa fa-file-o fa-4x"></i><br />
+                    <a v-if="_actions.create" href="javascript:void(0)" @click.prevent="$emit('create')" class="">
+                      {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
+                    </a>
+                  </template>
+                </div>
+                </template>
+              </slot>
+      <slot name="list-items"
+       :items="_paginatedItems" itemsPerRow:="itemsPerRow"
+       :columns="columns"
+      >
         <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
           <template v-for="(item, index) in _paginatedItems">
             <div
-                class="pointer d-flex "
+                class="pointer d-flex"
                 :key="index"
                 :class="itemWrapperClasses"
                 @click="handleItemClick($event, item)"
