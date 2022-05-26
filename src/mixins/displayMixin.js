@@ -46,6 +46,7 @@ export default {
     tag: { type: [String, Object], default: 'div' },
     prefix: String,
     suffix: String,
+    label: String,
     styles: String,
     classes: String,
     imageClasses: [String, Array, Object],
