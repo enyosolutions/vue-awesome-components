@@ -66,7 +66,7 @@ export default {
           return text;
         }
         const bool = this.templateParser(text, data);
-        console.log('"text', text, bool, data, this.contextDataMerger(data))
+        // console.log('"text', text, bool, data, this.contextDataMerger(data))
         if (bool === '1' || bool === 'true') {
           return true;
         }
