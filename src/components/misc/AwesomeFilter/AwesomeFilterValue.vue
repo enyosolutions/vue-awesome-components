@@ -23,7 +23,7 @@
             currentField.type === 'html' ||
             currentField.type === 'string' ||
             currentField.type === 'url') &&
-            !currentField.enum) ||
+            !currentFieldEnum) ||
             permanentInput
         "
         v-model="value"
@@ -36,30 +36,15 @@
         class="dropdown"
         v-if="
           (currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
-            currentField.enum
+            currentFieldEnum
         "
       >
-        <button
-          class="btn btn-default dropdown-toggle p-0 mr-2 ml-2"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          {{ Object.keys(value).length ? value : $t('AwesomeFilter.labels.values') }}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="field">
-          <a href="" @click.prevent="value = ''" class="dropdown-item">{{ $t('AwesomeFilter.labels.values') }}</a>
-          <a
-            href=""
-            @click.prevent="value = field"
-            class="dropdown-item"
-            v-for="(field, index) in currentField.enum"
-            :key="index"
-          >
+        <select v-model="value" class="form-control" aria-labelledby="field">
+          <option disabled selected>{{ $t('AwesomeFilter.labels.values') }}</option>
+          <option v-for="(field, index) in currentFieldEnum" :key="index" :selected="field === value">
             {{ field }}
-          </a>
-        </div>
+          </option>
+        </select>
       </div>
       <!-- TYPE NUMBER BETWEEN/NOTBETWEEN -->
       <div
@@ -204,6 +189,14 @@ export default {
       }
     }
   }),
+  computed: {
+    currentFieldEnum() {
+      return (
+        this.currentField.enum ||
+        (this.currentField.filterOptions && this.currentField.filterOptions.filterDropdownItems)
+      );
+    }
+  },
   methods: {
     updateValue(value) {
       this.$emit('update:current-value', value);
