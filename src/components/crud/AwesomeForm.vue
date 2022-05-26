@@ -1206,12 +1206,13 @@ export default {
     this.nestedModels.forEach((nm) => {
       this.$set(this.nestedModelsCollapseState, nm.identity, !!nm.initiallyCollapsed);
     });
-
+    this.loadModel();
+    // if an item was passed as prop set it
     if (this.item) {
       this.selectedItem = this.item;
     }
-    this.loadModel();
     if (this.mode === 'create') {
+      // initialize the form with the default values
       this.selectedItem = createDefaultObject(this.formSchema);
       this.selectedItem = merge(this.selectedItem, this.item);
     }
@@ -1228,9 +1229,11 @@ export default {
         if (this.$route.params.id === 'create' || this.$route.params.id === 'new') {
           delete this.$route.params.id;
         }
+        // the item was passed as a query set the content in the form
         if (this.$route.query.item) {
           this.selectedItem = merge(this.selectedItem, this.$route.query.item);
         }
+        alert('item ' + JSON.stringify(this.selectedItem));
         this.$awEmit('create', this.selectedItem, { reset: false });
 
         return;
@@ -1304,7 +1307,7 @@ export default {
     },
 
     onModeChanged(newmode, oldMode) {
-      if (newmode === 'create') {
+      if (newmode !== oldMode && newmode === 'create') {
         this.selectedItem = createDefaultObject(this.formSchema);
       }
       this.loadModel();
@@ -1350,7 +1353,7 @@ export default {
         this.nestedViewFunction();
       }
 
-      if (this.mode === 'bulkEdit' || this.mode === 'create') {
+      if ((this.mode === 'bulkEdit' || this.mode === 'create') && !this.selectedItem) {
         this.selectedItem = {} || createDefaultObject(this.formSchema);
       } else {
         this.selectedItem = this.item;

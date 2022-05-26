@@ -151,22 +151,22 @@
       </div>
     </div>
     <div class="card-body">
-        <slot name="list-empty-state">
-                <template v-if="!_paginatedItems || !_paginatedItems.length">
-                <div
-                class="text-center">
-                  <i v-if="isRefreshing" class="fa fa-spinner fa-spin fa-3x"></i>
-                  <template v-else>
-                    {{ $t('AwesomeTable.empty') }}
-                    <br />
-                    <i class="fa fa-file-o fa-4x"></i><br />
-                    <a v-if="_actions.create" href="javascript:void(0)" @click.prevent="$emit('create')" class="">
-                      {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
-                    </a>
-                  </template>
-                </div>
-                </template>
-              </slot>
+        <slot name="list-empty-state" :isRefreshing="isRefreshing" :items="_paginatedItems">
+          <template v-if="!_paginatedItems || !_paginatedItems.length">
+            <div
+            class="text-center">
+              <i v-if="isRefreshing" class="fa fa-spinner fa-spin fa-3x"></i>
+              <template v-else>
+                {{ $t('AwesomeTable.empty') }}
+                <br />
+                <i class="fa fa-file-o fa-4x"></i><br />
+                <a v-if="_actions.create" href="javascript:void(0)" @click.prevent="$emit('create')" class="">
+                  {{ $t('AwesomeTable.createFirstItem') }} <i class="fa fa-plus text-primary"></i>
+                </a>
+              </template>
+            </div>
+          </template>
+        </slot>
       <slot name="list-items"
        :items="_paginatedItems" itemsPerRow:="itemsPerRow"
        :columns="columns"

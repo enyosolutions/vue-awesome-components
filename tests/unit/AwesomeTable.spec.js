@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { shallowMount, mount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import AwesomeTable from '@/components/table/AwesomeTable/AwesomeTable.vue'
 
 describe('AwesomeTable.vue', () => {

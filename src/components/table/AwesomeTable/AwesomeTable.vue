@@ -59,12 +59,10 @@
           </div>
           <div class="aw-table-top-actions float-right m-0 p-0">
             <slot name="table-top-actions" />
-
             <popper
               trigger="clickToOpen"
               :options="{
-                placement: 'bottom',
-                modifiers: { offset: { offset: '0,10px' } }
+                placement: 'top'
               }"
               ref="filterPopover"
               v-if="canHideColumns"
@@ -82,8 +80,8 @@
                 <button
                   v-for="(col, index) in formattedColumns"
                   :key="index"
+                  class="dropdown-item col"
                   type="button"
-                  class="dropdown-item"
                   href="#"
                   :class="{
                     'text-light bg-primary': columnsState[col.field],
@@ -446,14 +444,14 @@ export default {
   </AwesomeTable>
   `,
   components: {
+    AwesomeActionList,
     AwesomeDisplay,
-    DateRangePicker,
-    VueGoodTable,
     AwesomeFilter,
+    AwesomeSegments,
+    DateRangePicker,
     popper: Popper,
     Skeleton,
-    AwesomeActionList,
-    AwesomeSegments
+    VueGoodTable
   },
   mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
   props: {

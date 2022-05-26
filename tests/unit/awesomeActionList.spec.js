@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { shallowMount, mount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import AwesomeActionList from '@/components/misc/AwesomeAction/AwesomeActionList.vue'
 
 describe('AwesomeActionList.vue', () => {

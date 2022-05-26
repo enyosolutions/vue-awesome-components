@@ -1,5 +1,6 @@
 import { expect } from 'chai'
-import { shallowMount, mount } from '@vue/test-utils'
+// import { shallowMount, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import FieldVSelect from '@/components/crud/fields/FieldVSelect.vue';
 
 describe('FieldVSelect.vue', () => {

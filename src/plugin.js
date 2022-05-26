@@ -1,5 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash'
+import VModal from 'vue-js-modal';
+
 import FieldEnyoSelect from './components/crud/fields/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/fields/FieldFileInput.vue';
 import FieldJsonTextarea from './components/crud/fields/FieldJsonTextarea.vue';
@@ -68,6 +70,8 @@ const install = (Vue, options = {}) => {
     }
 
   }
+
+  Vue.use(VModal);
 
   Vue.use(FormGenerator, {
     fields: _.values(FormGenerator.fieldsLoader),
