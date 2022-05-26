@@ -8,7 +8,7 @@
       :class="embed ? 'pull-right' : ''"
     >
       <span v-if="!embed">
-        {{ $props.value }}
+        {{ $props.label || $props.value }}
       </span>
       <i class="fa fa-external-link"></i>
     </a>
