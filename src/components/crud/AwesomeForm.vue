@@ -271,7 +271,11 @@
                           </a>
                         </li>
                         <template v-for="(nm, index) in nestedModels">
-                          <li v-if="nm && nm.identity" :key="index" class="nav-item nested-model-tab-link">
+                          <li
+                            v-if="nm && nm.identity && isNestedModelDisplayable(nm)"
+                            :key="index"
+                            class="nav-item nested-model-tab-link"
+                          >
                             <a
                               class="nav-link pointer"
                               :class="{ active: activeNestedTab === nm.identity }"
@@ -418,7 +422,7 @@
                           >
                             <template v-for="nm in nestedModels">
                               <div
-                                v-if="nm && nm.identity"
+                                v-if="nm && nm.identity && isNestedModelDisplayable(nm)"
                                 :key="nm.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
@@ -1788,6 +1792,13 @@ export default {
 
     getNestedActions(nestedModel) {
       return merge({}, defaultActions, nestedModel.actions);
+    },
+
+    isNestedModelDisplayable(nestedModel) {
+      return (
+        nestedModel.tabIsVisible === undefined ||
+        this.templateParseConditionalField(nestedModel.tabIsVisible, { parent: this.selectedItem })
+      );
     },
 
     onChange(newItem) {
