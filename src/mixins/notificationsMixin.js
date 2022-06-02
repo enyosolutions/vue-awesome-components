@@ -49,7 +49,6 @@ export default {
           type: payload.type,
           showCancelButton: false,
         })
-        // alert(payload.title);
       }
     },
 

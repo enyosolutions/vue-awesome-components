@@ -1237,7 +1237,6 @@ export default {
         if (this.$route.query.item) {
           this.selectedItem = merge(this.selectedItem, this.$route.query.item);
         }
-        alert('item ' + JSON.stringify(this.selectedItem));
         this.$awEmit('create', this.selectedItem, { reset: false });
 
         return;
