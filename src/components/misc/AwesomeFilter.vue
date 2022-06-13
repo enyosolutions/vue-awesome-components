@@ -219,7 +219,7 @@ export default {
     _filterableFields() {
       return this.fields.filter((field) => {
         // no option defined
-        return !field.filterOptions || !field.filterOptions.enabled;
+        return !field.filterOptions || field.filterOptions.enabled;
       });
     }
   },
