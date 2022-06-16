@@ -394,6 +394,7 @@ export default {
 
     onPageChange(params) {
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
+      alert('page changed');
       if (this.mode !== 'remote') {
         return;
       }
@@ -526,6 +527,7 @@ export default {
           localStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
             routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
             columnsState: this.saveColumnsState ? columnsState : undefined,
+            columnsFilterState: this.saveColumnsState ? this.columnsFilterState : undefined,
             columnFilters: this.saveColumnsState ? this.columnFilters : undefined,
             advancedFilters: this.saveColumnsState ? this.advancedFilters : undefined,
           }));
@@ -547,6 +549,9 @@ export default {
             }
             if (parsedState.columnsState && this.saveColumnsState) {
               this.columnsState = parsedState.columnsState;
+            }
+            if (parsedState.columnsFilterState && this.saveColumnsState) {
+              this.columnsFilterState = parsedState.columnsFilterState;
             }
             // @fixme
             // this.pushChangesToRouter();
@@ -620,6 +625,8 @@ export default {
       this.segmentValue = segmentValue;
       this.segmentQueryField = segmentField;
       this.injectSegmentFilter(segmentField, segmentValue);
+      // reset pagination for search.
+      this.updateParams({ page: 0 });
       this.getItems({ useSkeleton: true, source: '[apiListMixin] segmentChanged' });
     }
   }

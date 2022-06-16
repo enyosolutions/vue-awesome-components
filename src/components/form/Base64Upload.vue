@@ -1,8 +1,8 @@
 <template>
   <div class="base64-upload">
-    <i v-if="!name" class="fa fa-upload text-primary upload-icon"></i>
+    <i class="fa fa-upload text-primary upload-icon"></i>
     <img :src="srcComputed" v-if="isImage" :style="imageStyle" />
-    <p class="form-control" v-if="!isImage" :class="inputClass">{{ name || placeholder }}</p>
+    <p class="form-control" v-if="!isImage" :class="inputClass">{{ name || nameComputed || placeholder }}</p>
     <input type="file" :disabled="disabled || readonly" :accept="isImage ? 'image/*' : '*'" @change="onChange" />
   </div>
 </template>
@@ -43,7 +43,14 @@ export default {
         return src.indexOf('data:') === 0 ? src : `data:${this.type};base64,${src}`;
       }
       return src;
-    }
+    },
+    nameComputed() {
+      if (this.name) {
+        return this.name;
+      }
+      return  (this.src && this.src.name)  || (this.imageSrc && this.imageSrc.name) || '';
+    },
+
   },
   methods: {
     onChange(event) {
@@ -54,7 +61,8 @@ export default {
         reader.addEventListener('load', (e) => {
           this.src = e.target.result;
           let [, base64] = this.src.split(',');
-          this.name = file.name;
+          this.name = file.name || (this.src && this.src.name);
+          this.$forceUpdate();
           this.$emit('change', {
             size: file.size,
             type: file.type,

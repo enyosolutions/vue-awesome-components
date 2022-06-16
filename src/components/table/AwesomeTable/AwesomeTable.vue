@@ -978,10 +978,12 @@ export default {
         }
         return col;
       });
+      this.saveComponentState();
     },
 
     toggleAdvancedFilters() {
       this.displayAwFilter = !this.displayAwFilter;
+      this.saveComponentState();
     },
     // editItem(item) {},
 

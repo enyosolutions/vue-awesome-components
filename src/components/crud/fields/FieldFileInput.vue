@@ -1,6 +1,6 @@
 <template>
   <div class="input-group field-file-input row">
-    <div class="col-6">
+    <div class="col-12">
       <base64-upload
         :disabled="schema.disabled"
         :readonly="schema.readonly"
@@ -12,8 +12,8 @@
         @change="onChangeImage"
       />
     </div>
-    <div class="col-6">
-      <input v-if="valueIsNotObject" type="text" class="form-control" placeholder="url" v-model="value" />
+    <div class="col-12 p-0 mt-1">
+      <input v-if="valueIsNotObject" type="text" class="form-control mt-1" placeholder="url" v-model="value" />
     </div>
   </div>
 </template>

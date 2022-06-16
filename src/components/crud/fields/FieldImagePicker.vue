@@ -1,6 +1,6 @@
 <template>
   <div class="input-group field-file-input aw-form-field-image-picker row">
-    <div class="col-6 m-0 p-0">
+    <div class="col-12 m-0 p-0">
       <base64-upload
         :disabled="schema.disabled"
         :readonly="schema.readonly"
@@ -22,12 +22,12 @@
         <i class="fa fa-trash"></i>
       </button>
     </div>
-    <div class="col-6">
+    <div class="col-12 mt-1 p-0">
       <input
         placeholder="url"
         v-if="valueIsNotObject"
         type="text"
-        class="form-control image-picker-input p-0 m-0"
+        class="form-control image-picker-input p-0 m-0 mt-1"
         v-model="value"
       />
     </div>
