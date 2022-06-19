@@ -237,6 +237,7 @@ export default {
     localRefreshCompleted() {
       this.$emit('update:needsRefresh', false);
       this.$emit('afterRefresh', { data: this.data });
+      this.$emit('after-local-refresh', { data: this.data });
     },
 
     /** GET ENTITY ITEMS */
@@ -270,7 +271,7 @@ export default {
           {}
         )
         .then(res => {
-          this.$awEmit('after-api-refresh', { response: res, component: 'aw-listing', url: this._url })
+          this.$awEmit('after-api-refresh', { response: res, component: 'aw-listing', url: this._url });
           this.data =
             this.apiResponseConfig &&
               this.apiResponseConfig.dataPath
@@ -283,9 +284,11 @@ export default {
               ? _.get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
           this.$emit('crud-list-updated', this.data); // @deprecated
+          this.$emit('afterRefresh', this.data);
           this.$awEmit('table-refreshed', { component: 'aw-listing', url: this.url, data: this.data })
           this.$emit('dataChanged', this.data); // @deprecated
           this.$awEmit('data-changed', { component: 'aw-listing', url: this.url, data: this.data })
+          this.$awEmit('after-refresh', { component: 'aw-listing', url: this.url, data: this.data })
         })
 
         .catch(err => {

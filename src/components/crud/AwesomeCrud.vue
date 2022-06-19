@@ -265,6 +265,12 @@
             @cardChanged="onCardChanged"
             @cardAdded="onCardAdded"
             @cardClicked="onCardClicked"
+            @data-changed="onDataChanged"
+            @kanban-changed="forwardEvent('kanban-changed')"
+            @beforeRefresh="beforeRefresh"
+            @before-refresh="before_refresh"
+            @afterRefresh="afterRefresh"
+            @after-refresh="after_refresh"
           >
             <template slot="kanban-header-left">
               <ListingModeSelector
@@ -353,7 +359,7 @@
             @cancel="onViewDisplayCancelled"
             @closeRequested="onViewDisplayCancelled"
             @customAction="onCustomAction"
-            @beforeCreate="forwardEvent.bind(this, 'beforeCreate')"
+            @beforeCreate="beforeCreate"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
             @itemsBulkEdited="onItemsBulkEdited"
@@ -1234,6 +1240,7 @@ export default {
     if (!this.identity) {
       throw new Error('missing_required_props_identity');
     }
+
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
@@ -1928,10 +1935,6 @@ export default {
         });
     },
 
-    forwardEvent(...args) {
-      this.$emit(...args);
-    },
-
     listItemClickedHandler(row) {
       switch (this.tableRowClickAction) {
         case 'edit':
@@ -2071,6 +2074,26 @@ export default {
           : this.postEditDisplayMode;
       }
       return displayMode;
+    },
+
+    afterRefresh(...args) {
+      this.$emit('afterRefresh', ...args);
+    },
+
+    after_refresh(...args) {
+      this.$emit('after-refresh', ...args);
+    },
+
+    beforeRefresh(...args) {
+      this.$emit('beforeRefresh', ...args);
+    },
+
+    before_refresh(...args) {
+      this.$emit('before-refresh', ...args);
+    },
+
+    beforeCreate(...args) {
+      this.$emit('beforeCreate', ...args);
     }
   }
 };

@@ -39,7 +39,6 @@ export const defaultKanbanOptions = {
   },
   splittingField: '',
   splittingValues: null,
-  customListActions: [],
   sortField: '',
   sortOrder: 'asc'
 };

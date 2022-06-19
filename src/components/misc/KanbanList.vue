@@ -10,13 +10,14 @@
             <button
               class="btn btn-simple btn-alt-style btn-sm p-2"
               type="button"
-              data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
+              v-click-outside="hideActionDropdown"
+              @click="toggleActionDropdown"
             >
               <i class="fa fa-ellipsis-h"></i>
             </button>
-            <div class="dropdown-menu" aria-labelledby="filter">
+            <div class="dropdown-menu" aria-labelledby="filter" :class="showActionDropdown ? 'show' : ''">
               <template v-for="(action, index) in customListActions">
                 <a
                   href="javascript:void(0)"
@@ -32,7 +33,8 @@
                       items,
                       location: '',
                       id: action.name + '-' + index
-                    })
+                    });
+                    hideActionDropdown();
                   "
                 >
                   <i v-if="action.icon" :class="action.icon" />
@@ -123,6 +125,7 @@
 <script>
 import _ from 'lodash';
 import Vue from 'vue';
+import ClickOutside from 'vue-click-outside';
 import i18nMixin from '../../mixins/i18nMixin';
 import templatingMixin from '../../mixins/templatingMixin';
 import listCardFormatMixin from '../../mixins/listCardFormatMixin';
@@ -134,6 +137,9 @@ export default {
     AwesomeDisplay
   },
   mixins: [i18nMixin, listCardFormatMixin, templatingMixin],
+  directives: {
+    ClickOutside
+  },
   props: {
     /**
      * The id of the list
@@ -203,6 +209,10 @@ export default {
     displayColumnsInCards: {
       type: Boolean,
       default: false
+    },
+    allowDeletingList: {
+      type: Boolean,
+      default: false
     }
   },
   created() {
@@ -213,11 +223,12 @@ export default {
     }
   },
   data: () => ({
-    //
+    showActionDropdown: false
   }),
   methods: {
     removeList() {
       this.$emit('remove-list', { id: this.id, title: this.title });
+      this.hideActionDropdown();
     },
 
     cardChanged(item) {
@@ -262,6 +273,14 @@ export default {
         return usersImages;
       }
       return [usersImages];
+    },
+
+    hideActionDropdown() {
+      this.showActionDropdown = false;
+    },
+
+    toggleActionDropdown() {
+      this.showActionDropdown = !this.showActionDropdown;
     }
   },
   computed: {

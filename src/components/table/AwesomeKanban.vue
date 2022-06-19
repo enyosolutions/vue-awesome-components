@@ -103,7 +103,7 @@
               :animation="options.animation"
               :scroll-sensitivity="options.scrollSensitivity"
               :disabled="!options.moveCard"
-              :custom-list-actions="actions.customListActions"
+              :custom-list-actions="customListActions"
               :imageField="imageField"
               :titleField="titleField"
               :subtitleField="subtitleField"
@@ -256,6 +256,12 @@ export default {
     displayColumnsInCards: {
       type: Boolean,
       default: false
+    },
+
+    customListActions: {
+      type: Array,
+      default: () => [],
+      note: 'See https://enyosolutions-team.github.io/vue-awesome-components/guide/awesomecrud/custom-actions.html'
     }
   },
   data: () => ({
