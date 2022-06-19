@@ -418,12 +418,12 @@ export default {
       if (this.lists && this.lists.length) {
         this.localLists = _.cloneDeep(this.lists);
       } else {
-        if (this.data && Array.isArray(this.data)) {
-          const list = this.displayOrphansList
-            ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
-            : [];
-          this.localLists = _.cloneDeep(list);
-        }
+        //  if (this.data && Array.isArray(this.data)) {
+        const list = this.displayOrphansList
+          ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
+          : [];
+        this.localLists = _.cloneDeep(list);
+        //  }
       }
       this.filterLists();
       this.orderCardInLists();
@@ -447,14 +447,18 @@ export default {
               filterValue;
           }
           let content = [];
-          this.localLists.forEach((localList) => {
-            content.push(_.filter(localList.content, [this.splittingField, id]));
-            _.remove(localList.content, (obj) => {
-              return obj[this.splittingField] === id;
+          if (this.data) {
+            content = _.filter(this.data, [this.splittingField, id]);
+          } else {
+            this.localLists.forEach((localList) => {
+              content.push(_.filter(localList.content, [this.splittingField, id]));
+              _.remove(localList.content, (obj) => {
+                return obj[this.splittingField] === id;
+              });
             });
-          });
+            content = _.flatten([...content]);
+          }
 
-          content = _.flatten([...content]);
           if (!_.some(this.localLists, { id, title })) {
             this.localLists.push({ id, title, content });
           }
