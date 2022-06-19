@@ -77,8 +77,8 @@
       "close": "close",
       "columnsFilters": {
         "toggle": "Toggle columns filters",
-        "activate": "Activate les filtres",
-        "deactivate": "Disable les filtres"
+        "activate": "show columns filters",
+        "deactivate": "Hide columns fitlers"
       },
       "clear-state": "Reset table configuration"
     },

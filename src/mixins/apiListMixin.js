@@ -397,7 +397,6 @@ export default {
 
     onPageChange(params) {
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
-      alert('page changed');
       if (this.mode !== 'remote') {
         return;
       }
