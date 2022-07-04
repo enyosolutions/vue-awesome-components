@@ -18,7 +18,15 @@
       :style="$props.styles"
       :srcdoc="$props.value"
       frameborder="0"
+      ref="myIframe"
     ></iframe>
+    <button
+      v-if="displayExpandButton && expanded"
+      @click="onButonClick()"
+      class="btn pull-right btn-expand text-primary"
+    >
+      <i class="fa fa-eye"></i>
+    </button>
   </div>
 </template>
 
@@ -27,7 +35,24 @@ import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
 export default {
   name: 'DisplayHtml',
-  mixins: [awesomeDisplayMixin]
+  mixins: [awesomeDisplayMixin],
+  data() {
+    return {
+      expanded: false
+    };
+  },
+  methods: {
+    onButonClick() {
+      const size =
+        this.$refs.myIframe &&
+        this.$refs.myIframe.contentWindow &&
+        this.$refs.myIframe.contentWindow.document.documentElement.scrollHeight
+          ? this.$refs.myIframe.contentWindow.document.documentElement.scrollHeight + 15 + 'px'
+          : '100vh';
+      this.$refs.myIframe.style.height = size;
+      this.expanded = true;
+    }
+  }
 };
 </script>
 

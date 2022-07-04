@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
 import awEmitMixin from './awEmitMixin';
+import { query } from 'chartist';
 
 export default {
   mixins: [apiConfigMixin, awEmitMixin],
@@ -328,6 +329,10 @@ export default {
         delete newProps.columnFilters;
       }
       // store new advanced filter values
+      if (newProps.page !== undefined) {
+        this.serverParams.page = newProps.page;
+      }
+      // store new advanced filter values
       if (newProps.columns) {
         this.columnsState = newProps.columns;
       }
@@ -396,20 +401,21 @@ export default {
     },
 
     onPageChange(params) {
+      alert('page chagned ' + JSON.stringify(params, null, 2) + ' ' + this.mode + ' ' + this.useRouterMode)
+      this.updateParams({ page: params.currentPage });
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== 'remote') {
         return;
       }
-      this.updateParams({ page: params.currentPage });
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onPageChange' });
     },
 
     onPerPageChange(params) {
+      this.updateParams({ perPage: params.currentPerPage });
       this.pushChangesToRouter({ query: { ...this.$route.query, perPage: params.currentPerPage } });
       if (this.mode !== 'remote') {
         return;
       }
-      this.updateParams({ perPage: params.currentPerPage });
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onPerPageChange' });
     },
 
@@ -431,7 +437,27 @@ export default {
 
     pushChangesToRouter(options) {
       this.saveComponentState();
-      return;
+      console.log('{ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }', {
+        path: this.$route.path, ...options,
+        query: {
+          ...options.query,
+          ...this.routeQueryParams,
+          sort: undefined,
+        }
+      })
+      if (!this.useRouterMode) {
+        return;
+      }
+      this.$router.push({ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }).catch(err => {
+        // Ignore the vueRouter err regarding  navigating to the page they are already on.
+        if (
+          err.name !== 'NavigationDuplicated' &&
+          !err.message.includes('Avoided redundant navigation to current location')
+        ) {
+          // But print any other errors to the console
+          console.warn(err);
+        }
+      });
       // disable url update for now
       //@todo replace by a push state function
       /*
@@ -444,9 +470,7 @@ export default {
       console.warn('pushChangesToRouter', this.routeQueryParams)
       this.saveComponentState();
 
-      if (!this.useRouterMode) {
-        return;
-      }
+
 
       // window.history.pushState({}, null, '?' + Qs.stringify(this.routeQueryParams));
       console.log('Final push to router', { ...options, query: this.routeQueryParams });

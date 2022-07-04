@@ -52,7 +52,8 @@ export default {
     imageClasses: [String, Array, Object],
     imageStyles: [String, Array, Object],
     isSafe: { type: Boolean, default: false },
-    embed: { type: Boolean, default: false, description: 'Embed the target content into an iframe' }
+    embed: { type: Boolean, default: false, description: 'Embed the target content into an iframe' },
+    displayExpandButton: { type: Boolean, default: true, description: 'Display a button to expand the size of the iframe' }
   },
   data() {
     return {

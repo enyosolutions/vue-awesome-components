@@ -420,7 +420,13 @@ export default {
       } else {
         //  if (this.data && Array.isArray(this.data)) {
         const list = this.displayOrphansList
-          ? [{ id: 'unsorted', title: this.$t('AwesomeKanban.labels.unsorted'), content: _.cloneDeep(this.data) }]
+          ? [
+              {
+                id: 'unsorted',
+                title: this.$t('AwesomeKanban.labels.unsorted'),
+                content: this.data ? this.data.filter((item) => item[this.splittingField] == undefined) : []
+              }
+            ]
           : [];
         this.localLists = _.cloneDeep(list);
         //  }
@@ -449,7 +455,12 @@ export default {
           let content = [];
           if (this.data) {
             content = _.filter(this.data, [this.splittingField, id]);
+            if (id === 'unsorted') {
+              alert('hoops');
+              content = content.push(...this.data.filter((item) => item[this.splittingField] == id));
+            }
           } else {
+            alert('local');
             this.localLists.forEach((localList) => {
               content.push(_.filter(localList.content, [this.splittingField, id]));
               _.remove(localList.content, (obj) => {
