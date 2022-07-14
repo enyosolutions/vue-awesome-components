@@ -213,7 +213,7 @@
         <awesome-filter
           display-filters
           id="advancedFilterComponent"
-          v-if="_actions.filter && _actions.advancedFiltering"
+          v-if="advancedFilters.length"
           :fields="columns"
           @update-filter="advancedFiltering"
           :advanced-filters="advancedFilters"

@@ -28,7 +28,7 @@
             </div>
             <router-link
               v-if="value && onClickUrl && !isFunction(onClickUrl)"
-              :to="onClickUrl + '/' + value"
+              :to="_parsedClickUrl"
               class="external-link"
             >
               &nbsp; <i class="fa fa-external-link text-info"></i>
@@ -87,6 +87,16 @@ export default {
         this.isClickable ||
         (this.isClickable === undefined && this.awComponentsConfig && this.awComponentsConfig.relationsAreClickable)
       );
+    },
+
+    _parsedClickUrl() {
+      console.warn('_parseClickUrl', this.onClickUrl, this.value, {
+        [this.relationKey || this.primaryKey || 'id']: this.value
+      });
+      return this.parseUrl(this.onClickUrl, {
+        [this.relationKey || this.primaryKey || 'id']: this.value,
+        [this.field]: this.value
+      });
     }
   },
   mounted() {
@@ -136,7 +146,7 @@ export default {
         if (_.isFunction(this.onClickUrl)) {
           return this.onClickUrl(value);
         }
-        return this.$router.push(this.onClickUrl + '/' + value);
+        return this.$router.push(this._parsedClickUrl);
       } else if (value) {
         this.$router.push('/app/' + this.kebabCase(this.relation) + '/' + value);
       }

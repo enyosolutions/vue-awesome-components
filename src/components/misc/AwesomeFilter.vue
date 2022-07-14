@@ -159,11 +159,12 @@ export default {
           filter: this.currentOperator
         };
         this.selectedFilters.push(filter);
+        // if the selected field is not a permanent one then reset the current field
         if (!this.permanentFilter && !this.permanentInput) {
           this.currentField = {};
           this.currentValue = '';
           this.currentOperator = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
-          this.$refs['filterField'] = '';
+          this.$refs['filterField'].value = '';
         }
         this.parseFilter(this.selectedFilters);
       }
@@ -219,7 +220,7 @@ export default {
     _filterableFields() {
       return this.fields.filter((field) => {
         // no option defined
-        return !field.filterOptions || field.filterOptions.enabled;
+        return !field.filterOptions || field.filterOptions.enabled == undefined || field.filterOptions.enabled;
       });
     }
   },

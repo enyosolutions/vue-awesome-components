@@ -401,7 +401,9 @@ export default {
     },
 
     onPageChange(params) {
-      alert('page chagned ' + JSON.stringify(params, null, 2) + ' ' + this.mode + ' ' + this.useRouterMode)
+      if (process.env.NODE_ENV === 'development') {
+        alert('page chagned ' + JSON.stringify(params, null, 2) + ' ' + this.mode + ' ' + this.useRouterMode)
+      }
       this.updateParams({ page: params.currentPage });
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== 'remote') {
