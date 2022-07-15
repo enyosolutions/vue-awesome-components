@@ -418,6 +418,7 @@ dayjs.extend(localeData);
 import Popper from 'vue-popperjs';
 import { Skeleton } from 'vue-loading-skeleton';
 
+import advanceFilterMixin from '../../../mixins/advanceFilterMixin';
 import apiErrors from '../../../mixins/apiErrorsMixin';
 import apiListMixin from '../../../mixins/apiListMixin';
 import i18nMixin from '../../../mixins/i18nMixin';
@@ -453,7 +454,7 @@ export default {
     Skeleton,
     VueGoodTable
   },
-  mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin],
+  mixins: [uuidMixin, i18nMixin, apiErrors, apiListMixin, awEmitMixin, advanceFilterMixin],
   props: {
     columns: {
       type: Array,
@@ -927,31 +928,32 @@ export default {
       }, this.autoRefreshInterval * 1000);
     },
 
-    permanentFiltering(parsedFilters, filters) {
-      this.updateParams({
-        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
-        page: 0,
-        permanent: true
-      });
-      if (this.optionsComputed.autoSearch) {
-        this.getItems({ useSkeleton: true });
-      }
-      this.$awEmit('permanent-filter', { filters: parsedFilters });
-      this.$awEmit('filter', { filters: this.serverParams.filters });
-    },
+    // permanentFiltering(parsedFilters, filters) {
+    //   this.updateParams({
+    //     parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+    //     page: 0,
+    //     permanent: true
+    //   });
+    //   if (this.optionsComputed.autoSearch) {
+    //     this.getItems({ useSkeleton: true });
+    //   }
+    //   this.$awEmit('permanent-filter', { filters: parsedFilters });
+    //   this.$awEmit('filter', { filters: this.serverParams.filters });
+    // },
 
-    advancedFiltering(parsedFilters, filters) {
-      this.updateParams({
-        advancedFilters: _.cloneDeep(filters),
-        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
-        page: 0
-      });
-      if (this.optionsComputed.autoSearch) {
-        this.getItems({ useSkeleton: true });
-      }
-      this.$awEmit('advanced-filter', parsedFilters, filters);
-      this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
-    },
+    // advancedFiltering(parsedFilters, filters) {
+    //   console.log('advancedFiltering', parsedFilters, filters);
+    //   this.updateParams({
+    //     advancedFilters: _.cloneDeep(filters),
+    //     parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+    //     page: 0
+    //   });
+    //   if (this.optionsComputed.autoSearch) {
+    //     this.getItems({ useSkeleton: true });
+    //   }
+    //   this.$awEmit('advanced-filter', parsedFilters, filters);
+    //   this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
+    // },
 
     doRefresh() {
       this.$awEmit('refresh', { filters: this.serverParams.filters });

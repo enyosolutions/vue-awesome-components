@@ -401,9 +401,6 @@ export default {
     },
 
     onPageChange(params) {
-      if (process.env.NODE_ENV === 'development') {
-        alert('page chagned ' + JSON.stringify(params, null, 2) + ' ' + this.mode + ' ' + this.useRouterMode)
-      }
       this.updateParams({ page: params.currentPage });
       this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
       if (this.mode !== 'remote') {
@@ -413,8 +410,15 @@ export default {
     },
 
     onPerPageChange(params) {
-      this.updateParams({ perPage: params.currentPerPage });
-      this.pushChangesToRouter({ query: { ...this.$route.query, perPage: params.currentPerPage } });
+      // reset pagination in case of perPage change
+      this.updateParams({ page: 1, perPage: params.currentPerPage });
+      this.pushChangesToRouter({
+        query: {
+          ...this.$route.query,
+          page: 1,
+          perPage: params.currentPerPage
+        }
+      });
       if (this.mode !== 'remote') {
         return;
       }
@@ -439,18 +443,28 @@ export default {
 
     pushChangesToRouter(options) {
       this.saveComponentState();
-      console.log('{ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }', {
-        path: this.$route.path, ...options,
-        query: {
-          ...options.query,
-          ...this.routeQueryParams,
-          sort: undefined,
-        }
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('{ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }', {
+          path: this.$route.path,
+          ...options,
+          query: {
+            ...options.query,
+            ...this.routeQueryParams,
+            sort: undefined,
+          }
+        }, JSON.stringify(options));
+      }
       if (!this.useRouterMode) {
         return;
       }
-      this.$router.push({ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }).catch(err => {
+      this.$router.push({
+        path: this.$route.path, ...options,
+        query: {
+          ...this.routeQueryParams,
+          ...options.query,
+          sort: undefined
+        }
+      }).catch(err => {
         // Ignore the vueRouter err regarding  navigating to the page they are already on.
         if (
           err.name !== 'NavigationDuplicated' &&
@@ -552,8 +566,9 @@ export default {
         try {
           const columnsState = { ...this.columnsState };
           delete columnsState.__ACTIONS;
+          // @fixme probably not a good idea to save the state of filters
           localStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
-            routeQueryParams: this.savePaginationState ? this.routeQueryParams : undefined,
+            routeQueryParams: this.savePaginationState ? { ...this.routeQueryParams, filters: undefined } : undefined,
             columnsState: this.saveColumnsState ? columnsState : undefined,
             columnsFilterState: this.saveColumnsState ? this.columnsFilterState : undefined,
             columnFilters: this.saveColumnsState ? this.columnFilters : undefined,

@@ -90,9 +90,6 @@ export default {
     },
 
     _parsedClickUrl() {
-      console.warn('_parseClickUrl', this.onClickUrl, this.value, {
-        [this.relationKey || this.primaryKey || 'id']: this.value
-      });
       return this.parseUrl(this.onClickUrl, {
         [this.relationKey || this.primaryKey || 'id']: this.value,
         [this.field]: this.value
