@@ -103,7 +103,7 @@
     "lint-staged": "^10.5.1",
     "lodash": "^4.17.21",
     "lodash-webpack-plugin": "^0.11.5",
-    "marked": "^1.1.1",
+    "marked": "^4.0.10",
     "minimist": "^1.2.6",
     "node-sass": "4",
     "prettier-package-json": "^2.1.3",
