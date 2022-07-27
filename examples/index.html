@@ -1,0 +1,75 @@
+<!-- Include the library in the page -->
+<script src="../node_modules/vue/dist/vue.min.js"></script>
+<script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.13/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.3/qs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-good-table@2.16.5/dist/vue-good-table.min.js"></script>
+<script src="../lib/vac.iife.js"></script>
+
+<!-- App -->
+<div id="app">
+  <p ref="a" @click="handleClick">{{ message }}</p>
+  <test>
+    <button @click="handleClick">Test</button>
+  </test>
+  <comp ref="b" v-show="show"></comp>
+  <div>
+    <a ref="c">Hello</a>
+  </div>
+  <div ref="d">
+    <a>Hello</a>
+  </div>
+  <comp ref="b2" v-show="show" />
+  <div v-show="show">
+    <comp ref="e" />
+  </div>
+  <div>
+    <comp ref="f" />
+  </div>
+  <div>
+    <a ref="g">Hello</a>
+  </div>
+  <div ref="h">
+    <a>Hello</a>
+  </div>
+</div>
+
+<script>
+  console.clear();
+  console.log('Yes! We are using Vue version', Vue.version);
+
+  // New VueJS instance
+  var app = new Vue({
+    // CSS selector of the root DOM element
+    el: '#app',
+    // Some data
+    data: () => ({
+      message: 'Hello Vue.js!',
+      show: false
+    }),
+    components: {
+      comp: {
+        render(h) {
+          return h('div', 'MyComponent');
+        }
+      },
+      test: {
+        template: `<section><slot/></section>`
+      }
+    },
+    methods: {
+      handleClick() {
+        this.show ^= 1;
+        console.log('click', this.$refs);
+        this.$nextTick(() => {
+          console.log('tick', this.$refs);
+        });
+      }
+    },
+    mounted() {
+      console.log('mounted', this.$refs);
+    }
+  });
+</script>

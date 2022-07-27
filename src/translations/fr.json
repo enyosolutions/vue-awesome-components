@@ -21,7 +21,7 @@
       "unsorted": "Non triés."
     },
     "buttons": {
-      "filters": "Filtres",
+      "filters": "Filtrer",
       "refresh": "Rafraichir",
       "excel-currentpage": "Exporter la page en cours",
       "searchInput": "Rechercher",
@@ -67,7 +67,7 @@
   },
   "AwesomeTable": {
     "buttons": {
-      "filters": "Filtres",
+      "filters": "Filtrer",
       "refresh": "Rafraichir",
       "excel": "Exporter toutes les données",
       "searchInput": "Rechercher",
@@ -140,7 +140,7 @@
       "noData": "No fields selected"
     },
     "buttons": {
-      "filters": "Filtres",
+      "filters": "Filtrer",
       "refresh": "Rafraichir",
       "excel-currentpage": "Exporter la page en cours",
       "searchInput": "Rechercher",
