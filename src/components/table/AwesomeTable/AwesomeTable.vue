@@ -37,7 +37,11 @@
           </div>
         </div>
         <h3 class="card-title aw-table-title text-left">
-          <slot name="table-title"> {{ _tableTitle }} ({{ totalCount }}) </slot>
+          <slot name="table-title"
+            ><template v-if="_tableTitle">
+              {{ _tableTitle }} <label for="" class="badge badge-primary p-1">{{ totalCount }}</label>
+            </template></slot
+          >
 
           <div
             v-if="_actions && _actions.refresh"
@@ -627,12 +631,12 @@ export default {
       if (this.title === false) {
         return '';
       }
-      return (
+      const title =
         this.title ||
         (this.$te && this.$te('app.labels.' + this.entity)
           ? this.$t('app.labels.' + this.entity)
-          : _.startCase(this.entity))
-      );
+          : _.startCase(this.entity));
+      return (title || '').trim();
     },
 
     formattedColumns() {

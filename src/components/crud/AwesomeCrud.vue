@@ -21,13 +21,13 @@
           <!-- duplicate for when there is segment -->
           <ListingModeSelector
             v-if="_actions.changeDisplayMode && !!segmentField"
-            v-model="listDisplayMode"
+            v-model="listingDisplayMode"
             :enabled-modes="enabledListingModes"
           />
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'table' || (_displayModeHasPartialDisplay && listDisplayMode === 'table')) &&
+                (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
                 dataPaginationModeComputed
             "
             v-bind="$props"
@@ -78,7 +78,7 @@
             <template slot="table-header-left">
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && !segmentField"
-                v-model="listDisplayMode"
+                v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
             </template>
@@ -158,7 +158,7 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'list' || (_displayModeHasPartialDisplay && listDisplayMode === 'list'))
+                (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
             "
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -209,7 +209,7 @@
             <template slot="list-header-left">
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && !segmentField"
-                v-model="listDisplayMode"
+                v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
             </template>
@@ -238,7 +238,7 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listDisplayMode === 'kanban'))
+                (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
             :actions="_actions"
@@ -275,7 +275,7 @@
             <template slot="kanban-header-left">
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && !segmentField"
-                v-model="listDisplayMode"
+                v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
             </template>
@@ -439,6 +439,7 @@ import awesomeFormMixin from '../../mixins/awesomeFormMixin';
 import relationMixin from '../../mixins/relationMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 import uuidMixin from '../../mixins/uuidMixin';
+import componentStateMixin from '../../mixins/componentStateMixin';
 import modelInterfaceMixin from '../../mixins/modelInterfaceMixin';
 // import notificationsMixin from '../../mixins/notificationsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
@@ -499,6 +500,7 @@ export default {
     uuidMixin,
     i18nMixin,
     modelInterfaceMixin,
+    componentStateMixin,
     apiErrorsMixin,
     apiConfigMixin,
     awesomeFormMixin,
@@ -769,7 +771,7 @@ export default {
       selectedItem: {},
       selectedItems: [],
       previousDisplayMode: '',
-      listDisplayMode: 'table',
+      listingDisplayMode: 'table',
       displayMode: 'table',
       isRefreshing: false,
       tableNeedsRefresh: false,
@@ -1223,7 +1225,7 @@ export default {
     needsRefresh: 'refreshComponent',
     '$route.params.id': 'onRouteIdChanged',
     displayMode: 'onDisplayModeChanged',
-    listDisplayMode: 'onListDisplayModeChanged'
+    listingDisplayMode: 'onlistingDisplayModeChanged'
   },
   created() {
     if (!this.$http) {
@@ -1258,7 +1260,8 @@ export default {
     if (!this.displayMode) {
       this.displayMode = this.mergedOptions.initialDisplayMode;
     }
-    this.listDisplayMode = this.mergedOptions.initialDisplayMode;
+    this.listingDisplayMode = this.mergedOptions.initialDisplayMode;
+    this.restoreComponentState();
 
     if (this._isNested && this.nestedDisplayMode) {
       this.displayMode = this.nestedDisplayMode;
@@ -1470,6 +1473,7 @@ export default {
           }
         });
       }
+      this.restoreComponentState();
       if (!this._url) {
         return;
       }
@@ -1535,7 +1539,7 @@ export default {
       this.displayMode = mode;
       if (['table', 'list', 'kanban'].indexOf(mode) > -1) {
         // saved for the future needs
-        this.listDisplayMode = mode;
+        this.listingDisplayMode = mode;
         this.tableNeedsRefresh = options.refresh;
         this.selectedItem = {};
       } else {
@@ -2030,12 +2034,13 @@ export default {
 
     onDisplayModeChanged(mode) {
       if (['table', 'list', 'kanban'].includes(mode)) {
-        this.listDisplayMode = mode;
+        this.listingDisplayMode = mode;
       }
     },
-    onListDisplayModeChanged(mode, oldMode) {
+    onlistingDisplayModeChanged(mode, oldMode) {
       if (mode !== oldMode) {
         this.displayMode = mode;
+        this.saveComponentState();
       }
     },
 

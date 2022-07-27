@@ -6,11 +6,11 @@ import Qs from 'qs';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
+import componentStateMixin from './componentStateMixin';
 import awEmitMixin from './awEmitMixin';
-import { query } from 'chartist';
 
 export default {
-  mixins: [apiConfigMixin, awEmitMixin],
+  mixins: [apiConfigMixin, awEmitMixin, componentStateMixin],
   props: {
     rows: { type: Array, default: () => [] },
 
@@ -411,11 +411,11 @@ export default {
 
     onPerPageChange(params) {
       // reset pagination in case of perPage change
-      this.updateParams({ page: 1, perPage: params.currentPerPage });
+      this.updateParams({ perPage: params.currentPerPage });
       this.pushChangesToRouter({
         query: {
           ...this.$route.query,
-          page: 1,
+          // page: 1,
           perPage: params.currentPerPage
         }
       });
@@ -533,7 +533,6 @@ export default {
           this.pushChangesToRouter();
           return;
         }
-
       }
     },
 
@@ -573,6 +572,7 @@ export default {
             columnsFilterState: this.saveColumnsState ? this.columnsFilterState : undefined,
             columnFilters: this.saveColumnsState ? this.columnFilters : undefined,
             advancedFilters: this.saveColumnsState ? this.advancedFilters : undefined,
+            listingDisplayMode: this.listingDisplayMode
           }));
         }
         catch (err) {
@@ -595,6 +595,9 @@ export default {
             }
             if (parsedState.columnsFilterState && this.saveColumnsState) {
               this.columnsFilterState = parsedState.columnsFilterState;
+            }
+            if (parsedState.listingDisplayMode && this.listingDisplayMode) {
+              this.listingDisplayMode = parsedState.listingDisplayMode;
             }
             // @fixme
             // this.pushChangesToRouter();

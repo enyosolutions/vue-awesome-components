@@ -131,14 +131,14 @@
               <div v-if="isAddingList">
                 <input
                   v-model="newListName"
-                  class="form-control"
+                  class="form-control mb-1"
                   type="text"
                   :placeholder="$t('AwesomeKanban.labels.listName')"
                 />
-                <button :disabled="!newListName" @click.stop="addList" class="btn btn-simple btn-primary">
+                <button :disabled="!newListName" @click.stop="addList" class="btn btn-primary">
                   {{ $t('AwesomeKanban.labels.add') }}
                 </button>
-                <button @click.stop="clearForm" class="btn btn-xs btn-simple btn-primary">
+                <button @click.stop="clearForm" class="btn btn-primary ml-1">
                   <i class="fa fa-times"></i>
                 </button>
               </div>
@@ -371,6 +371,7 @@ export default {
           this.newListName = '';
           this.isAddingList = false;
         }
+        this.$awEmit('aw-kanban-list-added', this.localLists[this.localLists.length - 1]);
       }
     },
 
@@ -389,10 +390,12 @@ export default {
         return item.title !== list;
       });
       this.$emit('removeList', list);
+      this.$awEmit('aw-kanban-list-removed', list);
     },
 
     listChanged(item) {
       this.$emit('listChanged', item);
+      this.$awEmit('aw-kanban-list-changed', item, this.localLists);
     },
 
     onCardChanged(item, targetList, orderedListItems) {
