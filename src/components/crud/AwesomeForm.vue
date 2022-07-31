@@ -159,6 +159,7 @@
                       <div class="btn-group m-0 aw-form-header-actions" v-if="customTopActions">
                         <AwesomeActionList
                           :actions="customTopActions"
+                          :parentDisplayMode="mode"
                           :item="selectedItem"
                           :parent="parent"
                           location="top"
@@ -490,15 +491,6 @@
                         >
                           {{ $t('AwesomeCrud.buttons.cancel') }}
                         </button>
-                        <template v-if="customInlineActions">
-                          <AwesomeActionList
-                            :actions="customInlineActions"
-                            :item="selectedItem"
-                            location="inline"
-                            @customAction="$awEmit('customAction', $event)"
-                          />
-                        </template>
-
                         <button
                           v-if="_actions.delete && !_mergedOptions.noActions"
                           type="button"
@@ -511,6 +503,7 @@
                         <button v-if="mode === 'edit'" type="submit" class="btn btn-primary ml-2">
                           {{ $t('AwesomeCrud.buttons.save') }}
                         </button>
+
                         <button
                           v-if="mode === 'view' && _actions.edit && !_mergedOptions.noActions"
                           type="button"
@@ -520,6 +513,17 @@
                           <i class="fa fa-pencil" />
                           {{ $t('AwesomeCrud.buttons.edit') }}
                         </button>
+
+                        <template v-if="customInlineActions">
+                          <AwesomeActionList
+                            :actions="customInlineActions"
+                            :parentDisplayMode="mode"
+                            :item="selectedItem"
+                            location="inline"
+                            @customAction="$awEmit('customAction', $event)"
+                          />
+                        </template>
+
                         <button
                           v-if="mode === 'view' && !standalone"
                           type="button"

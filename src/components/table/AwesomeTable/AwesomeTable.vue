@@ -277,6 +277,7 @@
                   :items="selectedRows"
                   :columns="columns"
                   :parent="parent"
+                  parentDisplayMode="table"
                   location="bulk"
                   @customAction="$emit('customAction', $event)"
                 />
@@ -319,6 +320,7 @@
                   :actions="customTableTopActions"
                   :columns="columns"
                   location="tabletop"
+                  parentDisplayMode="table"
                   @customAction="$emit('customAction', $event)"
                   @permanent-filtering="permanentFiltering"
                 />
@@ -346,17 +348,6 @@
                 </awesome-display>
 
                 <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
-                  <slot name="table-row-actions" :item="props.row">
-                    <template v-if="customInlineActions">
-                      <AwesomeActionList
-                        :actions="customInlineActions"
-                        :item="props.row"
-                        :parent="parent"
-                        location="inline"
-                        @customAction="$emit('customAction', $event)"
-                      />
-                    </template>
-                  </slot>
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
                     class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
@@ -381,6 +372,18 @@
                   >
                     <i class="fa fa-trash text-danger" />
                   </button>
+                  <slot name="table-row-actions" :item="props.row">
+                    <template v-if="customInlineActions">
+                      <AwesomeActionList
+                        :actions="customInlineActions"
+                        :item="props.row"
+                        :parent="parent"
+                        location="inline"
+                        parentDisplayMode="table"
+                        @customAction="$emit('customAction', $event)"
+                      />
+                    </template>
+                  </slot>
                 </span>
                 <span
                   v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"

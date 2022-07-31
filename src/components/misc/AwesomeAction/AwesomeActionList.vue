@@ -64,7 +64,7 @@
     <!-- Start no dropdown zone -->
     <template v-if="!useDropdown">
       <template v-for="(action, index) in actions">
-        <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
+        <template v-if="shouldDisplayAction(action)">
           <AwesomeAction
             v-bind="{ ...action, class: undefined }"
             :classes="action.class || action.classes"
@@ -120,6 +120,11 @@ export default {
       note: 'The parent of the current element (in case of nested)',
       default: () => null
     },
+    parentDisplayMode: {
+      type: String,
+      note: 'The display mode of the parent',
+      default: ''
+    },
     useDropdown: {
       type: Boolean,
       note: 'if the slect items should be in a dropdown'
@@ -132,6 +137,30 @@ export default {
 
     unFoldableActions() {
       return this.actions.filter((a) => (a.type && a.type !== 'button') || a.sticky);
+    }
+  },
+  data() {
+    return {};
+  },
+  methods: {
+    shouldDisplayAction(action) {
+      this.mode = this.parentDisplayMode;
+      if (action.canDisplay !== undefined) {
+        return this.computeActionField(action, 'canDisplay');
+      }
+      if (action.visible !== undefined) {
+        return this.computeActionField(action, 'visible');
+      }
+      return true;
+    },
+    computeActionField(action, field) {
+      if (action[field] !== undefined) {
+        if (typeof action[field] === 'function') {
+          return action[field]({ item: this.item, parent: this.parent }, this);
+        }
+        return action.field;
+      }
+      return '';
     }
   }
 };

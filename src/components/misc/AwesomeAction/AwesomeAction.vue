@@ -42,7 +42,7 @@
         permanent-filter
         :defaultOperator="defaultOperator"
         :field="field"
-        :field-label="label || title"
+        :field-label="computeActionField(label || title)"
         :fields="columns"
         @update-filter="permanentFiltering"
       />
@@ -52,7 +52,7 @@
         :key="index"
         permanent-input
         :field="field"
-        :field-label="label || title"
+        :field-label="computeActionField(label || title)"
         @update-filter="permanentFiltering"
       />
     </div>
@@ -64,8 +64,8 @@
         class="btn"
         :class="classes"
         :id="`${name}-${index}`"
-        :data-title="title"
-        :data-tooltip="title"
+        :data-title="computeActionField(title)"
+        :data-tooltip="computeActionField(title)"
         @click="
           $emit('customAction', {
             action: $props,
@@ -78,7 +78,7 @@
         "
       >
         <i v-if="icon" :class="icon"></i>
-        <span>{{ label ? $t(label) : '' }}</span>
+        <span>{{ label ? computeActionField(label) : '' }}</span>
       </button>
     </div>
   </div>
@@ -106,11 +106,11 @@ export default {
       note: 'The name of the custom action used in the identifier'
     },
     title: {
-      type: String,
+      type: [String, Function],
       note: 'The text of the element. Usually used as a tooltip'
     },
     label: {
-      type: String,
+      type: [String, Function],
       note: 'The label of the element'
     },
     classes: {
@@ -118,7 +118,7 @@ export default {
       note: 'The CSS classes'
     },
     icon: {
-      type: String,
+      type: [String, Function],
       note: 'The icon of the element'
     },
     children: {
@@ -174,6 +174,16 @@ export default {
 
     permanentSearching(parsedFilters) {
       this.$emit('permanent-searching', parsedFilters);
+    },
+
+    computeActionField(field) {
+      if (field !== undefined) {
+        if (typeof field === 'function') {
+          return field({ item: this.item, parent: this.parent }, this);
+        }
+        return this.$t(field);
+      }
+      return '';
     }
   },
   mounted() {

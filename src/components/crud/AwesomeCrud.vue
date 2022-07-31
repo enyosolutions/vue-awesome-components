@@ -88,6 +88,7 @@
                   <template v-if="_customTopRightActions">
                     <AwesomeActionList
                       :actions="_customTopRightActions"
+                      :parentDisplayMode="displayMode"
                       location="topright"
                       :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
                       @customAction="onCustomAction"
@@ -111,6 +112,7 @@
               <template v-if="_customTitleBarActions">
                 <AwesomeActionList
                   :actions="_customTitleBarActions"
+                  :parentDisplayMode="displayMode"
                   location="topright"
                   :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
                   @customAction="onCustomAction"
@@ -1867,6 +1869,9 @@ export default {
     },
 
     onDataChanged(items) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('onDataChanged', items);
+      }
       this.itemsList = items.data;
     },
 
