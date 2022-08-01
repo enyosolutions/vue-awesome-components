@@ -20,7 +20,19 @@
       <div class="d-block">
         <div class="card-header">
           <h3 class="text-left aw-kanban-title">
-            <slot name="kanban-title">{{ titleComputed }} ({{ totalCount }})</slot>
+            <slot name="kanban-title"
+              ><template v-if="titleComputed"
+                >{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template
+              ></slot
+            >
+            <auto-refresh-button
+              v-if="actions && actions.refresh"
+              v-model="isRefreshing"
+              @refresh="getItems({ useSkeleton: true })"
+              :auto-refresh="autoRefresh"
+              :auto-refresh-interval="autoRefreshInterval"
+            />
+
             <div class="btn-group btn-group-sm float-right awesome-list-buttons">
               <div v-if="isRefreshing" style="text-align: center">
                 <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
@@ -31,7 +43,7 @@
                   v-if="actions.filter && actions.advancedFiltering"
                   slot="reference"
                   type="button"
-                  class="btn btn-simple btn-sm"
+                  class="btn btn-simple btn-sm p-0"
                   :class="{
                     'btn-primary': displayAwFilter || advancedFiltersCount,
                     'btn-default': !advancedFiltersCount
@@ -41,11 +53,6 @@
                   <i class="fa fa-filter" />
                   {{ $t('AwesomeTable.buttons.filters') }}
                   {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-                </button>
-
-                <button v-if="actions && actions.refresh" class="btn btn-simple btn-sm p-0" @click="getItems()">
-                  <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-                  {{ $t('AwesomeKanban.buttons.refresh') }}
                 </button>
               </div>
             </div>
@@ -164,15 +171,17 @@ import KanbanList from '../misc/KanbanList.vue';
 import AwesomeFilter from '../misc/AwesomeFilter.vue';
 
 import AwesomeSegments from './parts/AwesomeSegments.vue';
+import AutoRefreshButton from './parts/AutoRefreshButton.vue';
 
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
 export default {
   name: 'AwesomeKanban',
   components: {
-    KanbanList,
+    AutoRefreshButton,
+    AwesomeFilter,
     AwesomeSegments,
-    AwesomeFilter
+    KanbanList
   },
   mixins: [
     i18nMixin,

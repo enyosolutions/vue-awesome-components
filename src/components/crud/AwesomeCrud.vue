@@ -826,31 +826,15 @@ export default {
       return '';
     },
 
-    _titlePlural() {
-      if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
-      }
-
-      if (this.title) {
-        return this.$te(this.title + 's') ? this.$t(this.title + 's') : this.title + 's';
-      }
-
-      if (this.identity) {
-        return this.$te(`app.labels.${this.identity}s`)
-          ? this.$t(`app.labels.${this.identity}s`)
-          : _.startCase(this.identity + 's');
-      }
-      return '';
-    },
-
     _listingComponentTitle() {
       if (this.title === false) {
         return false;
       }
-      if (this.title) {
-        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      const title = this.title || this._model.title;
+      if (title) {
+        return this.$te(title) ? this.$t(title) : title;
       }
-      return this.$t('AwesomeCrud.labels.manageTitle') + ' ' + this._titlePlural;
+      return this.$t('AwesomeCrud.labels.manageTitle') + ' ' + this._namePlural;
     },
 
     _name() {
@@ -867,10 +851,6 @@ export default {
           : _.startCase(this.identity);
       }
       return '';
-    },
-
-    _model() {
-      return this.model || this.getModelFromStore(this.identity);
     },
 
     _namePlural() {
@@ -890,6 +870,10 @@ export default {
       return '';
     },
 
+    _model() {
+      return this.model || this.getModelFromStore(this.identity);
+    },
+
     // _url() see apiConfigMixin
     // _selectedItemUrl() see apiConfigMixin
 
@@ -906,7 +890,7 @@ export default {
     },
 
     listFieldsComputed() {
-      const allColumns = this.tableColumnsComputed;
+      const allColumns = this.allColumnsComputed;
       let columns = [];
       if (this.listOptions && Array.isArray(this.listOptions.fields)) {
         this.listOptions.fields.forEach((field) => {
@@ -920,7 +904,7 @@ export default {
     },
 
     kanbanFieldsComputed() {
-      const allColumns = this.tableColumnsComputed;
+      const allColumns = this.allColumnsComputed;
       let columns = [];
       // If we provided an array of fields to display
       if (this._kanbanOptions && Array.isArray(this._kanbanOptions.fields)) {
@@ -931,6 +915,13 @@ export default {
         return columns;
       }
       return allColumns;
+    },
+
+    allColumnsComputed() {
+      if (!this.schemaComputed) {
+        return [];
+      }
+      return this.parseColumns(this.schemaComputed.properties, { includeHidden: true });
     },
 
     tableColumnsComputed() {
@@ -1870,7 +1861,7 @@ export default {
 
     onDataChanged(items) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('onDataChanged', items);
+        //  console.log('onDataChanged', items);
       }
       this.itemsList = items.data;
     },

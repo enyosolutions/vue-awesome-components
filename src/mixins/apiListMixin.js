@@ -12,6 +12,12 @@ import awEmitMixin from './awEmitMixin';
 export default {
   mixins: [apiConfigMixin, awEmitMixin, componentStateMixin],
   props: {
+    autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },
+    autoRefreshInterval: {
+      type: Number,
+      default: 20,
+      description: 'Interval in seconds that should be used to refresh the page'
+    },
     rows: { type: Array, default: () => [] },
 
     url: { type: String, default: '' },

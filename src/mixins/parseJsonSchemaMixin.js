@@ -367,12 +367,12 @@ export default {
     },
 
 
-    parseColumns(properties) {
+    parseColumns(properties, options = { includeHidden: false }) {
       const newcolumns = [];
       Object.keys(properties).forEach((key) => {
         let newCol = {};
         const prop = properties[key];
-        if (!prop.hidden && !(prop.column && prop.column.hidden)) {
+        if ((!prop.hidden && !(prop.column && prop.column.hidden)) || (options && options.includeHidden)) {
           newCol.field = key;
           newCol.type = this.getColumnType(prop);
           newCol.label = startCase((prop.column && prop.column.title) || prop.title || key);

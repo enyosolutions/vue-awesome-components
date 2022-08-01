@@ -22,16 +22,14 @@
       "
     >
       <h3 class="mb-0 aw-list-title">
-        <slot name="list-title">{{ titleComputed }} ({{ totalCount }})</slot>
-          <button
-                v-if="actions && actions.refresh"
-                class="btn btn-simple btn-sm"
-                @click="getItems()"
-            >
-              <i class='fa fa-refresh'  :class="(isRefreshing ? ' fa-spin text-primary' : 'text-muted')"
-
-              />
-            </button>
+        <slot name="list-title"><template v-if="titleComputed">{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template></slot>
+          <auto-refresh-button
+            v-if="actions && actions.refresh"
+            v-model="isRefreshing"
+            @refresh="getItems({ useSkeleton: true })"
+            :auto-refresh="autoRefresh"
+            :auto-refresh-interval="autoRefreshInterval"
+          />
 
 
 
@@ -282,12 +280,14 @@ import templatingMixin from '../../mixins/templatingMixin';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../misc/AwesomeFilter.vue';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
+import AutoRefreshButton from './parts/AutoRefreshButton.vue';
 
 export default {
   name: 'AwesomeList',
   components: {
     Paginate,
     AwesomeDisplay,
+    AutoRefreshButton,
     AwesomeFilter,
     popper: Popper,
     AwesomeSegments

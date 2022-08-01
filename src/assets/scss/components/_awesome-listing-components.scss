@@ -15,4 +15,107 @@
       padding: 0.1rem 0.7rem;
     }
   }
+
+  .automatic-refresh-button {
+    display: inline-flex;
+    margin-top: -5px;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0px;
+    transition: 0.3s ease-in-out;
+    vertical-align: middle;
+    max-width: 25px;
+    overflow: hidden;
+    transition: max-width ease-in-out 300ms 1000ms;
+    &:hover {
+      transition: max-width ease-in-out 300ms 300ms;
+
+      max-width: 250px;
+    }
+    button {
+      margin: 0;
+      margin-right: 10px;
+    }
+    i {
+      margin-right: 5px;
+      font-size: 14px;
+      color: #bfc3ca !important;
+    }
+    .refresh-text {
+      font-size: 12px;
+      color: #bfc3ca !important;
+      overflow: hidden;
+      text-overflow: hidden;
+      white-space: nowrap;
+      display: inline;
+      vertical-align: middle;
+    }
+    &:hover span {
+      display: initial;
+    }
+    &.active {
+      i,
+      span {
+        color: #6d6d6d !important;
+        color: var(--primary) !important;
+      }
+    }
+
+    .switch {
+      margin-left: 10px;
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 22px;
+      margin-bottom: 0 !important;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #dde2e8;
+      -webkit-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: '';
+      height: 13px;
+      width: 13px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #a4aab5;
+      -webkit-transition: 0.3s ease-in-out;
+      transition: 0.3s ease-in-out;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2196f3;
+    }
+
+    input:focus + .slider {
+      //box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(13px);
+      -ms-transform: translateX(13px);
+      transform: translateX(13px);
+      background-color: white;
+    }
+  }
 }

@@ -42,25 +42,13 @@
               {{ _tableTitle }} <label for="" class="badge badge-primary p-1">{{ totalCount }}</label>
             </template></slot
           >
-
-          <div
+          <auto-refresh-button
             v-if="_actions && _actions.refresh"
-            :class="'automatic-refresh-button ' + (autoRefresh ? ' active' : '')"
-          >
-            <button
-              v-if="_actions && _actions.refresh"
-              type="button"
-              class="btn btn-simple btn-alt-style btn-sm p-2"
-              @click.prevent="getItems({ useSkeleton: true })"
-            >
-              <i :class="'fa fa-refresh' + (isRefreshing ? ' fa-spin' : '')" />
-            </button>
-            <span class="refresh-text">{{ $t('AwesomeTable.automatique-refresh') }}</span>
-            <label class="switch">
-              <input type="checkbox" v-model="autoRefreshInterface" />
-              <span class="slider round"></span>
-            </label>
-          </div>
+            v-model="isRefreshing"
+            @refresh="getItems({ useSkeleton: true })"
+            :auto-refresh="autoRefresh"
+            :auto-refresh-interval="autoRefreshInterval"
+          />
           <div class="aw-table-top-actions float-right m-0 p-0">
             <slot name="table-top-actions" />
             <popper
@@ -438,6 +426,7 @@ import AwesomeDisplay from '../../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../../misc/AwesomeFilter.vue';
 import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList.vue';
 import AwesomeSegments from '../parts/AwesomeSegments.vue';
+import AutoRefreshButton from '../parts/AutoRefreshButton.vue';
 
 export default {
   name: 'AwesomeTable',
@@ -456,6 +445,7 @@ export default {
     AwesomeDisplay,
     AwesomeFilter,
     AwesomeSegments,
+    AutoRefreshButton,
     DateRangePicker,
     popper: Popper,
     Skeleton,
@@ -505,12 +495,6 @@ export default {
         'AwesomeTable.empty': 'empty',
         'AwesomeTable.createFirstItem': 'Click here to create your first item'
       })
-    },
-    autoRefresh: { type: Boolean, default: false, description: 'Should we auto refresh the page ?' },
-    autoRefreshInterval: {
-      type: Number,
-      default: 20,
-      description: 'Interval in seconds that should be used to refresh the page'
     },
     refresh: { type: Function, default: undefined },
     delete: { type: Function, default: undefined },
@@ -617,15 +601,6 @@ export default {
     };
   },
   computed: {
-    autoRefreshInterface: {
-      get() {
-        return this.autoRefresh;
-      },
-      set(val) {
-        this.$emit('updateAutoRefresh', val);
-      }
-    },
-
     optionsComputed() {
       return _.merge(this.defaultOptions, this.options);
     },
@@ -845,14 +820,7 @@ export default {
     },
     entity: 'entityChanged',
     // store: changed => {},
-    rows: 'refreshLocalData',
-    autoRefresh(value) {
-      if (value) {
-        this.activateAutoRefresh();
-      } else {
-        clearInterval(this.refreshHandle);
-      }
-    }
+    rows: 'refreshLocalData'
   },
   created() {
     if (!this.$t) {
@@ -903,9 +871,6 @@ export default {
       });
     }
     // this.refreshLocalData();
-    if (this.autoRefresh) {
-      this.activateAutoRefresh();
-    }
   },
   beforeDestroy() {
     clearInterval(this.refreshHandle);
@@ -913,27 +878,6 @@ export default {
 
   methods: {
     startCase: _.startCase,
-
-    activateAutoRefresh() {
-      this.numberOfRefreshCalls = 0;
-      this.refreshHandle = setInterval(() => {
-        if (this.numberOfRefreshCalls > 300) {
-          this.$awNotify({
-            title: 'too much calls, aborting tracking',
-            type: 'warning'
-          });
-          clearInterval(this.refreshHandle);
-          this.refreshHandle = null;
-          return;
-        }
-        if (!document.hasFocus()) {
-          return;
-        }
-
-        this.numberOfRefreshCalls += 1;
-        this.getItems({ source: 'awTable_refreshHandle' });
-      }, this.autoRefreshInterval * 1000);
-    },
 
     // permanentFiltering(parsedFilters, filters) {
     //   this.updateParams({
@@ -1224,103 +1168,6 @@ export default {
 
   .aw-table-actions-field {
     white-space: nowrap;
-  }
-
-  .automatic-refresh-button {
-    display: inline-flex;
-    margin-top: -5px;
-    flex-flow: row nowrap;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0px;
-    transition: 0.3s ease-in-out;
-    vertical-align: bottom;
-    button {
-      margin: 0;
-      margin-right: 10px;
-    }
-    i {
-      margin-right: 5px;
-      font-size: 14px;
-      color: #bfc3ca !important;
-    }
-    span {
-      font-size: 12px;
-      color: #bfc3ca !important;
-      max-width: 0px;
-      overflow: hidden;
-      transition: max-width ease-in-out 300ms 300ms;
-      text-overflow: hidden;
-      white-space: nowrap;
-      display: inline;
-    }
-    &:hover span {
-      display: initial;
-      max-width: 100%;
-    }
-    &.active {
-      i,
-      span {
-        color: #6d6d6d !important;
-        color: var(--primary) !important;
-      }
-    }
-  }
-
-  .switch {
-    margin-left: 10px;
-    position: relative;
-    display: inline-block;
-    width: 30px;
-    height: 17px;
-    margin-bottom: 0 !important;
-  }
-
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #dde2e8;
-    -webkit-transition: 0.3s ease-in-out;
-    transition: 0.3s ease-in-out;
-    border-radius: 34px;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: '';
-    height: 13px;
-    width: 13px;
-    left: 2px;
-    bottom: 2px;
-    background-color: #a4aab5;
-    -webkit-transition: 0.3s ease-in-out;
-    transition: 0.3s ease-in-out;
-    border-radius: 50%;
-  }
-
-  input:checked + .slider {
-    background-color: #2196f3;
-  }
-
-  input:focus + .slider {
-    //box-shadow: 0 0 1px #2196F3;
-  }
-
-  input:checked + .slider:before {
-    -webkit-transform: translateX(13px);
-    -ms-transform: translateX(13px);
-    transform: translateX(13px);
-    background-color: white;
   }
 }
 </style>
