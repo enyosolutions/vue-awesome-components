@@ -7,7 +7,7 @@
       class="pointer"
       :class="$props.classes"
       :style="$props.styles"
-      v-html="$props.value"
+      v-html="strippedContent"
     ></div>
     <iframe
       v-if="!isSafe"
@@ -16,26 +16,35 @@
       class="aw-display-iframe"
       :class="$props.classes"
       :style="$props.styles"
-      :srcdoc="$props.value"
+      :srcdoc="strippedContent"
       frameborder="0"
       ref="myIframe"
     ></iframe>
     <button
-      v-if="displayExpandButton && expanded"
+      v-if="displayExpandButton && !expanded"
       @click="onButonClick()"
       class="btn pull-right btn-expand text-primary"
     >
-      <i class="fa fa-eye"></i>
+      <i class="fa fa-expand"></i>
     </button>
   </div>
 </template>
 
 <script>
+import striptags from 'striptags';
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 
 export default {
   name: 'DisplayHtml',
   mixins: [awesomeDisplayMixin],
+  computed: {
+    strippedContent() {
+      if (this.striptags) {
+        return striptags(this.$props.value, this.tagsToKeep);
+      }
+      return this.$props.value;
+    }
+  },
   data() {
     return {
       expanded: false

@@ -32,6 +32,7 @@
     "dayjs": "^1.11.0",
     "izitoast": "^1.4.0",
     "qs": "^6.6.0",
+    "striptags": "^3.2.0",
     "uuid": "^8.3.0",
     "vue-click-outside": "^1.1.0",
     "vue-js-modal": "^2.0.1"
