@@ -19,12 +19,12 @@ export default {
       }
       switch (this.type) {
         case 'datetime':
-          return 'DD/MM/YYYY <br/> hh:mm';
+          return 'DD/MM/YYYY <br/> HH:mm';
         case 'date':
           return 'DD/MM/YYYY';
 
         case 'time':
-          return 'hh:mm';
+          return 'HH:mm';
         default:
           return '';
       }

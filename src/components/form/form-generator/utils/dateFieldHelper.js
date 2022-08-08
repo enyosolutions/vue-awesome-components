@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-let inputFormat = 'YYYY-MM-DD hh:mm:ss';
+let inputFormat = 'YYYY-MM-DD HH:mm:ss';
 
 export default {
   getDefaultInputFormat() {

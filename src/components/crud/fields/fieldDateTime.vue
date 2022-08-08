@@ -31,7 +31,7 @@ import _ from 'lodash';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 
-const inputFormat = 'DD.MM.YYYY hh:mm';
+const inputFormat = 'DD.MM.YYYY HH:mm';
 
 export default {
   mixins: [VueFormGenerator.abstractField],

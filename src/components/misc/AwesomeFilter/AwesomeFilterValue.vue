@@ -206,7 +206,7 @@ export default {
         return;
       }
       if (this.currentFilter.value !== '$notBetween' && this.currentFilter.value !== '$between') {
-        this.value = dayjs(value.startDate.toISOString()).format('YYYY-MM-DD hh:mm');
+        this.value = dayjs(value.startDate.toISOString()).format('YYYY-MM-DD HH:mm');
       } else {
         this.value = {
           from: value.startDate.toISOString().slice(0, 10),

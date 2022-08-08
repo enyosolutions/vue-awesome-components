@@ -53,7 +53,7 @@ export default {
     imageStyles: [String, Array, Object],
     isSafe: { type: Boolean, default: false },
     striptags: { type: Boolean, default: false, description: 'Strip HTML tags from the html' },
-    tagsToKeep: { type: Array, default: ['br', 'p'], description: 'tags to keep the html' },
+    tagsToKeep: { type: Array, default: () => ['br', 'p'], description: 'tags to keep the html' },
     embed: { type: Boolean, default: false, description: 'Embed the target content into an iframe' },
     displayExpandButton: { type: Boolean, default: true, description: 'Display a button to expand the size of the iframe' }
   },

@@ -93,9 +93,10 @@
             group="lists"
             :animation="options.animation"
             ghost-class="moving-list"
-            :scroll-sensitivity="options.scrollSensitivity"
+            :scrollSensitivity="scrollSensitivity || options.scrollSensitivity"
             @change="listChanged"
             :disabled="!options.moveList"
+            :forceFallback="true"
           >
             <KanbanList
               v-for="(list, index) in localLists"
@@ -271,6 +272,11 @@ export default {
       type: Array,
       default: () => [],
       note: 'See https://enyosolutions-team.github.io/vue-awesome-components/guide/awesomecrud/custom-actions.html'
+    },
+    scrollSensitivity: {
+      type: Number,
+      default: 500,
+      note: 'See https://github.com/SortableJS/Sortable/tree/master/plugins/AutoScroll#scrollsensitivity-option'
     }
   },
   data: () => ({

@@ -183,7 +183,7 @@ export default {
      * */
     scrollSensitivity: {
       type: Number,
-      default: 150
+      default: 500
     },
 
     /*

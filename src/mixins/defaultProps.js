@@ -25,7 +25,7 @@ export const defaultActions = {
 };
 
 export const defaultKanbanOptions = {
-  scrollSensitivity: 200,
+  scrollSensitivity: 500,
   animation: 200,
   moveList: false,
   moveCard: true,

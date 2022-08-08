@@ -16,7 +16,7 @@ import $ from 'jquery';
 
 dayjs.extend(customParseFormat);
 
-const inputFormat = 'YYYY-MM-DDThh:mm:ssZ';
+const inputFormat = 'YYYY-MMHH:mm:ssZ';
 
 export default {
   mixins: [VueFormGenerator.abstractField],

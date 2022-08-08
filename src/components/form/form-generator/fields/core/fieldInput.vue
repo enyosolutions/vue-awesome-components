@@ -50,8 +50,8 @@ import dayjs from 'dayjs';
 
 const DATETIME_FORMATS = {
   date: 'YYYY-MM-DD',
-  datetime: 'YYYY-MM-DD hh:mm:ss',
-  'datetime-local': 'YYYY-MM-DDThh:mm:ss'
+  datetime: 'YYYY-MM-DD HH:mm:ss',
+  'datetime-local': 'YYYY-MM-DDTHH:mm:ss'
 };
 
 export default {
