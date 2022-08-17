@@ -19,11 +19,6 @@
           :class="displaySideFormContent ? 'col-6' : 'col-12'"
         >
           <!-- duplicate for when there is segment -->
-          <ListingModeSelector
-            v-if="_actions.changeDisplayMode && !!segmentField"
-            v-model="listingDisplayMode"
-            :enabled-modes="enabledListingModes"
-          />
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
@@ -75,16 +70,15 @@
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
-            <template slot="table-header-left">
-              <ListingModeSelector
-                v-if="_actions.changeDisplayMode && !segmentField"
-                v-model="listingDisplayMode"
-                :enabled-modes="enabledListingModes"
-              />
-            </template>
+            <template slot="table-header-left"> </template>
             <template slot="table-header-right">
               <div class="text-right">
                 <slot name="top-right-buttons">
+                  <ListingModeSelector
+                    v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
+                    v-model="listingDisplayMode"
+                    :enabled-modes="enabledListingModes"
+                  />
                   <template v-if="_customTopRightActions">
                     <AwesomeActionList
                       :actions="_customTopRightActions"
@@ -208,14 +202,13 @@
                 />
               </template>
             </template>
-            <template slot="list-header-left">
+            <template slot="list-header-left"> </template>
+            <template slot="list-header-right">
               <ListingModeSelector
-                v-if="_actions.changeDisplayMode && !segmentField"
+                v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
-            </template>
-            <template slot="list-header-right">
               <template v-if="_customTopRightActions">
                 <AwesomeActionList
                   :actions="_customTopRightActions"
@@ -274,14 +267,13 @@
             @afterRefresh="afterRefresh"
             @after-refresh="after_refresh"
           >
-            <template slot="kanban-header-left">
+            <template slot="kanban-header-left"> </template>
+            <template slot="kanban-header-right">
               <ListingModeSelector
-                v-if="_actions.changeDisplayMode && !segmentField"
+                v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
-            </template>
-            <template slot="kanban-header-right">
               <AwesomeActionList
                 :actions="_customTopRightActions"
                 location="topright"
