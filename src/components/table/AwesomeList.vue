@@ -130,14 +130,14 @@
                     class="pl-0  "
                     edit-filters
                     id="advancedFilterComponentDisplay"
-                    :fields="columns"
+                    :fields="_filterableColumns"
                     @update-filter="advancedFiltering"
                     :advanced-filters="advancedFilters"
                 />
                 <awesome-filter
                 v-if="actions.filter"
                 display-filters
-                :fields="columns"
+                :fields="_filterableColumns"
                 @update-filter="advancedFiltering"
                 :advanced-filters="advancedFilters"
             />
@@ -516,6 +516,14 @@ export default {
 
     _model() {
       return this.model || this.getModelFromStore(this.identity);
+    },
+    _filterableColumns() {
+      return  this.columns.map((col) => {
+        if (col.filterOptions) {
+          col.filterOptions.enabled = this.filterable === undefined || this.filterable ;
+        }
+        return col;
+      });
     }
   },
   watch: {
@@ -609,6 +617,7 @@ export default {
     toggleFilter() {
       this.filterable = !this.filterable;
 
+      // if filter are disabled then remove set values
       if (!this.filterable) {
         if (!this.serverParams) {
           this.serverParams = {};
@@ -617,12 +626,6 @@ export default {
         this.serverParams.filters = {};
         this.getItems({ useSkeleton: true });
       }
-      this.columns = this.columns.map((col) => {
-        if (col.filterOptions) {
-          col.filterOptions.enabled = this.filterable;
-        }
-        return col;
-      });
     },
 
     localSearch(items, search) {

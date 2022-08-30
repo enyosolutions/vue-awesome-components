@@ -23,6 +23,7 @@ export default {
         userHasRole: this.userHasRole,
         componentMode: this.mode || this.displayMode,
         moment: dayjs,
+        dayjs,
       }, data);
     },
 

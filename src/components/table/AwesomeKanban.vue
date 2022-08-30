@@ -60,7 +60,7 @@
               v-if="displayAwFilter"
               edit-filters
               id="advancedFilterComponentDisplay"
-              :fields="columns"
+              :fields="_filterableColumns"
               @update-filter="advancedFiltering"
               :advanced-filters="advancedFilters"
               class="p-0"
@@ -68,7 +68,7 @@
             <awesome-filter
               display-filters
               id="advancedFilterComponent"
-              :fields="columns"
+              :fields="_filterableColumns"
               @update-filter="advancedFiltering"
               :advanced-filters="advancedFilters"
             />
@@ -348,6 +348,15 @@ export default {
         }
       }
       return '';
+    },
+
+    _filterableColumns() {
+      return this.columns.map((col) => {
+        if (col.filterOptions) {
+          col.filterOptions.enabled = this.displayAwFilter === undefined || this.displayAwFilter;
+        }
+        return col;
+      });
     }
   },
 
