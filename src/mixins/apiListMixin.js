@@ -166,6 +166,9 @@ export default {
       return '';
     },
 
+    _saveStateKey() {
+      return `${this.identity}-${this.$options.name}-${window.location.pathname}-state`;
+    }
   },
 
   watch: {
@@ -214,10 +217,11 @@ export default {
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
   },
+
   beforeDestroy() {
     this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh', this.refreshLocalData);
-
   },
+
   methods: {
     startCase: _.startCase,
 
@@ -567,12 +571,12 @@ export default {
     },
 
     saveComponentState() {
-      if (this.isSaveStateEnabledCpt && this.uuid && window.localStorage) {
+      if (this.isSaveStateEnabledCpt && this.identity && window.localStorage) {
         try {
           const columnsState = { ...this.columnsState };
           delete columnsState.__ACTIONS;
           // @fixme probably not a good idea to save the state of filters
-          localStorage.setItem(`${this.uuid}-${this.$options.name}-state`, JSON.stringify({
+          localStorage.setItem(this._saveStateKey, JSON.stringify({
             routeQueryParams: this.savePaginationState ? { ...this.routeQueryParams, filters: undefined } : undefined,
             columnsState: this.saveColumnsState ? columnsState : undefined,
             columnsFilterState: this.saveColumnsState ? this.columnsFilterState : undefined,
@@ -588,9 +592,9 @@ export default {
     },
 
     async restoreComponentState() {
-      if (this.isSaveStateEnabledCpt && this.uuid && window.localStorage) {
+      if (this.isSaveStateEnabledCpt && this.identity && window.localStorage) {
         try {
-          let parsedState = await localStorage.getItem(`${this.uuid}-${this.$options.name}-state`);
+          let parsedState = await localStorage.getItem(this._saveStateKey);
           if (parsedState) {
             parsedState = JSON.parse(parsedState);
             if (this.savePaginationState) {
@@ -617,7 +621,7 @@ export default {
 
     clearComponentState() {
       try {
-        window.localStorage && localStorage.removeItem(`${this.uuid}-${this.$options.name}-state`);
+        window.localStorage && localStorage.removeItem(this._saveStateKey);
       }
       catch (err) {
         console.warn(err);
