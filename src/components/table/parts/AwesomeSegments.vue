@@ -164,7 +164,7 @@ export default {
       if (!this.dataUrl) {
         return;
       }
-      this.$http
+      this.$awApi
         .get(`${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}$perPage=100'`, {
           params: { ..._.get(this.field, 'fieldOptions.queryParams') }
         })

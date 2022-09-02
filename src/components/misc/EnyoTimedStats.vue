@@ -59,13 +59,13 @@ export default {
   name: 'EnyoTimedStats',
   components: {},
   props: {
-    url: {type: String, default: ''},
-    entity: {type: String, default: ''},
+    url: { type: String, default: '' },
+    entity: { type: String, default: '' },
     statsNeedsRefresh: {
       type: Boolean,
       default: false
     },
-    store: {type: Array, default: ()=> []}
+    store: { type: Array, default: () => [] }
   },
   data() {
     return {
@@ -82,24 +82,22 @@ export default {
     url: 'getStats',
     entity: 'getStats'
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.getStats();
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   methods: {
     getStats: _.debounce(
       function() {
-        this.$http
+        this.$awApi
           .get(this.url, {})
-          .then(res => {
+          .then((res) => {
             if (res && res.data && res.data.body) {
               this.stats = res.data.body;
             }
           })
-          .catch(err => {
+          .catch((err) => {
             // eslint-disable-next-line
             console.error(err);
           });

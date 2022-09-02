@@ -1188,16 +1188,7 @@ export default {
     needsRefresh: 'refreshComponent',
     selectedItem: 'onChange'
   },
-  created() {
-    if (!this.$http) {
-      try {
-        const axios = require('axios');
-        this.$http = axios;
-      } catch (err) {
-        // console.warn(err.message);
-      }
-    }
-  },
+  created() {},
   mounted() {
     this.openModalDebounced = debounce(this.openModal, 300, { leading: true });
     // @deprecated
@@ -1371,7 +1362,7 @@ export default {
 
       // todo call only if
       if (this.itemIdComputed) {
-        this.$http
+        this.$awApi
           .get(`${this._selectedItemUrl}`)
           .then((res) => {
             const data =
@@ -1526,7 +1517,7 @@ export default {
         parentIdentity: this.parentIdentity,
         parent: this.parent
       });
-      return this.$http
+      return this.$awApi
         .post(this._url, this.selectedItem, { timeout: this.apiTimeout })
         .then((res) => {
           this.selectedItem = get(res, this.apiResponseConfig.dataPath);
@@ -1640,7 +1631,7 @@ export default {
       if (!this._selectedItemUrl) {
         return;
       }
-      this.$http
+      this.$awApi
         .put(`${this._selectedItemUrl}`, this.selectedItem, { timeout: this.apiTimeout })
         .then((res) => {
           this.$awEmit('item-edited', { data: res.data });
@@ -1696,7 +1687,7 @@ export default {
       if (!this._selectedItemUrl) {
         return;
       }
-      this.$http
+      this.$awApi
         .get(`${this._selectedItemUrl}`)
         .then((res) => {
           this.selectedItem =

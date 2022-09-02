@@ -520,7 +520,7 @@ export default {
     _filterableColumns() {
       return  this.columns.map((col) => {
         if (col.filterOptions) {
-          col.filterOptions.enabled = this.filterable === undefined || this.filterable ;
+          col.filterOptions.enabled = (this.filterable === undefined || this.filterable) && (col.filterOptions.filterable === undefined || col.filterOptions.filterable);
         }
         return col;
       });

@@ -195,14 +195,6 @@ export default {
   },
 
   created() {
-    if (!this.$http) {
-      try {
-        const axios = require('axios');
-        this.$http = axios;
-      } catch (err) {
-        // console.warn(err.message);
-      }
-    }
   },
   beforeMount() {
     const userLang = window.navigator
@@ -276,7 +268,7 @@ export default {
       }
       this.isRefreshing = true;
       this.$awEmit('before-api-refresh', { component: 'aw-listing', url: this._url })
-      return this.$http
+      return this.$awApi
         .get(
           `${this._url}${this._url.indexOf('?') === -1 ? '?' : '&'}${Qs.stringify(this._translatedServerParams, {})}`,
           {}
@@ -633,7 +625,7 @@ export default {
         this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
-      this.$http
+      this.$awApi
         .get(this.exportUrl, {})
         .then((res) => {
           if (res.data.url) {

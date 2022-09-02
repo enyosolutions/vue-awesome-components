@@ -139,10 +139,10 @@ export default {
   },
 
   created() {
-    if (!this.$http) {
+    if (!this.$awApi) {
       try {
         const axios = require('axios');
-        this.$http = axios;
+        this.$awApi = axios;
       } catch (err) {
         // console.warn(err.message);
       }

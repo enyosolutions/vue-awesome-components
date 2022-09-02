@@ -363,7 +363,7 @@ export default {
       if (!this.dataUrl) {
         return;
       }
-      this.$http
+      this.$awApi
         .get(
           `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam || 'perPage=100'}`,
           {
@@ -379,7 +379,7 @@ export default {
     },
 
     search(loading, search, vm) {
-      this.$http
+      this.$awApi
         .get(this.dataUrl, {
           params: { ...this.fieldOptions.queryParams, search }
         })

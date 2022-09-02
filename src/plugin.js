@@ -116,8 +116,17 @@ const install = (Vue, options = {}) => {
   if (!Vue.prototype.$awEventBus) {
     Vue.prototype.$awEventBus = new Vue();
   }
-  if (!Vue.prototype.$http) {
-    Vue.prototype.$http = axios.create({});
+
+  if (!Vue.prototype.$awApi) {
+    if (options && options.$awApi) {
+      Vue.prototype.$awApi = options.$awApi;
+    }
+    else if (Vue.prototype.$http) {
+      Vue.prototype.$awApi = Vue.prototype.$http;
+    }
+    else {
+      Vue.prototype.$awApi = axios.create({});
+    }
   }
 
   if (!Vue.prototype.$notify) {

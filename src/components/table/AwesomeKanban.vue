@@ -353,7 +353,9 @@ export default {
     _filterableColumns() {
       return this.columns.map((col) => {
         if (col.filterOptions) {
-          col.filterOptions.enabled = this.displayAwFilter === undefined || this.displayAwFilter;
+          col.filterOptions.enabled =
+            (this.displayAwFilter === undefined || this.displayAwFilter) &&
+            (col.filterOptions.filterable === undefined || col.filterOptions.filterable);
         }
         return col;
       });
@@ -540,7 +542,7 @@ export default {
       }
       const urlparts = this._url.split('?');
       urlparts[0] = `${urlparts[0]}/${element[this.primaryKey]}`;
-      await this.$http.put(urlparts.join('?'), element);
+      await this.$awApi.put(urlparts.join('?'), element);
     },
 
     async reorderListItems(orderedList) {
@@ -549,7 +551,7 @@ export default {
           const urlparts = this._url.split('?');
           delete item[this.splittingField];
           urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
-          return this.$http.put(urlparts.join('?'), { ...item, [this.sortField]: index });
+          return this.$awApi.put(urlparts.join('?'), { ...item, [this.sortField]: index });
         });
         await Promise.all(promises);
       }

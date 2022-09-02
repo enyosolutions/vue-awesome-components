@@ -106,7 +106,7 @@ export default {
       /* eslint-disable-next-line */
       if (this.dataUrl) {
         this.isLoading = true;
-        const promise = this.$http.get(this.dataUrl, {
+        const promise = this.$awApi.get(this.dataUrl, {
           params: { listOfValues: this.fieldOptions.queryParams && this.fieldOptions.queryParams.listOfValues || false, search: searchString }
         });
         promise.then(res => {

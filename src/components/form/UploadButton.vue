@@ -81,7 +81,7 @@ export default {
         return;
       }
 
-      this.$http[this.options.method.toLowerCase()](this.options.targetUrl, formData)
+      this.$awApi[this.options.method.toLowerCase()](this.options.targetUrl, formData)
         .then((res) => {
           this.$emit('uploaded', res.data);
         })

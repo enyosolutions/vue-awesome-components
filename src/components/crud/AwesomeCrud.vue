@@ -1212,16 +1212,7 @@ export default {
     displayMode: 'onDisplayModeChanged',
     listingDisplayMode: 'onlistingDisplayModeChanged'
   },
-  created() {
-    if (!this.$http) {
-      try {
-        const axios = require('axios');
-        this.$http = axios;
-      } catch (err) {
-        // console.warn(err.message);
-      }
-    }
-  },
+  created() {},
   mounted() {
     // allow old property names to still work
     if (!this.identity) {
@@ -1397,7 +1388,7 @@ export default {
         this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
         return;
       }
-      this.$http
+      this.$awApi
         .get(this.mergedOptions.importUrl + '-template', {})
         .then((res) => {
           if (res.data.url) {
@@ -1481,7 +1472,7 @@ export default {
             } else {
               this.setDisplayMode('view', {});
             }
-            this.$http
+            this.$awApi
               .get(`${this._url}/${this.$route.params.id}`, { query: this.apiRequestPermanentQueryParams })
               .then((res) => {
                 const data =
@@ -1620,7 +1611,7 @@ export default {
 
     nestedViewFunction() {
       this.displayMode = 'view';
-      this.$http
+      this.$awApi
         .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =
@@ -1636,7 +1627,7 @@ export default {
     },
 
     bulkEditFunction(item) {
-      this.$http
+      this.$awApi
         .put(`${this._url}/${item[this.primaryKeyFieldCpt]}`, item)
         .then((res) => {
           this.$emit(this.identity + '-item-updated', res.data);
@@ -1672,7 +1663,7 @@ export default {
           if (result.value) {
             items.forEach((item) => {
               this.selectedItem = item;
-              this.$http
+              this.$awApi
                 .delete(`${this._selectedItemUrl}`)
                 .then(() => {
                   this.tableNeedsRefresh = true;
@@ -1708,7 +1699,7 @@ export default {
       })
         .then((result) => {
           if (result.value) {
-            this.$http
+            this.$awApi
               .delete(`${this._selectedItemUrl}`)
               .then(() => {
                 this.selectedItem = null;
@@ -1915,7 +1906,7 @@ export default {
     },
 
     getNestedItem() {
-      return this.$http
+      return this.$awApi
         .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =

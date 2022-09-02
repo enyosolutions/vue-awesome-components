@@ -213,7 +213,7 @@ export default {
       }
       // console.log('getApiLabel', url);
       this.$set(this._displayLabelCache, url, value);
-      this.$http
+      this.$awApi
         .get(url)
         .then((res) => {
           const data =

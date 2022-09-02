@@ -63,7 +63,7 @@ export default {
   methods: {
     getStats: _.debounce(
       function() {
-        this.$http
+        this.$awApi
           .get(this.url, {})
           .then((res) => {
             console.warn('data', res.data);
