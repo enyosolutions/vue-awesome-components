@@ -24,10 +24,12 @@ There are multiple location where you can add custom action.
 customTopRightActions: [
   {
     name: 'action-name',
-    label: 'Action label',
+    label: 'Action label', // or a function that return a string
     classes: 'btn-warning',
-    title: 'Action title',
+    title: 'Action title', // or a function that return a string
     icon: 'fa fa-question',
+    visible: true, // or a function that return a boolean
+    disabled: false, // or a function that return a boolean
     action: ({ items, action, location, props, id }, context) => {
       // Do what you want
     }
@@ -158,3 +160,68 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
 `produits.id` or `produits.disponibilites.id` from the `residence` model.
 
 :::
+
+## Examples
+
+```javascript
+      customTopRightActions: [
+        {
+          name: 'clear-monitoring-list',
+          label: 'Effacer',
+          classes: 'btn-danger',
+          title: 'Effacer tous les logs',
+          icon: 'fa fa-trash',
+          action: async ({ item }, context) => {
+            if (await context.confirm('Êtes-vous de vouloir effectuer cette action')) {
+              context.$http.delete('/monitoring/clear').then(() => {
+                context.refreshComponent();
+              });
+            }
+          },
+        },
+      ],
+      customInlineActions: [
+        {
+          name: 'monitoring-list-new-hebergement-type',
+          label: '',
+          classes: 'btn-primary btn-simple',
+          title: 'Créer la correspondance',
+          icon: 'fa fa-edit',
+          canDisplay({ item }, context) {
+            return item.message && item.message.indexOf('Type d\'hebergement') > -1;
+          },
+          action: ({
+            item, action, location, props, id,
+          }, context) => {
+            let data = item.context;
+            const targetData = {};
+            if (_.isString(data)) {
+              data = JSON.parse(data);
+              targetData.idMarchand = data.id_marchand;
+              targetData.valeur = data.hebergement_type;
+            }
+            context.$router.push({
+              path: '/app/correspondance/new',
+              query: { item: targetData },
+            });
+          },
+        },
+      ],
+
+```
+
+```javascript
+  customInlineActions: [{
+    name: 'send-mail',
+    label: 'contact candidate',
+    class: 'btn btn-sm btn-simple btn-awtable-inline-action btn-icon ml-2',
+    icon: 'fa fa-envelope',
+    // visible: ({ item }) => item.email,
+    disabled: ({ item }) => !item.email,
+    action: ({
+      item, action, location, props, id,
+    }, context) => {
+      context.$store.dispatch('email/setShowEmailComposerModal', { show: true, recipientAdress: item && item.email });
+    },
+  }],
+```
