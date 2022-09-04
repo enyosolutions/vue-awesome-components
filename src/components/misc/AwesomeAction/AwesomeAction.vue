@@ -187,7 +187,7 @@ export default {
     computeActionField(field) {
       if (field !== undefined) {
         if (typeof field === 'function') {
-          return field({ item: this.item, parent: this.parent }, this);
+          return field({ item: this.item, items: this.items, parent: this.parent }, this);
         }
         return this.$t(field);
       }
