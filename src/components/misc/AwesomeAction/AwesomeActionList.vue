@@ -2,7 +2,7 @@
   <div class="awesome-action-list">
     <template v-if="useDropdown">
       <template v-for="(action, index) in unFoldableActions">
-        <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
+        <template v-if="shouldDisplayAction(action)">
           <AwesomeAction
             v-bind="{ ...action, class: undefined }"
             :classes="action.class || action.classes"
@@ -40,7 +40,7 @@
           </button>
           <div class="card" style="max-height: 80vh; overflow: auto;z-index:1">
             <template v-for="(action, index) in foldableActions">
-              <template v-if="!action.canDisplay || action.canDisplay({ item }, this)">
+              <template v-if="shouldDisplayAction(action)">
                 <AwesomeAction
                   v-bind="{ ...action, class: undefined }"
                   :classes="action.class || action.classes"
@@ -145,6 +145,7 @@ export default {
   methods: {
     shouldDisplayAction(action) {
       this.mode = this.parentDisplayMode;
+      // legacy, use visible
       if (action.canDisplay !== undefined) {
         return this.computeActionField(action, 'canDisplay');
       }

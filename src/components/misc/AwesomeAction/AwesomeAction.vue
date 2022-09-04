@@ -41,6 +41,7 @@
         :key="index"
         permanent-filter
         :defaultOperator="defaultOperator"
+        :disabled="disabled"
         :field="field"
         :field-label="computeActionField(label || title)"
         :fields="columns"
@@ -52,6 +53,7 @@
         :key="index"
         permanent-input
         :field="field"
+        :disabled="disabled"
         :field-label="computeActionField(label || title)"
         @update-filter="permanentFiltering"
       />
@@ -66,6 +68,7 @@
         :id="`${name}-${index}`"
         :data-title="computeActionField(title)"
         :data-tooltip="computeActionField(title)"
+        :disabled="disabled"
         @click="
           $emit('customAction', {
             action: $props,
@@ -113,6 +116,11 @@ export default {
       type: [String, Function],
       note: 'The label of the element'
     },
+    disabled: {
+      type: [Boolean, Function],
+      note: 'Whether the element disabled or not',
+      default: false
+    },
     classes: {
       type: String,
       note: 'The CSS classes'
@@ -132,7 +140,7 @@ export default {
     },
     index: {
       type: Number,
-      note: 'The index of the element (use in id)'
+      note: 'The index of the element (used in id)'
     },
     items: {
       type: Array,
