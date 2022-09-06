@@ -41,7 +41,7 @@
         :key="index"
         permanent-filter
         :defaultOperator="defaultOperator"
-        :disabled="disabled"
+        :disabled="computeActionField(disabled)"
         :field="field"
         :field-label="computeActionField(label || title)"
         :fields="columns"
@@ -53,7 +53,7 @@
         :key="index"
         permanent-input
         :field="field"
-        :disabled="disabled"
+        :disabled="computeActionField(disabled)"
         :field-label="computeActionField(label || title)"
         @update-filter="permanentFiltering"
       />
@@ -68,7 +68,7 @@
         :id="`${name}-${index}`"
         :data-title="computeActionField(title)"
         :data-tooltip="computeActionField(title)"
-        :disabled="disabled"
+        :disabled="computeActionField(disabled)"
         @click="
           $emit('customAction', {
             action: $props,
