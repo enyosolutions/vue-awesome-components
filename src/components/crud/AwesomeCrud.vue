@@ -321,6 +321,7 @@
           >
             <i class="fa fa-plus text-primary" />
           </button>
+          <!-- view form -->
           <awesome-form
             v-bind="$props"
             v-if="showViewFormComputed"
@@ -371,6 +372,8 @@
           >
             <slot name="after-edit-form" slot="after-edit-form" :selectedItem="selectedItem" />
           </awesome-form>
+
+          <!-- edit form -->
           <awesome-form
             v-bind="$props"
             v-if="showEditFormComputed"
@@ -1212,7 +1215,9 @@ export default {
     displayMode: 'onDisplayModeChanged',
     listingDisplayMode: 'onlistingDisplayModeChanged'
   },
-  created() {},
+  created() {
+    this.setDisplayMode = _.debounce(this.setDisplayModeFresh, 500, { leading: true });
+  },
   mounted() {
     // allow old property names to still work
     if (!this.identity) {
@@ -1495,15 +1500,44 @@ export default {
       }
     },
 
+    setDisplayMode() {},
     /** @param mode: string */
-    setDisplayMode(mode, item, options = { refresh: true }) {
-      console.warn('setDisplayMode', mode, item);
+    setDisplayModeFresh(mode, item, options = { refresh: true }) {
+      // alert(
+      //   ' set display mode: ' +
+      //     mode +
+      //     '\n current display mode: ' +
+      //     this.displayMode +
+      //     '\n item: ' +
+      //     JSON.stringify(item) +
+      //     '\n selectedItem: ' +
+      //     JSON.stringify(this.selectedItem) +
+      //     '\n this.previousDisplayMode: ' +
+      //     this.previousDisplayMode
+      // );
+      if (
+        mode === this.displayMode &&
+        (!item ||
+          item === this.selectedItem ||
+          item[this.primaryKeyFieldCpt] === this.selectedItem[this.primaryKeyFieldCpt])
+        // !(options && options.refresh)
+      ) {
+        console.warn('warning duplicate setDisplayMode called');
+        return;
+      }
       if (['edit', 'view'].indexOf(mode) > -1) {
+        // console.trace('display mode set' + mode);
         this.$awEmit('aw-form-open');
         const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
       }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
+
+      // if were are trying to set the detailed view after a create and without an id...
+      if (mode === 'view' && this.previousDisplayMode == 'create' && !(item && item[this.primaryKeyFieldCpt])) {
+        console.warn('setDisplayMode = view: missing id', item, 'redirecting to ', this.listingDisplayMode);
+        return this.setDisplayMode(this.listingDisplayMode, item, options);
+      }
       if (mode === 'bulkEdit') {
         this.selectedItem = {};
         this.selectedItems = item;
@@ -1540,7 +1574,9 @@ export default {
       if (this.$route.query.item) {
         this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
       }
+      // if (this.displayMode !== 'create') {
       this.setDisplayMode('create', this.selectedItem);
+      // }
       if (this.useRouterMode && !options.reset) {
         this.$router.push(`${this.parentPath}/new?${Qs.stringify(this.$route.query)}`);
       }
@@ -1757,9 +1793,9 @@ export default {
     onEditDisplayCancelled(item, { context }) {
       const previousDisplayMode = this.getPreviousDisplayMode(context);
       if (this.useRouterMode) {
-        if (previousDisplayMode === 'view') {
+        if (previousDisplayMode === 'view' && item && item[this.primaryKeyFieldCpt]) {
           this.goToViewPage(item);
-        } else if (previousDisplayMode === 'edit') {
+        } else if (previousDisplayMode === 'edit' && item && item[this.primaryKeyFieldCpt]) {
           this.goToEditPage(item);
         } else {
           let url = this.parentPath
@@ -1962,8 +1998,14 @@ export default {
 
     onRouteIdChanged(newVal, previousVal) {
       // console.log('route id changed', newVal, previousVal);
-      if (this.useRouterMode && newVal && previousVal && previousVal !== newVal) {
-        this.setDisplayMode(this.displayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
+      if (this.useRouterMode) {
+        // in case we navigate for one detail page to another.
+        if (newVal && previousVal && previousVal !== newVal) {
+          this.setDisplayMode(this.displayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
+        }
+        //  else {
+        //   this.setDisplayMode(this.listingDisplayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
+        // }
       }
     },
 

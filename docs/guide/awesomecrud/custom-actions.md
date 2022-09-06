@@ -213,7 +213,7 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
 ```javascript
   customInlineActions: [{
     name: 'send-mail',
-    label: 'contact candidate',
+    label: 'app.buttons.contact-candidate-button',
     class: 'btn btn-sm btn-simple btn-awtable-inline-action btn-icon ml-2',
     icon: 'fa fa-envelope',
     // visible: ({ item }) => item.email,
