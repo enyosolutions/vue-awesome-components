@@ -1755,7 +1755,7 @@ export default {
     },
 
     exportLayout() {
-      this.$export(this.layout);
+      this.$awExport(this.layout);
     },
 
     onLayoutUpdated(items) {

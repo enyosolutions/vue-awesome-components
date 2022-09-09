@@ -173,17 +173,20 @@ export default {
 
   watch: {
     needsRefresh: 'refreshLocalData',
-    apiQueryParams(newValue, oldValue) {
-      if (!newValue || JSON.stringify(newValue) === JSON.stringify(oldValue)) {
-        return;
-      }
-      // not sure this is needed...
-      if (process.env.NODE_ENV === 'development') {
-        // eslint-disable-next-line
-        console.log('apiQueryParams refreshed', newValue, oldValue);
-      }
-      this.serverParams = _.merge({}, this.apiQueryParams, this.serverParams);
-      this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
+    apiQueryParams: {
+      deep: true,
+      handler(newValue, oldValue) {
+        if (!newValue || JSON.stringify(newValue) === JSON.stringify(oldValue)) {
+          return;
+        }
+        // not sure this is needed...
+        if (process.env.NODE_ENV === 'development') {
+          // eslint-disable-next-line
+          console.log('apiQueryParams refreshed', newValue, oldValue);
+        }
+        this.serverParams = _.merge({}, this.apiQueryParams, this.serverParams);
+        this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
+      },
     },
     entity: 'entityChanged',
     // store: changed => {},
@@ -221,7 +224,7 @@ export default {
     async refreshLocalData(changed) {
       if (this._url) {
         //   this.data = [];
-        // this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+        this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
       } else {
         this.data = this.rows;

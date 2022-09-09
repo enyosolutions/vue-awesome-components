@@ -72,7 +72,7 @@ export default {
       });
     },
 
-    $export(dataJSON) {
+    $awExport(dataJSON) {
       return new Promise((resolve, reject) => {
         Swal.fire({
           title: 'Data exported',

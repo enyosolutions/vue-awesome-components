@@ -120,7 +120,7 @@ export default {
             title: 'Valider le commentaire',
             icon: 'fa fa-play mr-1',
             action: function({ items }, context) {
-              context.$notify({
+              context.$awNotify({
                 title: `${items.length} to treat as a custom action`,
                 type: items.length > 10 ? 'success' : 'error'
               });

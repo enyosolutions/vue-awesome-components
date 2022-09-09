@@ -140,7 +140,9 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      state: {}
+    };
   },
   methods: {
     shouldDisplayAction(action) {

@@ -173,8 +173,9 @@ export default {
     }
   },
   data: () => ({
-    //
+    state: {}
   }),
+  watch: {},
   methods: {
     permanentFiltering(parsedFilters, filters) {
       this.$emit('permanent-filtering', parsedFilters, filters);
@@ -189,7 +190,10 @@ export default {
         if (typeof field === 'function') {
           return field({ item: this.item, items: this.items, parent: this.parent }, this);
         }
-        return this.$t(field);
+        if (typeof field === 'string') {
+          return this.$t(field);
+        }
+        return field;
       }
       return '';
     }

@@ -128,16 +128,15 @@ const install = (Vue, options = {}) => {
       Vue.prototype.$awApi = axios.create({});
     }
   }
+  //  conflicts with existing methods
+  // if (!Vue.prototype.$notify) {
+  //   Vue.prototype.$notify = notificationsMixin.methods.$awNotify;
+  // }
 
-  if (!Vue.prototype.$notify) {
-    Vue.prototype.$notify = notificationsMixin.methods.$awNotify;
-  }
-  Vue.prototype._notify = notificationsMixin.methods.$notify;
-
-  if (!Vue.prototype.$confirm) {
-    Vue.prototype.$confirm = notificationsMixin.methods.$confirm;
-  }
-  Vue.prototype._confirm = notificationsMixin.methods.$confirm;
+  //  conflicts with existing methods
+  // if (!Vue.prototype.$confirm) {
+  //   Vue.prototype.$confirm = notificationsMixin.methods.$confirm;
+  // }
 
 
   // DIRECTIVES
