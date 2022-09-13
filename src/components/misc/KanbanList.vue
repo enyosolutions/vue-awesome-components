@@ -90,7 +90,7 @@
               <p class="card-text" v-if="getItemProperty(data, descriptionField)">
                 {{ getItemProperty(data, descriptionField) }}
               </p>
-              <div v-if="getItemProperty(data, labelsField)" class="pull-right">
+              <div v-if="getLabelsProperty(data, labelsField)" class="pull-right">
                 <small v-for="label in getItemProperty(data, labelsField)" :key="label" class="badge badge-primary">{{
                   label
                 }}</small>
@@ -281,6 +281,13 @@ export default {
 
     toggleActionDropdown() {
       this.showActionDropdown = !this.showActionDropdown;
+    },
+    getLabelsProperty(data, labelsField) {
+      const item = this.getItemProperty(data, labelsField);
+      if (Array.isArray(item)) {
+        return item;
+      }
+      return [item];
     }
   },
   computed: {

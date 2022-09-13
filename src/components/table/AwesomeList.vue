@@ -21,6 +21,7 @@
           (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
       "
     >
+     <ProgressBar v-if="isRefreshing"></ProgressBar>
       <h3 class="mb-0 aw-list-title">
         <slot name="list-title"><template v-if="titleComputed">{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template></slot>
           <auto-refresh-button
@@ -281,16 +282,18 @@ import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../misc/AwesomeFilter.vue';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 import AutoRefreshButton from './parts/AutoRefreshButton.vue';
+import ProgressBar from './parts/ProgressBar.vue';
 
 export default {
   name: 'AwesomeList',
   components: {
-    Paginate,
-    AwesomeDisplay,
     AutoRefreshButton,
+    AwesomeDisplay,
     AwesomeFilter,
+    AwesomeSegments,
+    Paginate,
     popper: Popper,
-    AwesomeSegments
+    ProgressBar,
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin, templatingMixin],
   props: {

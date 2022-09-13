@@ -21,21 +21,7 @@
           'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')
         "
       >
-        <div v-if="isRefreshing" style="text-align: center;">
-          <div
-            class="progress"
-            style="height: 5px; border-radius: 0px; position: absolute; top: 0; left: 0; width: 100%;"
-          >
-            <div
-              class="progress-bar progress-bar-striped progress-bar-animated"
-              role="progressbar"
-              aria-valuenow="100"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              style="width: 5%;"
-            ></div>
-          </div>
-        </div>
+        <ProgressBar v-if="isRefreshing" />
         <h3 class="card-title aw-table-title text-left">
           <slot name="table-title"
             ><template v-if="_tableTitle">
@@ -427,6 +413,7 @@ import AwesomeFilter from '../../misc/AwesomeFilter.vue';
 import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList.vue';
 import AwesomeSegments from '../parts/AwesomeSegments.vue';
 import AutoRefreshButton from '../parts/AutoRefreshButton.vue';
+import ProgressBar from '../parts/ProgressBar.vue';
 
 export default {
   name: 'AwesomeTable',
@@ -448,6 +435,7 @@ export default {
     AutoRefreshButton,
     DateRangePicker,
     popper: Popper,
+    ProgressBar,
     Skeleton,
     VueGoodTable
   },
@@ -936,6 +924,14 @@ export default {
 
     toggleAdvancedFilters() {
       this.displayAwFilter = !this.displayAwFilter;
+      if (this.displayAwFilter) {
+        this.columnsFilterState = false;
+        this.toggleFilter();
+      } else {
+        this.columnsFilterState = true;
+        this.toggleFilter();
+      }
+
       this.saveComponentState();
     },
     // editItem(item) {},

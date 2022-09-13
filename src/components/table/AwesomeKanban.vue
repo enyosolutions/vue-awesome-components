@@ -19,6 +19,7 @@
     <div class="card aw-kanban-card">
       <div class="d-block">
         <div class="card-header">
+          <ProgressBar v-if="isRefreshing" />
           <h3 class="text-left aw-kanban-title">
             <slot name="kanban-title"
               ><template v-if="titleComputed"
@@ -34,9 +35,6 @@
             />
 
             <div class="btn-group btn-group-sm float-right awesome-list-buttons">
-              <div v-if="isRefreshing" style="text-align: center">
-                <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" style="color: #888; margin-left: 10px" />
-              </div>
               <slot name="top-actions" class />
               <div class="btn-group" role="group">
                 <button
@@ -173,6 +171,7 @@ import AwesomeFilter from '../misc/AwesomeFilter.vue';
 
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 import AutoRefreshButton from './parts/AutoRefreshButton.vue';
+import ProgressBar from './parts/ProgressBar.vue';
 
 import { defaultKanbanOptions } from '../../mixins/defaultProps';
 
@@ -182,7 +181,8 @@ export default {
     AutoRefreshButton,
     AwesomeFilter,
     AwesomeSegments,
-    KanbanList
+    KanbanList,
+    ProgressBar
   },
   mixins: [
     i18nMixin,
