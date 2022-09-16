@@ -44,10 +44,17 @@
     </div>
     <div v-if="permanentFilter || permanentInput">
       <div class="chip-groups">
-        <div class="chip chip-primary dark chip-permanent">
+        <div
+          class="chip chip-primary dark chip-permanent"
+          :class="{
+            'aw-filter-no-label': !showLabel,
+            'aw-filter-no-operator': !showOperator
+          }"
+        >
           <div class="chip-content">
-            <span class="form-control">{{ fieldLabel || field }}</span>
+            <span class="form-control" v-if="showLabel">{{ fieldLabel || field }}</span>
             <awesome-filter-operator
+              v-if="showOperator"
               :current-field="currentField"
               :current-filter.sync="currentOperator"
               :permanent-input="permanentInput"
@@ -138,6 +145,16 @@ export default {
       type: Boolean,
       default: false,
       note: 'State if AwesomeFilter is in custom input mode (Always display filter) that fire call on API'
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
+      note: 'Should be we show the label of the filter or not'
+    },
+    showOperator: {
+      type: Boolean,
+      default: true,
+      note: 'Should be we show the operator of the filter or not'
     }
   },
   data: () => ({
@@ -353,6 +370,22 @@ export default {
     color: black;
     margin: 4px;
 
+    &.aw-filter-no-label {
+      .chip-content {
+        .vs__search {
+          min-width: 1%;
+          max-width: unset;
+          width: auto;
+        }
+        .awesome-filter-value {
+          width: 100%;
+          max-width: 100%;
+          .aw-field-select-add-relation {
+            display: none;
+          }
+        }
+      }
+    }
     .chip-content {
       align-items: center;
       display: flex;
@@ -370,14 +403,14 @@ export default {
         border: none;
       }
       .awesome-filter-value {
-        width: 50%;
+        max-width: 50%;
         .aw-field-select-add-relation {
           display: none;
         }
       }
 
       .awesome-filter-operator {
-        width: 10%;
+        max-width: 10%;
       }
 
       input:not(.vs__search) {

@@ -1,10 +1,11 @@
 <template>
-  <div class="aw-action">
+  <div :class="`aw-action aw-action-name-${name}`">
     <!--  TYPE DROPDOWN  -->
     <div v-if="type === 'dropdown' && children.length" class="dropdown">
       <button
         class="btn dropdown-toggle"
         :class="classes"
+        @click="toggleDropdown()"
         type="button"
         :id="`${name}-${index}`"
         data-toggle="dropdown"
@@ -14,10 +15,10 @@
         <i v-if="icon" :class="icon"></i>
         <span>{{ title ? $t(title) : '' }}</span>
       </button>
-      <div class="dropdown-menu" :aria-labelledby="`${name}-${index}`">
+      <div class="dropdown-menu" :aria-labelledby="`${name}-${index}`" :class="{ show: isDropdownOpened }">
         <a
-          v-for="(child, index) in children"
-          :key="child.id || index"
+          v-for="(child, idx) in children"
+          :key="child.id || idx"
           class="dropdown-item"
           @click="
             $emit('customAction', {
@@ -26,9 +27,10 @@
               item,
               location,
               parent,
-              id: `${name}-${index}`,
-              child
-            })
+              id: `${name}-${index}-${idx}`,
+              dropdownItem: child
+            }),
+              toggleDropdown(false)
           "
         >
           <span>{{ child.title ? $t(child.title) : '' }}</span>
@@ -42,9 +44,11 @@
         permanent-filter
         :defaultOperator="defaultOperator"
         :disabled="computeActionField(disabled)"
-        :field="field"
         :field-label="computeActionField(label || title)"
+        :field="field"
         :fields="columns"
+        :showLabel="showLabel"
+        :showOperator="showOperator"
         @update-filter="permanentFiltering"
       />
     </div>
@@ -52,9 +56,11 @@
       <AwesomeFilter
         :key="index"
         permanent-input
-        :field="field"
         :disabled="computeActionField(disabled)"
         :field-label="computeActionField(label || title)"
+        :field="field"
+        :showLabel="showLabel"
+        :showOperator="showOperator"
         @update-filter="permanentFiltering"
       />
     </div>
@@ -88,6 +94,7 @@
 </template>
 
 <script>
+import ClickOutside from 'vue-click-outside';
 import i18nMixin from '../../../mixins/i18nMixin';
 import AwesomeFilter from '../AwesomeFilter.vue';
 
@@ -96,6 +103,9 @@ export default {
   mixins: [i18nMixin],
   components: {
     AwesomeFilter
+  },
+  directives: {
+    ClickOutside
   },
   props: {
     type: {
@@ -161,7 +171,7 @@ export default {
     },
     field: {
       type: String,
-      note: 'In case of type: filter || input, the field to search on'
+      note: 'In case of type: filter || input, the field to search on. This is used for generate a simple input'
     },
     defaultOperator: {
       type: String,
@@ -170,10 +180,31 @@ export default {
     columns: {
       type: Array,
       note: "In case of type: filter || input, the list of the model's columns" // eslint-disable-line
+    },
+    dropdownItemId: {
+      type: String,
+      note: 'In case of type: filter || input, the defaultOperator to display',
+      default: 'id'
+    },
+    dropdownItemLabel: {
+      type: String,
+      note: 'In case of type: filter || input, the defaultOperator to display',
+      default: 'title'
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
+      note: 'Should be we show the label of the filter or not'
+    },
+    showOperator: {
+      type: Boolean,
+      default: true,
+      note: 'Should be we show the operator of the filter or not'
     }
   },
   data: () => ({
-    state: {}
+    state: {},
+    isDropdownOpened: false
   }),
   watch: {},
   methods: {
@@ -196,6 +227,14 @@ export default {
         return field;
       }
       return '';
+    },
+
+    toggleDropdown(value) {
+      if (value !== undefined) {
+        this.isDropdownOpened = value;
+      } else {
+        this.isDropdownOpened = !this.isDropdownOpened;
+      }
     }
   },
   mounted() {

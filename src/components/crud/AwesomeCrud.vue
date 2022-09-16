@@ -70,36 +70,37 @@
             @updateAutoRefresh="updateAutoRefresh"
             @data-changed="onDataChanged"
           >
-            <template slot="table-header-left"> </template>
+            <template slot="table-header-left"><slot name="top-left-buttons"></slot></template>
             <template slot="table-header-right">
               <div class="text-right">
-                <slot name="top-right-buttons">
-                  <ListingModeSelector
-                    v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
-                    v-model="listingDisplayMode"
-                    :enabled-modes="enabledListingModes"
+                <slot name="top-right-buttons"></slot>
+                <ListingModeSelector
+                  v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
+                  v-model="listingDisplayMode"
+                  :enabled-modes="enabledListingModes"
+                />
+                <template v-if="_customTopRightActions">
+                  <AwesomeActionList
+                    class="d-inline-flex"
+                    :actions="_customTopRightActions"
+                    :parentDisplayMode="displayMode"
+                    location="topright"
+                    :columns="allColumnsComputed"
+                    :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
+                    @customAction="onCustomAction"
                   />
-                  <template v-if="_customTopRightActions">
-                    <AwesomeActionList
-                      :actions="_customTopRightActions"
-                      :parentDisplayMode="displayMode"
-                      location="topright"
-                      :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
-                      @customAction="onCustomAction"
-                    />
-                  </template>
-                  <button
-                    v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
-                    :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
-                    :disabled="!canShowCreateButton"
-                    class="btn btn-sm btn-outline-primary aw-button-add"
-                    @click.prevent="goToCreatePage()"
-                    type="button"
-                  >
-                    <i class="fa fa-plus text-primary" />
-                    {{ $t('AwesomeCrud.labels.createNew') }}
-                  </button>
-                </slot>
+                </template>
+                <button
+                  v-if="shouldShowCreateButtonCpt || !_customTopRightActions || !_customTopRightActions.length"
+                  :class="shouldShowCreateButtonCpt ? 'visible' : 'invisible'"
+                  :disabled="!canShowCreateButton"
+                  class="btn btn-sm btn-outline-primary aw-button-add"
+                  @click.prevent="goToCreatePage()"
+                  type="button"
+                >
+                  <i class="fa fa-plus text-primary" />
+                  {{ $t('AwesomeCrud.labels.createNew') }}
+                </button>
               </div>
             </template>
             <template slot="table-top-actions">
@@ -108,6 +109,7 @@
                   :actions="_customTitleBarActions"
                   :parentDisplayMode="displayMode"
                   location="topright"
+                  :columns="allColumnsComputed"
                   :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
                   @customAction="onCustomAction"
                 />
@@ -197,6 +199,7 @@
                 <AwesomeActionList
                   :actions="_customTitleBarActions"
                   location="topright"
+                  :columns="allColumnsComputed"
                   :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
                   @customAction="onCustomAction"
                 />
@@ -204,6 +207,7 @@
             </template>
             <template slot="list-header-left"> </template>
             <template slot="list-header-right">
+              <slot name="top-right-buttons"></slot>
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
@@ -213,6 +217,7 @@
                 <AwesomeActionList
                   :actions="_customTopRightActions"
                   location="topright"
+                  :columns="allColumnsComputed"
                   :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
                   @customAction="onCustomAction"
                 />
@@ -267,8 +272,11 @@
             @afterRefresh="afterRefresh"
             @after-refresh="after_refresh"
           >
-            <template slot="kanban-header-left"> </template>
+            <template slot="kanban-header-left">
+              <slot name="top-left-buttons"></slot>
+            </template>
             <template slot="kanban-header-right">
+              <slot name="top-right-buttons"></slot>
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
@@ -277,6 +285,7 @@
               <AwesomeActionList
                 :actions="_customTopRightActions"
                 location="topright"
+                :columns="allColumnsComputed"
                 :use-dropdown="_customTopRightActions && _customTopRightActions.length > 2"
                 @customAction="onCustomAction"
               />
@@ -292,19 +301,20 @@
                 {{ $t('AwesomeCrud.labels.createNew') }}
               </button>
             </template>
-            <template slot="top-actions">
-              <template v-if="_customTitleBarActions">
-                <AwesomeActionList
-                  :actions="_customTitleBarActions"
-                  location="topright"
-                  :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
-                  @customAction="onCustomAction"
-                />
+            <slot name="top-actions2">
+              <template slot="top-actions">
+                <template v-if="_customTitleBarActions">
+                  <AwesomeActionList
+                    :actions="_customTitleBarActions"
+                    location="topright"
+                    :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
+                    @customAction="onCustomAction"
+                  />
+                </template>
               </template>
-            </template>
+            </slot>
           </AwesomeKanban>
         </div>
-
         <div
           class="awesomecrud-detail-section  p-0"
           :class="{
