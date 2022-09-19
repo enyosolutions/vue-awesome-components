@@ -17,6 +17,7 @@
     <div class="card aw-table-card aw-table">
       <div
         class="card-header"
+        v-if="showHeader"
         :class="
           'aw-table-header ' + (optionsComputed.headerStyle ? 'colored-header bg-' + optionsComputed.headerStyle : '')
         "
@@ -544,6 +545,10 @@ export default {
       default: true,
       type: Boolean,
       description: 'Wether the table can be collapsed using the minus button at the topRight corner.'
+    },
+    showHeader: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

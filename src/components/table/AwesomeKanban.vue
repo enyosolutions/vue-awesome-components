@@ -18,7 +18,7 @@
 
     <div class="card aw-kanban-card">
       <div class="d-block">
-        <div class="card-header">
+        <div class="card-header aw-kanban-header">
           <ProgressBar v-if="isRefreshing" />
           <h3 class="text-left aw-kanban-title">
             <slot name="kanban-title"
@@ -54,33 +54,33 @@
                 </button>
               </div>
             </div>
-            <awesome-filter
-              v-if="displayAwFilter"
-              edit-filters
-              id="advancedFilterComponentDisplay"
-              :fields="_filterableColumns"
-              @update-filter="advancedFiltering"
-              :advanced-filters="advancedFilters"
-              class="p-0"
-            />
-            <awesome-filter
-              display-filters
-              id="advancedFilterComponent"
-              :fields="_filterableColumns"
-              @update-filter="advancedFiltering"
-              :advanced-filters="advancedFilters"
-            />
-
-            <div class="col-sm-12 offset-md-6 col-md-6 p-0">
-              <input
-                v-if="actions.search"
-                type="text"
-                v-model="search"
-                class="form-control"
-                :placeholder="$t('AwesomeTable.searchInput')"
-              />
-            </div>
           </h3>
+          <awesome-filter
+            v-if="displayAwFilter"
+            edit-filters
+            id="advancedFilterComponentDisplay"
+            :fields="_filterableColumns"
+            @update-filter="advancedFiltering"
+            :advanced-filters="advancedFilters"
+            class="p-0"
+          />
+          <awesome-filter
+            display-filters
+            id="advancedFilterComponent"
+            :fields="_filterableColumns"
+            @update-filter="advancedFiltering"
+            :advanced-filters="advancedFilters"
+          />
+
+          <div class="col-sm-12 offset-md-6 col-md-6 p-0">
+            <input
+              v-if="actions.search"
+              type="text"
+              v-model="search"
+              class="form-control"
+              :placeholder="$t('AwesomeTable.searchInput')"
+            />
+          </div>
         </div>
       </div>
       <div class="card-body">
