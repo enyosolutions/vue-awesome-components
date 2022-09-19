@@ -90,10 +90,13 @@
               <p class="card-text" v-if="getItemProperty(data, descriptionField)">
                 {{ getItemProperty(data, descriptionField) }}
               </p>
-              <div v-if="getLabelsProperty(data, labelsField)" class="pull-right">
-                <small v-for="label in getItemProperty(data, labelsField)" :key="label" class="badge badge-primary">{{
-                  label
-                }}</small>
+              <div v-if="getLabelsProperty(data, labelsField)" class="pull-right tags-field">
+                <small
+                  v-for="label in getItemProperty(data, labelsField)"
+                  :key="label"
+                  class="badge badge-primary kanban-label"
+                  >{{ label }}</small
+                >
               </div>
 
               <template v-if="columns && columns.length && (!hasFormattingData || displayColumnsInCards)">
@@ -282,6 +285,7 @@ export default {
     toggleActionDropdown() {
       this.showActionDropdown = !this.showActionDropdown;
     },
+
     getLabelsProperty(data, labelsField) {
       const item = this.getItemProperty(data, labelsField);
       if (Array.isArray(item)) {
@@ -368,6 +372,11 @@ export default {
           overflow: hidden;
           white-space: initial;
           line-height: 1;
+        }
+
+        .tags-field {
+          width: 100%;
+          overflow: hidden;
         }
       }
 
