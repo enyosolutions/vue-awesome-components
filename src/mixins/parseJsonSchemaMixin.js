@@ -283,7 +283,6 @@ export default {
             };
           }
 
-
           if (field.type === 'array') {
             field.itemsSchema = prop.items;
           }
@@ -293,10 +292,10 @@ export default {
             fieldOptions.timePicker = false;
             fieldOptions.datePicker = true;
           }
+          // if field type is time then use native picker.
           if (field.type === 'time') {
-            field.type = 'dateTime';
-            fieldOptions.timePicker = true;
-            fieldOptions.datePicker = false;
+            field.type = 'input';
+            fieldOptions.inputType = 'time';
           }
           if (field.type === 'datetime') {
             field.type = 'dateTime';
