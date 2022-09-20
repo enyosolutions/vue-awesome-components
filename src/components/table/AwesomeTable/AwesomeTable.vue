@@ -23,157 +23,174 @@
         "
       >
         <ProgressBar v-if="isRefreshing" />
-        <h3 class="card-title aw-table-title text-left">
-          <slot name="table-title"
-            ><template v-if="_tableTitle">
-              {{ _tableTitle }} <label for="" class="badge badge-primary p-1">{{ totalCount }}</label>
-            </template></slot
-          >
-          <auto-refresh-button
-            v-if="_actions && _actions.refresh"
-            v-model="isRefreshing"
-            @refresh="getItems({ useSkeleton: true })"
-            :auto-refresh="autoRefresh"
-            :auto-refresh-interval="autoRefreshInterval"
-          />
-          <div class="aw-table-top-actions float-right m-0 p-0">
-            <slot name="table-top-actions" />
-            <popper
-              trigger="clickToOpen"
-              :options="{
-                placement: 'top'
-              }"
-              ref="filterPopover"
-              v-if="canHideColumns"
-            >
-              <button
-                slot="reference"
-                type="button"
-                class="btn btn-sm btn-simple dropdown-toggle"
-                aria-haspopup="true"
-                aria-expanded="false"
+        <div class="row">
+          <div class="col-12 col-md-8">
+            <h3 class="card-title aw-table-title text-left">
+              <slot name="table-title"
+                ><template v-if="_tableTitle">
+                  {{ _tableTitle }} <label for="" class="badge badge-primary p-1">{{ totalCount }}</label>
+                </template></slot
               >
-                {{ $t('AwesomeTable.columns') }}
-              </button>
-              <div class="popper card mt-0" style="z-index: 1;">
-                <button
-                  v-for="(col, index) in formattedColumns"
-                  :key="index"
-                  class="dropdown-item col"
-                  type="button"
-                  href="#"
-                  :class="{
-                    'text-light bg-primary': columnsState[col.field],
-                    'd-none': col.field === '__ACTIONS'
+              <auto-refresh-button
+                v-if="_actions && _actions.refresh"
+                v-model="isRefreshing"
+                @refresh="getItems({ useSkeleton: true })"
+                :auto-refresh="autoRefresh"
+                :auto-refresh-interval="autoRefreshInterval"
+              />
+              <div class="aw-table-top-actions float-right m-0 p-0">
+                <slot name="table-top-actions" />
+                <popper
+                  trigger="clickToOpen"
+                  :options="{
+                    placement: 'top'
                   }"
-                  @click="toggleColumn(col.field)"
+                  ref="filterPopover"
+                  v-if="canHideColumns"
                 >
-                  {{ col.label }}
-                </button>
-              </div>
-            </popper>
+                  <button
+                    slot="reference"
+                    type="button"
+                    class="btn btn-sm btn-simple dropdown-toggle"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    {{ $t('AwesomeTable.columns') }}
+                  </button>
+                  <div class="popper card mt-0" style="z-index: 1;">
+                    <button
+                      v-for="(col, index) in formattedColumns"
+                      :key="index"
+                      class="dropdown-item col"
+                      type="button"
+                      href="#"
+                      :class="{
+                        'text-light bg-primary': columnsState[col.field],
+                        'd-none': col.field === '__ACTIONS'
+                      }"
+                      @click="toggleColumn(col.field)"
+                    >
+                      {{ col.label }}
+                    </button>
+                  </div>
+                </popper>
 
-            <button
-              slot="reference"
-              type="button"
-              class="btn btn-sm btn-simple mt-0"
-              :class="{ 'btn-primary': advancedFiltersCount || displayAwFilter, 'btn-default': !advancedFiltersCount }"
-              aria-haspopup="true"
-              aria-expanded="false"
-              id="advancedFilterButton"
-              @click="toggleAdvancedFilters"
-              v-if="_actions.filter && _actions.advancedFiltering"
-            >
-              <i class="fa fa-filter" />
-              {{ $t('AwesomeTable.buttons.filters') }}
-              {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-            </button>
+                <popper
+                  trigger="clickToOpen"
+                  :options="{
+                    placement: 'bottom',
+                    modifiers: { offset: { offset: '0,10px' } }
+                  }"
+                  v-if="
+                    _actions &&
+                      (_actions.export ||
+                        _actions.exportLocal ||
+                        _actions.import ||
+                        _actions.columnsFilters ||
+                        _actions.dropdownActions)
+                  "
+                >
+                  <button
+                    slot="reference"
+                    type="button"
+                    class="btn btn-sm btn-simple dropdown-toggle"
+                    id="configurationButton"
+                  >
+                    <i class="fa fa-cog" />
+                    {{ $t('AwesomeTable.configuration') }}
+                  </button>
 
-            <popper
-              trigger="clickToOpen"
-              :options="{
-                placement: 'bottom',
-                modifiers: { offset: { offset: '0,10px' } }
-              }"
-              v-if="
-                _actions &&
-                  (_actions.export ||
-                    _actions.exportLocal ||
-                    _actions.import ||
-                    _actions.columnsFilters ||
-                    _actions.dropdownActions)
-              "
-            >
-              <button
-                slot="reference"
-                type="button"
-                class="btn btn-sm btn-simple dropdown-toggle"
-                id="configurationButton"
-              >
-                <i class="fa fa-cog" />
-                {{ $t('AwesomeTable.configuration') }}
-              </button>
+                  <div class="popper card mt-0" style="z-index: 1;">
+                    <slot name="table-top-more-actions" />
+                    <button
+                      v-if="_actions.columnsFilters"
+                      type="button"
+                      class="btn btn-sm btn-simple btn-main-style"
+                      :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
+                      @click="toggleFilter()"
+                    >
+                      <i class="fa fa-filter" />
+                      {{
+                        !columnsFilterState
+                          ? $t('AwesomeTable.buttons.columnsFilters.activate')
+                          : $t('AwesomeTable.buttons.columnsFilters.deactivate')
+                      }}
+                    </button>
+                    <button
+                      v-if="_actions && _actions.export"
+                      type="button"
+                      class="btn btn-sm btn-simple text-success btn-main-style btn-block"
+                      @click="exportCallBack"
+                    >
+                      <i class="fa fa-file-excel" />
+                      {{ $t('AwesomeTable.buttons.excel') }}
+                    </button>
 
-              <div class="popper card mt-0" style="z-index: 1;">
-                <slot name="table-top-more-actions" />
+                    <button
+                      v-if="_actions && _actions.exportLocal"
+                      type="button"
+                      class="btn btn-sm btn-simple text-success btn-main-style btn-block"
+                      @click="exportCurrentArrayToExcel"
+                    >
+                      <i class="fa fa-file-excel" />
+                      {{ $t('AwesomeTable.buttons.excel-currentpage') }}
+                    </button>
+                    <button
+                      v-if="isSaveStateEnabledCpt"
+                      type="button"
+                      class="btn btn-sm btn-simple text-info btn-main-style btn-block"
+                      @click="clearComponentState"
+                    >
+                      <i class="fa fa-trash" />
+                      {{ $t('AwesomeTable.buttons.clear-state') }}
+                    </button>
+                  </div>
+                </popper>
+
                 <button
-                  v-if="_actions.columnsFilters"
+                  slot="reference"
                   type="button"
-                  class="btn btn-sm btn-simple btn-main-style"
-                  :class="{ 'btn-primary': columnsFilterState, 'btn-danger': !columnsFilterState }"
-                  @click="toggleFilter()"
+                  class="btn btn-sm btn-simple mt-0"
+                  :class="{
+                    'btn-primary': advancedFiltersCount || displayAwFilter,
+                    'btn-default': !advancedFiltersCount
+                  }"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  id="advancedFilterButton"
+                  @click="toggleAdvancedFilters"
+                  v-if="_actions.filter && _actions.advancedFiltering"
                 >
                   <i class="fa fa-filter" />
-                  {{
-                    !columnsFilterState
-                      ? $t('AwesomeTable.buttons.columnsFilters.activate')
-                      : $t('AwesomeTable.buttons.columnsFilters.deactivate')
-                  }}
-                </button>
-                <button
-                  v-if="_actions && _actions.export"
-                  type="button"
-                  class="btn btn-sm btn-simple text-success btn-main-style btn-block"
-                  @click="exportCallBack"
-                >
-                  <i class="fa fa-file-excel" />
-                  {{ $t('AwesomeTable.buttons.excel') }}
-                </button>
-
-                <button
-                  v-if="_actions && _actions.exportLocal"
-                  type="button"
-                  class="btn btn-sm btn-simple text-success btn-main-style btn-block"
-                  @click="exportCurrentArrayToExcel"
-                >
-                  <i class="fa fa-file-excel" />
-                  {{ $t('AwesomeTable.buttons.excel-currentpage') }}
-                </button>
-                <button
-                  v-if="isSaveStateEnabledCpt"
-                  type="button"
-                  class="btn btn-sm btn-simple text-info btn-main-style btn-block"
-                  @click="clearComponentState"
-                >
-                  <i class="fa fa-trash" />
-                  {{ $t('AwesomeTable.buttons.clear-state') }}
+                  {{ $t('AwesomeTable.buttons.filters') }}
+                  {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
                 </button>
               </div>
-            </popper>
+            </h3>
+            <p class="card-category">
+              <slot name="table-subtitle" />
+            </p>
           </div>
-        </h3>
-        <p class="card-category">
-          <slot name="table-subtitle" />
-        </p>
-        <button
-          v-if="collapsible"
-          class="btn btn-sm btn-i"
-          data-toggle="collapse"
-          :data-target="'#awTable-' + this._uid || this.uuid"
-          style="position: absolute; top: 0; right: 0; padding: 0;"
-        >
-          <i class="fa fa-minus"></i>
-        </button>
+          <div class="col-12 col-md-4">
+            <input
+              v-if="actions.search"
+              type="text"
+              v-model="searchInput"
+              class="form-control"
+              :placeholder="$t('AwesomeTable.searchInput')"
+            />
+          </div>
+
+          <button
+            v-if="collapsible"
+            class="btn btn-sm btn-i"
+            data-toggle="collapse"
+            :data-target="'#awTable-' + this._uid || this.uuid"
+            style="position: absolute; top: 0; right: 0; padding: 0;"
+          >
+            <i class="fa fa-minus"></i>
+          </button>
+        </div>
       </div>
       <div
         class="card-body aw-table-card-body collapse show"
@@ -215,7 +232,8 @@
             }"
             :search-options="{
               enabled: _actions.search,
-              placeholder: this.$t('AwesomeTable.searchInput')
+              placeholder: this.$t('AwesomeTable.searchInput'),
+              externalQuery: searchInput
             }"
             :pagination-options="{
               enabled: _actions ? _actions.pagination : true,
@@ -590,7 +608,8 @@ export default {
       selectedRows: [],
       displayLabelCache: {},
       clickTimeout: null,
-      displayAwFilter: false
+      displayAwFilter: false,
+      searchInput: ''
     };
   },
   computed: {

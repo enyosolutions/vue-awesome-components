@@ -19,67 +19,74 @@
     <div class="card aw-kanban-card">
       <div class="d-block">
         <div class="card-header aw-kanban-header">
-          <ProgressBar v-if="isRefreshing" />
-          <h3 class="text-left aw-kanban-title">
-            <slot name="kanban-title"
-              ><template v-if="titleComputed"
-                >{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template
-              ></slot
-            >
-            <auto-refresh-button
-              v-if="actions && actions.refresh"
-              v-model="isRefreshing"
-              @refresh="getItems({ useSkeleton: true })"
-              :auto-refresh="autoRefresh"
-              :auto-refresh-interval="autoRefreshInterval"
-            />
+          <div class="row">
+            <ProgressBar v-if="isRefreshing" />
 
-            <div class="btn-group btn-group-sm float-right awesome-list-buttons">
-              <slot name="top-actions" class />
-              <div class="btn-group" role="group">
-                <button
-                  v-if="actions.filter && actions.advancedFiltering"
-                  slot="reference"
-                  type="button"
-                  class="btn btn-simple btn-sm p-0"
-                  :class="{
-                    'btn-primary': displayAwFilter || advancedFiltersCount,
-                    'btn-default': !advancedFiltersCount
-                  }"
-                  @click="displayAwFilter = !displayAwFilter"
+            <div class="col-12 col-md-8">
+              <h3 class="text-left aw-kanban-title">
+                <slot name="kanban-title"
+                  ><template v-if="titleComputed"
+                    >{{ titleComputed }}
+                    <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template
+                  ></slot
                 >
-                  <i class="fa fa-filter" />
-                  {{ $t('AwesomeTable.buttons.filters') }}
-                  {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-                </button>
-              </div>
-            </div>
-          </h3>
-          <awesome-filter
-            v-if="displayAwFilter"
-            edit-filters
-            id="advancedFilterComponentDisplay"
-            :fields="_filterableColumns"
-            @update-filter="advancedFiltering"
-            :advanced-filters="advancedFilters"
-            class="p-0"
-          />
-          <awesome-filter
-            display-filters
-            id="advancedFilterComponent"
-            :fields="_filterableColumns"
-            @update-filter="advancedFiltering"
-            :advanced-filters="advancedFilters"
-          />
+                <auto-refresh-button
+                  v-if="actions && actions.refresh"
+                  v-model="isRefreshing"
+                  @refresh="getItems({ useSkeleton: true })"
+                  :auto-refresh="autoRefresh"
+                  :auto-refresh-interval="autoRefreshInterval"
+                />
 
-          <div class="col-sm-12 offset-md-6 col-md-6 p-0">
-            <input
-              v-if="actions.search"
-              type="text"
-              v-model="search"
-              class="form-control"
-              :placeholder="$t('AwesomeTable.searchInput')"
-            />
+                <div class="btn-group btn-group-sm float-right awesome-list-buttons">
+                  <slot name="top-actions" class />
+                  <div class="btn-group" role="group">
+                    <button
+                      v-if="actions.filter && actions.advancedFiltering"
+                      slot="reference"
+                      type="button"
+                      class="btn btn-simple btn-sm"
+                      :class="{
+                        'btn-primary': displayAwFilter || advancedFiltersCount,
+                        'btn-default': !advancedFiltersCount
+                      }"
+                      @click="displayAwFilter = !displayAwFilter"
+                    >
+                      <i class="fa fa-filter" />
+                      {{ $t('AwesomeTable.buttons.filters') }}
+                      {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+                    </button>
+                  </div>
+                </div>
+              </h3>
+            </div>
+            <div class="col-12 col-md-4">
+              <input
+                v-if="actions.search"
+                type="text"
+                v-model="search"
+                class="form-control"
+                :placeholder="$t('AwesomeTable.searchInput')"
+              />
+            </div>
+            <div class="col-12">
+              <awesome-filter
+                v-if="displayAwFilter"
+                edit-filters
+                id="advancedFilterComponentDisplay"
+                :fields="_filterableColumns"
+                @update-filter="advancedFiltering"
+                :advanced-filters="advancedFilters"
+                class="p-0"
+              />
+              <awesome-filter
+                display-filters
+                id="advancedFilterComponent"
+                :fields="_filterableColumns"
+                @update-filter="advancedFiltering"
+                :advanced-filters="advancedFilters"
+              />
+            </div>
           </div>
         </div>
       </div>

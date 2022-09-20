@@ -234,6 +234,12 @@
                 {{ $t('AwesomeCrud.labels.createNew') }}
               </button>
             </template>
+            <template v-slot:list-items="{ items, itemsPerRow, columns }">
+              <slot name="list-items" :items="items" :itemsPerRow="itemsPerRow" :columns="columns"> </slot>
+            </template>
+            <template v-slot:list-item="{ item, itemsPerRow, index }">
+              <slot name="list-items" :item="item" :itemsPerRow="itemsPerRow" :index="index"> </slot>
+            </template>
           </AwesomeList>
           <AwesomeKanban
             v-if="

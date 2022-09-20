@@ -3,157 +3,150 @@
     <div class="float-left col-6 pl-0">
       <slot name="list-header-left"></slot>
       <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
-        <awesome-segments :field="segmentFieldDefinitionComputed"
-                      :apiRequestConfig="apiRequestConfig"
-              :apiResponseConfig="apiResponseConfig"
-              @change="onSegmentChange" />
+        <awesome-segments
+          :field="segmentFieldDefinitionComputed"
+          :apiRequestConfig="apiRequestConfig"
+          :apiResponseConfig="apiResponseConfig"
+          @change="onSegmentChange"
+        />
       </div>
     </div>
     <div class="float-right text-right col-6 pr-0">
       <slot name="list-header-right"></slot>
     </div>
-  <div class="card aw-list-card aw-list-component awesome-list">
-    <div
-    class="card-header"
-    v-if="showHeader"
-        :class="
-        'aw-list-header ' +
-          (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')
-      "
-    >
-     <ProgressBar v-if="isRefreshing"></ProgressBar>
-      <h3 class="mb-0 aw-list-title">
-        <slot name="list-title"><template v-if="titleComputed">{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template></slot>
-          <auto-refresh-button
-            v-if="actions && actions.refresh"
-            v-model="isRefreshing"
-            @refresh="getItems({ useSkeleton: true })"
-            :auto-refresh="autoRefresh"
-            :auto-refresh-interval="autoRefreshInterval"
-          />
-
-
-
-
-            <div class="btn-group float-right aw-list-buttons">
-            <slot name="top-actions" class/>
-
-            <div class="btn-group" role="group">
-              <button
-                v-if="actions.filter && actions.advancedFiltering"
-                  slot="reference"
-                  type="button"
-                  class="btn btn-simple btn-sm"
-                  :class="{ 'btn-primary': displayAwFilter || advancedFiltersCount, 'btn-default': !advancedFiltersCount }"
-                  @click="displayAwFilter = !displayAwFilter"
-              >
-                <i class="fa fa-filter"/>
-                {{ $t('AwesomeTable.buttons.filters') }}
-                {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-              </button>
-
-
-            <template v-if="actions && actions.changeItemsPerRow">
-              <button class="btn btn-sm btn-sm" @click="setListMode()"
-                      :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
-              >
-                <i :class="'fa fa-list'"/>
-
-              </button>
-              <button
-                  class="btn btn-sm"
-                  :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
-                  @click="setMediumGridMode()">
-                <i :class="'fa fa-th-large'"/>
-              </button>
-
-              <button
-                  class="btn btn-sm"
-                  :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
-                  @click="setGridMode()">
-                <i :class="'fa fa-th'"/>
-              </button>
-            </template>
-
-            <div class="btn-group" role="group">
-              <popper
-                trigger="clickToOpen"
-                :options="{
-              placement: 'bottom',
-              modifiers: { offset: { offset: '0,10px' } }
-            }"
-                ref="filterPopover"
-                v-if="actions && (actions.export || actions.import)"
-            >
-              <button
-                  slot="reference"
-                  type="button"
-                  class="btn btn-simple dropdown-toggle btn-sm"
-              >
-                {{ $t("AwesomeTable.more") }}
-              </button>
-
-              <div class="popper card mt-0" style="z-index: 1;">
-               <slot name="table-top-more-actions"/>
-                <button
-                    v-if="actions && actions.export"
-                    class="btn  btn-sm btn-success btn-simple btn-block"
-                    @click="exportCallBack"
-                >
-                  <i class="fa fa-file-excel"/>
-                  {{ $t("common.buttons.excel") }}
-                </button>
-
-                <button
-                    class="btn btn-sm  btn-default btn-simple btn-block"
-                    @click="exportCurrentArrayToExcel"
-                >
-                  <i class="fa fa-file-excel"/>
-                  {{ $t("common.buttons.excel-currentpage") }}
-                </button>
-              </div>
-            </popper>
-            </div>
-          </div>
-          </div>
-
-
-      </h3>
-
-      <p class="card-category">
-        <slot name="list-subtitle"/>
-      </p>
-      <div class="">
+    <div class="card aw-list-card aw-list-component awesome-list">
+      <div
+        class="card-header"
+        v-if="showHeader"
+        :class="'aw-list-header ' + (opts.headerStyle ? 'colored-header bg-' + opts.headerStyle : '')"
+      >
+        <ProgressBar v-if="isRefreshing"></ProgressBar>
         <div class="row">
-          <div class="col-12">
-               <awesome-filter
-               v-if="displayAwFilter"
-                    class="pl-0  "
-                    edit-filters
-                    id="advancedFilterComponentDisplay"
-                    :fields="_filterableColumns"
-                    @update-filter="advancedFiltering"
-                    :advanced-filters="advancedFilters"
-                />
-                <awesome-filter
-                v-if="actions.filter"
-                display-filters
-                :fields="_filterableColumns"
-                @update-filter="advancedFiltering"
-                :advanced-filters="advancedFilters"
-            />
+          <div class="col-12 col-md-8">
+            <h3 class="mb-0 aw-list-title">
+              <slot name="list-title"
+                ><template v-if="titleComputed"
+                  >{{ titleComputed }} <span class="badge badge-primary d-inline p-1">{{ totalCount }}</span></template
+                ></slot
+              >
+              <auto-refresh-button
+                v-if="actions && actions.refresh"
+                v-model="isRefreshing"
+                @refresh="getItems({ useSkeleton: true })"
+                :auto-refresh="autoRefresh"
+                :auto-refresh-interval="autoRefreshInterval"
+              />
+              <template v-if="actions && actions.changeItemsPerRow">
+                <div class="btn-group ml-3" role="group">
+                  <button
+                    class="btn btn-sm btn-sm"
+                    @click="setListMode()"
+                    :class="itemsPerRow === 1 ? 'btn-primary' : 'btn-light'"
+                  >
+                    <i :class="'fa fa-list'" />
+                  </button>
+                  <button
+                    class="btn btn-sm"
+                    :class="itemsPerRow === 2 ? 'btn-primary' : 'btn-light'"
+                    @click="setMediumGridMode()"
+                  >
+                    <i :class="'fa fa-th-large'" />
+                  </button>
+
+                  <button
+                    class="btn btn-sm"
+                    :class="itemsPerRow === 3 ? 'btn-primary' : 'btn-light'"
+                    @click="setGridMode()"
+                  >
+                    <i :class="'fa fa-th'" />
+                  </button>
+                </div>
+              </template>
+
+              <div class="btn-group float-right aw-list-buttons">
+                <slot name="top-actions" class />
+
+                <div class="btn-group" role="group">
+                  <popper
+                    trigger="clickToOpen"
+                    :options="{
+                      placement: 'bottom',
+                      modifiers: { offset: { offset: '0,10px' } }
+                    }"
+                    ref="filterPopover"
+                    v-if="actions && (actions.export || actions.import)"
+                  >
+                    <button slot="reference" type="button" class="btn btn-simple dropdown-toggle btn-sm">
+                      {{ $t('AwesomeTable.more') }}
+                    </button>
+
+                    <div class="popper card mt-0" style="z-index: 1;">
+                      <slot name="table-top-more-actions" />
+                      <button
+                        v-if="actions && actions.export"
+                        class="btn  btn-sm btn-success btn-simple btn-block"
+                        @click="exportCallBack"
+                      >
+                        <i class="fa fa-file-excel" />
+                        {{ $t('common.buttons.excel') }}
+                      </button>
+
+                      <button class="btn btn-sm  btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel">
+                        <i class="fa fa-file-excel" />
+                        {{ $t('common.buttons.excel-currentpage') }}
+                      </button>
+                    </div>
+                  </popper>
+
+                  <button
+                    v-if="actions.filter && actions.advancedFiltering"
+                    slot="reference"
+                    type="button"
+                    class="btn btn-simple btn-sm"
+                    :class="{
+                      'btn-primary': displayAwFilter || advancedFiltersCount,
+                      'btn-default': !advancedFiltersCount
+                    }"
+                    @click="displayAwFilter = !displayAwFilter"
+                  >
+                    <i class="fa fa-filter" />
+                    {{ $t('AwesomeTable.buttons.filters') }}
+                    {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+                  </button>
+                </div>
+              </div>
+            </h3>
+            <p class="card-category">
+              <slot name="list-subtitle" />
+            </p>
           </div>
-          <div class="col-sm-12 offset-md-6 col-md-6">
-            <input  v-if="actions.search" type="text" v-model="search" placeholder="Rechercher" class="form-control">
+          <div class="col-12 col-md-4">
+            <input v-if="actions.search" type="text" v-model="search" placeholder="Rechercher" class="form-control" />
+          </div>
+          <div class="col-12">
+            <awesome-filter
+              v-if="displayAwFilter"
+              class="pl-0  "
+              edit-filters
+              id="advancedFilterComponentDisplay"
+              :fields="_filterableColumns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+            />
+            <awesome-filter
+              v-if="actions.filter"
+              display-filters
+              :fields="_filterableColumns"
+              @update-filter="advancedFiltering"
+              :advanced-filters="advancedFilters"
+            />
           </div>
         </div>
       </div>
-    </div>
-    <div class="card-body">
+      <div class="card-body">
         <slot name="list-empty-state" :isRefreshing="isRefreshing" :items="_paginatedItems">
           <template v-if="!_paginatedItems || !_paginatedItems.length">
-            <div
-            class="text-center">
+            <div class="text-center">
               <i v-if="isRefreshing" class="fa fa-spinner fa-spin fa-3x"></i>
               <template v-else>
                 {{ $t('AwesomeTable.empty') }}
@@ -166,105 +159,108 @@
             </div>
           </template>
         </slot>
-      <slot name="list-items"
-       :items="_paginatedItems" itemsPerRow:="itemsPerRow"
-       :columns="columns"
-      >
-        <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
-          <template v-for="(item, index) in _paginatedItems">
-            <div
+        <slot name="list-items" :items="_paginatedItems" :itemsPerRow="itemsPerRow" :columns="columns">
+          <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+            <template v-for="(item, index) in _paginatedItems">
+              <div
                 class="pointer d-flex"
                 :key="index"
                 :class="itemWrapperClasses"
                 @click="handleItemClick($event, item)"
-            >
-              <slot name="list-item" :item="item" itemsPerRow:="itemsPerRow" :index="index">
-                <div
+              >
+                <slot name="list-item" :item="item" :itemsPerRow="itemsPerRow" :index="index">
+                  <div
                     class="card mb-3 aw-list-item flex-fill"
                     :class="itemClasses"
-                    :style="{'flex-direction': itemsPerRow < 2 ? 'row' : 'column',
-                  'height': _itemHeight
-                }"
-                >
-                  <img
+                    :style="{ 'flex-direction': itemsPerRow < 2 ? 'row' : 'column', height: _itemHeight }"
+                  >
+                    <img
                       class="card-img-top"
                       v-if="imageField"
                       :src="getItemProperty(item, imageField)"
                       :alt="getItemProperty(item, titleField)"
                       :class="imageClasses"
                       :style="imageStyles"
-                  />
-                  <div class="card-body">
-                    <h4 class="card-title aw-list-item-title" style=""
+                    />
+                    <div class="card-body">
+                      <h4
+                        class="card-title aw-list-item-title"
+                        style=""
+                        v-if="getItemProperty(item, titleField)"
+                        v-html="getItemProperty(item, titleField)"
+                      ></h4>
+                      <h6
+                        class="card-title aw-list-item-subtitle"
+                        v-if="getItemProperty(item, subtitleField)"
+                        v-html="getItemProperty(item, subtitleField)"
+                      ></h6>
 
-                    v-if="getItemProperty(item, titleField)"
-                    v-html="getItemProperty(item, titleField)"
-                    ></h4>
-                    <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)"
-                    v-html="getItemProperty(item, subtitleField)"
-                    ></h6>
+                      <h3
+                        class="card-title aw-list-item-title"
+                        style=""
+                        v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]"
+                      >
+                        {{ item[_modelDisplayField] }}
+                      </h3>
 
-                    <h3 class="card-title aw-list-item-title" style=""
-                        v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]">
-                      {{ item[_modelDisplayField] }}</h3>
-
-                    <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
-                      <AwesomeDisplay
+                      <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
+                        <AwesomeDisplay
                           v-bind="getField(descriptionField)"
                           :value="getItemProperty(item, descriptionField)"
-                      >
-                      </AwesomeDisplay>
-                    </p>
-                    <template v-if="columns && columns.length && !_useClassicLayout">
-                      <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                        <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small><br/>
-                        <AwesomeDisplay
+                        >
+                        </AwesomeDisplay>
+                      </p>
+                      <template v-if="columns && columns.length && !_useClassicLayout">
+                        <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
+                          <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small
+                          ><br />
+                          <AwesomeDisplay
                             v-bind="getField(key)"
                             :value="itemData"
                             :relation="getField(key).relation"
                             :relation-label="getField(key).relationLabel"
                             :relation-url="getField(key).relationUrl"
                             :relation-key="getField(key).relationKey"
-                        >
-                        </AwesomeDisplay>
-                      </div>
-                    </template>
-                    <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                      <button
+                          >
+                          </AwesomeDisplay>
+                        </div>
+                      </template>
+                      <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
+                        <button
                           @click="handleItemButtonClick($event, item)"
                           class="btn btn-primary btn-sm "
-                          :class="itemsPerRow > 1 ? 'btn-block': ''"
-                      >
-                        {{ $t("AwesomeList.buttons.itemAction") }}
-                      </button>
+                          :class="itemsPerRow > 1 ? 'btn-block' : ''"
+                        >
+                          {{ $t('AwesomeList.buttons.itemAction') }}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </slot>
-            </div>
-          </template>
-        </div>
-      </slot>
-    <hr v-if="actions.pagination == undefined || actions.pagination"/>
-    <nav class="text-center" v-if="actions.pagination == undefined || actions.pagination">
-      <paginate
-          v-model="page"
-          :page-count="_pageCount"
-          :page-range="3"
-          :margin-pages="2"
-          :click-handler="onPaginationChange"
-          :prev-text="'<< '"
-          :next-text="' >>'"
-          :container-class="'pagination'"
-          :page-class="'page-item'"
-          :prev-class="'page-item'"
-          :page-link-class="'page-link'"
-          :prev-link-class="'page-link'"
-          :next-link-class="'page-link'"
-      ></paginate>
-    </nav>
+                </slot>
+              </div>
+            </template>
+          </div>
+        </slot>
+        <hr v-if="actions.pagination == undefined || actions.pagination" />
+        <nav class="text-center" v-if="actions.pagination == undefined || actions.pagination">
+          <paginate
+            v-model="page"
+            :page-count="_pageCount"
+            :page-range="3"
+            :margin-pages="2"
+            :click-handler="onPaginationChange"
+            :prev-text="'<< '"
+            :next-text="' >>'"
+            :container-class="'pagination'"
+            :page-class="'page-item'"
+            :prev-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-link-class="'page-link'"
+            :next-link-class="'page-link'"
+          ></paginate>
+        </nav>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 <script>
@@ -293,7 +289,7 @@ export default {
     AwesomeSegments,
     Paginate,
     popper: Popper,
-    ProgressBar,
+    ProgressBar
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin, templatingMixin],
   props: {
@@ -396,7 +392,8 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     }
   },
   data() {
@@ -521,9 +518,11 @@ export default {
       return this.model || this.getModelFromStore(this.identity);
     },
     _filterableColumns() {
-      return  this.columns.map((col) => {
+      return this.columns.map((col) => {
         if (col.filterOptions) {
-          col.filterOptions.enabled = (this.filterable === undefined || this.filterable) && (col.filterOptions.filterable === undefined || col.filterOptions.filterable);
+          col.filterOptions.enabled =
+            (this.filterable === undefined || this.filterable) &&
+            (col.filterOptions.filterable === undefined || col.filterOptions.filterable);
         }
         return col;
       });
