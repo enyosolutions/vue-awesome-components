@@ -16,9 +16,10 @@
         class="form-control input-group-sm"
         :placeholder="$t('AwesomeFilter.labels.filterValue')"
       />
+
       <!-- TYPE STRING/TEXT -->
       <input
-        v-if="
+        v-else-if="
           ((currentField.type === 'text' ||
             currentField.type === 'html' ||
             currentField.type === 'string' ||
@@ -49,7 +50,7 @@
       <!-- TYPE NUMBER BETWEEN/NOTBETWEEN -->
       <div
         class="form-element between"
-        v-if="
+        v-else-if="
           (currentField.type === 'number' || currentField.type === 'integer') &&
             (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
         "
@@ -63,7 +64,7 @@
         <input v-model="value.to" type="number" class="form-control" :placeholder="$t('AwesomeFilter.labels.to')" />
       </div>
       <!-- TYPE BOOLEAN -->
-      <div v-if="currentField.type === 'boolean'" class="form-element">
+      <div v-else-if="currentField.type === 'boolean'" class="form-element">
         <select v-model="value" class="form-control">
           <option value="true">true</option>
           <option value="false">false</option>
@@ -73,7 +74,7 @@
       <!-- TYPE DATETIME/DATE SIMPLE -->
       <div
         class="form-element"
-        v-if="
+        v-else-if="
           (currentField.type === 'datetime' || currentField.type === 'date') &&
             currentFilter.value !== '$notBetween' &&
             currentFilter.value !== '$between'
@@ -96,7 +97,7 @@
       <!-- TYPE DATETIME/DATE RANGE-->
       <div
         class="form-element"
-        v-if="
+        v-else-if="
           (currentField.type === 'datetime' || currentField.type === 'date') &&
             (currentFilter.value === '$notBetween' || currentFilter.value === '$between')
         "
@@ -111,7 +112,7 @@
       </div>
       <!-- ADD SELECT FOR RELATION / OBJECT -->
       <FieldVSelect
-        v-if="currentField.type === 'relation'"
+        v-else-if="currentField.type === 'relation'"
         class="form-control input-group-sm"
         :schema="{
           ...currentField,
@@ -127,10 +128,27 @@
       />
       <!-- ADD SELECT FOR object / array -->
       <input
-        v-if="currentField.type === 'object'"
+        v-else-if="currentField.type === 'object'"
         v-model.number="value"
         type="text"
         class="form-control input-group-sm"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
+      />
+      <!-- TYPE TIME -->
+      <input
+        v-else-if="currentField.type === 'time'"
+        v-model="value"
+        type="time"
+        class="form-control input-group-sm"
+        :placeholder="$t('AwesomeFilter.labels.filterValue')"
+      />
+      <!-- the rest -->
+      <input
+        v-if="isUnsupportedType"
+        v-model="value"
+        type="text"
+        class="form-control input-group-sm v-else"
+        :class="`field-type-${currentField.type}`"
         :placeholder="$t('AwesomeFilter.labels.filterValue')"
       />
     </div>
@@ -194,6 +212,14 @@ export default {
       return (
         this.currentField.enum ||
         (this.currentField.filterOptions && this.currentField.filterOptions.filterDropdownItems)
+      );
+    },
+    isUnsupportedType() {
+      return (
+        !this.currentField.type ||
+        ['string', 'number', 'integer', 'boolean', 'datetime', 'date', 'time', 'relation', 'object', 'text'].indexOf(
+          this.currentField.type
+        ) === -1
       );
     }
   },

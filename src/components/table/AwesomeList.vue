@@ -752,6 +752,7 @@ export default {
 
   .vgt-date-range {
     height: 32px;
+    width: 100%;
 
     .form-control {
       padding: 6px 12px;

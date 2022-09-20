@@ -179,6 +179,19 @@
               class="form-control"
               :placeholder="$t('AwesomeTable.searchInput')"
             />
+            <date-range-picker
+              v-if="actions.dateFilter"
+              class="form-group aw-filter-date-range"
+              :class="{ 'mt-1': actions.search }"
+              :placeholder="$t('AwesomeTable.daterange.start')"
+              :date-range="{
+                startDate: defaultStartDate,
+                endDate: defaultEndDate
+              }"
+              :locale-data="datePicker.locale"
+              :opens="'left'"
+              @update="onDateFilter"
+            />
           </div>
 
           <button
@@ -294,19 +307,7 @@
                 {{ $t('AwesomeTable.bulk.edit') }}
               </button>
             </div>
-            <div slot="table-actions" v-if="customTableTopActions.length || _actions.dateFilter">
-              <date-range-picker
-                v-if="_actions.dateFilter"
-                class="form-group vgt-date-range"
-                :placeholder="$t('AwesomeTable.daterange.start')"
-                :date-range="{
-                  startDate: defaultStartDate,
-                  endDate: defaultEndDate
-                }"
-                :locale-data="datePicker.locale"
-                :opens="'left'"
-                @update="onDateFilter"
-              />
+            <div slot="table-actions" v-if="customTableTopActions.length">
               <template v-if="customTableTopActions">
                 <AwesomeActionList
                   class="ml-1"
@@ -1086,8 +1087,9 @@ export default {
     max-width: 30vw;
   }
 
-  .vgt-date-range {
+  .aw-filter-date-range {
     height: 32px;
+    width: 100%;
 
     .form-control {
       padding: 6px 12px;

@@ -106,6 +106,7 @@ export default {
         '$isDefined',
         '$isNotDefined'
       ],
+      time: ['$eq', '$ne', '$gt', '$gte', '$lt', '$lte', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'],
       relation: ['$eq', '$ne', '$in', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined'], // temporary solution, soon we'll need to provide a relation picker.
       boolean: ['$eq', '$ne', '$isNull', '$isNotNull', '$isDefined', '$isNotDefined']
     }
