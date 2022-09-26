@@ -81,7 +81,7 @@
                     </button>
 
                     <div class="popper card mt-0" style="z-index: 1;">
-                      <slot name="table-top-more-actions" />
+                      <slot name="top-more-actions" />
                       <button
                         v-if="actions && actions.export"
                         class="btn  btn-sm btn-success btn-simple btn-block"
@@ -160,11 +160,21 @@
           </template>
         </slot>
         <slot name="list-items" :items="_paginatedItems" :itemsPerRow="itemsPerRow" :columns="columns">
-          <div class="list-responsive" :class="styles.listWrapperClasses" v-if="_paginatedItems">
+          <Draggable
+            v-if="_paginatedItems"
+            v-model="_paginatedItems"
+            ghost-class="moving-card"
+            group="awesomeList"
+            :delay="300"
+            :disabled="!_isDraggable"
+            :delay-on-touch-only="true"
+            class="draggable-list w-100 list-responsive"
+            :class="styles.listWrapperClasses"
+          >
             <template v-for="(item, index) in _paginatedItems">
               <div
-                class="pointer d-flex"
                 :key="index"
+                class="pointer d-flex"
                 :class="itemWrapperClasses"
                 @click="handleItemClick($event, item)"
               >
@@ -174,6 +184,7 @@
                     :class="itemClasses"
                     :style="{ 'flex-direction': itemsPerRow < 2 ? 'row' : 'column', height: _itemHeight }"
                   >
+                    <i class="draggable-icon fa fa-list"></i>
                     <img
                       class="card-img-top"
                       v-if="imageField"
@@ -239,7 +250,7 @@
                 </slot>
               </div>
             </template>
-          </div>
+          </Draggable>
         </slot>
         <hr v-if="actions.pagination == undefined || actions.pagination" />
         <nav class="text-center" v-if="actions.pagination == undefined || actions.pagination">
@@ -375,7 +386,8 @@ export default {
         itemButton: true,
         refresh: true,
         changeItemsPerRow: true,
-        pagination: true
+        pagination: true,
+        reorder: false
       })
     },
     defaultOptions: {
@@ -486,8 +498,11 @@ export default {
           : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
       },
       set(d) {
-        //eslint-disable-next-line
-        console.warn(d);
+        console.warn('trying to set the new order', d, this.data);
+        if (!this.search) {
+          this.data = d;
+          this.onListReordered(d);
+        }
       }
     },
 
@@ -526,6 +541,10 @@ export default {
         }
         return col;
       });
+    },
+
+    _isDraggable() {
+      return this.actions.reorder && !this.search;
     }
   },
   watch: {
@@ -642,6 +661,10 @@ export default {
         }
         return true;
       });
+    },
+
+    onListReordered(items) {
+      this.$emit('reorder', items);
     }
   }
 };
@@ -675,6 +698,12 @@ export default {
       overflow: hidden;
       cursor: pointer;
 
+      .draggable-icon {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: #ddd;
+      }
       .card-body {
         min-height: 50px;
       }

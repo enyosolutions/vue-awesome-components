@@ -601,7 +601,8 @@ export default {
             if (parsedState.columnsFilterState && this.saveColumnsState) {
               this.columnsFilterState = parsedState.columnsFilterState;
             }
-            if (parsedState.listingDisplayMode && this.listingDisplayMode) {
+            // restore listing stage only if the state is saved and is  known a
+            if (parsedState.listingDisplayMode && this.listingDisplayMode && this.enabledListingModes && this.enabledListingModes.includes(parsedState.listingDisplayMode)) {
               this.listingDisplayMode = parsedState.listingDisplayMode;
             }
             // @fixme

@@ -122,8 +122,10 @@
         }"
         :model="{}"
         :multiple="currentFilter && currentFilter.value === '$in'"
+        taggable
         :placeholder="$t('AwesomeFilter.labels.filterValue')"
         :url="currentField.relationUrl"
+        @itemSelected="onRelationValueChanged"
         v-model="value"
       />
       <!-- ADD SELECT FOR object / array -->
@@ -184,12 +186,17 @@ export default {
       type: [String, Object, Number, Array],
       required: true
     },
+    currentValueLabel: {
+      type: String,
+      required: false
+    },
     permanentInput: {
       type: Boolean
     }
   },
   data: () => ({
     value: '',
+    valueLabel: '',
     dateRangePicker: {
       startDate: dayjs(),
       endDate: dayjs().add(7, 'days'),
@@ -239,6 +246,19 @@ export default {
           to: value.endDate.toISOString().slice(0, 10)
         };
       }
+    },
+
+    onRelationValueChanged(value) {
+      if (this.currentField.relation && this.currentField.relationLabel) {
+        // @todo improve to user template tags also.
+        this.valueLabel = value[this.currentField.relationLabel];
+      }
+
+      if (this.valueLabel) {
+        this.$emit('update:current-value-label', this.valueLabel);
+        return;
+      }
+      // this.$emit('update:current-value-label', value);
     }
   },
   watch: {
@@ -297,10 +317,17 @@ export default {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
     min-width: 100px;
+    width: auto;
     &::-webkit-scrollbar {
       display: none;
     }
   }
+
+  .vs1__listbox {
+    min-width: 250px;
+    width: auto;
+  }
+
   .vs__dropdown-toggle-menu::-webkit-scrollbar {
     display: none;
   }

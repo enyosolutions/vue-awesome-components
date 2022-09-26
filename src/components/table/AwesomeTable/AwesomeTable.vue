@@ -59,7 +59,7 @@
                   </button>
                   <div class="popper card mt-0" style="z-index: 1;">
                     <button
-                      v-for="(col, index) in formattedColumns"
+                      v-for="(col, index) in sortedColumns"
                       :key="index"
                       class="dropdown-item col"
                       type="button"
@@ -820,6 +820,10 @@ export default {
         this.options &&
         (this.columnsFilterState !== null ? this.columnsFilterState : this.options.filterInitiallyOn)
       );
+    },
+
+    sortedColumns() {
+      return _.sortBy(this.formattedColumns, ['field', 'order']);
     }
   },
   watch: {
@@ -1077,8 +1081,7 @@ export default {
   .aw-display-image-img {
     max-height: 200px;
   }
-
-  .aw-table-checkbox {
+  od .aw-table-checkbox {
     height: 18px;
     width: 18px;
   }

@@ -14,9 +14,9 @@
         </div>
 
         <div
-          class="awesomecrud-list-table-section p-0"
+          class="awesomecrud-listing-section p-0"
           v-show="showItemsListSectionComputed"
-          :class="displaySideFormContent ? 'col-6' : 'col-12'"
+          :class="`aw-crud-listing-mode-${listingDisplayMode} ${displaySideFormContent ? 'col-6' : 'col-12'}`"
         >
           <!-- duplicate for when there is segment -->
           <AwesomeTable
@@ -193,6 +193,7 @@
             :useRouterMode="useRouterMode"
             v-bind="listOptions"
             @itemClicked="onListItemClicked"
+            @reorder="onListReordered"
           >
             <template slot="top-actions">
               <template v-if="_customTitleBarActions">
@@ -232,6 +233,32 @@
               >
                 <i class="fa fa-plus text-primary" />
                 {{ $t('AwesomeCrud.labels.createNew') }}
+              </button>
+            </template>
+            <template slot="top-more-actions">
+              <upload-button
+                v-if="_actions.import"
+                name="import"
+                :options="{
+                  upload: true,
+                  targetUrl: mergedOptions.uploadUrl || mergedOptions.importUrl,
+                  method: 'POST',
+                  headers: {},
+                  base64: false,
+                  label: $t('AwesomeCrud.buttons.import'),
+                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
+                }"
+                @uploaded="importResponse"
+                @upload-failed="importFailedResponse"
+              />
+              <button
+                v-if="_actions.import"
+                class="btn btn-sm text-info btn-link btn-alt-style btn-block"
+                type="button"
+                @click="exportTemplateCallBack"
+              >
+                <i class="fa fa-file-excel" />
+                {{ $t('AwesomeCrud.buttons.excel-template') }}
               </button>
             </template>
             <template v-slot:list-items="{ items, itemsPerRow, columns }">
@@ -785,7 +812,7 @@ export default {
       selectedItems: [],
       previousDisplayMode: '',
       listingDisplayMode: 'table',
-      displayMode: 'table',
+      displayMode: '',
       isRefreshing: false,
       tableNeedsRefresh: false,
       awesomeEditNeedsRefresh: false,
@@ -932,7 +959,11 @@ export default {
       if (!this.schemaComputed) {
         return [];
       }
-      return this.parseColumns(this.schemaComputed.properties, { includeHidden: true });
+      const columns = this.parseColumns(this.schemaComputed.properties, { includeHidden: true });
+      if (!columns) {
+        return [];
+      }
+      return _.sortBy(columns, ['field', 'order']);
     },
 
     tableColumnsComputed() {
@@ -1243,6 +1274,7 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
+
     if (
       this.enabledListingModes &&
       this.enabledListingModes.length &&
@@ -2013,7 +2045,6 @@ export default {
     },
 
     onRouteIdChanged(newVal, previousVal) {
-      // console.log('route id changed', newVal, previousVal);
       if (this.useRouterMode) {
         // in case we navigate for one detail page to another.
         if (newVal && previousVal && previousVal !== newVal) {
@@ -2069,9 +2100,18 @@ export default {
       }
     },
 
-    onDisplayModeChanged(mode) {
-      if (['table', 'list', 'kanban'].includes(mode)) {
-        this.listingDisplayMode = mode;
+    onDisplayModeChanged(mode, oldMode) {
+      if (mode !== oldMode) {
+        if (this.supportedListingDisplayModes.includes(mode)) {
+          if (this.enabledListingModes && !this.enabledListingModes.includes(mode)) {
+            if (this.enabledListingModes[0]) {
+              this.listingDisplayMode = this.enabledListingModes[0];
+            }
+            return;
+          }
+
+          this.listingDisplayMode = mode;
+        }
       }
     },
     onlistingDisplayModeChanged(mode, oldMode) {
@@ -2136,6 +2176,18 @@ export default {
 
     beforeCreate(...args) {
       this.$emit('beforeCreate', ...args);
+    },
+
+    async onListReordered(items) {
+      if (this.listOptions && this.listOptions.sortField && items) {
+        const promises = items.map((item, index) => {
+          const urlparts = this._url.split('?');
+          urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
+          return this.$awApi.put(urlparts.join('?'), { ...item, [this.listOptions.sortField]: index + 1 });
+        });
+        await Promise.all(promises);
+      }
+      this.$emit('reorder', items);
     }
   }
 };

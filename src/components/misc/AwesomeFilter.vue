@@ -29,6 +29,7 @@
           :current-field="currentField"
           :current-filter="currentOperator"
           :current-value.sync="currentValue"
+          :current-value-label.sync="currentValueLabel"
         />
         <div class="awesome-filter-add-block pt-1 ">
           <button
@@ -63,6 +64,7 @@
               :current-field="currentField"
               :current-filter="currentOperator"
               :current-value.sync="currentValue"
+              :current-value-label.sync="currentValueLabel"
               :permanent-input="permanentInput"
             />
           </div>
@@ -83,7 +85,19 @@
                 {{ value }}
               </span>
             </div>
-            <div v-else>{{ filter.value }}</div>
+            <div v-else>
+              <span v-if="filter.valueLabel"> {{ filter.valueLabel }}</span>
+              <span v-else-if="filter.field.type === 'relation'">
+                <AwesomeDisplay
+                  :field="filter.field.field"
+                  type="relation"
+                  v-bind="filter.field"
+                  :value="filter.value"
+                  :isClickable="false"
+                />
+              </span>
+              <span v-else>{{ filter.value }}</span>
+            </div>
             <button type="button" class="btn text-muted" @click.prevent="removeFilter(filter)">
               <i class="fa fa-times-circle"></i>
             </button>
@@ -96,6 +110,7 @@
 
 <script>
 import _ from 'lodash';
+import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator.vue';
 import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue.vue';
 import i18nMixin from '../../mixins/i18nMixin';
@@ -104,6 +119,7 @@ export default {
   name: 'AwesomeFilter',
   mixins: [i18nMixin],
   components: {
+    AwesomeDisplay,
     AwesomeFilterOperator,
     AwesomeFilterValue
   },
@@ -160,6 +176,7 @@ export default {
   data: () => ({
     currentField: {},
     currentValue: '',
+    currentValueLabel: '',
     currentOperator: {},
     selectedFilters: []
   }),
@@ -169,10 +186,12 @@ export default {
         ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentOperator.value) > -1
           ? true
           : this.currentValue;
+      alert('currentValueLabel ' + this.currentValueLabel);
       if (Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
           value,
+          valueLabel: this.currentValueLabel || '',
           filter: this.currentOperator
         };
         this.selectedFilters.push(filter);
@@ -180,6 +199,7 @@ export default {
         if (!this.permanentFilter && !this.permanentInput) {
           this.currentField = {};
           this.currentValue = '';
+          // this.currentValueLabel = '';
           this.currentOperator = { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' };
           this.$refs['filterField'].value = '';
         }
@@ -257,6 +277,8 @@ export default {
       if (this.permanentFilter || this.permanentInput) {
         this.addFilter();
       }
+    },
+    currentValueLabel(val) {
     }
   },
   mounted() {
