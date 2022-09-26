@@ -186,7 +186,6 @@ export default {
         ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentOperator.value) > -1
           ? true
           : this.currentValue;
-      alert('currentValueLabel ' + this.currentValueLabel);
       if (Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
@@ -278,8 +277,7 @@ export default {
         this.addFilter();
       }
     },
-    currentValueLabel(val) {
-    }
+    currentValueLabel(val) {}
   },
   mounted() {
     this.currentOperator = this.defaultOperator
