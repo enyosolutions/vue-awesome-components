@@ -498,7 +498,6 @@ export default {
           : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
       },
       set(d) {
-        console.warn('trying to set the new order', d, this.data);
         if (!this.search) {
           this.data = d;
           this.onListReordered(d);

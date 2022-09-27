@@ -107,9 +107,7 @@ export default {
       this.$awEventBus.$off(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
   },
   watch: {
-    relationUrl(newValue) {
-      console.warn('relationUrl', newValue);
-    }
+    relationUrl(newValue) {}
   },
   data() {
     return {

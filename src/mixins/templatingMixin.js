@@ -120,6 +120,7 @@ export default {
       if (!item) {
         return '';
       }
+      // @todo put some caching mecanism here
       if (path && path.indexOf('{{') > -1 && path.indexOf('}}') > -1) {
         let result = this.templateParseText(path, { ...item, currentItem: item });
         return result;

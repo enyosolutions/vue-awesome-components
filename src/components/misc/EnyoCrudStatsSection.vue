@@ -66,7 +66,6 @@ export default {
         this.$awApi
           .get(this.url, {})
           .then((res) => {
-            console.warn('data', res.data);
             if (res && res.data) {
               const data =
                 this.apiResponseConfig && this.apiResponseConfig.dataPath

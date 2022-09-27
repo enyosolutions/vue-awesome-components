@@ -226,15 +226,7 @@ export default {
         if (!this.componentProps[propName] && propInfo.default && propInfo.default !== 'undefined') {
           let propDefault = propInfo.default;
           if (['function'].indexOf(propInfo.type) === -1 && typeof propDefault === 'function') {
-            console.warn('[getDefaultProps] getting default value', propName, propDefault, propInfo.type);
             propDefault = propDefault();
-            console.warn(
-              '[getDefaultProps] after getting default value',
-              propName,
-              propDefault,
-              propInfo.type,
-              typeof prop
-            );
           }
           try {
             propDefault = JSON.parse(propDefault);

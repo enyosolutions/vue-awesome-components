@@ -446,7 +446,7 @@ export default {
       }
     },
 
-    pushChangesToRouter(options) {
+    pushChangesToRouter(options = {}) {
       this.saveComponentState();
       if (process.env.NODE_ENV === 'development') {
         console.warn('{ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }', {
