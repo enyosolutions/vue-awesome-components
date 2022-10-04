@@ -451,7 +451,7 @@ export default {
       if (this.fieldOptions.taggable) {
         return label || item;
       }
-      if (this.awComponentsConfig.hideIdsInSelect) {
+      if (this.awComponentsConfig.hideIdsInSelect || this.fieldOptions.hideIdsInSelect) {
         return `${label}`;
       }
       return `${label} [${item[this._trackBy]}]`;

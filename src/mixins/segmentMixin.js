@@ -13,7 +13,7 @@ export const segmentMixin = {
       if (typeof segment === 'string' && segment.indexOf('|') > -1) {
         return segment.split('|')[1];
       }
-      return _.startCase(segment.field || segment.name || _.isString(segment) ? segment : this.getSegmentKey(segment));
+      return _.startCase(segment.field || segment.name || (_.isString(segment) ? segment : this.getSegmentKey(segment)));
     },
 
     getSegmentKey(segment) {
