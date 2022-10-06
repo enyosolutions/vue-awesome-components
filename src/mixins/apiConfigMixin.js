@@ -127,6 +127,9 @@ export default {
     },
 
     _selectedItemUrl() {
+      if (!this.selectedItem) {
+        return null;
+      }
       let url;
       if (this._url.indexOf('?') > -1) {
         url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);

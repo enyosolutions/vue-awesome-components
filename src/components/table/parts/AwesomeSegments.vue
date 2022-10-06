@@ -40,8 +40,6 @@ export default {
       type: [Object, String],
       default: () => null
     },
-
-    title: { type: [String, Boolean], default: '' },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
 

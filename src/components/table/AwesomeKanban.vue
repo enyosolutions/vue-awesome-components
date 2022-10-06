@@ -467,11 +467,12 @@ export default {
         this.localLists = _.cloneDeep(list);
         //  }
       }
-      this.filterLists();
+      this.splitItemsInLists();
       this.orderCardInLists();
     },
 
-    filterLists() {
+    // split items in lists
+    splitItemsInLists() {
       if (this.splittingField && this.splittingValuesComputed && Array.isArray(this.splittingValuesComputed)) {
         this.splittingValuesComputed.forEach((filterValue) => {
           let id = filterValue,
@@ -486,7 +487,7 @@ export default {
               (this.segmentFieldDefinitionComputed.relation &&
                 filterValue[this.segmentFieldDefinitionComputed.relationLabel]) ||
               filterValue.label ||
-              filterValue;
+              id;
           }
           let content = [];
           if (this.data) {

@@ -70,15 +70,17 @@
             />
             <div class="card-body">
               <template v-if="usersField && getItemProperty(data, usersField)">
-                <div class="pull-right">
-                  <img
-                    v-for="(user, index) in getItemUsers(data, usersField)"
-                    :key="index"
-                    class="kanban-user-img"
-                    :alt="getItemProperty(user, userTitleField)"
-                    :title="getItemProperty(user, userTitleField)"
-                    :src="getItemProperty(user, userImageField) || (user && user.src) || user"
-                  />
+                <div class="pull-right kanban-card-users-avatars">
+                  <template v-for="(user, index) in getItemUsers(data, usersField)">
+                    <img
+                      v-if="getUserAvatar(user)"
+                      :key="index"
+                      class="kanban-user-img"
+                      :alt="getItemProperty(user, userTitleField)"
+                      :src="getUserAvatar(user)"
+                    />
+                    <span class="text-info user-initials" :key="index" v-else>{{ getUserInitials(user) }}</span>
+                  </template>
                 </div>
               </template>
               <h5 class="card-title text-truncate" v-if="getItemProperty(data, titleField)">
@@ -154,7 +156,7 @@ export default {
 
     title: {
       type: [String, Boolean],
-      default: 'Title'
+      default: ''
     },
 
     /**
@@ -292,6 +294,29 @@ export default {
         return item;
       }
       return [item];
+    },
+
+    getUserInitials(user) {
+      const userTitle = user === 'string' ? user : this.getItemProperty(user, this.userTitleField);
+      if (!userTitle) {
+        return '';
+      }
+      if (userTitle.includes(' ')) {
+        return userTitle
+          .split(' ')
+          .slice(0, 2)
+          .map((str) => str.slice(0, 1))
+          .join('');
+      }
+      return userTitle.substring(0, 2);
+    },
+
+    getUserAvatar(user) {
+      const avatar = this.getItemProperty(user, this.userImageField) || (user && user.src);
+      if (avatar) {
+        return avatar;
+      }
+      return '';
     }
   },
   computed: {
