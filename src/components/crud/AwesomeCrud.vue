@@ -1339,16 +1339,13 @@ export default {
     this.initializeSelectedItem();
   },
   beforeRouteEnter(to, from, next) {
-    alert('beforeRouteEnter');
     // eslint-disable-next-line
     next((vm) => {});
   },
   beforeRouteLeave(to, from, next) {
-    alert('beforeRouteLeave');
     next((vm) => {});
   },
   beforeRouteUpdate(to, from, next) {
-    alert('beforeRouteUpdate');
     // if we are on the same component and coming from a detail list
     if (this.useRouterMode && from.params.id && !to.params.id) {
       //this.onViewDisplayCancelled();
