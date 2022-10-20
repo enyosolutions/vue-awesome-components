@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="awesome-kanban">
+        <div class="awesome-kanban" ref="scrollableDiv">
           <Draggable
             class="draggable-list"
             :list="localLists"
@@ -101,7 +101,6 @@
             :scrollSensitivity="scrollSensitivity || options.scrollSensitivity"
             @change="listChanged"
             :disabled="!options.moveList"
-            :forceFallback="true"
           >
             <KanbanList
               v-for="(list, index) in localLists"
@@ -133,7 +132,13 @@
               @cardAdded="onCardAdded"
               @cardClicked="onCardClicked"
               @cardMoved="onCardMoved"
-            ></KanbanList>
+              @choose="onChoose"
+              @unchoose="onUnChoose"
+            >
+              <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
+                ><slot :name="slot" v-bind="scope"
+              /></template>
+            </KanbanList>
           </Draggable>
           <div v-if="actions && actions.addKanbanList" class="card add-list" @click.stop="editForm">
             <div class="card-body">
@@ -286,16 +291,6 @@ export default {
       note: 'See https://github.com/SortableJS/Sortable/tree/master/plugins/AutoScroll#scrollsensitivity-option'
     }
   },
-  data: () => ({
-    localLists: [], // Static list to test
-    isAddingList: false,
-    newListName: '',
-    isRefreshing: false,
-    displayLabelsCache: {},
-    splittingFieldApiValues: [],
-    displayAwFilter: false,
-    search: ''
-  }),
 
   created() {
     // Check if the component is loaded globally
@@ -392,6 +387,18 @@ export default {
       this.onSearch({ searchTerm: newVal });
     }
   },
+  data: () => ({
+    localLists: [], // Static list to test
+    isAddingList: false,
+    newListName: '',
+    isRefreshing: false,
+    displayLabelsCache: {},
+    splittingFieldApiValues: [],
+    displayAwFilter: false,
+    search: '',
+    scrollBox: {}
+  }),
+
   methods: {
     addList() {
       if (this.newListName) {
@@ -567,6 +574,35 @@ export default {
 
     onSegmentListChanged(values) {
       this.splittingFieldApiValues = values;
+    },
+
+    onMouseMove(event) {
+      const scrollDiv = this.$refs.scrollableDiv;
+      // (1) prepare to moving: make absolute and on top by z-index
+
+      // move it out of any current parents directly into body
+      // to make it positioned relative to the body
+      if (!this.scrollBox) {
+        this.scrollBox = this.$refs.scrollableDiv.getBoundingClientRect();
+      }
+      // centers the ball at (pageX, pageY) coordinates
+      document.querySelector('#scrollableDiv');
+      const distanceToTheEnd = document.body.offsetWidth - event.pageX;
+      const distanceToTheStart = event.pageX - this.scrollBox.x;
+      // console.log('Space left to the start', distanceToTheStart);
+      // console.log('Space left to the end', distanceToTheEnd);
+      if (distanceToTheEnd < 50 && scrollDiv.scrollLeft + scrollDiv.offsetWidth < scrollDiv.scrollWidth) {
+        scrollDiv.scrollLeft += 10;
+      } else if (distanceToTheStart < 0 && scrollDiv.scrollLeft > 0) {
+        scrollDiv.scrollLeft -= 10;
+      }
+    },
+    onChoose($event) {
+      this.scrollBox = this.$refs.scrollableDiv.getBoundingClientRect();
+      document.addEventListener('dragover', this.onMouseMove);
+    },
+    onUnChoose($event) {
+      document.removeEventListener('dragover', this.onMouseMove);
     }
   }
 };

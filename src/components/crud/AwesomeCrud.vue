@@ -305,6 +305,9 @@
             @afterRefresh="afterRefresh"
             @after-refresh="after_refresh"
           >
+            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
+              ><slot :name="slot" v-bind="scope"
+            /></template>
             <template slot="kanban-header-left">
               <slot name="top-left-buttons"></slot>
             </template>
@@ -336,6 +339,18 @@
             </template>
             <slot name="top-actions2">
               <template slot="top-actions">
+                <template v-if="_customTitleBarActions">
+                  <AwesomeActionList
+                    :actions="_customTitleBarActions"
+                    location="topright"
+                    :use-dropdown="_customTitleBarActions && _customTitleBarActions.length > 2"
+                    @customAction="onCustomAction"
+                  />
+                </template>
+              </template>
+            </slot>
+            <slot name="kanban-item">
+              <template slot="kanban-item">
                 <template v-if="_customTitleBarActions">
                   <AwesomeActionList
                     :actions="_customTitleBarActions"
@@ -1324,13 +1339,16 @@ export default {
     this.initializeSelectedItem();
   },
   beforeRouteEnter(to, from, next) {
+    alert('beforeRouteEnter');
     // eslint-disable-next-line
     next((vm) => {});
   },
   beforeRouteLeave(to, from, next) {
+    alert('beforeRouteLeave');
     next((vm) => {});
   },
   beforeRouteUpdate(to, from, next) {
+    alert('beforeRouteUpdate');
     // if we are on the same component and coming from a detail list
     if (this.useRouterMode && from.params.id && !to.params.id) {
       //this.onViewDisplayCancelled();
