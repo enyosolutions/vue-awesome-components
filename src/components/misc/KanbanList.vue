@@ -1,5 +1,5 @@
 <template>
-  <div class="list">
+  <div class="list" :class="items && items.length ? 'list-has-items' : 'list-no-items'">
     <div class="list-content">
       <div class="list-header">
         <div class="list-title">
