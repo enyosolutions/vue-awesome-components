@@ -1,7 +1,7 @@
 <template>
   <div :class="`aw-action aw-action-name-${name}`">
     <!--  TYPE DROPDOWN  -->
-    <div v-if="type === 'dropdown' && children.length" class="dropdown">
+    <div v-if="type === 'dropdown'" class="dropdown dropleft">
       <button
         class="btn dropdown-toggle"
         :class="classes"
@@ -15,7 +15,12 @@
         <i v-if="icon" :class="icon"></i>
         <span>{{ title ? $t(title) : '' }}</span>
       </button>
-      <div class="dropdown-menu" :aria-labelledby="`${name}-${index}`" :class="{ show: isDropdownOpened }">
+      <div
+        v-if="children && children.length"
+        class="dropdown-menu"
+        :aria-labelledby="`${name}-${index}`"
+        :class="{ show: isDropdownOpened }"
+      >
         <a
           v-for="(child, idx) in children"
           :key="child.id || idx"
@@ -33,7 +38,7 @@
               toggleDropdown(false)
           "
         >
-          <span>{{ child.title ? $t(child.title) : '' }}</span>
+          <span>{{ child.title || child.label ? $t(child.title || child.label) : '' }}</span>
         </a>
       </div>
     </div>

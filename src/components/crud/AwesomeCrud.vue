@@ -194,6 +194,20 @@
             v-bind="listOptions"
             @itemClicked="onListItemClicked"
             @reorder="onListReordered"
+            @create="goToCreatePage"
+            @view="goToViewPage"
+            @edit="goToEditPage"
+            @delete="goToDeletePage"
+            @bulkDelete="goToBulkDeletePage"
+            @bulkEdit="goToBulkEditPage"
+            @customAction="onCustomAction"
+            @customBulkAction="onCustomBulkAction"
+            @table-updated="onListUpdated"
+            @refresh="onTableRefresh"
+            @onRowClicked="onTableRowClicked"
+            @onRowDoubleClicked="onTableRowDoubleClicked"
+            @updateAutoRefresh="updateAutoRefresh"
+            @data-changed="onDataChanged"
           >
             <template slot="top-actions">
               <template v-if="_customTitleBarActions">
@@ -293,6 +307,7 @@
             :splittingValues="_splittingValuesComputed"
             :mode="dataPaginationModeComputed"
             @customListAction="onCustomListAction"
+            @create="goToCreatePage"
             @removeList="onRemoveList"
             @listChanged="onListChanged"
             @cardChanged="onCardChanged"

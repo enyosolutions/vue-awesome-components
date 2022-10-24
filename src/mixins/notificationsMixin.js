@@ -53,23 +53,27 @@ export default {
     },
 
     $awConfirm(message) {
-      return new Promise((resolve, reject) => {
-        Swal.fire({
-          title: this.$t('Notifications.messages.are_you_sure'),
-          text: message,
-          type: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: this.$t('Notifications.buttons.yes'),
-          cancelButtonText: this.$t('Notifications.buttons.cancel'),
-          reverseButtons: true
-        })
-          .then((result) => {
-            resolve(result.value);
-          })
-          .catch(reject);
-      });
+      let request = {
+        title: this.$t('Notifications.messages.are_you_sure'),
+        text: '',
+        type: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: this.$t('Notifications.buttons.yes'),
+        cancelButtonText: this.$t('Notifications.buttons.cancel'),
+        reverseButtons: true
+      };
+      if (typeof message === 'object') {
+        request = Object.assign({}, request, message);
+      }
+      else {
+        request.text = message;
+      }
+      return Swal.fire(request)
+        .then((result) => {
+          return result.value;
+        });
     },
 
     $awExport(dataJSON) {
