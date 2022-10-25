@@ -311,8 +311,8 @@ export default {
       }
       if (userTitle.includes(' ')) {
         return userTitle
+          .trim()
           .split(' ')
-          .slice(0, 2)
           .map((str) => str.slice(0, 1))
           .join('');
       }

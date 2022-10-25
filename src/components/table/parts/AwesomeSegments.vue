@@ -153,7 +153,7 @@ export default {
         return;
       }
       this.$awApi
-        .get(`${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}$perPage=100'`, {
+        .get(`${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}perPage=100`, {
           params: { ..._.get(this.field, 'fieldOptions.queryParams') }
         })
         .then((res) => {

@@ -73,12 +73,12 @@
             <template slot="table-header-left"><slot name="top-left-buttons"></slot></template>
             <template slot="table-header-right">
               <div class="text-right">
-                <slot name="top-right-buttons"></slot>
                 <ListingModeSelector
                   v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                   v-model="listingDisplayMode"
                   :enabled-modes="enabledListingModes"
                 />
+                <slot name="top-right-buttons"></slot>
                 <template v-if="_customTopRightActions">
                   <AwesomeActionList
                     class="d-inline-flex"
@@ -222,12 +222,12 @@
             </template>
             <template slot="list-header-left"> </template>
             <template slot="list-header-right">
-              <slot name="top-right-buttons"></slot>
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
+              <slot name="top-right-buttons"></slot>
               <template v-if="_customTopRightActions">
                 <AwesomeActionList
                   :actions="_customTopRightActions"
@@ -327,12 +327,12 @@
               <slot name="top-left-buttons"></slot>
             </template>
             <template slot="kanban-header-right">
-              <slot name="top-right-buttons"></slot>
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
                 v-model="listingDisplayMode"
                 :enabled-modes="enabledListingModes"
               />
+              <slot name="top-right-buttons"></slot>
               <AwesomeActionList
                 :actions="_customTopRightActions"
                 location="topright"

@@ -125,7 +125,7 @@
         taggable
         :placeholder="$t('AwesomeFilter.labels.filterValue')"
         :url="currentField.relationUrl"
-        @itemSelected="onRelationValueChanged"
+        clientID
         v-model="value"
       />
       <!-- ADD SELECT FOR object / array -->

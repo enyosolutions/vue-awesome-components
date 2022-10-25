@@ -32,6 +32,7 @@
       :options="computedOptions"
       :disabled="isDisabled"
       :required="required"
+      :placeholder="schema.placeholder || fieldOptions.placeholder"
       @open="preloadFn"
       @search="onSearch"
       :value="model[schema.model]"
@@ -62,6 +63,7 @@
       </template>
 
       <Popper
+        v-if="!schema.relationRoute"
         trigger="clickToOpen"
         transition="fade"
         :append-to-body="true"
@@ -209,7 +211,7 @@ export default {
 
     dataUrl() {
       // eslint-disable-next-line
-      let url = this.url || this.fieldOptions.url;
+      let url = this.url || this.fieldOptions.url || this.schema.relationUrl || this.schema.fieldOptions.relationUrl;
       if (url && url.indexOf('{{') > -1) {
         url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model, context: this });
       }
@@ -386,7 +388,8 @@ export default {
       }
       this.$awApi
         .get(
-          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam || 'perPage=100'}`,
+          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam ||
+            'perPage=100'}&_vac=1&_vac_source=vselect`,
           {
             params: { ...this.fieldOptions.queryParams }
           }
@@ -402,7 +405,12 @@ export default {
     search(loading, search, vm) {
       this.$awApi
         .get(this.dataUrl, {
-          params: { ...this.fieldOptions.queryParams, search }
+          params: {
+            ...this.fieldOptions.queryParams,
+            search,
+            _vac: 1,
+            _vac_source: 'vselect'
+          }
         })
         .then((res) => {
           this.apiOptions = this.getData(res);
@@ -416,7 +424,12 @@ export default {
     searchDebounced: _.debounce((loading, search, vm) => {
       vm.$http
         .get(vm.dataUrl, {
-          params: { ...vm.fieldOptions.queryParams, search }
+          params: {
+            ...vm.fieldOptions.queryParams,
+            search,
+            _vac: 1,
+            _vac_source: 'vselect'
+          }
         })
         .then((res) => {
           vm.apiOptions = vm.getData(res);
