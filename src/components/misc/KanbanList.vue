@@ -52,20 +52,20 @@
         </div>
       </div>
       <div class="list-cards">
-        <slot name="kanban-list-items" :title="title" :items="items">
-          <Draggable
-            class="draggable-card"
-            :list="items"
-            :group="group"
-            :animation="animation"
-            ghost-class="moving-card"
-            :delay="300"
-            :delay-on-touch-only="true"
-            :scroll-sensitivity="scrollSensitivity"
-            @change="cardChanged"
-            @choose="onChoose($event)"
-            @unchoose="onUnChoose($event)"
-          >
+        <Draggable
+          class="draggable-card"
+          :list="items"
+          :group="group"
+          :animation="animation"
+          ghost-class="moving-card"
+          :delay="300"
+          :delay-on-touch-only="true"
+          :scroll-sensitivity="scrollSensitivity"
+          @change="cardChanged"
+          @choose="onChoose($event)"
+          @unchoose="onUnChoose($event)"
+        >
+          <slot name="kanban-list-items" :title="title" :items="items">
             <div class="card" v-for="(data, index) in items" :key="index" @click="cardClicked(data)">
               <slot name="kanban-list-item" :title="title" :item="data" :index="index">
                 <img
@@ -128,8 +128,8 @@
                 </div>
               </slot>
             </div>
-          </Draggable>
-        </slot>
+          </slot>
+        </Draggable>
       </div>
     </div>
   </div>
