@@ -83,6 +83,7 @@
                   }"
                   v-if="
                     _actions &&
+                      _actions.tableConfiguration &&
                       (_actions.export ||
                         _actions.exportLocal ||
                         _actions.import ||
@@ -331,21 +332,22 @@
             <template slot="table-row" slot-scope="props">
               <Skeleton v-if="showSkeleton" :count="1" :loading="true"></Skeleton>
               <template v-else>
-                <awesome-display
-                  v-if="props.column.field !== '__ACTIONS'"
-                  v-bind="props.column"
-                  :apiResponseConfig="apiResponseConfig"
-                  :apiRequestHeaders="apiRequestHeaders"
-                  :value="getItemProperty(props.row, props.column.field)"
-                  class="pointer text-avoid-overflow"
-                >
-                </awesome-display>
+                <div class="aw-table-router-link" v-if="props.column.field !== '__ACTIONS'">
+                  <awesome-display
+                    v-bind="props.column"
+                    :apiResponseConfig="apiResponseConfig"
+                    :apiRequestHeaders="apiRequestHeaders"
+                    :value="getItemProperty(props.row, props.column.field)"
+                    class="pointer text-avoid-overflow"
+                  >
+                  </awesome-display>
+                </div>
 
                 <span v-else-if="props.column.field === '__ACTIONS'" class="text-right aw-table-actions-field">
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.view, { currentItem: props.row })"
                     class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
-                    @click="$emit('view', props.row)"
+                    @click.prevent.stop="$emit('view', props.row, $event)"
                     type="button"
                   >
                     <i class="fa fa-eye text-info" />
@@ -353,7 +355,7 @@
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.edit, { currentItem: props.row })"
                     class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon mr-2"
-                    @click="$emit('edit', props.row)"
+                    @click.prevent.stop="$emit('edit', props.row, $event)"
                     type="button"
                   >
                     <i class="fa fa-pencil fa fa-pencil text-primary" />
@@ -361,7 +363,7 @@
                   <button
                     v-if="templateParseConditionalField(_actionsBeforeCalculation.delete, { currentItem: props.row })"
                     class="btn btn-sm btn-simple btn-awtable-inline-action btn-icon"
-                    @click="$emit('delete', props.row)"
+                    @click.prevent.stop="$emit('delete', props.row)"
                     type="button"
                   >
                     <i class="fa fa-trash text-danger" />
@@ -369,6 +371,7 @@
                   <slot name="table-row-actions" :item="props.row">
                     <template v-if="customInlineActions">
                       <AwesomeActionList
+                        @click.prevent.stop="() => null"
                         :actions="customInlineActions"
                         :item="props.row"
                         :parent="parent"
@@ -382,12 +385,15 @@
                 <span
                   v-else-if="props.column.type === 'list-of-value' || props.column.type === 'lov'"
                   class="pointer"
-                  @click="clickOnLine(props)"
+                  @click.prevent.stop="clickOnLine(props, $event)"
                   >{{ getLovValue(props.formattedRow[props.column.field], props.column.listName) }}</span
                 >
-                <span v-else-if="props.column.type === 'list-of-data'" class="pointer" @click="clickOnLine(props)">{{
-                  getDataValue(props.formattedRow[props.column.field], props.column.listName)
-                }}</span>
+                <span
+                  v-else-if="props.column.type === 'list-of-data'"
+                  class="pointer"
+                  @click.prevent.stop="clickOnLine(props, $event)"
+                  >{{ getDataValue(props.formattedRow[props.column.field], props.column.listName) }}</span
+                >
               </template>
             </template>
             <div slot="emptystate">
@@ -568,6 +574,15 @@ export default {
     showHeader: {
       type: Boolean,
       default: true
+    },
+    singleClickFunction: {
+      type: Function
+    },
+    getViewUrl: {
+      type: Function
+    },
+    getEditUrl: {
+      type: Function
     }
   },
   data() {
@@ -966,6 +981,13 @@ export default {
     // editItem(item) {},
 
     clickOnLine(props, props2) {
+      if (this.singleClickFunction) {
+        return;
+      }
+      // prevent accident row click action on the __ACTIONS column
+      if (props.column && props.column.field === '__ACTIONS') {
+        return;
+      }
       this.$nextTick(() => {
         if (!this.clickTimeout) {
           this.clickTimeout = setTimeout(() => {
@@ -1073,6 +1095,9 @@ export default {
   clear: both;
   .aw-table-card {
     clear: both;
+  }
+  .aw-table-router-link {
+    color: unset;
   }
   .aw-table-img {
     max-height: 50px;

@@ -119,6 +119,7 @@ export default {
       if (isFunction(this.debouncedFormatFunc)) {
         this.debouncedFormatFunc.flush();
       }
+      this.$emit('blur', this.model[this.schema.model], this.schema.model);
     }
   },
 

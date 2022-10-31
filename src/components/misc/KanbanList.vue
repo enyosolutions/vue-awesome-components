@@ -66,67 +66,73 @@
           @unchoose="onUnChoose($event)"
         >
           <slot name="kanban-list-items" :title="title" :items="items">
-            <div class="card" v-for="(data, index) in items" :key="index" @click="cardClicked(data)">
-              <slot name="kanban-list-item" :title="title" :item="data" :index="index">
-                <img
-                  class="card-img-top"
-                  v-if="imageField && getItemProperty(data, imageField)"
-                  :src="getItemProperty(data, imageField)"
-                  :alt="getItemProperty(data, titleField)"
-                />
-                <div class="card-body">
-                  <template v-if="usersField && getItemProperty(data, usersField)">
-                    <div class="pull-right kanban-card-users-avatars">
-                      <template v-for="(user, index) in getItemUsers(data, usersField)">
-                        <img
-                          v-if="getUserAvatar(user)"
-                          :key="index"
-                          class="kanban-user-img"
-                          :alt="getItemProperty(user, userTitleField)"
-                          :src="getUserAvatar(user)"
-                        />
-                        <span class="text-info user-initials" :key="index" v-else>{{ getUserInitials(user) }}</span>
-                      </template>
-                    </div>
-                  </template>
-                  <h5 class="card-title text-truncate" v-if="getItemProperty(data, titleField)">
-                    {{ getItemProperty(data, titleField) }}
-                  </h5>
-                  <h6 v-if="getItemProperty(data, subtitleField)" class="card-subtitle mb-2 text-muted text-truncate">
-                    {{ getItemProperty(data, subtitleField) }}
-                  </h6>
-                  <p class="card-text" v-if="getItemProperty(data, descriptionField)">
-                    {{ getItemProperty(data, descriptionField) }}
-                  </p>
-                  <div v-if="getLabelsProperty(data, labelsField)" class="pull-right tags-field">
-                    <small
-                      v-for="label in getItemProperty(data, labelsField)"
-                      :key="label"
-                      class="badge badge-primary kanban-label"
-                      >{{ label }}</small
-                    >
-                  </div>
-
-                  <template v-if="columns && columns.length && (!hasFormattingData || displayColumnsInCards)">
-                    <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
-                      {{ key }} :
-                      <AwesomeDisplay
-                        :type="getField(key).type"
-                        :value="itemData"
-                        :relation="getField(key).relation"
-                        :relation-label="getField(key).relationLabel"
-                        :relation-url="getField(key).relationUrl"
-                        :relation-key="getField(key).relationKey"
-                        :display-label-cache="displayLabelsCache"
+            <div class="card" v-for="(data, index) in items" :key="index" @click="cardClicked(data, $event)">
+              <router-link
+                :to="cardClickResolver && cardClickResolver(data) ? cardClickResolver(data) : ''"
+                :tag="cardClickResolver && cardClickResolver(data) ? 'a' : 'div'"
+                class="kanban-card-link"
+              >
+                <slot name="kanban-list-item" :title="title" :item="data" :index="index">
+                  <img
+                    class="card-img-top"
+                    v-if="imageField && getItemProperty(data, imageField)"
+                    :src="getItemProperty(data, imageField)"
+                    :alt="getItemProperty(data, titleField)"
+                  />
+                  <div class="card-body">
+                    <template v-if="usersField && getItemProperty(data, usersField)">
+                      <div class="pull-right kanban-card-users-avatars">
+                        <template v-for="(user, index) in getItemUsers(data, usersField)">
+                          <img
+                            v-if="getUserAvatar(user)"
+                            :key="index"
+                            class="kanban-user-img"
+                            :alt="getItemProperty(user, userTitleField)"
+                            :src="getUserAvatar(user)"
+                          />
+                          <span class="text-info user-initials" :key="index" v-else>{{ getUserInitials(user) }}</span>
+                        </template>
+                      </div>
+                    </template>
+                    <h5 class="card-title text-truncate" v-if="getItemProperty(data, titleField)">
+                      {{ getItemProperty(data, titleField) }}
+                    </h5>
+                    <h6 v-if="getItemProperty(data, subtitleField)" class="card-subtitle mb-2 text-muted text-truncate">
+                      {{ getItemProperty(data, subtitleField) }}
+                    </h6>
+                    <p class="card-text" v-if="getItemProperty(data, descriptionField)">
+                      {{ getItemProperty(data, descriptionField) }}
+                    </p>
+                    <div v-if="getLabelsProperty(data, labelsField)" class="pull-right tags-field">
+                      <small
+                        v-for="label in getItemProperty(data, labelsField)"
+                        :key="label"
+                        class="badge badge-primary kanban-label"
+                        >{{ label }}</small
                       >
-                      </AwesomeDisplay>
                     </div>
-                  </template>
-                  <p v-if="!hasFormattingData && !displayColumnsInCards" class="card-text">
-                    {{ $t('AwesomeKanban.labels.noData') }}
-                  </p>
-                </div>
-              </slot>
+
+                    <template v-if="columns && columns.length && (!hasFormattingData || displayColumnsInCards)">
+                      <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
+                        {{ key }} :
+                        <AwesomeDisplay
+                          :type="getField(key).type"
+                          :value="itemData"
+                          :relation="getField(key).relation"
+                          :relation-label="getField(key).relationLabel"
+                          :relation-url="getField(key).relationUrl"
+                          :relation-key="getField(key).relationKey"
+                          :display-label-cache="displayLabelsCache"
+                        >
+                        </AwesomeDisplay>
+                      </div>
+                    </template>
+                    <p v-if="!hasFormattingData && !displayColumnsInCards" class="card-text">
+                      {{ $t('AwesomeKanban.labels.noData') }}
+                    </p>
+                  </div>
+                </slot>
+              </router-link>
             </div>
           </slot>
         </Draggable>
@@ -226,7 +232,8 @@ export default {
     allowDeletingList: {
       type: Boolean,
       default: false
-    }
+    },
+    cardClickResolver: Function
   },
   created() {
     // Check if the component is loaded globally
@@ -276,8 +283,8 @@ export default {
       return field[0] ? field[0] : field;
     },
 
-    cardClicked(data) {
-      this.$emit('cardClicked', data);
+    cardClicked(data, $event) {
+      this.$emit('cardClicked', data, $event);
     },
 
     getItemUsers(data, usersField) {

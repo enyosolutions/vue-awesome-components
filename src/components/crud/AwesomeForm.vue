@@ -111,6 +111,8 @@
                               :model="selectedItem"
                               :options="formOptions"
                               tag="div"
+                              v-on="$listeners"
+                              @model-updated="onModelUpdated"
                             />
                           </template>
                           <template v-slot:fields="fieldsSlotProps">
@@ -119,6 +121,8 @@
                               :model="selectedItem"
                               :options="formOptions"
                               tag="div"
+                              v-on="$listeners"
+                              @model-updated="onModelUpdated"
                             />
                           </template>
                         </AwesomeLayout>
@@ -129,6 +133,8 @@
                             :model="selectedItem"
                             :options="formOptions"
                             tag="div"
+                            v-on="$listeners"
+                            @model-updated="onModelUpdated"
                           />
                         </template>
                       </slot>
@@ -306,6 +312,7 @@
                                   :model="selectedItem"
                                   :options="formOptions"
                                   tag="div"
+                                  @model-updated="onModelUpdated"
                                 />
                               </template>
                               <template v-slot:fields="fieldsSlotProps">
@@ -314,6 +321,7 @@
                                   :model="selectedItem"
                                   :options="formOptions"
                                   tag="div"
+                                  @model-updated="onModelUpdated"
                                 />
                               </template>
                             </AwesomeLayout>
@@ -410,6 +418,7 @@
                                 :options="formOptions"
                                 ref="form"
                                 tag="div"
+                                @model-updated="onModelUpdated"
                               />
                             </div>
                           </template>
@@ -568,6 +577,7 @@
                             :model="selectedItem"
                             :options="formOptions"
                             tag="div"
+                            @model-updated="onModelUpdated"
                           />
                         </template>
                       </slot>
@@ -1257,7 +1267,7 @@ export default {
 
     const action = `${this.mode}Function`;
     if (this[action]) {
-      this[action](this.selectedItem);
+      //  this[action](this.selectedItem);
     } else {
       throw new Error('no_action_available_for_mode_' + this.mode);
     }
@@ -1799,6 +1809,10 @@ export default {
 
     onChange(newItem) {
       this.$emit('change', newItem);
+    },
+
+    onModelUpdated(value, field) {
+      this.$emit('model-updated', value, field);
     }
   }
 };

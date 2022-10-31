@@ -104,33 +104,34 @@
           >
             <KanbanList
               v-for="(list, index) in localLists"
-              :id="list.id"
-              :key="index"
-              :title="list.title"
-              :items="list.content"
-              :fields="options.fields"
-              :columns="columns"
-              :showColumns="options.showColumns"
-              group="card"
               :animation="options.animation"
-              :scroll-sensitivity="options.scrollSensitivity"
-              :disabled="!options.moveCard"
+              :columns="columns"
               :custom-list-actions="customListActions"
-              :imageField="imageField"
-              :titleField="titleField"
-              :subtitleField="subtitleField"
               :descriptionField="descriptionField"
+              :disabled="!options.moveCard"
+              :display-labels-cache="displayLabelsCache"
+              :fields="options.fields"
+              :card-click-resolver="cardClickResolver"
+              :id="list.id"
+              :imageField="imageField"
+              :items="list.content"
+              :key="index"
+              :labelsField="labelsField"
+              :scroll-sensitivity="options.scrollSensitivity"
+              :showColumns="options.showColumns"
+              :subtitleField="subtitleField"
+              :title="list.title"
+              :titleField="titleField"
+              :userImageField="userImageField"
               :usersField="usersField"
               :userTitleField="userTitleField"
-              :userImageField="userImageField"
-              :labelsField="labelsField"
-              :display-labels-cache="displayLabelsCache"
+              group="card"
               @remove-list="onRemoveList"
               @customListAction="onCustomListAction"
               @change="onCardChanged"
               @cardRemoved="onCardRemoved"
               @cardAdded="onCardAdded"
-              @cardClicked="onCardClicked"
+              @cardClicked="(card) => onCardClicked(card, $event)"
               @cardMoved="onCardMoved"
               @choose="onChoose"
               @unchoose="onUnChoose"
@@ -289,7 +290,8 @@ export default {
       type: Number,
       default: 500,
       note: 'See https://github.com/SortableJS/Sortable/tree/master/plugins/AutoScroll#scrollsensitivity-option'
-    }
+    },
+    cardClickResolver: Function
   },
 
   created() {
@@ -453,8 +455,8 @@ export default {
       this.$emit('cardAdded', item, list);
     },
 
-    onCardClicked(item) {
-      this.$emit('cardClicked', item);
+    onCardClicked(item, $event) {
+      this.$emit('cardClicked', item, $event);
     },
 
     handleLists() {

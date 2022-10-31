@@ -55,6 +55,7 @@
             :url="_url"
             :useRouterMode="useRouterMode"
             :uuid="'awtable-' + identity"
+            :get-view-url="getViewPageUrl"
             @create="goToCreatePage"
             @view="goToViewPage"
             @edit="goToEditPage"
@@ -306,6 +307,7 @@
             :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
             :mode="dataPaginationModeComputed"
+            :card-click-resolver="getViewPageUrl"
             @customListAction="onCustomListAction"
             @create="goToCreatePage"
             @removeList="onRemoveList"
@@ -430,6 +432,7 @@
             @beforeCreate="beforeCreate"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
+            @modelUpdated="onModelUpdated"
             @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
@@ -464,6 +467,7 @@
             :item="selectedItem"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             :mode="displayBottomFormContent ? 'create' : displayMode"
+            @modelUpdated="onModelUpdated"
             :model="_model"
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :schema="schemaComputed"
@@ -1365,6 +1369,9 @@ export default {
     if (this.useRouterMode && from.params.id && !to.params.id) {
       //this.onViewDisplayCancelled();
     }
+    if (this.useRouterMode && to.params.id) {
+      this.loadModel();
+    }
     next();
   },
 
@@ -1581,18 +1588,6 @@ export default {
     setDisplayMode() {},
     /** @param mode: string */
     setDisplayModeFresh(mode, item, options = { refresh: true }) {
-      // alert(
-      //   ' set display mode: ' +
-      //     mode +
-      //     '\n current display mode: ' +
-      //     this.displayMode +
-      //     '\n item: ' +
-      //     JSON.stringify(item) +
-      //     '\n selectedItem: ' +
-      //     JSON.stringify(this.selectedItem) +
-      //     '\n this.previousDisplayMode: ' +
-      //     this.previousDisplayMode
-      // );
       if (
         mode === this.displayMode &&
         (!item ||
@@ -1686,7 +1681,7 @@ export default {
       this.bulkDeleteFunction(items);
     },
 
-    goToEditPage(item, options) {
+    goToEditPage(item, event) {
       if (this.mergedOptions.editPath) {
         if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
           return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKeyFieldCpt]));
@@ -1698,29 +1693,58 @@ export default {
       }
       const nextPath = `${this.parentPath}/${item[this.primaryKeyFieldCpt]}/edit`;
       if (this.useRouterMode && this.$route.path !== nextPath) {
-        this.$router.push(nextPath);
+        if (event && event.metaKey) {
+          window.open(nextPath, '_blank');
+        } else {
+          this.$router.push(nextPath);
+        }
       }
-      this.setDisplayMode('edit', item, options);
+      this.setDisplayMode('edit', item, event);
     },
 
-    goToViewPage(item) {
+    goToViewPage(item, event) {
       if (!item) {
         return;
       }
-      if (this.mergedOptions.viewPath) {
-        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
-          return this.$router.push(this.mergedOptions.viewPath.replace(':id', item[this.primaryKeyFieldCpt]));
-        }
-        if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
-          return this.$router.push(this.parseUrl(this.mergedOptions.viewPath, item));
-        }
-        return this.$router.push(this.mergedOptions.viewPath);
+      if (!this.useRouterMode) {
+        this.setDisplayMode('view', item);
+        return;
       }
-      const nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
-      if (this.useRouterMode && this.$route.path !== nextPath) {
-        this.$router.push(nextPath);
+      let nextPath = this.getViewPageUrl(item, event);
+      if (nextPath && event && event.metaKey) {
+        window.open(nextPath, '_blank');
+        return;
       }
       this.setDisplayMode('view', item);
+      if (this.$route.path !== nextPath) {
+        this.$router.push(nextPath);
+      } else {
+        console.warn('Duplicate goToViewPage called');
+      }
+    },
+    getViewPageUrl(item, event) {
+      if (!item) {
+        return '';
+      }
+      if (this._actions && !this._actions.view) {
+        return '';
+      }
+      let nextPath = '';
+      if (this.mergedOptions.viewPath) {
+        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
+          nextPath = this.mergedOptions.viewPath.replace(':id', item[this.primaryKeyFieldCpt]);
+        }
+        if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
+          nextPath = this.parseUrl(this.mergedOptions.viewPath, item);
+        }
+        nextPath = this.mergedOptions.viewPath;
+        return this.$router.push(nextPath);
+      }
+      nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
+      if (this.useRouterMode && this.$route.path !== nextPath) {
+        return nextPath;
+      }
+      return;
     },
 
     nestedViewFunction() {
@@ -1859,9 +1883,9 @@ export default {
     onCardChanged(item, list) {},
     onCardAdded({ element, newIndex }, list) {},
 
-    onCardClicked(item) {
-      this.$emit('on-kanban-item-clicked', item);
-      this.listItemClickedHandler(item);
+    onCardClicked(item, $event) {
+      this.$emit('on-kanban-item-clicked', item, $event);
+      this.listItemClickedHandler(item, $event);
     },
 
     /**
@@ -1936,24 +1960,24 @@ export default {
       this.$emit(this.identity + '-list-updated', datas);
     },
 
-    onTableRowClicked(props) {
-      const { column, row } = props; // rowIndex and event are also available
+    onTableRowClicked(props, $event) {
+      const { column, row, event } = props; // rowIndex and event are also available
       if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
         return;
       }
       // this._actions && this._actions.view && this.$emit("view", row);
-      this.$emit('on-table-row-clicked', row);
-      this.listItemClickedHandler(row);
+      this.$emit('on-table-row-clicked', row, event || $event);
+      this.listItemClickedHandler(row, event || $event);
     },
 
-    onTableRowDoubleClicked(props) {
-      const { column, row } = props; // rowIndex and event are also available
+    onTableRowDoubleClicked(props, $event) {
+      const { column, row, event } = props; // rowIndex and event are also available
       if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
         return;
       }
       // this._actions && this._actions.view && this.$emit("view", row);
-      this.$emit('on-table-row-double-clicked', row);
-      this.listItemDoubleClickedHandler(row);
+      this.$emit('on-table-row-double-clicked', row), event || $event;
+      this.listItemDoubleClickedHandler(row, event || $event);
     },
 
     onDataChanged(items) {
@@ -1967,10 +1991,10 @@ export default {
       this.mergedOptions.autoRefresh = value;
     },
 
-    onListItemClicked(item) {
+    onListItemClicked(item, event) {
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-list-item-clicked', item);
-      this.listItemClickedHandler(item);
+      this.listItemClickedHandler(item, event);
     },
 
     // @deprecated use directly $awConfirm
@@ -2032,19 +2056,19 @@ export default {
         });
     },
 
-    listItemClickedHandler(row) {
+    listItemClickedHandler(row, $event) {
       switch (this.tableRowClickAction) {
         case 'edit':
           if (this._actions && !this._actions.edit) {
             return;
           }
-          this.goToEditPage(row);
+          this.goToEditPage(row, $event);
           break;
         case 'view':
           if (this._actions && !this._actions.view) {
             return;
           }
-          this.goToViewPage(row);
+          this.goToViewPage(row, $event);
           break;
         case 'none':
         default:
@@ -2052,24 +2076,24 @@ export default {
       }
     },
 
-    listItemDoubleClickedHandler(row) {
+    listItemDoubleClickedHandler(row, event) {
       switch (this.tableRowDoubleClickAction) {
         case 'edit':
           if (this._actions && !this._actions.edit) {
             return;
           }
-          this.goToEditPage(row);
+          this.goToEditPage(row, event);
           break;
         case 'view':
           if (this._actions && !this._actions.view) {
             return;
           }
-          this.goToViewPage(row);
+          this.goToViewPage(row, event);
           break;
         case 'none':
           break;
         default:
-          this.listItemClickedHandler(row);
+          this.listItemClickedHandler(row, event);
           break;
       }
     },
@@ -2218,6 +2242,10 @@ export default {
         await Promise.all(promises);
       }
       this.$emit('reorder', items);
+    },
+
+    onModelUpdated(value, field) {
+      this.$emit('modelUpdated', value, field);
     }
   }
 };
