@@ -105,8 +105,8 @@
                     </p>
                     <div v-if="getLabelsProperty(data, labelsField)" class="pull-right tags-field">
                       <small
-                        v-for="label in getItemProperty(data, labelsField)"
-                        :key="label"
+                        v-for="(label, idx) in getItemProperty(data, labelsField)"
+                        :key="idx"
                         class="badge badge-primary kanban-label"
                         >{{ label }}</small
                       >

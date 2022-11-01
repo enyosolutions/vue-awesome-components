@@ -81,7 +81,7 @@ export default {
         return;
       }
 
-      this.$awApi[this.options.method.toLowerCase()](this.options.targetUrl, formData)
+      this.$awApi[this.options.method.toLowerCase()](this.options.targetUrl, formData, { timeout: 60000 })
         .then((res) => {
           this.$emit('uploaded', res.data);
         })
