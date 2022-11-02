@@ -1736,7 +1736,6 @@ export default {
         if (nextPath.includes('{{') && nextPath.includes('}}')) {
           nextPath = this.parseUrl(nextPath, item);
         }
-
         return nextPath;
       }
       nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
