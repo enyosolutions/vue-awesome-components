@@ -167,6 +167,9 @@
             "error"
           ]
         }
+      ],
+      "no-alert": [
+        "error"
       ]
     },
     "parserOptions": {

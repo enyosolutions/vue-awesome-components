@@ -1737,11 +1737,9 @@ export default {
           nextPath = this.parseUrl(nextPath, item);
         }
 
-        console.log('getViewPageUrl', nextPath);
         return nextPath;
       }
       nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
-      console.log('getViewPageUrl', nextPath);
       if (this.useRouterMode && this.$route.path !== nextPath) {
         return nextPath;
       }
