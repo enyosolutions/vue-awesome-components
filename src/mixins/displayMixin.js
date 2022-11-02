@@ -15,6 +15,7 @@ export default {
         'date',
         'relation',
         'checkbox',
+        'component',
       ]
     },
     src: String,

@@ -48,9 +48,9 @@
     :value="$props.value"
   ></display-relation>
   <div
-    v-else-if="$props.component"
+    v-else-if="$props.type === 'component'"
     :is="$props.component"
-    class="aw-display aw-display-custom"
+    class="aw-display aw-display-component"
     v-bind="$props"
     :value="$props.value"
   ></div>

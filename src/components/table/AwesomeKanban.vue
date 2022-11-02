@@ -131,7 +131,7 @@
               @change="onCardChanged"
               @cardRemoved="onCardRemoved"
               @cardAdded="onCardAdded"
-              @cardClicked="(card) => onCardClicked(card, $event)"
+              @cardClicked="onCardClicked"
               @cardMoved="onCardMoved"
               @choose="onChoose"
               @unchoose="onUnChoose"
