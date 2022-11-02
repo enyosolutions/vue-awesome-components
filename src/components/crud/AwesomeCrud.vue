@@ -1721,7 +1721,6 @@ export default {
     },
 
     getViewPageUrl(item, event) {
-      console.log('getViewPageUrl', item, event);
       if (!item) {
         return '';
       }
