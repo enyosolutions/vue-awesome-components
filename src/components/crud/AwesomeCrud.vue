@@ -1308,7 +1308,6 @@ export default {
     if (this.nestedSchemas && this.nestedSchemas.length) {
       console.warn('@deprecated nestedSchemas is now nestedModels. Please use nested nestedModels');
     }
-
     if (
       this.enabledListingModes &&
       this.enabledListingModes.length &&
@@ -1317,7 +1316,6 @@ export default {
       console.warn('Intitial display mode is not in the list of enabled modes', this.mergedOptions.initialDisplayMode);
       this.mergedOptions.initialDisplayMode = this.enabledListingModes[0];
     }
-
     this.internalOptions = _.cloneDeep(this.mergedOptions);
     this.loadModel();
     if (!this.displayMode) {
@@ -1325,7 +1323,6 @@ export default {
     }
     this.listingDisplayMode = this.mergedOptions.initialDisplayMode;
     this.restoreComponentState();
-
     if (this._isNested && this.nestedDisplayMode) {
       this.displayMode = this.nestedDisplayMode;
     }
@@ -1693,7 +1690,7 @@ export default {
       }
       const nextPath = `${this.parentPath}/${item[this.primaryKeyFieldCpt]}/edit`;
       if (this.useRouterMode && this.$route.path !== nextPath) {
-        if (event && event.metaKey) {
+        if (event && (event.metaKey || event.ctrlKey)) {
           window.open(nextPath, '_blank');
         } else {
           this.$router.push(nextPath);
@@ -1711,7 +1708,7 @@ export default {
         return;
       }
       let nextPath = this.getViewPageUrl(item, event);
-      if (nextPath && event && event.metaKey) {
+      if (nextPath && event && (event.metaKey || event.ctrlKey)) {
         window.open(nextPath, '_blank');
         return;
       }
@@ -1722,7 +1719,9 @@ export default {
         console.warn('Duplicate goToViewPage called');
       }
     },
+
     getViewPageUrl(item, event) {
+      console.log('getViewPageUrl', item, event);
       if (!item) {
         return '';
       }
@@ -1731,16 +1730,19 @@ export default {
       }
       let nextPath = '';
       if (this.mergedOptions.viewPath) {
-        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
-          nextPath = this.mergedOptions.viewPath.replace(':id', item[this.primaryKeyFieldCpt]);
-        }
-        if (this.mergedOptions.viewPath.includes('{{') && this.mergedOptions.viewPath.includes('}}')) {
-          nextPath = this.parseUrl(this.mergedOptions.viewPath, item);
-        }
         nextPath = this.mergedOptions.viewPath;
-        return this.$router.push(nextPath);
+        if (this.mergedOptions.viewPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
+          nextPath = nextPath.replace(':id', item[this.primaryKeyFieldCpt]);
+        }
+        if (nextPath.includes('{{') && nextPath.includes('}}')) {
+          nextPath = this.parseUrl(nextPath, item);
+        }
+
+        console.log('getViewPageUrl', nextPath);
+        return nextPath;
       }
       nextPath = `${this.parentPath.replace(':id', '')}/${item[this.primaryKeyFieldCpt]}`;
+      console.log('getViewPageUrl', nextPath);
       if (this.useRouterMode && this.$route.path !== nextPath) {
         return nextPath;
       }
@@ -1885,6 +1887,9 @@ export default {
 
     onCardClicked(item, $event) {
       this.$emit('on-kanban-item-clicked', item, $event);
+      if (this.getViewPageUrl && this.getViewPageUrl(item)) {
+        return;
+      }
       this.listItemClickedHandler(item, $event);
     },
 
