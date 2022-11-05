@@ -902,7 +902,7 @@ export default {
       if (this.title === false) {
         return false;
       }
-      const title = this.title || this._model.title;
+      const title = this.title || (this._model && this._model.title);
       if (title) {
         return this.$te(title) ? this.$t(title) : title;
       }
