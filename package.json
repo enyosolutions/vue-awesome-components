@@ -19,7 +19,7 @@
     "build:lib": "bili",
     "dev": "vue-cli-service serve",
     "docs:build": "vuepress build docs",
-    "docs:deploy": "scp -r docs/.vuepress/dist/* jenkins@develop:/apps/vue-aw-components.dev/dist/",
+    "docs:deploy": "sh deployDoc.sh",
     "docs:dev": "vuepress dev docs",
     "demo:deploy": " scp -r dist/* jenkins:/apps/vue-enyo-components.dev/dist/",
     "lint": "vue-cli-service lint --fix",

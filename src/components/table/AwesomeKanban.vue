@@ -56,6 +56,31 @@
                       {{ $t('AwesomeTable.buttons.filters') }}
                       {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
                     </button>
+
+                    <popper
+                      trigger="clickToOpen"
+                      :options="{
+                        placement: 'bottom',
+                        modifiers: { offset: { offset: '0,10px' } }
+                      }"
+                      ref="filterPopover"
+                    >
+                      <button slot="reference" type="button" class="btn btn-simple dropdown-toggle btn-sm">
+                        {{ $t('AwesomeTable.more') }}
+                      </button>
+
+                      <div class="popper card mt-0" style="z-index: 1;">
+                        <slot name="top-more-actions" />
+                        <button
+                          v-if="actions && actions.export"
+                          class="btn  btn-sm btn-success btn-simple btn-block"
+                          @click="exportCallBack"
+                        >
+                          <i class="fa fa-file-excel" />
+                          {{ $t('common.buttons.excel') }}
+                        </button>
+                      </div>
+                    </popper>
                   </div>
                 </div>
               </h3>
@@ -171,6 +196,8 @@
 
 <script>
 import _ from 'lodash';
+import Popper from 'vue-popperjs';
+
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
@@ -195,7 +222,8 @@ export default {
     AwesomeFilter,
     AwesomeSegments,
     KanbanList,
-    ProgressBar
+    ProgressBar,
+    Popper
   },
   mixins: [
     i18nMixin,

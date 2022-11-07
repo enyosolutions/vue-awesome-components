@@ -62,7 +62,7 @@
       "is-not-null": "is not null",
       "is-defined": "is defined",
       "is-not-defined": "is not defined",
-      "in": "is in"
+      "in": "is one of"
     }
   },
   "AwesomeTable": {

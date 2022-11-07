@@ -14,6 +14,12 @@ The Awesome Kanban allows you to create view in `Trello` style.
 
 ## Props
 
+### all props
+
+<ClientOnly>
+<ComponentDoc component="AwesomeKanban" />
+</ClientOnly>
+
 ### lists
 
 type: `Array (default: [], required: false)`
@@ -184,3 +190,14 @@ methods: {
   }
 }
 ```
+
+## slots
+
+- kanban-header-left
+- kanban-header-right
+- kanban-title
+- top-actions
+- top-more-actions (inside the dropdown)
+- kanban-list-title [tile, items, id]
+- kanban-list-items [title, items]
+- kanban-list-item [title, index, item]

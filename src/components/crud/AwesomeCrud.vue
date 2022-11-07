@@ -277,10 +277,10 @@
               </button>
             </template>
             <template v-slot:list-items="{ items, itemsPerRow, columns }">
-              <slot name="list-items" :items="items" :itemsPerRow="itemsPerRow" :columns="columns"> </slot>
+              <slot name="list-items" :items="items" :itemsPerRow="itemsPerRow" :columns="columns"></slot>
             </template>
-            <template v-slot:list-item="{ item, itemsPerRow, index }">
-              <slot name="list-items" :item="item" :itemsPerRow="itemsPerRow" :index="index"> </slot>
+            <template v-slot:list-item="{ item, itemsPerRow, columns, index }">
+              <slot name="list-item" :item="item" :itemsPerRow="itemsPerRow" :columns="columns" :index="index"></slot>
             </template>
           </AwesomeList>
           <AwesomeKanban
@@ -352,6 +352,32 @@
               >
                 <i class="fa fa-plus text-primary" />
                 {{ $t('AwesomeCrud.labels.createNew') }}
+              </button>
+            </template>
+            <template slot="top-more-actions">
+              <upload-button
+                v-if="_actions.import"
+                name="import"
+                :options="{
+                  upload: true,
+                  targetUrl: mergedOptions.uploadUrl || mergedOptions.importUrl,
+                  method: 'POST',
+                  headers: {},
+                  base64: false,
+                  label: $t('AwesomeCrud.buttons.import'),
+                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
+                }"
+                @uploaded="importResponse"
+                @upload-failed="importFailedResponse"
+              />
+              <button
+                v-if="_actions.import"
+                class="btn btn-sm text-info btn-link btn-alt-style btn-block"
+                type="button"
+                @click="exportTemplateCallBack"
+              >
+                <i class="fa fa-file-excel" />
+                {{ $t('AwesomeCrud.buttons.excel-template') }}
               </button>
             </template>
             <slot name="top-actions2">

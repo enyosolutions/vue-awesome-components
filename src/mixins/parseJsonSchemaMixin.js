@@ -347,6 +347,7 @@ export default {
           field.displayOptions = prop.field.displayOptions || {
             ...prop.column,
             hidden: undefined,
+            visible: true,
             type: this.getColumnType(prop),
             classes: (prop.column && prop.column.classes),
             styles: (prop.column && prop.column.styles)
@@ -371,7 +372,19 @@ export default {
       Object.keys(properties).forEach((key) => {
         let newCol = {};
         const prop = properties[key];
-        if ((!prop.hidden && !(prop.column && prop.column.hidden)) || (options && options.includeHidden)) {
+        if (!prop.column) {
+          prop.column = {};
+        }
+        if (prop.column.visible === undefined) {
+          prop.column.visible = true;
+        }
+
+        // support for the old field
+        if (prop.column && prop.column.hidden !== undefined) {
+          prop.column.visible = !(prop.column.hidden === true || prop.column.hidden === 0);
+        }
+
+        if ((prop.visible || (prop.column && prop.column.visible)) || (options && options.includeHidden)) {
           newCol.field = key;
           newCol.type = this.getColumnType(prop);
           newCol.label = startCase((prop.column && prop.column.title) || prop.title || key);

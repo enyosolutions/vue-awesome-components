@@ -97,6 +97,7 @@ export default {
     async process(component, documentation, ignoreMixins) {
       let _component;
       let VueAwesomeComponents = await import('../../../src');
+      console.log('VueAwesomeComponents', VueAwesomeComponents);
       if (typeof component === 'string' && VueAwesomeComponents[component]) {
         _component = VueAwesomeComponents[component];
       } else {

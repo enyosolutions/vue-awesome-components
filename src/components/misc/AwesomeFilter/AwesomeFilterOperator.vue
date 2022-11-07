@@ -7,6 +7,7 @@
       }"
       :disabled="!(currentField && currentField.field) || permanentInput"
       @change="updateFilter"
+      :value="(currentField && currentField.value) || '$eq'"
     >
       <option disabled class="dropdown-item">{{ $t('AwesomeFilter.labels.filters') }}</option>
       <option class="text-center" disabled>_________</option>
