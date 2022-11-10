@@ -120,15 +120,7 @@
               <upload-button
                 v-if="_actions.import"
                 name="import"
-                :options="{
-                  upload: true,
-                  targetUrl: mergedOptions.uploadUrl || mergedOptions.importUrl,
-                  method: 'POST',
-                  headers: {},
-                  base64: false,
-                  label: $t('AwesomeCrud.buttons.import'),
-                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
-                }"
+                :options="importButtonConfig"
                 @uploaded="importResponse"
                 @upload-failed="importFailedResponse"
               />
@@ -254,15 +246,7 @@
               <upload-button
                 v-if="_actions.import"
                 name="import"
-                :options="{
-                  upload: true,
-                  targetUrl: mergedOptions.uploadUrl || mergedOptions.importUrl,
-                  method: 'POST',
-                  headers: {},
-                  base64: false,
-                  label: $t('AwesomeCrud.buttons.import'),
-                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
-                }"
+                :options="importButtonConfig"
                 @uploaded="importResponse"
                 @upload-failed="importFailedResponse"
               />
@@ -358,15 +342,7 @@
               <upload-button
                 v-if="_actions.import"
                 name="import"
-                :options="{
-                  upload: true,
-                  targetUrl: mergedOptions.uploadUrl || mergedOptions.importUrl,
-                  method: 'POST',
-                  headers: {},
-                  base64: false,
-                  label: $t('AwesomeCrud.buttons.import'),
-                  class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
-                }"
+                :options="importButtonConfig"
                 @uploaded="importResponse"
                 @upload-failed="importFailedResponse"
               />
@@ -1309,6 +1285,18 @@ export default {
       return this._kanbanOptions.splittingValues && this._kanbanOptions.splittingValues.length
         ? this._kanbanOptions.splittingValues
         : this.segmentFieldPossibleValues;
+    },
+
+    importButtonConfig() {
+      return {
+        upload: true,
+        targetUrl: `${this._url}/import`,
+        method: 'POST',
+        headers: {},
+        base64: false,
+        label: this.$t('AwesomeCrud.buttons.import'),
+        class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
+      };
     }
   },
   watch: {

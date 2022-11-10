@@ -73,7 +73,7 @@ export default {
   },
 
   methods: {
-    inputChange() {
+    inputChange(a, b) {
       this.value = this.$el.value;
     }
   },

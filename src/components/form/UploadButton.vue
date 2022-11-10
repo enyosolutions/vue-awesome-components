@@ -72,7 +72,7 @@ export default {
       });
 
       if (!this.options.targetUrl) {
-        this.$awNotify({ message: 'Upload Url is Required', type: 'warning' });
+        this.$awNotify({ message: 'The Upload Url is Required', type: 'warning' });
         return;
       }
 
