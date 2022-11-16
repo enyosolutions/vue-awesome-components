@@ -7,11 +7,17 @@
       }"
       :disabled="!(currentField && currentField.field) || permanentInput"
       @change="updateFilter"
-      :value="(currentField && currentField.value) || '$eq'"
     >
       <option disabled class="dropdown-item">{{ $t('AwesomeFilter.labels.filters') }}</option>
       <option class="text-center" disabled>_________</option>
-      <option v-for="filter in _getFilters" :key="filter.value" :value="filter.value">{{ formatLabel(filter) }}</option>
+      <option
+        v-for="filter in _getFilters"
+        :key="filter.value"
+        :value="filter.value"
+        :selected="filter.value === (currentOperator && currentOperator.value)"
+      >
+        {{ formatLabel(filter) }}</option
+      >
     </select>
   </div>
 </template>
@@ -23,12 +29,16 @@ import i18nMixin from '../../../mixins/i18nMixin';
 export default {
   name: 'AwesomeFilterOperator',
   mixins: [i18nMixin],
+  model: {
+    prop: 'currentOperator',
+    event: 'update'
+  },
   props: {
     currentField: {
       type: Object,
       required: true
     },
-    currentFilter: {
+    currentOperator: {
       type: Object,
       required: true
     },
@@ -119,10 +129,10 @@ export default {
         selectedFilter = this.filters.find((f) => f.value === event.target.value);
       }
 
-      this.$emit('update:current-filter', selectedFilter);
+      this.$emit('update', selectedFilter);
     },
     formatLabel(filter) {
-      if (this.currentFilter && filter.value === this.currentFilter.value) {
+      if (this.currentOperator && filter.value === this.currentOperator.value) {
         return filter.shortText || filter.text;
       }
       return filter.text;
@@ -143,7 +153,7 @@ export default {
       return this.filters;
     },
     _filterSelected() {
-      return this.currentFilter && Object.keys(this.currentFilter).length > 0;
+      return this.currentOperator && Object.keys(this.currentOperator).length > 0;
     }
   },
   mounted() {

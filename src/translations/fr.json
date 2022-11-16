@@ -58,8 +58,8 @@
       "not-contains": "Ne contient pas",
       "starts-with": "Commence par",
       "ends-with": "Fini par",
-      "is-null": "est null",
-      "is-not-null": "N'est pas null",
+      "is-null": "est vide",
+      "is-not-null": "N'est pas vide",
       "is-defined": "Est défini",
       "is-not-defined": "N'est pas défini",
       "in": "Est parmi"

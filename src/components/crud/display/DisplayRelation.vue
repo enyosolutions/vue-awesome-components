@@ -6,32 +6,32 @@
           <span
             v-if="value"
             class="badge badge-info pointer"
-            @click="onClick"
+            @click.prevent.stop="onClick"
             :class="_relationIsClickable ? 'pointer' : ''"
           >
             {{ getLabel(value) }}
           </span>
           <template v-if="displayActions">
             <span v-if="value" class="copy-link" @click="copy(value)">
-              &nbsp; <i class="fa fa-clone text-info"></i>
+              &nbsp;<i class="fa fa-clone text-info"></i>
             </span>
             <router-link
               v-if="value && !onClickUrl"
               :to="'/app/' + kebabCase(relation) + '/' + value"
               class="external-link"
             >
-              &nbsp; <i class="fa fa-external-link text-info"></i>
+              &nbsp;<i class="fa fa-external-link text-info"></i>
             </router-link>
 
             <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
-              &nbsp; <i class="fa fa-external-link text-info"></i>
+              &nbsp;<i class="fa fa-external-link text-info"></i>
             </div>
             <router-link
               v-if="value && onClickUrl && !isFunction(onClickUrl)"
               :to="_parsedClickUrl"
               class="external-link"
             >
-              &nbsp; <i class="fa fa-external-link text-info"></i>
+              &nbsp;<i class="fa fa-external-link text-info"></i>
             </router-link>
           </template>
         </div>
@@ -287,7 +287,7 @@ export default {
   visibility: visible;
   display: inline-block;
   opacity: 1;
-  margin-left: 5px;
+  margin-left: 2px;
   margin-top: 2px;
 }
 

@@ -24,7 +24,7 @@
             </option>
           </select>
         </div>
-        <awesome-filter-operator :current-field="currentField" :current-filter.sync="currentOperator" in-popper />
+        <awesome-filter-operator :current-field="currentField" v-model="currentOperator" in-popper />
         <awesome-filter-value
           :current-field="currentField"
           :current-filter="currentOperator"
@@ -57,7 +57,7 @@
             <awesome-filter-operator
               v-if="showOperator"
               :current-field="currentField"
-              :current-filter.sync="currentOperator"
+              v-model="currentOperator"
               :permanent-input="permanentInput"
             />
             <awesome-filter-value
@@ -81,9 +81,18 @@
               {{ filter.filter ? filter.filter.shortText || filter.filter.text : '' }}
             </strong>
             <div v-if="typeof filter.value === 'object'">
-              <span v-for="(value, index) in filter.value" :key="index">
-                {{ value }}
-              </span>
+              <template v-for="(value, index) in filter.value">
+                <span :key="index" v-if="filter.field.type === 'relation'">
+                  <AwesomeDisplay
+                    :field="filter.field.field"
+                    type="relation"
+                    v-bind="filter.field"
+                    :value="value"
+                    :isClickable="false"
+                  />
+                </span>
+                <span :key="index" v-else> {{ value }}</span>
+              </template>
             </div>
             <div v-else>
               <span v-if="filter.valueLabel"> {{ filter.valueLabel }}</span>
@@ -98,7 +107,10 @@
               </span>
               <span v-else>{{ filter.value }}</span>
             </div>
-            <button type="button" class="btn text-muted" @click.prevent="removeFilter(filter)">
+            <button type="button" class="btn text-muted d-none p-0" @click.prevent="editFilter(filter)">
+              <i class="fa fa-edit"></i>
+            </button>
+            <button type="button" class="btn text-muted p-1" @click.prevent="removeFilter(filter)">
               <i class="fa fa-times-circle"></i>
             </button>
           </div>
@@ -204,6 +216,11 @@ export default {
         }
         this.parseFilter(this.selectedFilters);
       }
+    },
+    editFilter(item) {
+      this.$emit('toggle-edit', item);
+      // this.selectedFilters = _.without(this.selectedFilters, item);
+      // this.parseFilter(this.selectedFilters);
     },
     removeFilter(item) {
       this.selectedFilters = _.without(this.selectedFilters, item);

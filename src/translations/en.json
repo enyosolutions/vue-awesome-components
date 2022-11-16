@@ -58,8 +58,8 @@
       "not-contains": "Does not contains",
       "starts-with": "Starts with",
       "ends-with": "Ends with",
-      "is-null": "is null",
-      "is-not-null": "is not null",
+      "is-null": "is empty",
+      "is-not-null": "is not empty",
       "is-defined": "is defined",
       "is-not-defined": "is not defined",
       "in": "is one of"

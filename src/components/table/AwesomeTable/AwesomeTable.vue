@@ -226,6 +226,7 @@
           v-if="advancedFilters.length"
           :fields="columns"
           @update-filter="advancedFiltering"
+          @toggle-edit="displayAwFilter = true"
           :advanced-filters="advancedFilters"
         />
         <div class="table-responsive">

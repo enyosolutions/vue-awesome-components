@@ -11,7 +11,11 @@
       :readonly="schema.readonly"
       :ranges="false"
       opens="center"
-      :class="isTimepickerOnly ? 'date-range-timepicker-only' : ''"
+      :class="{
+        'date-range-timepicker-only': isTimepickerOnly,
+        readonly: schema.readonly,
+        disabled: schema.disabled
+      }"
       @update="onDateSelected"
     >
       <template slot="input">
@@ -133,6 +137,12 @@ export default {
 <style scoped>
 .field-dateTime .vue-daterange-picker {
   width: 100%;
+}
+.field-dateTime .vue-daterange-picker.disabled .reportrange-text {
+  background: #e9ecef;
+}
+.field-dateTime .vue-daterange-picker.readonly .reportrange-text {
+  background: #e9ecef;
 }
 .field-dateTime .input-group {
   z-index: unset;
