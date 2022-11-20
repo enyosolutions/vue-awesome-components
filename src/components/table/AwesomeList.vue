@@ -452,7 +452,7 @@ export default {
       advancedFilters: [],
       search: '',
       displayAwFilter: false,
-      columnSortState: "",
+      columnSortState: '',
       columnSortDirection: 'asc',
     };
   },
