@@ -73,7 +73,7 @@
                         <slot name="top-more-actions" />
                         <button
                           v-if="actions && actions.export"
-                          class="btn  btn-sm btn-success btn-simple btn-block"
+                          class="btn  btn-sm text-success btn-block"
                           @click="exportCallBack"
                         >
                           <i class="fa fa-file-excel" />

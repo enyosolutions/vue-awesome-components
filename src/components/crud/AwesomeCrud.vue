@@ -136,7 +136,7 @@
               <button
                 v-if="mergedOptions.useCustomLayout && _actions.editLayout"
                 type="button"
-                class="btn btn-sm btn-simple btn-default btn-block"
+                class="btn btn-sm text-success btn-link btn-alt-style btn-block"
                 @click="goToCreatePage({ editLayoutMode: true })"
               >
                 <i class="fa fa-th-large"></i>

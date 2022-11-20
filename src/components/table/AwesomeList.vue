@@ -67,6 +67,41 @@
                 <slot name="top-actions" class />
 
                 <div class="btn-group" role="group">
+                 <popper
+                  trigger="clickToOpen"
+                  :options="{
+                    placement: 'top'
+                  }"
+                  ref="sortPopover"
+                >
+                  <button
+                    slot="reference"
+                    type="button"
+                    class="btn btn-sm btn-simple dropdown-toggle"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    {{ $t('AwesomeCrud.buttons.sort') }}
+                  </button>
+                  <div class="popper card mt-0" style="z-index: 1;">
+                    <button
+                      v-for="(col, index) in columns"
+                      :key="index"
+                      class="dropdown-item col"
+                      type="button"
+                      href="#"
+                      :class="{
+                        'text-light bg-primary': columnSortState === col.field,
+                        'd-none': col.field === '__ACTIONS'
+                      }"
+                      @click="toggleColumnSort(col.field)"
+                    >
+                      {{ col.label }} <span v-if="columnSortState === col.field" class="pull-right"> {{ columnSortDirection === 'asc' ? '⬆️' : '⬇️' }}</span>
+                    </button>
+                  </div>
+                </popper>
+                </div>
+                <div class="btn-group" role="group">
                   <popper
                     trigger="clickToOpen"
                     :options="{
@@ -387,7 +422,8 @@ export default {
         refresh: true,
         changeItemsPerRow: true,
         pagination: true,
-        reorder: false
+        reorder: false,
+        sort: true,
       })
     },
     defaultOptions: {
@@ -415,7 +451,9 @@ export default {
       data: [],
       advancedFilters: [],
       search: '',
-      displayAwFilter: false
+      displayAwFilter: false,
+      columnSortState: "",
+      columnSortDirection: 'asc',
     };
   },
   computed: {
@@ -649,7 +687,7 @@ export default {
     },
 
     localSearch(items, search) {
-      return items.filter((item) => {
+      let filteredList =  items.filter((item) => {
         if (!this.search) {
           return true;
         }
@@ -660,10 +698,38 @@ export default {
         }
         return true;
       });
+
+      if (!this.columnSortState) {
+        return filteredList;
+      }
+      filteredList = _.sortBy(filteredList, this.columnSortState)
+
+      if (this.columnSortDirection === 'asc') {
+        return filteredList;
+      }
+      return filteredList.reverse();
     },
 
     onListReordered(items) {
       this.$emit('reorder', items);
+    },
+
+    toggleColumnSort(colName) {
+      const sort = {[colName]: true};
+      // if item already selected just change the direction
+      if (this.columnSortState === colName) {
+        this.columnSortDirection = this.columnSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.columnSortState = colName;
+      }
+      this.$refs.sortPopover.doClose();
+      if (this.mode !== 'remote') {
+        return;
+      }
+      sort[colName] = this.columnSortDirection;
+      this.pushChangesToRouter({ query: { sort } });
+      this.updateParams({ sort });
+      this.getItems({ useSkeleton: true });
     }
   }
 };

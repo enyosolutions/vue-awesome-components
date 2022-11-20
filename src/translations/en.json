@@ -118,6 +118,7 @@
       "close": "Close",
       "edit": "Edit",
       "save": "Save",
+      "sort": "Sort",
       "delete": "Delete",
       "bulkEdit": "Multiple Edit",
       "openEditLayoutMode": "Edit Layout",

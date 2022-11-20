@@ -98,7 +98,7 @@
                     id="configurationButton"
                   >
                     <i class="fa fa-cog" />
-                    {{ $t('AwesomeTable.configuration') }}
+                    {{ $t('AwesomeTable.more') }}
                   </button>
 
                   <div class="popper card mt-0" style="z-index: 1;">
