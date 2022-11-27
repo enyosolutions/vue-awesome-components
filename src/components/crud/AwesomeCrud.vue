@@ -274,24 +274,25 @@
             "
             v-bind="_kanbanOptions"
             :actions="_actions"
-            :title="_listingComponentTitle"
-            :columns="kanbanFieldsComputed"
-            :fields="_kanbanOptions.fields"
-            :identity="identity"
-            :url="_url"
-            :api-query-params="apiQueryParams || mergedOptions.queryParams"
             :api-query-headers="mergedOptions.headerParams"
+            :api-query-params="apiQueryParams || mergedOptions.queryParams"
             :apiRequestConfig="apiRequestConfig"
             :apiResponseConfig="apiResponseConfig"
             :apiTimeout="apiTimeout"
+            :card-click-resolver="getViewPageUrl"
+            :columns="kanbanFieldsComputed"
+            :export-url="mergedOptions.exportUrl"
+            :fields="_kanbanOptions.fields"
+            :identity="identity"
+            :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
-            :useRouterMode="useRouterMode"
             :options="_kanbanOptions.options"
             :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
-            :mode="dataPaginationModeComputed"
-            :card-click-resolver="getViewPageUrl"
+            :title="_listingComponentTitle"
+            :url="_url"
+            :useRouterMode="useRouterMode"
             @customListAction="onCustomListAction"
             @create="goToCreatePage"
             @removeList="onRemoveList"
@@ -1486,7 +1487,7 @@ export default {
 
     exportTemplateCallBack() {
       if (!this.mergedOptions.importUrl) {
-        this.$awNotify({ title: '[WARN] missing export url', type: 'warning' });
+        this.$awNotify({ title: '[WARN] missing export template url', type: 'warning' });
         return;
       }
       this.$awApi

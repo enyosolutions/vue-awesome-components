@@ -151,6 +151,7 @@
               :usersField="usersField"
               :userTitleField="userTitleField"
               group="card"
+              :allowRemovingList="actions.removeList"
               @remove-list="onRemoveList"
               @customListAction="onCustomListAction"
               @change="onCardChanged"
@@ -296,7 +297,8 @@ export default {
       type: Object,
       default: () => ({
         refresh: true,
-        addKanbanList: true
+        addKanbanList: true,
+        removeList: false
       })
     },
 

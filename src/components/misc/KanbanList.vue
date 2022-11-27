@@ -44,7 +44,7 @@
                 </a>
               </template>
               <div v-if="customListActions.length" class="dropdown-divider"></div>
-              <a href="#" @click.prevent="removeList" class="dropdown-item text-danger">{{
+              <a href="#" @click.prevent="removeList" class="dropdown-item text-danger" v-if="allowRemovingList">{{
                 $t('AwesomeKanban.labels.removeList')
               }}</a>
             </div>
@@ -229,7 +229,7 @@ export default {
       type: Boolean,
       default: false
     },
-    allowDeletingList: {
+    allowRemovingList: {
       type: Boolean,
       default: false
     },
