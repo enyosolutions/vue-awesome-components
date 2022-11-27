@@ -634,7 +634,8 @@ export default {
         .then((res) => {
           if (res.data.url) {
             const link = document.createElement('a');
-            link.download = `${this.entity || ''}_export`;
+            const name = res.data.url.split('/').pop();
+            link.download = `${this.entity || ''}_export_${name || ''}`;
             link.href = res.data.url;
             link.click();
             link.remove();

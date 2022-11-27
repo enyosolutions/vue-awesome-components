@@ -66,7 +66,9 @@
               <div class="btn-group float-right aw-list-buttons">
                 <slot name="top-actions" class />
 
-                <div class="btn-group" role="group">
+                <div class="btn-group" role="group"
+                v-if="_actions.sort"
+                >
                  <popper
                   trigger="clickToOpen"
                   :options="{
