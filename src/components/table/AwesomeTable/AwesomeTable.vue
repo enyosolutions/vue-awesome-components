@@ -1031,7 +1031,7 @@ export default {
 
     toggleColumn(colName) {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
-      this.pushChangesToRouter();
+      this.pushChangesToRouter(undefined, true);
     },
 
     onColumnFilter(params) {
@@ -1065,8 +1065,8 @@ export default {
       if (this.mode !== 'remote') {
         return;
       }
-      this.pushChangesToRouter({ query: { sort } });
       this.updateParams({ sort });
+      this.pushChangesToRouter({ query: { sort } }, true);
       this.getItems({ useSkeleton: true });
     },
 

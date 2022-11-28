@@ -334,6 +334,19 @@ export default {
   },
   mounted() {
     this.handleLists();
+    if (this.serverParams && this.serverParams.page > 1) {
+      this.updateParams({ page: 0 });
+      this.pushChangesToRouter(
+        {
+          query: {
+            page: 0
+          }
+        },
+        true
+      );
+      this.connectRouteToPagination(this.$route);
+      this.getItems();
+    }
   },
 
   computed: {

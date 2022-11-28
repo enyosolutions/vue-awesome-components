@@ -151,6 +151,7 @@
               !_isANestedDetailView &&
                 (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
             "
+            v-bind="listOptions"
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
             :api-query-params="apiQueryParams || mergedOptions.queryParams"
@@ -172,7 +173,7 @@
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
-            :perPage="listOptions && listOptions.perPage ? listOptions.perPage : 10"
+            :perPage="listOptions && listOptions.perPage ? listOptions.perPage : 20"
             :segment="segment"
             :segmentField="segmentField"
             :styles="{
@@ -184,7 +185,6 @@
             :titleField="listOptions && listOptions.titleField"
             :url="_url"
             :useRouterMode="useRouterMode"
-            v-bind="listOptions"
             @itemClicked="onListItemClicked"
             @reorder="onListReordered"
             @create="goToCreatePage"

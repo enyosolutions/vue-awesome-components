@@ -168,7 +168,19 @@ export default {
 
     _saveStateKey() {
       return `${this.identity}-${this.$options.name}-${window.location.pathname}-state`;
-    }
+    },
+    /*
+        serverParams2() {
+          const params = _.merge({}, this.apiQueryParams, this.apiRequestPermanentQueryParams);
+          Object.keys(params).forEach(field => {
+            if (params[field] === undefined) {
+              delete params[field];
+            }
+          });
+
+          return params;
+        }
+        */
   },
 
   watch: {
@@ -208,6 +220,7 @@ export default {
 
   mounted() {
     this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', this.refreshLocalData);
+    this.onSearch = _.debounce(this.onSearchFresh, 300);
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.refreshLocalData();
@@ -407,7 +420,7 @@ export default {
 
     onPageChange(params) {
       this.updateParams({ page: params.currentPage });
-      this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } });
+      this.pushChangesToRouter({ query: { ...this.$route.query, page: params.currentPage } }, false);
       if (this.mode !== 'remote') {
         return;
       }
@@ -423,20 +436,21 @@ export default {
           // page: 1,
           perPage: params.currentPerPage
         }
-      });
+      }, true);
       if (this.mode !== 'remote') {
         return;
       }
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onPerPageChange' });
     },
 
-    onSearch(params) {
-      // this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } });
+    onSearch: () => null,
+    onSearchFresh(params) {
+      this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } }, true);
+      let search = params.searchTerm;
+      this.updateParams({ search, page: 0 });
       if (this.mode !== 'remote') {
         return;
       }
-      let search = params.searchTerm;
-      this.updateParams({ search, page: 0 });
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onSearch' });
     },
 
@@ -446,10 +460,10 @@ export default {
       }
     },
 
-    pushChangesToRouter(options = {}) {
+    pushChangesToRouter(options = {}, replace = false) {
       this.saveComponentState();
       if (process.env.NODE_ENV === 'development') {
-        console.warn('{ path: this.$route.path, ...options, query: { ...this.routeQueryParams, sort: undefined } }', {
+        console.warn('PUSH CHANGES TO ROUTER', {
           path: this.$route.path,
           ...options,
           query: {
@@ -462,13 +476,23 @@ export default {
       if (!this.useRouterMode) {
         return;
       }
-      this.$router.push({
-        path: this.$route.path, ...options,
-        query: {
-          ...this.routeQueryParams,
-          ...options.query,
-          sort: undefined
+      const method = replace ? 'replace' : 'push';
+      const query = {
+        ...this.routeQueryParams,
+        ...this.$route.query,
+        ...options.query,
+        sort: undefined
+      };
+      Object.keys(query).forEach((key) => {
+        if (query[key] === undefined) {
+          delete query[key];
         }
+      });
+
+      this.$router[method]({
+        path: this.$route.path,
+        ...options,
+        query,
       }).catch(err => {
         // Ignore the vueRouter err regarding  navigating to the page they are already on.
         if (
@@ -516,17 +540,17 @@ export default {
         if (Object.keys(to.query).length) {
           this.updateParams({
             page: to.query.page,
-            search: to.query.search || '',
-            perPage: to.query.perPage || '',
-            filters: to.query.filters || '',
+            search: to.query.search || undefined,
+            perPage: to.query.perPage || undefined,
+            filters: to.query.filters || undefined,
             //  columns: to.query.columns || '',
             //   sort: to.query.sort || '',
           });
           this.routeQueryParams = {
-            page: to.query.page || '',
-            search: to.query.search || '',
-            perPage: to.query.perPage || '',
-            filters: to.query.filters || '',
+            page: to.query.page || undefined,
+            search: to.query.search || undefined,
+            perPage: to.query.perPage || undefined,
+            filters: to.query.filters || undefined,
             // columns: to.query.columns || '',
             // sort: to.query.sort || '',
           }
@@ -535,7 +559,7 @@ export default {
 
         if (Object.keys(this.routeQueryParams).length) {
           this.updateParams({ ...this.routeQueryParams, columns: undefined });
-          this.pushChangesToRouter();
+          this.pushChangesToRouter(undefined, true);
           return;
         }
       }
