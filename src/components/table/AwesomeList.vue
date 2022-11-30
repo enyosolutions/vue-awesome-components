@@ -222,7 +222,7 @@
                     :class="itemClasses"
                     :style="{ 'flex-direction': itemsPerRow < 2 ? 'row' : 'column', height: _itemHeight }"
                   >
-                    <i class="draggable-icon fa fa-list"></i>
+                    <i v-if="_isDraggable" class="draggable-icon fa fa-list"></i>
                     <img
                       class="card-img-top"
                       v-if="imageField"
