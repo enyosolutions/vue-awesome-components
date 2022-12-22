@@ -25,6 +25,239 @@ To create nested component, simply add the `nestedModels` property (an array) an
 
 ## Examples
 
+Show a tab with a list of comments
+
 ```
+{
+
+  ...
+   nestedModels: [
+      {
+        extends: 'comment',
+        config: {
+          name: 'Actions & comments',
+          namePlural: 'Actions & comments',
+          apiUrl: '{{ parent && parent.id ? "/api/candidate/" + parent.id + "/comment?filters[includeModelData]=true" : "" }}',
+          detailPageMode: 'modal',
+          title: 'Actions and comments',
+          actions: {
+            dateFilter: false,
+            pagination: true,
+          },
+          schema: {
+            properties: {
+              createdBy: {
+                type: 'string',
+                column: {
+                  type: 'relation',
+                  label: 'Created by',
+                  hidden: false,
+                  displayActions: false,
+                },
+                field: {
+                  readonly: true
+                }
+              },
+              AllModelRelations: {
+                type: 'object',
+                column: {
+                  type: 'object',
+                  label: 'Context',
+                  format: '{{ currentItem && currentItem.modelData? currentItem.model + ": " + (currentItem.modelData.name || currentItem.modelData.title || currentItem.modelData.username || currentItem.modelId ): currentItem }}',
+                },
+                field: {
+                  readonly: true,
+                  displayOptions: {
+                    format: '{{ currentItem && currentItem.modelData? currentItem.model + ": " + (currentItem.modelData.name || currentItem.modelData.title || currentItem.modelData.username || currentItem.modelId ): currentItem }}',
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    ],
+...
+}
+
+```
+
+Show a tab with a full page component
+
+```
+    nestedModels: [
+      {
+        identity: 'cv',
+        name: 'Curriculum',
+        title: 'Curriculum',
+        tabIsVisible: '{{ parent && parent.cv ? true : false }}',
+        apiUrl: '/api/candidate',
+        itemId: '{{ parent ? parent.id : "" }}',
+        detailPageMode: 'page',
+        displayMode: 'page',
+        nestedDisplayMode: 'page',
+        component: 'AwesomeForm',
+        displayHeader: false,
+        mode: 'view',
+        actions: {
+          edit: false,
+          view: false,
+          delete: false,
+          changeDisplayMode: false
+        },
+        options: {
+        },
+        schema: {
+          properties: {
+            cv: {
+              field: {
+                label: '',
+                cols: 12,
+                classes: 'vh-100',
+                visible: true,
+                displayOptions: {
+                  type: 'url',
+                  embed: true,
+                  classes: 'h-100',
+                  styleClasses: 'h-100',
+                  styles: 'height:100%',
+                },
+              }
+            }
+          }
+        }
+      },
+      {
+        extends: 'recruitmentProcess',
+        config: {
+          apiUrl: '{{ parent && parent.id ? "/api/recruitment-process?filters[candidateId]=" + parent.id + "" : "" }}',
+          detailPageMode: 'modal',
+          name: 'Recruitment',
+          namePlural: 'Recruitments',
+          title: 'Recruitments',
+          actions: {
+            edit: false,
+            delete: false,
+            changeDisplayMode: false
+          },
+          options: {
+            viewPath: '/app/recruitment-process/:id',
+          },
+          schema: {
+            properties: {
+              candidateId: {
+                field: {
+                  readonly: true,
+                  default: '{{ parent && parent.id ? parent.id : undefined }}',
+                  // value: '{{ parent && parent.id ? parent.id : null }}',
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        extends: 'interview',
+        config: {
+          title: 'Interviews',
+          name: 'Interviews',
+          namePlural: 'Interviews',
+          apiUrl: '{{ parent && parent.id ? "/api/interview?filters[candidateId]=" + parent.id + "" : "" }}',
+          detailPageMode: 'modal',
+          actions: {
+            search: false,
+            pagination: false,
+            noActions: true,
+            create: true,
+          },
+          schema: {
+            properties: {
+              candidateId: {
+                field: {
+                  readonly: true,
+                  default: '{{ parent && parent.id ? parent.id : undefined }}',
+                  // value: '{{ parent && parent.id ? parent.id : null }}',
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        extends: 'comment',
+        config: {
+          name: 'Actions & comments',
+          namePlural: 'Actions & comments',
+          apiUrl: '{{ parent && parent.id ? "/api/candidate/" + parent.id + "/comment?filters[includeModelData]=true" : "" }}',
+          detailPageMode: 'modal',
+          title: 'Actions and comments',
+          actions: {
+            dateFilter: false,
+            pagination: true,
+          },
+          schema: {
+            properties: {
+              createdBy: {
+                type: 'string',
+                column: {
+                  type: 'relation',
+                  label: 'Created by',
+                  hidden: false,
+                  displayActions: false,
+                },
+                field: {
+                  readonly: true
+                }
+              },
+              AllModelRelations: {
+                type: 'object',
+                column: {
+                  type: 'object',
+                  label: 'Context',
+                  format: '{{ currentItem && currentItem.modelData? currentItem.model + ": " + (currentItem.modelData.name || currentItem.modelData.title || currentItem.modelData.username || currentItem.modelId ): currentItem }}',
+                },
+                field: {
+                  readonly: true,
+                  displayOptions: {
+                    format: '{{ currentItem && currentItem.modelData? currentItem.model + ": " + (currentItem.modelData.name || currentItem.modelData.title || currentItem.modelData.username || currentItem.modelId ): currentItem }}',
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    ],
+```
+
+if you are using Axel framework to serve your model from the api, you can also use the extend style of writing nested models;
+
+```
+    nestedModels: [
+      {
+        extends: 'workshop',
+        config: { url: '/api/workshop?filters[moduleId]={{parent.id}}' }
+      },
+      {
+        extends: 'message',
+        config: {
+          url: '{{ parent && parent.id ? "/api/request/" + parent.id + "/message" : "" }}',
+          options: { initialDisplayMode: 'list', },
+          actions: { create: true, },
+        },
+      },
+      {
+        extends: 'modelComment',
+        config: {
+          identity: 'requestComment',
+          name: 'Commentaire interne',
+          namePlural: 'Commentaires internes',
+          title: 'Commentaires internes',
+          options: { initialDisplayMode: 'list', },
+          url: '{{ parent && parent.id ? "/api/request/" + parent.id + "/comment" : "" }}',
+          actions: { create: true, },
+        },
+      },
+    ],
 
 ```

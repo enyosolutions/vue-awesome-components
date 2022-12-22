@@ -223,7 +223,8 @@ export default {
     this.onSearch = _.debounce(this.onSearchFresh, 300);
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
-    this.refreshLocalData();
+    this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+    this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
   },
 
   beforeDestroy() {
@@ -235,7 +236,11 @@ export default {
 
     // eslint-disable-next-line
     async refreshLocalData(changed) {
-      if (this._url) {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.log('refreshLocalData', changed);
+      }
+      if (this._url && this.mode !== 'local') {
         //   this.data = [];
         this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
@@ -271,10 +276,11 @@ export default {
         });
         return;
       }
-
       if (!this._url) {
         return;
       }
+      // Attention ne pas interdire les appels si on en mode remote
+
       if (options.useSkeleton) {
         this.showSkeleton = options.useSkeleton; ''
       }
@@ -424,6 +430,7 @@ export default {
       if (this.mode !== 'remote') {
         return;
       }
+
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onPageChange' });
     },
 
@@ -444,13 +451,19 @@ export default {
     },
 
     onSearch: () => null,
+    /**
+     * En mode local si on push les changements dans le router, cela lance une requete
+     *
+     * @param {*} params
+     * @returns
+     */
     onSearchFresh(params) {
-      this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } }, true);
       let search = params.searchTerm;
       this.updateParams({ search, page: 0 });
       if (this.mode !== 'remote') {
         return;
       }
+      this.pushChangesToRouter({ query: { ...this.$route.query, search: params.searchTerm } }, true);
       this.getItems({ useSkeleton: true, source: '[apiListMixin] onSearch' });
     },
 
@@ -463,7 +476,8 @@ export default {
     pushChangesToRouter(options = {}, replace = false) {
       this.saveComponentState();
       if (process.env.NODE_ENV === 'development') {
-        console.warn('PUSH CHANGES TO ROUTER', {
+        // eslint-disable-next-line no-console
+        console.info('PUSH CHANGES TO ROUTER', {
           path: this.$route.path,
           ...options,
           query: {

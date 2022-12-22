@@ -153,6 +153,10 @@ export default {
       type: Function,
       note: 'A function you want to trigger when an action on element is fire'
     },
+    actionApiUrl: {
+      type: String,
+      note: 'an api url to call for this action. it can contain a template'
+    },
     index: {
       type: Number,
       note: 'The index of the element (used in id)'

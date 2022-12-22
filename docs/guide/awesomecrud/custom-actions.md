@@ -16,6 +16,20 @@ There are multiple location where you can add custom action.
 | `customFormTopActions`  | Actions that appears on top of `Awesome Form`                                  |
 | `customTitleBarActions` | Actions that appears on in the title bar                                       |
 
+## Props of an action
+
+| Key            | Location                                                                                                                                           |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`         | type of action `'button', 'dropdown', 'input', 'filter'`                                                                                           |
+| `name`         | Unique Name of the action. Useful mostly to identify the action                                                                                    |
+| `title`        | The text of the element. Usually used as a tooltip                                                                                                 |
+| `label`        | The label of the element                                                                                                                           |
+| `disabled`     | Whether the element disabled or not (boolean / Function / template )                                                                               |
+| `action`       | A function you want to trigger when an action on element is fired                                                                                  |
+| `actionApiUrl` | an api url to call for this action. it can contain a template. ex: '/api/salary/{{ item.id }}/recalculate'. The call is always done wia a PUT call |
+
+For all options See https://github.com/enyosolutions-team/vue-awesome-components/blob/master/src/components/misc/AwesomeAction/AwesomeAction.vue#L115
+
 ## Locations examples
 
 ### `customTopRightActions`

@@ -42,7 +42,7 @@
             :custom-table-top-actions="_customTableTopActions"
             :entity="identity"
             :export-url="mergedOptions.exportUrl"
-            :limit="tableDataLimit"
+            :limit="dataPaginationModeComputed === 'remote' ? 20 : tableDataLimit"
             :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -840,6 +840,13 @@ export default {
       validator: (value) => ['list', 'edit', 'view'].includes(value),
       description: 'The location to redirect after a successful edit',
       default: 'view'
+    },
+    dataPaginationMode: {
+      type: String,
+      values: ['remote', 'local'],
+      validator: (value) => ['remote', 'local'].includes(value),
+      description: 'How do we paginate the data',
+      default: 'remote'
     }
   },
   data() {
@@ -1189,7 +1196,7 @@ export default {
     },
 
     dataPaginationModeComputed() {
-      return this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
+      return this.dataPaginationMode || this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
     },
 
     segmentFieldDefinitionComputed() {
@@ -2056,7 +2063,19 @@ export default {
     onCustomAction(body) {
       const { action } = body;
       this.$emit(this.identity + '-custom-action', action);
-      return action && action.action && action.action(body, this);
+      if (action) {
+        if (action.actionApiUrl) {
+          let url = this.templateParseUrl(action.actionApiUrl, body);
+          this.$awApi
+            .put(url, body)
+            .then((res) => {
+              this.tableNeedsRefresh = true;
+            })
+            .catch(this.apiErrorCallback);
+        } else if (action.action && typeof action.action === 'function') {
+          action.action(body, this);
+        }
+      }
     },
 
     getNestedItem() {

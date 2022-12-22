@@ -422,7 +422,7 @@ export default {
     },
 
     searchDebounced: _.debounce((loading, search, vm) => {
-      vm.$http
+      vm.$awApi
         .get(vm.dataUrl, {
           params: {
             ...vm.fieldOptions.queryParams,

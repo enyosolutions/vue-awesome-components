@@ -225,7 +225,7 @@
                     <i v-if="_isDraggable" class="draggable-icon fa fa-list"></i>
                     <img
                       class="card-img-top"
-                      v-if="imageField"
+                      v-if="imageField && getItemProperty(item, imageField)"
                       :src="getItemProperty(item, imageField)"
                       :alt="getItemProperty(item, titleField)"
                       :class="imageClasses"
