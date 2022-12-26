@@ -421,7 +421,8 @@ import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 import { VueGoodTable } from 'vue-good-table';
 import dayjs from 'dayjs';
-const localeData = require('dayjs/plugin/localeData');
+import localeData from 'dayjs/plugin/localeData';
+
 dayjs.extend(localeData);
 import Popper from 'vue-popperjs';
 import { Skeleton } from 'vue-loading-skeleton';

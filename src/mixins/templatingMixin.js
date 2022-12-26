@@ -3,7 +3,7 @@ import rolesMixin from './rolesMixin';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
-const customParseFormat = require('dayjs/plugin/customParseFormat.js');
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
 
 

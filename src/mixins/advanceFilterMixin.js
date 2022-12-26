@@ -1,4 +1,4 @@
-const _ = require('lodash');
+import { cloneDeep } from 'lodash';
 import AwesomeFilter from '../components/misc/AwesomeFilter.vue';
 
 export default {
@@ -14,8 +14,8 @@ export default {
   methods: {
     advancedFiltering(parsedFilters, filters) {
       this.updateParams({
-        advancedFilters: _.cloneDeep(filters),
-        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+        advancedFilters: cloneDeep(filters),
+        parsedAdvancedFilters: cloneDeep(parsedFilters),
         page: 0
       });
       if (!this.optionsComputed || this.optionsComputed.autoSearch) {
@@ -27,7 +27,7 @@ export default {
 
     permanentFiltering(parsedFilters, filters) {
       this.updateParams({
-        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+        parsedAdvancedFilters: cloneDeep(parsedFilters),
         page: 0,
         permanent: true
       });

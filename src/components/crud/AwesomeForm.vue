@@ -667,7 +667,7 @@ export default {
     event: 'change'
   },
   components: {
-    AwesomeCrud: AwesomeCrud,
+    AwesomeCrud: () => AwesomeCrud,
     /* Column,
     Tabs,
     Row,

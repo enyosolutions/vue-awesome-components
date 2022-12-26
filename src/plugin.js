@@ -4,7 +4,7 @@ import VModal from 'vue-js-modal';
 
 import FieldEnyoSelect from './components/crud/fields/FieldEnyoSelect.vue';
 import FieldFileInput from './components/crud/fields/FieldFileInput.vue';
-import FieldJsonTextarea from './components/crud/fields/FieldJsonTextarea.vue';
+import FieldJson from './components/crud/fields/FieldJsonTextarea.vue';
 import FieldDateTime from './components/crud/fields/fieldDateTime.vue';
 import FieldVSelect from './components/crud/fields/FieldVSelect.vue';
 import FieldImagePicker from './components/crud/fields/FieldImagePicker.vue';
@@ -96,8 +96,9 @@ const install = (Vue, options = {}) => {
   Vue.component('fieldVSelect', FieldVSelect);
   Vue.component('fieldFileInput', FieldFileInput);
   Vue.component('fieldFilePicker', FieldFileInput);
-  Vue.component('fieldJsonTextarea', FieldJsonTextarea);
-  Vue.component('field-json-textarea', FieldJsonTextarea);
+  Vue.component('fieldJsonTextarea', FieldJson);
+  Vue.component('field-json-textarea', FieldJson);
+  Vue.component('field-json', FieldJson);
   Vue.component('fieldImagePicker', FieldImagePicker);
   Vue.component('fieldComponent', FieldComponent);
   Vue.component('field-array', FieldArray);

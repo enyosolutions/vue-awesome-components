@@ -11,8 +11,9 @@
 <script>
 import VueFormGenerator from '../../form/form-generator';
 import dayjs from 'dayjs';
-const customParseFormat = require('dayjs/plugin/customParseFormat.js');
 import $ from 'jquery';
+
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 
 dayjs.extend(customParseFormat);
 

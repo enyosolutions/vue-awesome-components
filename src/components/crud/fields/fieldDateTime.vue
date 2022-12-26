@@ -27,14 +27,15 @@
 </template>
 
 <script>
-import VueFormGenerator from '../../form/form-generator';
 import dayjs from 'dayjs';
-const customParseFormat = require('dayjs/plugin/customParseFormat.js');
-dayjs.extend(customParseFormat);
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import _ from 'lodash';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 
+import VueFormGenerator from '../../form/form-generator';
+
+dayjs.extend(customParseFormat);
 const inputFormat = 'DD.MM.YYYY HH:mm';
 
 export default {

@@ -5,9 +5,10 @@
 <script>
 import dayjs from 'dayjs';
 // require is needed because plugins are not correctly inserted
-const customParseFormat = require('dayjs/plugin/customParseFormat.js');
-dayjs.extend(customParseFormat);
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
+
+dayjs.extend(customParseFormat);
 
 export default {
   name: 'DisplayDate',
