@@ -11,7 +11,7 @@ export default {
         return;
       }
 
-      const messageOriginal = err.response || err.data || err;
+      const messageOriginal = err.data || err.response || err;
       let message = this.parseErrorResponse(messageOriginal);
       if (this.$te(`aw.messages.${message}`)) {
         message = this.$t(`aw.messages.${message}`);
@@ -22,7 +22,7 @@ export default {
       }
       const errorBody = (err.response && err.response.data) || err.data || err;
       const subErrors = errorBody && errorBody.errors;
-      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal).map(e => `${this.$te(e) ? this.$t(e) : e}\n`).join('') : '';
+      const subErrorsHtml = subErrors && Array.isArray(subErrors) ? subErrors.map(e => e.message || e).filter(e => e !== messageOriginal && e !== errorBody.message).map(e => `${this.$te(e) ? this.$t(e) : e}\n`).join('') : '';
       this.$awNotify({
         title: message,
         message: subErrorsHtml,
