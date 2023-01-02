@@ -14,6 +14,12 @@ export default {
         return this.awComponentsConfig && this.awComponentsConfig.primaryKey ? this.awComponentsConfig.primaryKey : 'id';
       }
     },
+    primaryKeyField: {
+      type: String,
+      default: function () {
+        return this.awComponentsConfig && this.awComponentsConfig.primaryKey ? this.awComponentsConfig.primaryKey : 'id';
+      }
+    },
     url: { type: [String, Function], default: '' },
     apiUrl: { type: [String, Function], default: '' },
     apiTimeout: { type: [String, Number], default: 20000, description: 'the duration after with the request will be considered as failed' },
@@ -133,12 +139,16 @@ export default {
       let url;
       if (this._url.indexOf('?') > -1) {
         url = new URL(this._url.indexOf('http') === 0 ? this._url : `http://localhost${this._url}`);
-        url = `${url.pathname}/${this.selectedItem[this.primaryKey]}${url.search}`;
+        url = `${url.pathname}/${this.selectedItem[this.primaryKeyFieldCpt]}${url.search}`;
       } else {
-        url = `${this._url}/${this.selectedItem[this.primaryKey]}`;
+        url = `${this._url}/${this.selectedItem[this.primaryKeyFieldCpt]}`;
       }
       return url;
     },
+
+    primaryKeyFieldCpt() {
+      return this.primaryKeyField || this.primaryKey || (this.awComponentsConfig && this.awComponentsConfig.primaryKey) || 'id';
+    }
   },
 
   created() {

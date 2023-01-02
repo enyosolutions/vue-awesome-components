@@ -16,13 +16,12 @@ export default {
       description: 'Which field to use as primary key. By default it\'s `id` but it can be `_id`  or anything that you want',
 
     },
-    identity: { type: String, required: true },
     displayField: { type: String },
+    identity: { type: String, required: true },
     title: { type: [String, Boolean] },
     name: { type: [String, Boolean] },
-    pluralName: { type: [String, Boolean] },
+    namePlural: { type: [String, Boolean] },
     tabTitle: { type: [String, Boolean], required: false, default: undefined },
-    pageTitle: { type: [String, Boolean], required: false, default: undefined },
   },
   computed: {
     primaryKeyFieldCpt() {

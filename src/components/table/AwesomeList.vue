@@ -563,8 +563,8 @@ export default {
         return this._model.displayField;
       }
 
-      if (this.primaryKey) {
-        return this.primaryKey;
+      if (this.primaryKeyFieldCpt) {
+        return this.primaryKeyFieldCpt;
       }
       return '';
     },

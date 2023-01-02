@@ -12,7 +12,9 @@
     >
       <template slot="group-legend" slot-scope="{ group, groupLegend }">
         <slot name="group-legend" :group="group" :group-legend="groupLegend">
-          <legend class="aw-form-group-legend" v-if="groupLegend"><span v-html="groupLegend"></span></legend>
+          <legend class="aw-form-group-legend" v-if="groupLegend">
+            <span v-html="groupLegend"></span>
+          </legend>
         </slot>
       </template>
       <template slot="group-help" slot-scope="{ group }">
@@ -76,6 +78,7 @@ import { isFunction, isNil } from 'lodash';
 export default {
   name: 'form-generator',
   components: { formGroup, formElement },
+
   props: {
     schema: {
       type: Object,

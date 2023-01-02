@@ -1009,7 +1009,7 @@ export default {
         return item;
       }
       const value = this.$store.state.listOfValues[listName].find(
-        (elm) => elm[this.primaryKey] === item || elm.code === item
+        (elm) => elm[this.primaryKeyFieldCpt] === item || elm.code === item
       );
       if (!value) {
         return item;
@@ -1022,7 +1022,9 @@ export default {
       if (!item || !this.$store.state.data[listName]) {
         return item;
       }
-      const value = this.$store.state.data[listName].find((elm) => elm[this.primaryKey] === item || elm.code === item);
+      const value = this.$store.state.data[listName].find(
+        (elm) => elm[this.primaryKeyFieldCpt] === item || elm.code === item
+      );
       if (!value) {
         return item;
       }

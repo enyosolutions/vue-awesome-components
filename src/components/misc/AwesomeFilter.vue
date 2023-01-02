@@ -198,7 +198,7 @@ export default {
         ['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].indexOf(this.currentOperator.value) > -1
           ? true
           : this.currentValue;
-      if (Object.keys(this.currentField).length) {
+      if (this.currentField && Object.keys(this.currentField).length) {
         let filter = {
           field: this.currentField,
           value,

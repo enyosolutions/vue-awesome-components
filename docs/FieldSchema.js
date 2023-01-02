@@ -63,7 +63,7 @@ module.exports = {
           title:
             'The type of the field, when its a text input comming from https://vue-generators.gitbook.io/vue-generators/fields',
           example: 'file',
-          enum: ['text', 'date', 'number', 'radio', 'checkbox', 'datetime', 'masked'],
+          enum: ['text', 'date', 'number', 'radio', 'checkbox', 'datetime', 'masked', 'password'],
         },
         required: {
           type: 'boolean',

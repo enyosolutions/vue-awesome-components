@@ -21,8 +21,7 @@ export default {
     _isANestedDetailView() {
       return (
         this._isNested &&
-        // ((this.selectedItem && this.selectedItem[this.primaryKey]) ||
-        ((this.selectedItem && this.selectedItem[this.primaryKey]) ||
+        ((this.selectedItem && this.selectedItem[this.primaryKeyFieldCpt]) ||
           this.nestedDisplayMode === 'view' ||
           this.nestedDisplayMode === 'edit')
       );

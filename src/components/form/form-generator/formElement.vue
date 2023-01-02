@@ -167,7 +167,7 @@ export default {
       return isArray(this.field.buttons) && this.field.buttons.length > 0;
     },
     isViewMode() {
-      return this.field.mode === 'view';
+      return this.field.mode === 'view' || this.field.readonly;
     },
 
     fieldValue() {

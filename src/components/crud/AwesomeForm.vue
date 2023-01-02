@@ -664,8 +664,22 @@ export default {
   introduction: 'A component to forms from a json schema',
   model: {
     prop: 'item',
-    event: 'change'
+    event: 'input'
   },
+  emits: [
+    'create',
+    'edit',
+    'change',
+    'save',
+    'input',
+    'update:crudNeedsRefresh',
+    'update:needsRefresh',
+    'input:crudNeedsRefresh',
+    'input:needsRefresh',
+    'before-update',
+    'item-edited',
+    'model-updated'
+  ],
   components: {
     AwesomeCrud: () => AwesomeCrud,
     /* Column,
@@ -778,7 +792,6 @@ export default {
       required: true,
       values: ['create', 'edit', 'view', 'bulkEdit'],
       validator: (value) => {
-        // Only accepts values that contain the string 'cookie-dough'.
         return ['create', 'edit', 'view', 'bulkEdit'].indexOf(value) !== -1;
       },
       description: 'Define what mode should the form be used in (create| edit | view | bulkEdit '
@@ -810,7 +823,6 @@ export default {
         'slide' // deprecated
       ],
       validator: (value) => {
-        // Only accepts values that contain the string 'cookie-dough'.
         return (
           [
             'modal',
@@ -903,11 +915,31 @@ export default {
     useCustomLayout: {
       type: Boolean,
       default: false,
-      note: 'If the form layout can be changed'
+      note: 'Can the form layout be changed'
     },
-    displayFields: {
+    displayedFields: {
       type: Array,
       note: 'The fields that should be displayed in the form'
+    },
+    useTabsForUngroupedFields: {
+      type: Boolean,
+      default: true,
+      note: 'If there are tabs present in the schema, should i also group the ungrouped fields ?'
+    },
+    generalTabLabel: {
+      type: String,
+      default: 'General',
+      note: 'Which label do i use for the main tab'
+    },
+    tabsNavType: {
+      type: String,
+      default: 'tabs',
+      note: 'Should i use tabs or pills to style the tabs'
+    },
+    tabsDirection: {
+      type: String,
+      default: 'horizontal',
+      note: 'How do i organise the tabs ? horizontaly or vertically'
     }
   },
   data() {
@@ -1045,6 +1077,7 @@ export default {
       }
       return mergedOptions || {};
     },
+
     formSchema() {
       if (!this._schema) {
         return [];
@@ -1052,18 +1085,32 @@ export default {
       const parsedFormSchema = this.parseSchema(this._schema);
       parsedFormSchema.styleClasses = 'row';
       parsedFormSchema.mode = this.mode;
+
       if (parsedFormSchema.fields) {
-        parsedFormSchema.fields = parsedFormSchema.fields
-          .filter((field) => !this.displayFields || this.displayFields.includes(field.model))
-          .map((field) => {
-            if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
-              field.styleClasses = `${field.styleClasses || ''} col-12`;
-            }
-            if (parsedFormSchema.mode === 'bulkEdit') {
-              field.required = false;
-            }
-            return field;
-          });
+        if (this.displayedFields) {
+          parsedFormSchema.fields = this.displayedFields
+            .map((fieldName) => {
+              return parsedFormSchema.fields.find((field) => {
+                if (field.model === fieldName) {
+                  return true;
+                }
+                if (field.type === 'group' && field.id === fieldName) {
+                  return true;
+                }
+                return false;
+              });
+            })
+            .filter((f) => f);
+        }
+        parsedFormSchema.fields = parsedFormSchema.fields.map((field) => {
+          if (!field.styleClasses || field.styleClasses.indexOf('col-') === -1) {
+            field.styleClasses = `${field.styleClasses || ''} col-12`;
+          }
+          if (parsedFormSchema.mode === 'bulkEdit') {
+            field.required = false;
+          }
+          return field;
+        });
       }
       return parsedFormSchema;
     },
@@ -1178,10 +1225,10 @@ export default {
       let itemId;
       if (this.itemId) {
         itemId = this.itemId;
-      } else if (this.item && this.item[this.primaryKey]) {
-        itemId = this.item[this.primaryKey];
-      } else if (this.selectedItem && this.selectedItem[this.primaryKey]) {
-        itemId = this.selectedItem[this.primaryKey];
+      } else if (this.item && this.item[this.primaryKeyFieldCpt]) {
+        itemId = this.item[this.primaryKeyFieldCpt];
+      } else if (this.selectedItem && this.selectedItem[this.primaryKeyFieldCpt]) {
+        itemId = this.selectedItem[this.primaryKeyFieldCpt];
       }
       if (typeof itemId === 'string' && itemId.includes('{{')) {
         return this.templateParseText(itemId, { currentItem: this.item || this.selectedItem });
@@ -1196,9 +1243,14 @@ export default {
     model: 'loadModel',
     mode: 'onModeChanged',
     options: 'mergeOptions',
-    item: 'refreshComponent',
     needsRefresh: 'refreshComponent',
-    selectedItem: 'onChange'
+    selectedItem: 'onChange',
+    item: {
+      deep: true,
+      handler(newValue, oldValue) {
+        this.refreshComponent(newValue, oldValue);
+      }
+    }
   },
   created() {},
   mounted() {
@@ -1300,7 +1352,10 @@ export default {
       if (this.identity) {
         this.loadModel();
       }
-
+      this.selectedItem = {
+        ...this.selectedItem,
+        ...newVal
+      };
       this.nestedElementsNeedRefresh = true;
 
       setTimeout(() => {
@@ -1375,7 +1430,7 @@ export default {
       // todo call only if
       if (this.itemIdComputed) {
         this.$awApi
-          .get(`${this._selectedItemUrl}`)
+          .get(`${this._selectedItemUrl}`, { params: this.apiQueryParams })
           .then((res) => {
             const data =
               this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
@@ -1461,24 +1516,24 @@ export default {
     goToEditPage(item) {
       if (!this._mergedOptions.editPath) {
         if (this.useRouterMode) {
-          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}/edit`);
-          this.$router.push(`${this.parentPath}/${item[this.primaryKey] || this.itemIdComputed}/edit`);
+          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKeyFieldCpt]}/edit`);
+          this.$router.push(`${this.parentPath}/${item[this.primaryKeyFieldCpt] || this.itemIdComputed}/edit`);
         }
         this.editFunction(item);
         return;
       }
       this.$router.push(
         this._mergedOptions.editPath
-          .replace(':id', item[this.primaryKey] || this.itemIdComputed)
-          .replace('{{id}}', item[this.primaryKey] || this.itemIdComputed)
+          .replace(':id', item[this.primaryKeyFieldCpt] || this.itemIdComputed)
+          .replace('{{id}}', item[this.primaryKeyFieldCpt] || this.itemIdComputed)
       );
     },
 
     goToViewPage(item) {
       if (!this._mergedOptions.viewPath) {
         if (this.useRouterMode) {
-          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKey]}`);
-          this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKey] || this.itemIdComputed}`);
+          // window.history.pushState({}, null, `${this.parentPath}/${item[this.primaryKeyFieldCpt]}`);
+          this.$router.push({}, null, `${this.parentPath}/${item[this.primaryKeyFieldCpt] || this.itemIdComputed}`);
         }
         this.activeNestedTab = 'general';
         this.viewFunction(item);
@@ -1486,8 +1541,8 @@ export default {
       }
       this.$router.push(
         this._mergedOptions.viewPath
-          .replace(':id', item[this.primaryKey] || this.itemIdComputed)
-          .replace('{{id}}', item[this.primaryKey] || this.itemIdComputed)
+          .replace(':id', item[this.primaryKeyFieldCpt] || this.itemIdComputed)
+          .replace('{{id}}', item[this.primaryKeyFieldCpt] || this.itemIdComputed)
       );
     },
 
@@ -1530,7 +1585,10 @@ export default {
         parent: this.parent
       });
       return this.$awApi
-        .post(this._url, this.selectedItem, { timeout: this.apiTimeout })
+        .post(this._url, this.selectedItem, {
+          timeout: this.apiTimeout,
+          params: this.apiQueryParams
+        })
         .then((res) => {
           this.selectedItem = get(res, this.apiResponseConfig.dataPath);
 
@@ -1593,7 +1651,7 @@ export default {
         console.warn('Unable to find the reference to the schema form on ', this.$route.path);
       }
       this.bulkItems.forEach((element) => {
-        if (element[this.primaryKey]) {
+        if (element[this.primaryKeyFieldCpt]) {
           element = merge(element, this.selectedItem);
           this.$awEmit('itemsBulkEdited', element);
         }
@@ -1607,9 +1665,9 @@ export default {
         this.$emit('change', this.selectedItem);
         return false;
       }
-      if (!this.selectedItem[this.primaryKey] && !this.itemIdComputed) {
+      if (!this.selectedItem[this.primaryKeyFieldCpt] && !this.itemIdComputed) {
         // eslint-disable-next-line
-        console.warn('AWESOMECRUD ERROR:: No primary key on this item', this.selectedItem, this.primaryKey);
+        console.warn('AWESOMECRUD ERROR:: No primary key on this item', this.selectedItem, this.primaryKeyFieldCpt);
         return false;
       }
       if (this.$refs.form) {
@@ -1644,7 +1702,7 @@ export default {
         return;
       }
       this.$awApi
-        .put(`${this._selectedItemUrl}`, this.selectedItem, { timeout: this.apiTimeout })
+        .put(`${this._selectedItemUrl}`, this.selectedItem, { timeout: this.apiTimeout, params: this.apiQueryParams })
         .then((res) => {
           this.$awEmit('item-edited', { data: res.data });
           this.$awNotify({
@@ -1700,7 +1758,7 @@ export default {
         return;
       }
       this.$awApi
-        .get(`${this._selectedItemUrl}`)
+        .get(`${this._selectedItemUrl}`, { params: this.apiQueryParams })
         .then((res) => {
           this.selectedItem =
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
@@ -1813,6 +1871,7 @@ export default {
 
     onModelUpdated(value, field) {
       this.$emit('model-updated', value, field);
+      this.$emit('input', value, field);
     }
   }
 };

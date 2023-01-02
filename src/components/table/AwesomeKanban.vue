@@ -358,8 +358,8 @@ export default {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
 
-      if (this._model && this._model.pluralName) {
-        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
+      if (this._model && this._model.namePlural) {
+        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
       }
 
       if (this._model && this._model.singularName) {
@@ -601,7 +601,7 @@ export default {
         delete element[this.sortField];
       }
       const urlparts = this._url.split('?');
-      urlparts[0] = `${urlparts[0]}/${element[this.primaryKey]}`;
+      urlparts[0] = `${urlparts[0]}/${element[this.primaryKeyFieldCpt]}`;
       await this.$awApi.put(urlparts.join('?'), element);
     },
 
@@ -610,7 +610,7 @@ export default {
         const promises = orderedList.map((item, index) => {
           const urlparts = this._url.split('?');
           delete item[this.splittingField];
-          urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
+          urlparts[0] = `${urlparts[0]}/${item[this.primaryKeyFieldCpt]}`;
           return this.$awApi.put(urlparts.join('?'), { ...item, [this.sortField]: index });
         });
         await Promise.all(promises);

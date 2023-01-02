@@ -159,7 +159,8 @@
   },
   "Notifications": {
     "messages": {
-      "are_you_sure": "Êtes-vous sûr ?"
+      "are_you_sure": "Êtes-vous sûr ?",
+      "action_successfully_sent": "L'action à bien été exécutée."
     },
     "buttons": {
       "yes": "Oui",

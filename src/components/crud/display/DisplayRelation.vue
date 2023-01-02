@@ -91,7 +91,7 @@ export default {
 
     _parsedClickUrl() {
       return this.parseUrl(this.onClickUrl, {
-        [this.relationKey || this.primaryKey || 'id']: this.value,
+        [this.relationKey || this.primaryKeyField || this.primaryKey || 'id']: this.value,
         [this.field]: this.value
       });
     }

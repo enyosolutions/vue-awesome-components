@@ -172,6 +172,21 @@ export default {
       }
       const fields = [];
       const numberOfFields = Object.keys(schema.properties).length;
+      let generalTab = null;
+      if (this.useTabsForUngroupedFields) {
+        generalTab = {
+          id: 'generalTab',
+          legend: this.generalTabLabel || 'General',
+          title: this.generalTabLabel || 'General',
+          type: 'tab',
+          tabsNavType: this.tabsNavType,
+          tabsDirection: this.tabsDirection,
+          fields: []
+        };
+
+      }
+      let anyFieldIsATab = Object.values(schema.properties).some(prop => prop.field && prop.field.type === 'tab');
+
       Object.keys(schema.properties).forEach((key) => {
         const prop = schema.properties[key];
         if (Array.isArray(prop.type)) {
@@ -191,14 +206,28 @@ export default {
         if (prop.field.visible == false || prop.field.visible == 0) {
           return;
         }
-        if (prop.type === 'object' && !(prop.field.type)) {
+        // if the field is a group type (tab / group / object) send prepare a group config
+        if (prop.type === 'object' && (!prop.field.type || prop.field.type === 'group' || prop.field.type === 'tab')) {
           const subSchema = this.parseSchema(prop, `${prefix}${key}.`);
-          subSchema.legend = prop.title || startCase(key);
-          subSchema.type = 'group';
+          subSchema.type = prop.field.type || 'group';
+
+          subSchema.title = prop.title || startCase(key);
           subSchema.default = {};
           subSchema.id = key;
-          subSchema.cols = prop.field && prop.field.cols;
-          subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
+
+          if (subSchema.type === 'group') {
+            subSchema.collapsible = prop.field.collapsible;
+            subSchema.collapsed = prop.field.collapsed;
+            subSchema.cols = prop.field && prop.field.cols;
+            subSchema.legend = prop.title || startCase(key);
+            subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
+          }
+          else if (prop.field.type === 'tab') {
+
+            subSchema.cols = 12;
+            subSchema.styleClasses = `subgroup-tabs  ${(prop.field.styleClasses) || ''}`;
+          }
+
           fields.push(subSchema);
         } else {
           const relationUrl = this.getRelationUrl(prop);
@@ -357,9 +386,17 @@ export default {
           field.displayOptions.relationKey = field.displayOptions.relationKey || relationKey;
           field.displayOptions.relationLabel = field.displayOptions.relationLabel || relationLabel;
 
-          fields.push({ ...field, fieldOptions });
+          if (generalTab && anyFieldIsATab) {
+            generalTab.fields.push({ ...field, fieldOptions });
+          } else {
+            fields.push({ ...field, fieldOptions });
+          }
         }
       });
+
+      if (anyFieldIsATab) {
+        fields.unshift(generalTab);
+      }
       // let groups = this.parseSchemaGroups(schema);
       // groups = this.distributeFieldsInGroups(groups, fields);
 

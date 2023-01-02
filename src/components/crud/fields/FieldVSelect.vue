@@ -353,22 +353,19 @@ export default {
         this.value = value[this._trackBy];
       }
     },
+
     updateSelectedItem(value) {
       this.internalValue = value;
       if (!value || typeof value === 'string' || typeof value === 'number') {
-        if (this._trackBy) {
-          this.$emit(
-            'itemSelected',
-            this.internalOptions.find(
-              (option) => option[this._trackBy] !== undefined && option[this._trackBy] === value
-            )
-          );
-        } else {
-          this.$emit('itemSelected', value);
-        }
+        const itemSelected = this.internalOptions.find(
+          (option) => option[this._trackBy] !== undefined && option[this._trackBy] === value
+        );
+        this.$emit('itemSelected', value, itemSelected);
       } else if (Array.isArray(value)) {
-        const valueArray = value.map((item) => (this._trackBy && item[this._trackBy] !== undefined ? item : item));
-        this.$emit('itemSelected', valueArray);
+        const itemArray = this.internalOptions.filter(
+          (option) => option[this._trackBy] !== undefined && option[this._trackBy] === value
+        );
+        this.$emit('itemSelected', value, itemArray);
       } else {
         this.$emit('itemSelected', value);
       }

@@ -35,8 +35,8 @@ export default {
   },
   props: {
     currentField: {
-      type: Object,
-      required: true
+      required: true,
+      description: 'Field to use for filtering'
     },
     currentOperator: {
       type: Object,

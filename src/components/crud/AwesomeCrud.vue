@@ -401,7 +401,7 @@
           </button>
           <!-- view form -->
           <awesome-form
-            v-bind="$props"
+            v-bind="formOptionsComputed"
             v-if="showViewFormComputed"
             :actions="_actionsBeforeCalculation"
             :apiTimeout="apiTimeout"
@@ -435,7 +435,7 @@
             @beforeCreate="beforeCreate"
             @itemCreated="onItemCreated"
             @itemEdited="onItemEdited"
-            @modelUpdated="onModelUpdated"
+            @model-updated="onModelUpdated"
             @itemsBulkEdited="onItemsBulkEdited"
             @itemDeleted="onItemDeleted"
             @itemViewed="onItemViewed"
@@ -470,7 +470,6 @@
             :item="selectedItem"
             :layout="displayMode === 'create' ? createPageLayoutComputed : editPageLayoutComputed"
             :mode="displayBottomFormContent ? 'create' : displayMode"
-            @modelUpdated="onModelUpdated"
             :model="_model"
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :schema="schemaComputed"
@@ -496,6 +495,7 @@
             @layout-updated="onLayoutUpdated"
             @layout-resetted="onLayoutUpdated"
             @layout-fields-updated="onLayoutFieldsUpdated"
+            @model-updated="onModelUpdated"
             @open-edit-layout-mode="onOpenEditLayoutMode"
             @close-edit-layout-mode="onCloseEditLayoutMode"
             @aw-select-previous-item="selectPreviousItem"
@@ -1305,6 +1305,13 @@ export default {
         label: this.$t('AwesomeCrud.buttons.import'),
         class: 'btn btn-sm btn-main-style btn btn-simple text-success  btn-block'
       };
+    },
+
+    formOptionsComputed() {
+      return {
+        ...this.$props,
+        ...this.formOptions
+      };
     }
   },
   watch: {
@@ -2068,8 +2075,20 @@ export default {
           let url = this.templateParseUrl(action.actionApiUrl, body);
           this.$awApi
             .put(url, body)
-            .then((res) => {
+            .then(({ data }) => {
               this.tableNeedsRefresh = true;
+              let message = '';
+              if (typeof data === 'string') {
+                message = data;
+              } else if (data.message) {
+                message = data.message;
+              } else {
+                message = 'Notifications.messages.action_successfully_sent';
+              }
+
+              this.$awNotify({
+                title: this.$te(message) ? this.$t(message) : message
+              });
             })
             .catch(this.apiErrorCallback);
         } else if (action.action && typeof action.action === 'function') {
@@ -2271,7 +2290,7 @@ export default {
       if (this.listOptions && this.listOptions.sortField && items) {
         const promises = items.map((item, index) => {
           const urlparts = this._url.split('?');
-          urlparts[0] = `${urlparts[0]}/${item[this.primaryKey]}`;
+          urlparts[0] = `${urlparts[0]}/${item[this.primaryKeyFieldCpt]}`;
           return this.$awApi.put(urlparts.join('?'), { ...item, [this.listOptions.sortField]: index + 1 });
         });
         await Promise.all(promises);
@@ -2281,6 +2300,7 @@ export default {
 
     onModelUpdated(value, field) {
       this.$emit('modelUpdated', value, field);
+      this.$emit('model-updated', value, field);
     }
   }
 };

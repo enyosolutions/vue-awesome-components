@@ -49,6 +49,28 @@
         </div>
       </div>
     </section>
+    <section v-if="merged.emits" class="props">
+      <div class="proprow labels">
+        <div class="propcol name required">
+          Event
+          <span>(required)</span>
+        </div>
+        <div class="propcol type">
+          type
+        </div>
+        <div class="propcol notes">
+          notes
+        </div>
+      </div>
+      <div v-for="event in merged.emits" :key="event" class="proprow" :id="'prop-' + event">
+        <div class="propcol name">
+          <span>{{ event }}</span>
+        </div>
+        <div class="propcol notes">
+          {{ event.description || event.note }}
+        </div>
+      </div>
+    </section>
   </article>
 </template>
 <script>

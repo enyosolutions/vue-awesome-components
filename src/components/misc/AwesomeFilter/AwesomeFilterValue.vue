@@ -3,7 +3,7 @@
     v-if="!['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(currentFilter.value)"
     class="column awesome-filter-value"
   >
-    <div v-if="Object.keys(currentField).length || permanentInput">
+    <div v-if="(currentField && Object.keys(currentField).length) || permanentInput">
       <!-- TYPE NUMBER -->
       <input
         v-if="
@@ -176,8 +176,7 @@ export default {
   },
   props: {
     currentField: {
-      type: Object,
-      required: true
+      required: false
     },
     currentFilter: {
       type: Object,

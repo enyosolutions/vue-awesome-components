@@ -70,7 +70,7 @@ export default {
         return prop.foreignKey;
       } else {
         const model = this.getModelFromStore(relation);
-        return model ? model.primaryKeyField || this.primaryKey : this.primaryKey;
+        return model ? model.primaryKeyField || this.primaryKeyField || this.primaryKey : (this.primaryKeyField || this.primaryKey);
       }
     },
     getRelationLabel(prop) {
