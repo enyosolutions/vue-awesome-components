@@ -425,9 +425,9 @@
                           <template
                             v-if="
                               nestedModels &&
-                                nestedModels.length &&
-                                (mode === 'view' || mode === 'edit') &&
-                                selectedItem
+                              nestedModels.length &&
+                              (mode === 'view' || mode === 'edit') &&
+                              selectedItem
                             "
                           >
                             <template v-for="nm in nestedModels">
@@ -444,9 +444,8 @@
                                     class="nested-model-title mt-5 text-primary font-italic mb-0"
                                     @click="
                                       getNestedActions(nm).collapse
-                                        ? (nestedModelsCollapseState[nm.identity] = !nestedModelsCollapseState[
-                                            nm.identity
-                                          ])
+                                        ? (nestedModelsCollapseState[nm.identity] =
+                                            !nestedModelsCollapseState[nm.identity])
                                         : ''
                                     "
                                   >
@@ -722,15 +721,13 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     needsRefresh: {
       type: [Boolean, String],
@@ -767,8 +764,7 @@ export default {
       required: false,
       default: 'list',
       values: ['view', 'edit', 'object', 'table'],
-      note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form'
     },
     translations: {
       type: Object,
@@ -842,7 +838,7 @@ export default {
       type: Boolean,
       required: false,
       default: false,
-      node: 'If true then the create form will display only required attributes'
+      note: 'If true then the create form will display only required attributes'
     },
     options: {
       type: Object,
@@ -881,16 +877,14 @@ export default {
       type: Boolean,
       required: false,
       default: true,
-      node:
-        'Controls if the actions (create / edit / view)  should update the current route url. @Deprecated, use `useRouterMode` instead.'
+      node: 'Controls if the actions (create / edit / view)  should update the current route url. @Deprecated, use `useRouterMode` instead.'
     },
     nestedLayoutMode: {
       type: String,
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note:
-        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     displayHeader: {
       type: Boolean,
@@ -1151,14 +1145,17 @@ export default {
         type: 'group',
         fields: this.layout.map((group) => ({
           ...group,
-          type: 'group',
-          legend: group.legend || group.title,
-          wrapperClasses: `${group.wrapperClasses || ''}`,
-          cols: group.cols,
-          styleClasses: `${group.classes || group.styleClasses || ''}`,
+          cols: group.type === 'tab' ? 12 : group.cols,
+          fieldOptions: group.fieldOptions || {},
+          fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model)),
           headerClasses: `${group.headerClasses || ''}`,
+          id: group.id || group.title || group.legend,
+          legend: group.legend || group.title,
+          styleClasses: `subgroup-tabs ${group.classes || group.styleClasses || ''}`,
           styles: `${group.styles || ''}`,
-          fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model))
+          title: group.title || group.legend,
+          type: group.type || 'group',
+          wrapperClasses: `${group.wrapperClasses || ''}`
         }))
       };
     },
@@ -1390,7 +1387,7 @@ export default {
         }
       }
       this.mergedOptions = merge({}, defaultOptions, this.mergedOptions, this.options);
-      if (this.$route && this.$route.query && this.$route.query.filters) {
+      if (this.$route?.query?.filters) {
         this.mergedOptions.queryParams = merge(this.mergedOptions.queryParams || this.$route.query.filters);
       }
     },
@@ -1433,9 +1430,7 @@ export default {
           .get(`${this._selectedItemUrl}`, { params: this.apiQueryParams })
           .then((res) => {
             const data =
-              this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-                ? get(res, this.apiResponseConfig.dataPath)
-                : res.data;
+              this.apiResponseConfig?.dataPath != false ? get(res, this.apiResponseConfig.dataPath) : res.data;
             this.selectedItem = data;
             this.$awEmit('itemFetched', this.selectedItem); // @deprecated
             this.$awEmit('item-fetched', {
@@ -1506,7 +1501,7 @@ export default {
     },
 
     close() {
-      this.$awEmit('closeRequested', this.selectedItem && this.selectedItem.id ? this.selectedItem : this.item, {
+      this.$awEmit('closeRequested', this.selectedItem?.id ? this.selectedItem : this.item, {
         context: this.mode
       });
       //eslint-disable-next-line
@@ -1679,7 +1674,7 @@ export default {
             errors = err;
           }
         }
-        if (errors && errors.length > 0) {
+        if (errors?.length > 0) {
           if (process.env.NODE_ENV !== 'production') {
             // eslint-disable-next-line
             console.error('AWESOMECRUD ERROR:: validation errors', errors);
@@ -1761,9 +1756,7 @@ export default {
         .get(`${this._selectedItemUrl}`, { params: this.apiQueryParams })
         .then((res) => {
           this.selectedItem =
-            this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-              ? get(res, this.apiResponseConfig.dataPath)
-              : res.data.body;
+            this.apiResponseConfig?.dataPath != false ? get(res, this.apiResponseConfig.dataPath) : res.data.body;
           this.$awEmit('itemFfetched', this.selectedItem); // @deprecated
           this.$awEmit('item-fetched', {
             component: 'aw-form',
@@ -1783,7 +1776,7 @@ export default {
     customAction(body) {
       const { action } = body;
       this.$awEmit(this.identity + '-custom-action', action);
-      return action && action.action && action.action(body, this);
+      return action?.action && action.action(body, this);
     },
 
     listUpdated(datas) {

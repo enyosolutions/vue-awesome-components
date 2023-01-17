@@ -4,7 +4,7 @@
       v-if="$props.value"
       :href="$props.value"
       target="_blank"
-      class="ajax-table-href "
+      class="ajax-table-href"
       :class="embed ? 'pull-right' : ''"
     >
       <span v-if="!embed">
@@ -16,7 +16,7 @@
       <iframe
         v-bind="$props"
         value=""
-        class="aw-display-iframe "
+        class="aw-display-iframe"
         :class="$props.classes"
         :src="$props.value"
         frameborder="0"

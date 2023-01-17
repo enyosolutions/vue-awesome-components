@@ -29,7 +29,7 @@
       "cancel": "Annuler",
       "close": "Fermer",
       "columnsFilters": "Activer/Désactiver les filtres de colonnes",
-      "clear-state": "Réinitialiser le configuration du tableau"
+      "clear-state": "Réinitialiser la configuration du kanban"
     }
   },
   "AwesomeFilter": {
@@ -74,7 +74,7 @@
       "view": "Voir",
       "cancel": "Annuler",
       "close": "Fermer",
-      "clear-state": "Réinitialiser le configuration du tableau",
+      "clear-state": "Réinitialiser la configuration du tableau",
       "excel-currentpage": "Exporter les données affichées",
       "columnsFilters": {
         "toggle": "Activer/Désactiver les filtres de colonnes",
@@ -149,7 +149,7 @@
       "cancel": "Annuler",
       "close": "Fermer",
       "columnsFilters": "Activer/Désactiver les filtres de colonnes",
-      "clear-state": "Réinitialiser le configuration du tableau"
+      "clear-state": "Réinitialiser la configuration de la liste"
     }
   },
   "AwesomeLayout": {

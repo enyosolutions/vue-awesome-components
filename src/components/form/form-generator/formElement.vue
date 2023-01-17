@@ -7,6 +7,7 @@
       </label>
       <template v-if="isViewMode">
         <awesome-display
+          v-if="field.displayOptions"
           v-bind="field.displayOptions"
           :type="viewFieldType"
           :value="fieldValue"
@@ -117,13 +118,13 @@ export default {
 
     // Get type of field 'field-xxx'. It'll be the name of HTML element
     viewFieldType() {
-      if (this.field.displayOptions && this.field.displayOptions.type) {
+      if (this.field?.displayOptions?.type) {
         return this.field.displayOptions.type;
       }
-      if (this.field.fieldOptions.relation) {
+      if (this.field?.fieldOptions?.relation) {
         return 'relation';
       }
-      return this.field.fieldOptions.inputType;
+      return this.field?.fieldOptions?.inputType;
     },
 
     // Should field type have a label?

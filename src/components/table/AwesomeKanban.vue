@@ -69,11 +69,11 @@
                         {{ $t('AwesomeTable.more') }}
                       </button>
 
-                      <div class="popper card mt-0" style="z-index: 1;">
+                      <div class="popper card mt-0" style="z-index: 1">
                         <slot name="top-more-actions" />
                         <button
                           v-if="actions && actions.export"
-                          class="btn  btn-sm text-success btn-block"
+                          class="btn btn-sm text-success btn-block"
                           @click="exportCallBack"
                         >
                           <i class="fa fa-file-excel" />

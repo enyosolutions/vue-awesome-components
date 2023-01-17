@@ -19,8 +19,8 @@
       </button>
       <slot name="group-help" :group="group"></slot>
       <div
-        class="row m-0 "
-        style="flex:1"
+        class="row m-0"
+        style="flex: 1"
         :class="{ 'vac-collapsible': group && group.collapsible, collapsed: collapsed }"
       >
         <template v-if="!isTabsMixedWithFields">
@@ -226,6 +226,7 @@ export default {
       if (this.fields && Array.isArray(this.fields)) {
         return this.fields.filter((field) => field.type === 'tab');
       }
+
       return [];
     },
 

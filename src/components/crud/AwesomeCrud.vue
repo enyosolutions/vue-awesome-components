@@ -22,8 +22,8 @@
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
-                dataPaginationModeComputed
+              (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
+              dataPaginationModeComputed
             "
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
@@ -149,7 +149,7 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
+              (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
             "
             v-bind="listOptions"
             :actions="_actionsBeforeCalculation"
@@ -270,7 +270,7 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-                (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
+              (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
             "
             v-bind="_kanbanOptions"
             :actions="_actions"
@@ -384,7 +384,7 @@
           </AwesomeKanban>
         </div>
         <div
-          class="awesomecrud-detail-section  p-0"
+          class="awesomecrud-detail-section p-0"
           :class="{
             'col-6': displaySideFormContent,
             'col-12': !displaySideFormContent,
@@ -454,7 +454,7 @@
 
           <!-- edit form -->
           <awesome-form
-            v-bind="$props"
+            v-bind="formOptionsComputed"
             v-if="showEditFormComputed"
             :actions="_actionsBeforeCalculation"
             :apiTimeout="apiTimeout"
@@ -606,15 +606,13 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
       type: [Object, Array],
@@ -683,16 +681,14 @@ export default {
       type: String,
       required: false,
       values: ['view', 'edit', 'object', 'table'],
-      note:
-        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     nestedLayoutMode: {
       type: String,
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note:
-        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     parent: {
       type: Object,
@@ -736,6 +732,10 @@ export default {
       default: () => defaultListOptions
     },
     kanbanOptions: {
+      type: Object,
+      default: () => ({})
+    },
+    formOptions: {
       type: Object,
       default: () => ({})
     },
@@ -865,12 +865,6 @@ export default {
       internalOptions: {},
       innerNestedSchemas: [],
       activeNestedTab: 'general',
-      formOptions: {
-        validateAsync: false,
-        validateAfterLoad: false,
-        validateAfterChanged: true,
-        fieldIdPrefix: 'AwesomeCrud'
-      },
       supportedListingDisplayModes: ['table', 'list', 'kanban'],
       editLayoutMode: false,
       itemsList: [],
@@ -1018,34 +1012,34 @@ export default {
     },
 
     _layout() {
-      return this.detailPageLayout || (this.model && this.model.formOptions && this.model.formOptions.layout);
+      return this.detailPageLayout || (this._model && this._model.formOptions && this._model.formOptions.layout);
     },
     _createFormLayout() {
-      return (this.model && this.model.formOptions && this.model.formOptions.createLayout) || this._layout;
+      return (this._model && this._model.formOptions && this._model.formOptions.createLayout) || this._layout;
     },
 
     _editFormLayout() {
-      return (this.model && this.model.formOptions && this.model.editLayout) || this._layout;
+      return (this._model && this._model.formOptions && this.model.editLayout) || this._layout;
     },
 
     createPageLayoutComputed() {
       return (
         this.createPageLayout ||
-        (this.model && this.model.formOptions && this.model.formOptions.createLayout) ||
+        (this._model && this._model.formOptions && this._model.formOptions.createLayout) ||
         this._layout
       );
     },
     viewPageLayoutComputed() {
       return (
         this.viewPageLayout ||
-        (this.model && this.model.formOptions && this.model.formOptions.viewPageLayout) ||
+        (this._model && this._model.formOptions && this._model.formOptions.viewPageLayout) ||
         this._layout
       );
     },
     editPageLayoutComputed() {
       return (
         this.editPageLayout ||
-        (this.model && this.model.formOptions && this.model.formOptions.editPageLayout) ||
+        (this._model && this._model.formOptions && this._model.formOptions.editPageLayout) ||
         this._layout
       );
     },
@@ -1373,11 +1367,7 @@ export default {
     }
 
     this.parentPath = this.$route.path;
-    this.parentPath = this.parentPath
-      .replace('/view', '')
-      .replace('/edit', '')
-      .replace('/new', '')
-      .replace('/:id', '');
+    this.parentPath = this.parentPath.replace('/view', '').replace('/edit', '').replace('/new', '').replace('/:id', '');
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
