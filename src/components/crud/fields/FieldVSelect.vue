@@ -161,8 +161,7 @@ export default {
     apiQueryParams: {
       type: Object,
       default: () => ({}),
-      note:
-        "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
+      note: "A params object containing parameters that will be passed as query params to the api request.\n It's up to the server to treat these requests. Example of uses incluse passing a `filter` object, or an options object. In one of our projects we pass the args options.searchMode = `exact|startWith|wildcard|regex` to determine how the filtering options will ve treated in the back."
     },
     apiRequestHeaders: { type: Object, default: () => ({}) },
     preloadQueryParam: { type: String, default: 'perPage=10000' },
@@ -211,7 +210,8 @@ export default {
 
     dataUrl() {
       // eslint-disable-next-line
-      let url = this.url || this.fieldOptions.url || this.schema.relationUrl || this.schema.fieldOptions.relationUrl;
+      let url =
+        this.url || this.fieldOptions?.url || this.schema?.relationUrl || this.schema?.fieldOptions?.relationUrl;
       if (url && url.indexOf('{{') > -1) {
         url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model, context: this });
       }
@@ -221,8 +221,10 @@ export default {
     _trackBy() {
       return (
         this.$props.trackBy ||
-        (this.fieldOptions && (this.fieldOptions.trackBy || this.fieldOptions.relationKey)) ||
-        (this.schema && (this.schema.relationKey || this.schema.foreignKey))
+        this.fieldOptions?.trackBy ||
+        this.fieldOptions?.relationKey ||
+        this.schema?.relationKey ||
+        this.schema?.foreignKey
       );
     },
 
@@ -385,8 +387,9 @@ export default {
       }
       this.$awApi
         .get(
-          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${this._preloadQueryParam ||
-            'perPage=100'}&_vac=1&_vac_source=vselect`,
+          `${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}${
+            this._preloadQueryParam || 'perPage=100'
+          }&_vac=1&_vac_source=vselect`,
           {
             params: { ...this.fieldOptions.queryParams }
           }
