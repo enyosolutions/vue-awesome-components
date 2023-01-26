@@ -16,7 +16,7 @@
         <div
           class="awesomecrud-listing-section p-0"
           v-show="showItemsListSectionComputed"
-          :class="`aw-crud-listing-mode-${listingDisplayMode} ${displaySideFormContent ? 'col-6' : 'col-12'}`"
+          :class="`aw-crud-listing-mode-${listingDisplayMode} ${displaySideFormContent ? 'col-12 col-md-6' : 'col-12'}`"
         >
           <!-- duplicate for when there is segment -->
           <AwesomeTable
@@ -386,7 +386,7 @@
         <div
           class="awesomecrud-detail-section p-0"
           :class="{
-            'col-6': displaySideFormContent,
+            'col-10 col-md-6': displaySideFormContent,
             'col-12': !displaySideFormContent,
             'sticky-form': displaySideFormContent && isSideformSticky
           }"

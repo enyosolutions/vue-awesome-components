@@ -1,5 +1,5 @@
 <template>
-  <div class="awesome-vue-select">
+  <div class="awesome-vue-select dropdown">
     <!--
     <enyo-select
       :id="fieldOptions.id"

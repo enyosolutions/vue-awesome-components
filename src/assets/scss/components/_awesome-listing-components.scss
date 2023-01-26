@@ -15,7 +15,31 @@
       padding: 0.1rem 0.7rem;
     }
   }
+  @media screen and (max-width: 767px) {
+    .aw-segment-table-wrapper {
+      width: 100%;
 
+      ul {
+        overflow: auto;
+        overflow: auto;
+        display: flex;
+        flex-direction: row;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        li {
+          width: auto;
+          .nav-link {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
   .automatic-refresh-button {
     display: inline-flex;
     margin-top: -5px;

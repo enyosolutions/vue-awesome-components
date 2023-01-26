@@ -1,6 +1,6 @@
 <template>
   <div class="aw-list aw-listing">
-    <div class="float-left col-6 pl-0">
+    <div class="float-left col-12 col-md-6 pl-0 pr-0">
       <slot name="list-header-left"></slot>
       <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
         <awesome-segments
@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="float-right text-right col-6 pr-0">
+    <div class="float-right text-right col-12 col-md-6 pl-0 pr-0">
       <slot name="list-header-right"></slot>
     </div>
     <div class="card aw-list-card aw-list-component awesome-list">
@@ -83,7 +83,7 @@
                     >
                       {{ $t('AwesomeCrud.buttons.sort') }}
                     </button>
-                    <div class="popper card mt-0" style="z-index: 1;">
+                    <div class="popper card mt-0" style="z-index: 1">
                       <button
                         v-for="(col, index) in columns"
                         :key="index"
@@ -118,18 +118,18 @@
                       {{ $t('AwesomeTable.more') }}
                     </button>
 
-                    <div class="popper card mt-0" style="z-index: 1;">
+                    <div class="popper card mt-0" style="z-index: 1">
                       <slot name="top-more-actions" />
                       <button
                         v-if="actions && actions.export"
-                        class="btn  btn-sm btn-success btn-simple btn-block"
+                        class="btn btn-sm btn-success btn-simple btn-block"
                         @click="exportCallBack"
                       >
                         <i class="fa fa-file-excel" />
                         {{ $t('common.buttons.excel') }}
                       </button>
 
-                      <button class="btn btn-sm  btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel">
+                      <button class="btn btn-sm btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel">
                         <i class="fa fa-file-excel" />
                         {{ $t('common.buttons.excel-currentpage') }}
                       </button>
@@ -164,7 +164,7 @@
           <div class="col-12">
             <awesome-filter
               v-if="displayAwFilter"
-              class="pl-0  "
+              class="pl-0"
               edit-filters
               id="advancedFilterComponentDisplay"
               :fields="_filterableColumns"
@@ -277,7 +277,7 @@
                       <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
                         <button
                           @click="handleItemButtonClick($event, item)"
-                          class="btn btn-primary btn-sm "
+                          class="btn btn-primary btn-sm"
                           :class="itemsPerRow > 1 ? 'btn-block' : ''"
                         >
                           {{ $t('AwesomeList.buttons.itemAction') }}
@@ -443,8 +443,7 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note:
-        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     }
   },
   data() {

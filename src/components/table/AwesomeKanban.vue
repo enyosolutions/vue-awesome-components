@@ -1,6 +1,6 @@
 <template>
   <div class="aw-kanban aw-listing">
-    <div class="float-left col-6 pl-0">
+    <div class="float-left col-12 col-md-6 pl-0 pr-0">
       <slot name="kanban-header-left"></slot>
       <div class="card aw-segment-table-wrapper d-none" v-show="segmentFieldDefinitionComputed">
         <awesome-segments
@@ -12,7 +12,7 @@
         />
       </div>
     </div>
-    <div class="float-right text-right col-6 pr-0">
+    <div class="float-right text-right col-12 col-md-6 pl-0 pr-0">
       <slot name="kanban-header-right"><button class="btn btn-primary" style="visibility: hidden">&nbsp;</button></slot>
     </div>
 

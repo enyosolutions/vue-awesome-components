@@ -1,6 +1,6 @@
 <template>
   <div class="aw-table aw-listing">
-    <div class="float-left col-6 pl-0">
+    <div class="float-left col-12 col-md-6 pl-0 pr-0">
       <slot name="table-header-left"> </slot>
       <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
         <awesome-segments
@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="float-right text-right col-6 pr-0">
+    <div class="float-right text-right col-12 col-md-6 pl-0 pr-0">
       <slot name="table-header-right"></slot>
     </div>
     <div class="card aw-table-card aw-table">
@@ -57,7 +57,7 @@
                   >
                     {{ $t('AwesomeTable.columns') }}
                   </button>
-                  <div class="popper card mt-0" style="z-index: 1;">
+                  <div class="popper card mt-0" style="z-index: 1">
                     <button
                       v-for="(col, index) in sortedColumns"
                       :key="index"
@@ -83,12 +83,12 @@
                   }"
                   v-if="
                     _actions &&
-                      _actions.tableConfiguration &&
-                      (_actions.export ||
-                        _actions.exportLocal ||
-                        _actions.import ||
-                        _actions.columnsFilters ||
-                        _actions.dropdownActions)
+                    _actions.tableConfiguration &&
+                    (_actions.export ||
+                      _actions.exportLocal ||
+                      _actions.import ||
+                      _actions.columnsFilters ||
+                      _actions.dropdownActions)
                   "
                 >
                   <button
@@ -101,7 +101,7 @@
                     {{ $t('AwesomeTable.more') }}
                   </button>
 
-                  <div class="popper card mt-0" style="z-index: 1;">
+                  <div class="popper card mt-0" style="z-index: 1">
                     <slot name="table-top-more-actions" />
                     <button
                       v-if="_actions.columnsFilters"
@@ -200,7 +200,7 @@
             class="btn btn-sm btn-i"
             data-toggle="collapse"
             :data-target="'#awTable-' + this._uid || this.uuid"
-            style="position: absolute; top: 0; right: 0; padding: 0;"
+            style="position: absolute; top: 0; right: 0; padding: 0"
           >
             <i class="fa fa-minus"></i>
           </button>
@@ -323,7 +323,7 @@
                 <button
                   v-if="!optionsComputed.autoSearch"
                   type="button"
-                  class="btn btn-sm btn-primary btn-add-item "
+                  class="btn btn-sm btn-primary btn-add-item"
                   @click="doRefresh"
                 >
                   <i class="fa fa-search"></i>
@@ -489,8 +489,7 @@ export default {
     entity: {
       type: String,
       default: '',
-      note:
-        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
+      note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
@@ -593,9 +592,7 @@ export default {
       columnsFilterState: null,
       isRefreshing: false,
       columnsState: {},
-      defaultStartDate: dayjs()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
+      defaultStartDate: dayjs().subtract(7, 'days').format('YYYY-MM-DD'),
       defaultEndDate: dayjs().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -668,7 +665,7 @@ export default {
 
         if (col.type && col.type === 'datetime') {
           col.format = 'D MMM YYYY <br/> HH:mm';
-          col.formatFn = function(value) {
+          col.formatFn = function (value) {
             if (!value) {
               return value;
             }
@@ -678,7 +675,7 @@ export default {
 
         if (col.type && col.type === 'date') {
           col.format = 'DD-MM-YYYY';
-          col.formatFn = function(value) {
+          col.formatFn = function (value) {
             if (!value) {
               return value;
             }
