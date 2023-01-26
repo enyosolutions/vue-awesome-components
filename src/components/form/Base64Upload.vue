@@ -48,9 +48,8 @@ export default {
       if (this.name) {
         return this.name;
       }
-      return  (this.src && this.src.name)  || (this.imageSrc && this.imageSrc.name) || '';
-    },
-
+      return (this.src && this.src.name) || (this.imageSrc && this.imageSrc.name) || '';
+    }
   },
   methods: {
     onChange(event) {
@@ -84,6 +83,8 @@ export default {
   z-index: 2;
   overflow: hidden;
   height: 100%;
+  width: ;
+  :100% ;
 }
 .upload-icon {
   position: absolute;
