@@ -25,6 +25,7 @@
               (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
               dataPaginationModeComputed
             "
+            ref="awesomeTable"
             v-bind="$props"
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -151,6 +152,7 @@
               !_isANestedDetailView &&
               (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
             "
+            ref="awesomeList"
             v-bind="listOptions"
             :actions="_actionsBeforeCalculation"
             :api-query-headers="mergedOptions.headerParams"
@@ -162,7 +164,7 @@
             :auto-refresh="mergedOptions.autoRefresh"
             :columns="listFieldsComputed"
             :descriptionField="listOptions ? listOptions.descriptionField : ''"
-            :displayFields="listOptions ? listOptions.displayFields : []"
+            :displayedFields="listOptions ? listOptions.displayedFields : []"
             :export-url="mergedOptions.exportUrl"
             :identity="identity"
             :imageClasses="listOptions && listOptions.imageClasses"
@@ -213,7 +215,7 @@
                 />
               </template>
             </template>
-            <template slot="list-header-left"> </template>
+            <template slot="list-header-left"><slot name="top-left-buttons"></slot></template>
             <template slot="list-header-right">
               <ListingModeSelector
                 v-if="_actions.changeDisplayMode && enabledListingModes.length > 1"
@@ -272,6 +274,7 @@
               !_isANestedDetailView &&
               (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
             "
+            ref="awesomeKanban"
             v-bind="_kanbanOptions"
             :actions="_actions"
             :api-query-headers="mergedOptions.headerParams"
@@ -553,7 +556,7 @@ const defaultOptions = {
 };
 
 const defaultListOptions = {
-  displayFields: [], // list of fields to use for the display
+  displayedFields: [], // list of fields to use for the display
   imageField: '',
   titleField: '',
   subtitleField: '',

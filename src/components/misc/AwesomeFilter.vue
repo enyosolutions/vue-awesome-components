@@ -3,16 +3,16 @@
     <div class="filtering" v-if="editFilters">
       <h6 class="card-subtitle text-muted mb-2">{{ $t('AwesomeFilter.labels.filterData') }}</h6>
       <form class="container" @submit.prevent="addFilter()">
-        <div class="dropdown column  pl-0">
+        <div class="dropdown column pl-0">
           <select
             ref="filterField"
             class="form-control btn-outline-primary"
             :placeholder="Object.keys(currentField).length ? currentField.label : $t('AwesomeFilter.labels.fields')"
             @change="selectFilter"
           >
-            <option value class="text-primary" @click.prevent="currentField = {}">{{
-              $t('AwesomeFilter.labels.fields')
-            }}</option>
+            <option value class="text-primary" @click.prevent="currentField = {}">
+              {{ $t('AwesomeFilter.labels.fields') }}
+            </option>
             <option class="text-center" disabled>_________</option>
             <option
               @click="currentField = field"
@@ -31,7 +31,7 @@
           :current-value.sync="currentValue"
           :current-value-label.sync="currentValueLabel"
         />
-        <div class="awesome-filter-add-block pt-1 ">
+        <div class="awesome-filter-add-block pt-1">
           <button
             :disabled="!Object.keys(currentField).length"
             @click.prevent="addFilter()"
@@ -71,6 +71,7 @@
         </div>
       </div>
     </div>
+    {{ /* normal filters */ }}
     <div class="active-filter" v-if="displayFilters && advancedFilters && advancedFilters.length">
       <h6 class="card-subtitle mb-2 text-muted">{{ $t('AwesomeFilter.labels.activeFilter') }}</h6>
       <div class="chip-groups">
@@ -105,7 +106,7 @@
                   :isClickable="false"
                 />
               </span>
-              <span v-else>{{ filter.value }}</span>
+              <span v-if="canShowValue(filter.filter)">{{ filter.value }}</span>
             </div>
             <button type="button" class="btn text-muted d-none p-0" @click.prevent="editFilter(filter)">
               <i class="fa fa-edit"></i>
@@ -192,6 +193,58 @@ export default {
     currentOperator: {},
     selectedFilters: []
   }),
+
+  computed: {
+    _filterableFields() {
+      return this.fields.filter((field) => {
+        // no option defined
+        return !field.filterOptions || field.filterOptions.enabled == undefined || field.filterOptions.enabled;
+      });
+    }
+  },
+
+  watch: {
+    advancedFilters(newFilters) {
+      this.selectedFilters = newFilters;
+    },
+
+    currentOperator() {
+      if (this.permanentFilter || this.permanentInput) {
+        this.addFilter();
+      }
+    },
+
+    currentValue() {
+      if (this.permanentFilter || this.permanentInput) {
+        this.addFilter();
+      }
+    },
+    currentValueLabel(val) {}
+  },
+  mounted() {
+    this.currentOperator = this.defaultOperator
+      ? {
+          shortText: this.defaultOperator,
+          text: this.$t(`AwesomeFilter.filters.${this.defaultOperator}`),
+          value: this.defaultOperator
+        }
+      : {
+          shortText: '=',
+          text: this.$t('AwesomeFilter.filters.equals'),
+          value: '$eq'
+        };
+    if (this.permanentFilter || this.permanentInput) {
+      if (this.fields && this.fields.length) {
+        this.currentField = this.fields.filter((item) => item.field === this.field)[0];
+      } else {
+        this.currentField = {
+          field: this.field,
+          label: this.field,
+          type: 'string'
+        };
+      }
+    }
+  },
   methods: {
     addFilter() {
       const value =
@@ -266,58 +319,14 @@ export default {
       } else {
         this.currentField = {};
       }
-    }
-  },
-
-  computed: {
-    _filterableFields() {
-      return this.fields.filter((field) => {
-        // no option defined
-        return !field.filterOptions || field.filterOptions.enabled == undefined || field.filterOptions.enabled;
-      });
-    }
-  },
-
-  watch: {
-    advancedFilters(newFilters) {
-      this.selectedFilters = newFilters;
     },
 
-    currentOperator() {
-      if (this.permanentFilter || this.permanentInput) {
-        this.addFilter();
-      }
-    },
-
-    currentValue() {
-      if (this.permanentFilter || this.permanentInput) {
-        this.addFilter();
-      }
-    },
-    currentValueLabel(val) {}
-  },
-  mounted() {
-    this.currentOperator = this.defaultOperator
-      ? {
-          shortText: this.defaultOperator,
-          text: this.$t(`AwesomeFilter.filters.${this.defaultOperator}`),
-          value: this.defaultOperator
-        }
-      : {
-          shortText: '=',
-          text: this.$t('AwesomeFilter.filters.equals'),
-          value: '$eq'
-        };
-    if (this.permanentFilter || this.permanentInput) {
-      if (this.fields && this.fields.length) {
-        this.currentField = this.fields.filter((item) => item.field === this.field)[0];
-      } else {
-        this.currentField = {
-          field: this.field,
-          label: this.field,
-          type: 'string'
-        };
-      }
+    canShowValue(filterType) {
+      return (
+        filterType &&
+        filterType.value !== undefined &&
+        !['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(filterType.value)
+      );
     }
   }
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="aw-table aw-listing">
     <div class="float-left col-12 col-md-6 pl-0 pr-0">
-      <slot name="table-header-left"> </slot>
+      <slot name="table-header-left"></slot>
       <div class="card aw-segment-table-wrapper" v-if="segmentFieldDefinitionComputed">
         <awesome-segments
           :apiRequestConfig="apiRequestConfig"

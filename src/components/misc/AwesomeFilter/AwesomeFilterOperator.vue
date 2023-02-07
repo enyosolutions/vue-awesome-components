@@ -16,8 +16,8 @@
         :value="filter.value"
         :selected="filter.value === (currentOperator && currentOperator.value)"
       >
-        {{ formatLabel(filter) }}</option
-      >
+        {{ formatLabel(filter) }}
+      </option>
     </select>
   </div>
 </template>
@@ -62,6 +62,7 @@ export default {
         '$substring',
         '$isNull',
         '$isNotNull',
+        '$isDefined',
         '$isNotDefined'
       ],
       object: [
@@ -74,6 +75,7 @@ export default {
         '$substring',
         '$isNull',
         '$isNotNull',
+        '$isDefined',
         '$isNotDefined'
       ],
       datetime: [
@@ -87,6 +89,7 @@ export default {
         '$notBetween',
         '$isNull',
         '$isNotNull',
+        '$isDefined',
         '$isNotDefined'
       ],
       number: [

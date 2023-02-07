@@ -386,7 +386,7 @@ export default {
       type: String,
       description: 'The field to use for the description'
     },
-    displayFields: {
+    displayedFields: {
       type: Array,
       description: 'The fields to display on the card'
     },
@@ -604,13 +604,17 @@ export default {
   methods: {
     getAllowedFields(item) {
       let fields = {};
-      Object.keys(item).forEach((key) => {
-        this.columns.forEach((column) => {
-          if (column.field === key) {
-            fields = Object.assign(fields, _.pick(item, [key]));
-          }
+      Object.keys(item)
+        .filter((key) => {
+          return this.displayedFields && this.displayedFields.length ? this.displayedFields.includes(key) : true;
+        })
+        .forEach((key) => {
+          this.columns.forEach((column) => {
+            if (column.field === key) {
+              fields = Object.assign(fields, _.pick(item, [key]));
+            }
+          });
         });
-      });
       return fields;
     },
 

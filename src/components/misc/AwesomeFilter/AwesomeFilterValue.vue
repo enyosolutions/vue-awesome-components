@@ -8,8 +8,8 @@
       <input
         v-if="
           (currentField.type === 'number' || currentField.type === 'integer') &&
-            currentFilter.value !== '$between' &&
-            currentFilter.value !== '$notBetween'
+          currentFilter.value !== '$between' &&
+          currentFilter.value !== '$notBetween'
         "
         v-model.number="value"
         type="number"
@@ -25,7 +25,7 @@
             currentField.type === 'string' ||
             currentField.type === 'url') &&
             !currentFieldEnum) ||
-            permanentInput
+          permanentInput
         "
         v-model="value"
         type="text"
@@ -37,7 +37,7 @@
         class="dropdown"
         v-if="
           (currentField.type === 'text' || currentField.type === 'string' || currentField.type === 'url') &&
-            currentFieldEnum
+          currentFieldEnum
         "
       >
         <select v-model="value" class="form-control" aria-labelledby="field">
@@ -52,7 +52,7 @@
         class="form-element between"
         v-else-if="
           (currentField.type === 'number' || currentField.type === 'integer') &&
-            (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
+          (currentFilter.value === '$between' || currentFilter.value === '$notBetween')
         "
       >
         <input
@@ -76,8 +76,8 @@
         class="form-element"
         v-else-if="
           (currentField.type === 'datetime' || currentField.type === 'date') &&
-            currentFilter.value !== '$notBetween' &&
-            currentFilter.value !== '$between'
+          currentFilter.value !== '$notBetween' &&
+          currentFilter.value !== '$between'
         "
       >
         <date-range-picker
@@ -99,7 +99,7 @@
         class="form-element"
         v-else-if="
           (currentField.type === 'datetime' || currentField.type === 'date') &&
-            (currentFilter.value === '$notBetween' || currentFilter.value === '$between')
+          (currentFilter.value === '$notBetween' || currentFilter.value === '$between')
         "
       >
         <date-range-picker
