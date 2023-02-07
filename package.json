@@ -1,8 +1,11 @@
 {
   "name": "vue-aw-components",
-  "contributors": ["faouzane batiga", "Julien Martin"],
+  "contributors": [
+    "faouzane batiga",
+    "Julien Martin"
+  ],
   "license": "MIT",
-  "version": "1.59.2",
+  "version": "1.59.3",
   "main": "lib/vac.common.js",
   "module": "src/index.js",
   "files": [
