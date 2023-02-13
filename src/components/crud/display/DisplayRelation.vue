@@ -2,7 +2,7 @@
   <div class="text-avoid-overflow aw-display-relation" v-bind="$props">
     <template v-if="_values && _values.length">
       <template v-for="value in _values">
-        <div :key="value" :title="getLabel(value) + ' (' + value + ')'" :tooltip="value">
+        <div :key="getKey(value)" :title="getLabel(value) + ' (' + value + ')'" :tooltip="value">
           <span
             v-if="value"
             class="badge badge-info pointer"
@@ -17,7 +17,7 @@
             </span>
             <router-link
               v-if="value && !onClickUrl"
-              :to="'/app/' + kebabCase(relation) + '/' + value"
+              :to="'/app/' + kebabCase(relation) + '/' + getKey(value)"
               class="external-link"
             >
               &nbsp;<i class="fa fa-external-link text-info"></i>
@@ -37,9 +37,7 @@
         </div>
       </template>
     </template>
-    <div v-else>
-      ...
-    </div>
+    <div v-else>...</div>
   </div>
 </template>
 
@@ -58,8 +56,13 @@ export default {
     _relationUrl() {
       return this.relationUrl || this.relation;
     },
+
     _relationLabel() {
       return this.relationLabel || 'label';
+    },
+
+    _relationKey() {
+      return this.relationKey || this.primaryKeyField || this.primaryKey || 'id';
     },
 
     _label() {
@@ -133,7 +136,13 @@ export default {
     kebabCase: _.kebabCase,
     isFunction: _.isFunction,
     getLabel(value) {
+      if (typeof value === 'object') {
+        return this.formatLabel(value);
+      }
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
+    },
+    getKey(value) {
+      return typeof value === 'object' ? value[this._relationKey] : value;
     },
 
     goToRelation(value) {
@@ -143,7 +152,7 @@ export default {
         }
         return this.$router.push(this._parsedClickUrl);
       } else if (value) {
-        this.$router.push('/app/' + this.kebabCase(this.relation) + '/' + value);
+        this.$router.push('/app/' + this.kebabCase(this.relation) + '/' + this.getKey(value));
       }
       return;
     },

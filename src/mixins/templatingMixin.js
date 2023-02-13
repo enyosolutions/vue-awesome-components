@@ -128,6 +128,14 @@ export default {
       return _.get(item, path);
     },
 
+    getLabelsProperty(data, labelsField) {
+      const item = this.getItemProperty(data, labelsField);
+      if (Array.isArray(item)) {
+        return item;
+      }
+      return [item];
+    },
+
     parseUrl(url, data) {
       return this.templateParseUrl(url, {
         ...this.selectedItem,

@@ -20,7 +20,7 @@
 import abstractField from '../abstractField';
 
 export default {
-  name: 'field-textArea',
+  name: 'field-textArea', // @TODO: rename to field-textarea
   mixins: [abstractField]
 };
 </script>

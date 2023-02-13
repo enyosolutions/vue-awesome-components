@@ -22,7 +22,7 @@
     ></iframe>
     <button
       v-if="displayExpandButton && !expanded"
-      @click="onButonClick()"
+      @click.prevent.stop="onButonClick()"
       class="btn pull-right btn-expand text-primary"
     >
       <i class="fa fa-expand"></i>

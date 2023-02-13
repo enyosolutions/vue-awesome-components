@@ -32,8 +32,8 @@ displayMode
 | date         | Date field ("DD-MM-YYYY")                                      |
 | datetime     | Date time field (exact format will depend on your browser)     |
 | EnyoSelect   | @deprecated use VSelect                                        |
-| textArea     | textArea                                                       |
-| JsonTextarea | textArea that presents json data                               |
+| textarea     | textarea                                                       |
+| JsonTextarea | textarea that presents json data                               |
 | VSelect      | Select  using VSelect mode                                     |
 | fileInput    | fileInput  using base64 picker                                 |
 | ImagePicker  | Image Picker using base64 picker                               |

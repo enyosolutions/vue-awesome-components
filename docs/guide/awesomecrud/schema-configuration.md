@@ -97,7 +97,7 @@ The awesome crud configuration schema.
             'vSelect',
             'dateTime',
             'DateRange',
-            'textArea',
+            'textarea', // formerly 'textArea'
             'JsonTextarea',
             'date',
             'datetime',

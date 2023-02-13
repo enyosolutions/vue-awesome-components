@@ -7,7 +7,7 @@ import fieldLabel from '../fields/core/fieldLabel.vue';
 import fieldRadios from '../fields/core/fieldRadios.vue';
 import fieldSelect from '../fields/core/fieldSelect.vue';
 import fieldSubmit from '../fields/core/fieldSubmit.vue';
-import fieldTextArea from '../fields/core/fieldTextArea.vue';
+import fieldTextArea from '../fields/core/fieldTextarea.vue';
 import fieldUpload from '../fields/core/fieldUpload.vue';
 // optional
 import fieldCleave from '../fields/optional/fieldCleave.vue';

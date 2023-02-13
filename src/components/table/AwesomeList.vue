@@ -238,11 +238,10 @@
                         v-if="getItemProperty(item, titleField)"
                         v-html="getItemProperty(item, titleField)"
                       ></h4>
-                      <h6
-                        class="card-title aw-list-item-subtitle"
-                        v-if="getItemProperty(item, subtitleField)"
-                        v-html="getItemProperty(item, subtitleField)"
-                      ></h6>
+                      <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)">
+                        <AwesomeDisplay v-bind="getField(subtitleField)" :value="getItemProperty(item, subtitleField)">
+                        </AwesomeDisplay>
+                      </h6>
 
                       <h3
                         class="card-title aw-list-item-title"
@@ -259,6 +258,14 @@
                         >
                         </AwesomeDisplay>
                       </p>
+                      <div v-if="getLabelsProperty(item, labelsField)" class="pull-right tags-field">
+                        <small
+                          v-for="(label, idx) in getItemProperty(item, labelsField)"
+                          :key="idx"
+                          class="badge badge-primary list-item-label"
+                          >{{ label }}</small
+                        >
+                      </div>
                       <template v-if="columns && columns.length && !_useClassicLayout">
                         <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
                           <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small
@@ -385,6 +392,14 @@ export default {
     descriptionField: {
       type: String,
       description: 'The field to use for the description'
+    },
+    labelsField: {
+      type: String,
+      description: 'The field to use for the labels (tags)'
+    },
+    usersField: {
+      type: String,
+      description: 'The field to use for the users'
     },
     displayedFields: {
       type: Array,
