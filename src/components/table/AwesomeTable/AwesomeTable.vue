@@ -438,6 +438,7 @@ import { defaultActions } from '../../../mixins/defaultProps';
 
 import AwesomeDisplay from '../../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../../misc/AwesomeFilter.vue';
+import AwesomeFilterOperator from '../../misc/AwesomeFilter/AwesomeFilterOperator';
 import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList.vue';
 import AwesomeSegments from '../parts/AwesomeSegments.vue';
 import AutoRefreshButton from '../parts/AutoRefreshButton.vue';
@@ -879,7 +880,7 @@ export default {
     if (this.apiQueryParams && this.apiQueryParams.filters && Object.keys(this.apiQueryParams.filters).length > 0) {
       const tempFilters = [];
       Object.keys(this.apiQueryParams.filters)
-        .filter((field) => this.apiQueryParams.filters[field])
+        .filter((field) => field && this.apiQueryParams.filters[field])
         .forEach((field) => {
           tempFilters.push({ [field]: this.apiQueryParams.filters[field] });
         });
@@ -891,7 +892,8 @@ export default {
         const field = this.columns.find((e) => e.field === key);
         if (field) {
           filter.field = field;
-          const operator = AwesomeFilter.data().filters && AwesomeFilter.data().filters.find((e) => e.value === op);
+          const operator =
+            AwesomeFilterOperator.data().filters && AwesomeFilterOperator.data().filters.find((e) => e.value === op);
           filter.value = value;
           if (operator) {
             filter.filter = operator;

@@ -159,7 +159,13 @@
             </p>
           </div>
           <div class="col-12 col-md-4">
-            <input v-if="actions.search" type="text" v-model="search" placeholder="Rechercher" class="form-control" />
+            <input
+              v-if="actions.search"
+              type="text"
+              v-model="search"
+              placeholder="Rechercher"
+              class="form-control aw-search-input"
+            />
           </div>
           <div class="col-12">
             <awesome-filter
@@ -599,6 +605,10 @@ export default {
 
     _isDraggable() {
       return this.actions.reorder && !this.search;
+    },
+
+    perPageComputed() {
+      return this.mode === 'remote' ? parseInt(this.serverParams.perPage) : this.perPage;
     }
   },
   watch: {

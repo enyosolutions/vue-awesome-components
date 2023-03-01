@@ -133,7 +133,12 @@ export default {
     },
     disabled: {
       type: [Boolean, Function],
-      note: 'Whether the element disabled or not',
+      note: 'Whether the element is disabled or not',
+      default: false
+    },
+    visible: {
+      type: [Boolean, Function],
+      note: 'Whether the element visible or not',
       default: false
     },
     classes: {

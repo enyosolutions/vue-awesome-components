@@ -72,14 +72,18 @@
       </div>
     </div>
     {{ /* normal filters */ }}
-    <div class="active-filter" v-if="displayFilters && advancedFilters && advancedFilters.length">
+    <div class="active-filters readonly-filter" v-if="canShowReadonlyFilters">
       <h6 class="card-subtitle mb-2 text-muted">{{ $t('AwesomeFilter.labels.activeFilter') }}</h6>
       <div class="chip-groups">
         <div class="chip chip-primary bg-primary dark" v-for="(filter, index) in advancedFilters" :key="index">
           <div class="chip-content">
             <span class="form-control">{{ filter.field ? filter.field.label : '' }}</span>
-            <strong class="ml-2 mr-2">
-              {{ filter.filter ? filter.filter.shortText || filter.filter.text : '' }}
+            <strong class="ml-2 mr-2 filter-value">
+              {{
+                filter.filter
+                  ? filter.filter.shortText || filter.filter.text || $t(`AwesomeFilter.filters.${filter.filter.value}`)
+                  : ''
+              }}
             </strong>
             <div v-if="typeof filter.value === 'object'">
               <template v-for="(value, index) in filter.value">
@@ -97,7 +101,7 @@
             </div>
             <div v-else>
               <span v-if="filter.valueLabel"> {{ filter.valueLabel }}</span>
-              <span v-else-if="filter.field.type === 'relation'">
+              <span v-else-if="filter.field.type === 'relation' && canShowValue(filter.filter)">
                 <AwesomeDisplay
                   :field="filter.field.field"
                   type="relation"
@@ -106,7 +110,7 @@
                   :isClickable="false"
                 />
               </span>
-              <span v-if="canShowValue(filter.filter)">{{ filter.value }}</span>
+              <span class="filter-value" v-if="canShowValue(filter.filter)">{{ filter.value }}</span>
             </div>
             <button type="button" class="btn text-muted d-none p-0" @click.prevent="editFilter(filter)">
               <i class="fa fa-edit"></i>
@@ -200,6 +204,10 @@ export default {
         // no option defined
         return !field.filterOptions || field.filterOptions.enabled == undefined || field.filterOptions.enabled;
       });
+    },
+
+    canShowReadonlyFilters() {
+      return this.displayFilters && this.advancedFilters?.length;
     }
   },
 
@@ -322,9 +330,10 @@ export default {
     },
 
     canShowValue(filterType) {
+      // @fix this is not working correctly
       return (
         filterType &&
-        filterType.value !== undefined &&
+        filterType.value &&
         !['$isNull', '$isNotNull', '$isDefined', '$isNotDefined'].includes(filterType.value)
       );
     }

@@ -170,7 +170,7 @@
             :imageClasses="listOptions && listOptions.imageClasses"
             :imageField="listOptions && listOptions.imageField"
             :imageStyles="listOptions && listOptions.imageStyles"
-            :perRow="listOptions && listOptions.perRow"
+            :perRow="listOptions && parseInt(listOptions.perRow)"
             :mode="dataPaginationModeComputed"
             :needs-refresh.sync="tableNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
@@ -1618,7 +1618,6 @@ export default {
         return;
       }
       if (['edit', 'view'].indexOf(mode) > -1) {
-        // console.trace('display mode set' + mode);
         this.$awEmit('aw-form-open');
         const { ...data } = item;
         this.itemIndex = _.findIndex(this.itemList, data);
@@ -1725,16 +1724,17 @@ export default {
       if (!item) {
         return;
       }
-      if (!this.useRouterMode) {
-        this.setDisplayMode('view', item);
-        return;
-      }
+
       let nextPath = this.getViewPageUrl(item, event);
       if (nextPath && event && (event.metaKey || event.ctrlKey)) {
         window.open(nextPath, '_blank');
         return;
       }
       this.setDisplayMode('view', item);
+      // if the view page is not defined and we are not in router mode, we just set the display mode
+      if (!this.useRouterMode && !this.mergedOptions.viewPath) {
+        return;
+      }
       if (this.$route.path !== nextPath) {
         this.$router.push(nextPath);
       } else {
@@ -2064,6 +2064,7 @@ export default {
       const { action } = body;
       this.$emit(this.identity + '-custom-action', action);
       if (action) {
+        // if the action has an api url, we call it
         if (action.actionApiUrl) {
           let url = this.templateParseUrl(action.actionApiUrl, body);
           this.$awApi

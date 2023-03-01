@@ -90,7 +90,7 @@
                 v-if="actions.search"
                 type="text"
                 v-model="search"
-                class="form-control"
+                class="form-control aw-search-input"
                 :placeholder="$t('AwesomeTable.searchInput')"
               />
             </div>

@@ -141,7 +141,7 @@ export default {
         ...this.selectedItem,
         parent: this.parent,
         context: this,
-        currentItem: this.selectedItem,
+        currentItem: this.selectedItem || this.currentItem,
         items: this.items,
         ...data,
       })

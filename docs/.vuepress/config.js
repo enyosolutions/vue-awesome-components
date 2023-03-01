@@ -91,6 +91,10 @@ module.exports = {
         ]
       },
       {
+        title: 'Custom actions',
+        path: '/guide/awesomecrud/custom-actions.md',
+      },
+      {
         title: 'Nested models',
         path: '/guide/nestedmodels/'
       },

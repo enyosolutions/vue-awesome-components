@@ -1,6 +1,6 @@
 # Custom actions
 
-In addition to the default ations on a `Awesome Crud` it's also possible to create custom actions.
+In addition to the default ations on a `AwesomeCrud` it's also possible to create custom actions.
 The component `AwesomeAction` is used for that.
 
 ## Location
@@ -26,7 +26,7 @@ There are multiple location where you can add custom action.
 | `label`        | The label of the element                                                                                                                           |
 | `disabled`     | Whether the element disabled or not (boolean / Function / template )                                                                               |
 | `action`       | A function you want to trigger when an action on element is fired                                                                                  |
-| `actionApiUrl` | an api url to call for this action. it can contain a template. ex: '/api/salary/{{ item.id }}/recalculate'. The call is always done wia a PUT call |
+| `actionApiUrl` | an api url to call for this action. it can contain a template. ex: '<code v-pre>/api/salary/{{item?.id}}/recalculate</code>'. The call is always done via a PUT call |
 
 For all options See https://github.com/enyosolutions-team/vue-awesome-components/blob/master/src/components/misc/AwesomeAction/AwesomeAction.vue#L115
 
@@ -141,15 +141,10 @@ customFormTopActions: [
 `AwesomeForm`
 ![Demo customFormTopActions](./customs-actions-examples/customFormTopActions.png)
 
-## Props
 
-<ClientOnly>
-<ComponentDoc component="AwesomeAction" />
-</ClientOnly>
+## actions Types
 
-## Types
-
-There are 4 differents types, that you can use to display your custom action :
+There are 4 differents actions types, that you can use to display your custom action :
 
 ### `button`
 
@@ -174,6 +169,16 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
 `produits.id` or `produits.disponibilites.id` from the `residence` model.
 
 :::
+
+---
+
+## Props
+
+<ClientOnly>
+<ComponentDoc component="AwesomeAction" />
+</ClientOnly>
+
+---
 
 ## Examples
 

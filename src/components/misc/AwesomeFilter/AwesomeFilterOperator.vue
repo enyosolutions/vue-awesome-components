@@ -50,7 +50,25 @@ export default {
     }
   },
   data: () => ({
-    filters: [],
+    filters: [
+      { shortText: '=', value: '$eq' },
+      { shortText: '', value: '$in' },
+      { shortText: '!=', value: '$ne' },
+      { shortText: '>', value: '$gt' },
+      { shortText: '>=', value: '$gte' },
+      { shortText: '<', value: '$lt' },
+      { shortText: '<=', value: '$lte' },
+      { value: '$between' },
+      { value: '$notBetween' },
+      { value: '$like' },
+      { value: '$notLike' },
+      { value: '$startsWith' },
+      { value: '$endsWith' },
+      { value: '$isNull' },
+      { value: '$isNotNull' },
+      { value: '$isDefined' },
+      { value: '$isNotDefined' }
+    ],
     rules: {
       text: [
         '$eq',
@@ -160,25 +178,9 @@ export default {
     }
   },
   mounted() {
-    this.filters = [
-      { shortText: '=', text: this.$t('AwesomeFilter.filters.equals'), value: '$eq' },
-      { shortText: '', text: this.$t('AwesomeFilter.filters.in'), value: '$in' },
-      { shortText: '!=', text: this.$t('AwesomeFilter.filters.not-equals'), value: '$ne' },
-      { shortText: '>', text: this.$t('AwesomeFilter.filters.greater-than'), value: '$gt' },
-      { shortText: '>=', text: this.$t('AwesomeFilter.filters.greater-or-equals'), value: '$gte' },
-      { shortText: '', text: this.$t('AwesomeFilter.filters.lesser-than'), value: '$lt' },
-      { shortText: '', text: this.$t('AwesomeFilter.filters.lesser-or-equals'), value: '$lte' },
-      { text: this.$t('AwesomeFilter.filters.between'), value: '$between' },
-      { text: this.$t('AwesomeFilter.filters.not-between'), value: '$notBetween' },
-      { text: this.$t('AwesomeFilter.filters.contains'), value: '$like' },
-      { text: this.$t('AwesomeFilter.filters.not-contains'), value: '$notLike' },
-      { text: this.$t('AwesomeFilter.filters.starts-with'), value: '$startsWith' },
-      { text: this.$t('AwesomeFilter.filters.ends-with'), value: '$endsWith' },
-      { text: this.$t('AwesomeFilter.filters.is-null'), value: '$isNull' },
-      { text: this.$t('AwesomeFilter.filters.is-not-null'), value: '$isNotNull' },
-      { text: this.$t('AwesomeFilter.filters.is-defined'), value: '$isDefined' },
-      { text: this.$t('AwesomeFilter.filters.is-not-defined'), value: '$isNotDefined' }
-    ];
+    this.filters.forEach((filter) => {
+      filter.text = this.$t(`AwesomeFilter.filters.${filter.value}`);
+    });
   }
 };
 </script>
