@@ -23,7 +23,7 @@
       >
         <a
           v-for="(child, idx) in children"
-          :key="child.id || idx"
+          :key="child.id || child || idx"
           class="dropdown-item"
           @click="
             $emit('customAction', {
@@ -38,7 +38,7 @@
               toggleDropdown(false)
           "
         >
-          <span>{{ child.title || child.label ? $t(child.title || child.label) : '' }}</span>
+          <span>{{ child.title || child.label ? $t(child.title || child.label) : child.id || child || '' }}</span>
         </a>
       </div>
     </div>

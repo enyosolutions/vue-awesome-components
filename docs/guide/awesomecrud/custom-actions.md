@@ -229,18 +229,47 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
 
 ```
 
+### inline actions with `visible` and `disabled`
 ```javascript
   customInlineActions: [{
     name: 'send-mail',
     label: 'app.buttons.contact-candidate-button',
     class: 'btn btn-sm btn-simple btn-awtable-inline-action btn-icon ml-2',
     icon: 'fa fa-envelope',
-    // visible: ({ item }) => item.email,
+    visible: ({ item }) => item.canBecontacted,
     disabled: ({ item }) => !item.email,
     action: ({
       item, action, location, props, id,
     }, context) => {
       context.$store.dispatch('email/setShowEmailComposerModal', { show: true, recipientAdress: item && item.email });
+    },
+  }],
+```
+
+### inline actions with dropdown
+```javascript
+  customInlineActions: [{
+    name: 'call',
+    label: 'app.buttons.contact-candidate-button',
+    class: 'btn btn-sm btn-simple btn-awtable-inline-action btn-icon ml-2',
+    icon: 'fa fa-phone',
+    type: 'dropdown',
+    children: ['send-mail', 'send-sms', 'send-whatsapp'],
+    // you can also use objects like so:
+    //children: [{id: 'send-mail', label: 'some label'}, {id: 'send-sms'}, {id: 'send-whatsapp', label: 'send whatsapp'}],
+    visible: ({ item }) => item.canBecontacted,
+    action: ({
+      item, action, location, props, id, dropdownItem
+    }, context) => {
+      switch (dropdownItem) {
+        case 'send-mail':
+          context.$store.dispatch('email/showEmailComposerModal', { recipientAdress: item && item.email });
+          break;
+        case 'send-sms':
+          ...
+          break;
+
+      }
     },
   }],
 ```

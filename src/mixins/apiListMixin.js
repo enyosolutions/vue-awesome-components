@@ -483,7 +483,7 @@ export default {
           query: {
             ...options.query,
             ...this.routeQueryParams,
-            sort: undefined,
+            // sort: undefined,
           }
         }, JSON.stringify(options));
       }
@@ -495,7 +495,7 @@ export default {
         ...this.routeQueryParams,
         ...this.$route.query,
         ...options.query,
-        sort: undefined
+        // sort: undefined
       };
       Object.keys(query).forEach((key) => {
         if (query[key] === undefined) {
@@ -558,7 +558,7 @@ export default {
             perPage: to.query.perPage || undefined,
             filters: to.query.filters || undefined,
             //  columns: to.query.columns || '',
-            //   sort: to.query.sort || '',
+            sort: to.query.sort || '',
           });
           this.routeQueryParams = {
             page: to.query.page || undefined,
@@ -566,7 +566,7 @@ export default {
             perPage: to.query.perPage || undefined,
             filters: to.query.filters || undefined,
             // columns: to.query.columns || '',
-            // sort: to.query.sort || '',
+            sort: to.query.sort || '',
           }
           return;
         }
