@@ -2046,7 +2046,9 @@ export default {
       if (this.hasPrevious && this.itemsList[this.currentItemIndex - 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex - 1];
         if (this.useRouterMode) {
-          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}`);
+          this.$router.push(
+            `${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}?${Qs.stringify(this.$route.query)}`
+          );
         }
       }
     },
@@ -2055,7 +2057,9 @@ export default {
       if (this.hasNext && this.itemsList[this.currentItemIndex + 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex + 1];
         if (this.useRouterMode) {
-          this.$router.push(`${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}`);
+          this.$router.push(
+            `${this.parentPath}/${this.selectedItem[this.primaryKeyFieldCpt]}?${Qs.stringify(this.$route.query)}`
+          );
         }
       }
     },

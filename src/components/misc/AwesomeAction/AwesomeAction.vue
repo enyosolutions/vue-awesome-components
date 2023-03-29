@@ -1,7 +1,7 @@
 <template>
   <div :class="`aw-action aw-action-name-${name}`">
     <!--  TYPE DROPDOWN  -->
-    <div v-if="type === 'dropdown'" class="dropdown dropleft">
+    <div v-if="type === 'dropdown'" class="dropdown" :class="dropdownDirection">
       <button
         class="btn dropdown-toggle"
         :class="classes"
@@ -197,13 +197,19 @@ export default {
     },
     dropdownItemId: {
       type: String,
-      note: 'In case of type: filter || input, the defaultOperator to display',
+      note: 'In case of type: dropddown, the field to use to identify',
       default: 'id'
     },
     dropdownItemLabel: {
       type: String,
-      note: 'In case of type: filter || input, the defaultOperator to display',
+      note: 'In case of type: dropddown, the field to use to display',
       default: 'title'
+    },
+    dropdownDirection: {
+      type: String,
+      note: 'In case of type: dropddown, the direction to drop the dropdown',
+      default: 'dropleft',
+      values: ['dropleft', 'dropright', 'dropup', 'dropdown']
     },
     showLabel: {
       type: Boolean,

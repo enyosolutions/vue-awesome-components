@@ -438,7 +438,7 @@ import { defaultActions } from '../../../mixins/defaultProps';
 
 import AwesomeDisplay from '../../crud/display/AwesomeDisplay.vue';
 import AwesomeFilter from '../../misc/AwesomeFilter.vue';
-import AwesomeFilterOperator from '../../misc/AwesomeFilter/AwesomeFilterOperator';
+import AwesomeFilterOperator from '../../misc/AwesomeFilter/AwesomeFilterOperator.vue';
 import AwesomeActionList from '../../misc/AwesomeAction/AwesomeActionList.vue';
 import AwesomeSegments from '../parts/AwesomeSegments.vue';
 import AutoRefreshButton from '../parts/AutoRefreshButton.vue';
