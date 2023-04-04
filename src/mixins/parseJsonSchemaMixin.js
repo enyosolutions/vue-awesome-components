@@ -404,7 +404,7 @@ export default {
     },
 
 
-    parseColumns(properties, options = { includeHidden: false }) {
+    parseColumns(properties, options = { includeHidden: false, prefix: '' }) {
       const newcolumns = [];
       Object.keys(properties).forEach((key) => {
         let newCol = {};
@@ -415,14 +415,22 @@ export default {
         if (prop.column.visible === undefined) {
           prop.column.visible = true;
         }
-
+        // if the column is nested and has the type 'nestedColumns' then parse the columns of the nested object and push them to the columns
+        if (prop.column?.type === 'nestedColumns') {
+          const nestedColumns = this.parseColumns(prop.properties, { ...options, prefix: `${key}.` });
+          nestedColumns.forEach((nestedColumn) => {
+            newcolumns.push(nestedColumn);
+          });
+          return;
+        }
         // support for the old field
         if (prop.column && prop.column.hidden !== undefined) {
           prop.column.visible = !(prop.column.hidden === true || prop.column.hidden === 0);
         }
 
+        // if the column is visible set the defualt config and add it to the columns
         if ((prop.visible || (prop.column && prop.column.visible)) || (options && options.includeHidden)) {
-          newCol.field = key;
+          newCol.field = `${options.prefix || ''}${key}`;
           newCol.type = this.getColumnType(prop);
           newCol.label = startCase((prop.column && prop.column.title) || prop.title || key);
           newCol.filterOptions = { enabled: false };

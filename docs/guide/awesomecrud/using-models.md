@@ -15,7 +15,7 @@ It controls general behavior of the page :
 - structure of the detail page (modal, sidebar, page, fullscreen, sideform)
 - Options and actions available in the page (which actions i can do, custom actions, displayed columns / informations, tabs, nested informations etc)
 
-[https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelConfig.js]()
+[https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelConfig.js](https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelConfig.js)
 
 ## JSON schema Definition of a field
 
@@ -27,4 +27,4 @@ It controls general behavior of a field :
 - validations on the field
 - etc
 
-[https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelFieldConfig.js]()
+[https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelFieldConfig.js](https://github.com/enyosolutions-team/axel-core/blob/master/src/models/schema/AxelModelFieldConfig.js)
