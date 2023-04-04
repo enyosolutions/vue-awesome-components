@@ -323,7 +323,7 @@ The awesome crud configuration schema.
           description:
             'The type of the column, comming from https://vue-generators.gitbook.io/vue-generators/fields',
           type: 'string',
-          enum: ['string', 'number', 'date', 'datetime', 'image', 'html', 'relation', 'object', 'boolean', 'url'],
+          enum: ['string', 'number', 'date', 'datetime', 'image', 'html', 'relation', 'object', 'boolean', 'url', 'nestedColumns'],
         },
         hidden: {
           title: 'Hide this column',
