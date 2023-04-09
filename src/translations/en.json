@@ -169,6 +169,12 @@
       "clear-state": "Reset table configuration"
     }
   },
+  "AwesomeForm": {
+    "labels": {
+      "provideFileInstead": "Provide a file instead",
+      "provideUrlInstead": "Provide a link instead"
+    }
+  },
   "AwesomeLayout": {
     "messages": {
       "emptyBlockBeforeDelete": "you must empty the block before you can delete it."

@@ -104,7 +104,7 @@ export default {
     },
 
     templateParseConditionalField(fieldData, data = null) {
-      if (typeof (fieldData) == 'boolean') {
+      if (typeof (fieldData) === 'boolean') {
         return fieldData;
       }
       if (isString(fieldData)) {

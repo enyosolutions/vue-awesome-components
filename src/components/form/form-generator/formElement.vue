@@ -15,6 +15,8 @@
           :relation-url="field.displayOptions.relationUrl"
           :relation-key="field.displayOptions.relationKey"
           :relation-label="field.displayOptions.relationLabel"
+          :schema="field"
+          :model="model"
         >
         </awesome-display>
       </template>

@@ -12,7 +12,7 @@
     >
       <template slot="group-legend" slot-scope="{ group, groupLegend }">
         <slot name="group-legend" :group="group" :group-legend="groupLegend">
-          <legend class="aw-form-group-legend" v-if="groupLegend">
+          <legend class="aw-form-group-legend" v-if="group.showHeader && groupLegend">
             <span v-html="groupLegend"></span>
           </legend>
         </slot>

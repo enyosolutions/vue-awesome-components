@@ -123,6 +123,8 @@
                           :relation-url="getField(key).relationUrl"
                           :relation-key="getField(key).relationKey"
                           :display-label-cache="displayLabelsCache"
+                          :schema="getField(key)"
+                          :model="data"
                         >
                         </AwesomeDisplay>
                       </div>

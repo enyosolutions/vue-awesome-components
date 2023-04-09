@@ -90,6 +90,7 @@
                 <span :key="index" v-if="filter.field.type === 'relation'">
                   <AwesomeDisplay
                     :field="filter.field.field"
+                    :schema="filter.field"
                     type="relation"
                     v-bind="filter.field"
                     :value="value"
@@ -104,6 +105,7 @@
               <span v-else-if="filter.field.type === 'relation' && canShowValue(filter.filter)">
                 <AwesomeDisplay
                   :field="filter.field.field"
+                  :schema="filter.field"
                   type="relation"
                   v-bind="filter.field"
                   :value="filter.value"

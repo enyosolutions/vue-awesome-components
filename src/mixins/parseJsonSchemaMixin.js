@@ -214,19 +214,25 @@ export default {
           subSchema.title = prop.title || startCase(key);
           subSchema.default = {};
           subSchema.id = key;
+          subSchema.showHeader = prop.field.showHeader !== undefined ? prop.field.showHeader : true;
+          subSchema.visible = prop.field.visible !== undefined ? prop.field.visible : true;
 
+          subSchema.styleClasses = 'subgroup-auto ';
           if (subSchema.type === 'group') {
             subSchema.collapsible = prop.field.collapsible;
             subSchema.collapsed = prop.field.collapsed;
             subSchema.cols = prop.field && prop.field.cols;
             subSchema.legend = prop.title || startCase(key);
-            subSchema.styleClasses = `subgroup-auto  ${(prop.field.styleClasses) || ''}`;
+            subSchema.styleClasses += `subgroup-group  ${(prop.field.styleClasses) || ''}`;
           }
           else if (prop.field.type === 'tab') {
-
             subSchema.cols = 12;
-            subSchema.styleClasses = `subgroup-tabs  ${(prop.field.styleClasses) || ''}`;
+            subSchema.styleClasses += `subgroup-tabs  ${(prop.field.styleClasses) || ''}`;
           }
+          // subSchema.fields = subSchema.fields || Object.keys(subSchema.schema.properties) || [];
+
+          this.transformStateBooleans(subSchema);
+          this.transformStateFunctions(subSchema);
 
           fields.push(subSchema);
         } else {
@@ -472,6 +478,7 @@ export default {
             ...group,
             legend: this.$t(group.title),
             id: group.id,
+            showHeader: group.showHeader !== undefined ? group.showHeader : true,
             type: 'group'
           });
         }

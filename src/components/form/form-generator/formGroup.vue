@@ -121,10 +121,11 @@
 import formMixin from './formMixin.js';
 import formGroupTabHeader from './formGroupTabHeader.vue';
 import { get as objGet, isFunction, isNil } from 'lodash';
+import templatingMixin from '../../../mixins/templatingMixin.js';
 
 export default {
   name: 'form-group',
-  mixins: [formMixin],
+  mixins: [formMixin, templatingMixin],
   components: {
     formGroupTabHeader
   },
@@ -211,12 +212,11 @@ export default {
     },
 
     groupIsVisible() {
-      if (this.group && this.group.visible && isFunction(this.group.visible)) {
-        return this.group.visible.call(this, this.model, this.group, this);
-      }
-
       if (isNil(this.group.visible)) {
         return true;
+      }
+      if (this.group && this.group.visible && isFunction(this.group.visible)) {
+        return this.group.visible.call(this, this.model, this.group, this);
       }
 
       return this.group.visible;

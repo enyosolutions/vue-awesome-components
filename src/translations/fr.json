@@ -169,6 +169,12 @@
       "clear-state": "Réinitialiser la configuration de la liste"
     }
   },
+  "AwesomeForm": {
+    "labels": {
+      "provideFileInstead": "Choisir un fichier",
+      "provideUrlInstead": "Fournir une URL"
+    }
+  },
   "AwesomeLayout": {
     "messages": {
       "emptyBlockBeforeDelete": "you must empty the block before you can delete it."

@@ -245,8 +245,12 @@
                         v-html="getItemProperty(item, titleField)"
                       ></h4>
                       <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)">
-                        <AwesomeDisplay v-bind="getField(subtitleField)" :value="getItemProperty(item, subtitleField)">
-                        </AwesomeDisplay>
+                        <AwesomeDisplay
+                          v-bind="getField(subtitleField)"
+                          :value="getItemProperty(item, subtitleField)"
+                          :model="item"
+                          :schema="getField(subtitleField)"
+                        />
                       </h6>
 
                       <h3
@@ -261,8 +265,9 @@
                         <AwesomeDisplay
                           v-bind="getField(descriptionField)"
                           :value="getItemProperty(item, descriptionField)"
-                        >
-                        </AwesomeDisplay>
+                          :model="item"
+                          :schema="getField(subtitleField)"
+                        />
                       </p>
                       <div v-if="getLabelsProperty(item, labelsField)" class="pull-right tags-field">
                         <small
@@ -283,8 +288,9 @@
                             :relation-label="getField(key).relationLabel"
                             :relation-url="getField(key).relationUrl"
                             :relation-key="getField(key).relationKey"
-                          >
-                          </AwesomeDisplay>
+                            :model="item"
+                            :schema="getField(subtitleField)"
+                          />
                         </div>
                       </template>
                       <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
@@ -644,12 +650,7 @@ export default {
     },
 
     getField(key) {
-      const field = _.filter(this.columns, ['field', key]);
-      return field[0] ? field[0] : field;
-    },
-    getFieldType(key) {
-      const field = _.filter(this.columns, ['field', key]);
-      return field[0] ? field[0] : field;
+      return _.find(this.columns, ['field', key]) || {};
     },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;

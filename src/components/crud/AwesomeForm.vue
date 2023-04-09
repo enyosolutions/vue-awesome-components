@@ -1140,18 +1140,26 @@ export default {
       if (!this.layout || !Array.isArray(this.layout) || !this.layout.length) {
         return this.formSchema;
       }
+
       return {
         ...this.formSchema,
-        type: 'group',
+        // if any of the layout fields uses tabs then define it as a tab.
+        type: this.layout.some((g) => g.type === 'tab') ? 'tab' : 'group',
         fields: this.layout.map((group) => ({
           ...group,
+          visible: this.templateParseConditionalField(group.visible),
+          showHeader: group.showHeader !== undefined ? group.showHeader : true, // default to true
           cols: group.type === 'tab' ? 12 : group.cols,
           fieldOptions: group.fieldOptions || {},
-          fields: this.formSchema.fields.filter((f) => group.fields.includes(f.model)),
+          // select fields that are in this group.fields or starts with the name of the group
+          fields: this.formSchema.fields.filter(
+            (f) =>
+              group.fields.includes(f?.model) || (['group', 'tab'].includes(f.type) && group.fields.includes(f?.id))
+          ),
           headerClasses: `${group.headerClasses || ''}`,
           id: group.id || group.title || group.legend,
           legend: group.legend || group.title,
-          styleClasses: `subgroup-tabs ${group.classes || group.styleClasses || ''}`,
+          styleClasses: `${group.classes || group.styleClasses || ''}`,
           styles: `${group.styles || ''}`,
           title: group.title || group.legend,
           type: group.type || 'group',
@@ -1335,7 +1343,10 @@ export default {
   },
 
   beforeDestroy() {
-    document.body.classList.remove('modal-open');
+    setTimeout(() => {
+      document.body.classList.remove('modal-open');
+    }, 100);
+    //  document.body.classList.remove('modal-open');
   },
 
   methods: {

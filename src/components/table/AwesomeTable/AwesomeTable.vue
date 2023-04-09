@@ -336,6 +336,8 @@
                 <div class="aw-table-router-link" v-if="props.column.field !== '__ACTIONS'">
                   <awesome-display
                     v-bind="props.column"
+                    :schema="props.column"
+                    :model="props.row"
                     :apiResponseConfig="apiResponseConfig"
                     :apiRequestHeaders="apiRequestHeaders"
                     :value="getItemProperty(props.row, props.column.field)"

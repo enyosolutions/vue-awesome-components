@@ -2,6 +2,7 @@
   <div class="input-group field-file-input aw-form-field-image-picker">
     <div class="d-flex m-0 p-0">
       <base64-upload
+        v-if="!urlFieldIsVisible"
         :disabled="schema.disabled"
         :readonly="schema.readonly"
         :type="type"
@@ -13,7 +14,6 @@
       >
       </base64-upload>
     </div>
-
     <div class="image-picker-actions" v-if="value">
       <button @click.prevent="openImageInTab" type="button" class="btn">
         <i class="fa fa-external-link"></i>
@@ -24,13 +24,14 @@
     </div>
     <div class="col-12 mt-1 p-0">
       <input
-        placeholder="Or paste an url here"
-        v-if="valueIsNotObject"
+        placeholder="Paste an url here"
+        v-if="urlFieldIsVisible && valueIsNotObject"
         type="text"
-        class="form-control image-picker-input p-0 m-0 mt-1"
+        class="form-control image-picker-input p-1 m-0 mt-1"
         v-model="value"
       />
     </div>
+    <UploadButtonToggle v-model="urlFieldIsVisible"></UploadButtonToggle>
   </div>
 </template>
 <script>
@@ -38,15 +39,17 @@ import VueFormGenerator from '../../form/form-generator';
 
 // You need a specific loader for CSS files
 import Base64Upload from '../../form/Base64Upload.vue';
+import UploadButtonToggle from './parts/UploadButtonToggle.vue';
 
 export default {
-  components: { Base64Upload },
+  components: { Base64Upload, UploadButtonToggle },
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {
       refresh: Date.now(),
       type: 'image',
-      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
+      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass,
+      urlFieldIsVisible: false
     };
   },
   computed: {
@@ -87,6 +90,15 @@ export default {
 </script>
 <style lang="scss">
 .field-file-input {
+  .btn-file-url {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px;
+    z-index: 10;
+    padding: 1px !important;
+    border: transparent !important;
+  }
   cursor: pointer;
 
   > * {

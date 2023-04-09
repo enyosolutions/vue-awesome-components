@@ -2,6 +2,7 @@
   <div class="input-group field-file-input">
     <div class="d-flex">
       <base64-upload
+        v-if="!urlFieldIsVisible"
         :disabled="schema.disabled"
         :readonly="schema.readonly"
         :type="type"
@@ -14,13 +15,14 @@
     </div>
     <div class="d-flex p-0 mt-1">
       <input
-        v-if="valueIsNotObject"
+        v-if="urlFieldIsVisible && valueIsNotObject"
         type="text"
-        class="form-control mt-1"
-        placeholder="or paste and url here"
+        class="form-control mt-1 p-1"
+        placeholder="Paste and url here"
         v-model="value"
       />
     </div>
+    <UploadButtonToggle v-model="urlFieldIsVisible"></UploadButtonToggle>
   </div>
 </template>
 <script>
@@ -28,10 +30,11 @@ import VueFormGenerator from '../../form/form-generator';
 
 // You need a specific loader for CSS files
 import Base64Upload from '../../form/Base64Upload.vue';
+import UploadButtonToggle from './parts/UploadButtonToggle.vue';
 
 export default {
   name: 'field-filePicker',
-  components: { Base64Upload },
+  components: { Base64Upload, UploadButtonToggle },
   mixins: [VueFormGenerator.abstractField],
   data() {
     return {
@@ -40,7 +43,8 @@ export default {
         this.schema &&
         this.schema.fieldOptions &&
         (this.schema.fieldOptions.type || this.schema.fieldOptions.inputType),
-      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass
+      inputClass: this.schema && this.schema.fieldOptions && this.schema.fieldOptions.inputClass,
+      urlFieldIsVisible: false
     };
   },
   computed: {
