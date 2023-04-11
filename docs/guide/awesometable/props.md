@@ -46,7 +46,7 @@ The table can display various type of data. By default the value used it the str
 | object        | objecrt or array                                                |
 | list-of-value | The value is used to find the value in a vuex store             |
 | list-of-data  | The value is used to find the value in a vuex store             |
-| nestedColumns | This types means that there are more columns nested in the object |
+| nestedColumn  | This types means that there are more columns nested in the object |
 
 ## Styling classes :
 
