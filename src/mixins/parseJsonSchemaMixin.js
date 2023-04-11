@@ -410,6 +410,16 @@ export default {
     },
 
 
+    /**
+     * Takes a json properties list object ({prop: {type: 'string', ...}, ...}) and returns an array of columns
+     * @param {Object} schema
+     * @param {Object} options
+     * @param {Boolean} options.includeHidden
+     * @param {String} options.prefix
+     *
+     * @retuns {Array} columns
+     *
+     */
     parseColumns(properties, options = { includeHidden: false, prefix: '' }) {
       const newcolumns = [];
       Object.keys(properties).forEach((key) => {
@@ -422,7 +432,7 @@ export default {
           prop.column.visible = true;
         }
         // if the column is nested and has the type 'nestedColumn' then parse the columns of the nested object and push them to the columns
-        if (prop.column && prop.column.type === 'nestedColumn') {
+        if (prop.column && prop.column.type === 'nestedColumn' && prop.properties && prop.properties.length > 0) {
           const nestedColumns = this.parseColumns(prop.properties, { ...options, prefix: `${key}.` });
           nestedColumns.forEach((nestedColumn) => {
             newcolumns.push(nestedColumn);
