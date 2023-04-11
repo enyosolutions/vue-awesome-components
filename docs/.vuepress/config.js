@@ -52,42 +52,63 @@ module.exports = {
         title: 'Global configuration',
         path: '/guide/cookbook/global-configuration.md'
       },
+
+
       {
-        title: 'Awesome Table',
+        title: 'Components',
+        path: '',
         children: [
-          '/guide/awesometable/',
-          '/guide/awesometable/props',
-          '/guide/awesometable/saving-config-state',
-          '/guide/awesometable/events',
-          '/guide/awesometable/examples'
-        ]
-      },
-      {
-        title: 'Awesome Kanban',
-        path: '/guide/awesomekanban/'
-      },
-      {
-        title: 'Awesome List',
-        path: '/guide/awesomelist/'
-      },
-      {
-        title: 'Awesome Form',
-        path: '/guide/awesomeform/',
-      },
-      {
-        title: 'Awesome Crud',
-        children: [
-          '/guide/awesomecrud/',
-          '/guide/awesomecrud/props',
-          '/guide/awesomecrud/schema-configuration',
-          '/guide/awesomecrud/configuration-options',
-          '/guide/awesomecrud/saving-config-state',
-          '/guide/awesomecrud/actions.md',
-          '/guide/awesomecrud/custom-actions.md',
-          '/guide/awesomecrud/template-parsing-system',
-          '/guide/awesomecrud/events',
-          '/guide/awesomecrud/classes',
-          '/guide/awesomecrud/examples',
+          {
+            title: 'Awesome Crud',
+            children: [
+              '/guide/awesomecrud/',
+              '/guide/awesomecrud/props',
+              '/guide/awesomecrud/slots',
+              '/guide/awesomecrud/schema-configuration',
+              '/guide/awesomecrud/configuration-options',
+              '/guide/awesomecrud/saving-config-state',
+              '/guide/awesomecrud/actions.md',
+              '/guide/awesomecrud/custom-actions.md',
+              '/guide/awesomecrud/template-parsing-system',
+              '/guide/awesomecrud/events',
+              '/guide/awesomecrud/classes',
+              '/guide/awesomecrud/examples',
+            ]
+          },
+          {
+            title: 'Awesome Table',
+            children: [
+              '/guide/awesometable/',
+              '/guide/awesometable/props',
+              '/guide/awesometable/saving-config-state',
+              '/guide/awesometable/events',
+              '/guide/awesometable/examples'
+            ]
+          },
+          {
+            title: 'Awesome Kanban',
+            path: '/guide/awesomekanban/'
+          },
+          {
+            title: 'Awesome List',
+            path: '/guide/awesomelist/'
+          },
+          {
+            title: 'Awesome Form',
+            path: '/guide/awesomeform/',
+          },
+          {
+            title: 'EnyoStats',
+            path: '/guide/enyostats'
+          },
+          {
+            title: 'Table And Charts Card',
+            path: '/guide/enyochartcard'
+          },
+          {
+            title: 'Enyo Select',
+            path: '/guide/enyoselect'
+          },
         ]
       },
       {
@@ -107,30 +128,15 @@ module.exports = {
         path: '/guide/awesomeBus/'
       },
       {
-        title: 'Api',
+        title: 'All items Api',
         path: '/guide/api/props.md'
       },
-      {
-        title: 'EnyoStats',
-        path: '/guide/enyostats'
-      },
-      {
-        title: 'Table And Charts Card',
-        path: '/guide/enyochartcard'
-      },
-      {
-        title: 'Enyo Select',
-        path: '/guide/enyoselect'
-      },
+
 
       {
         title: "Next steps",
         path: "/guide/next-steps.md"
       },
-      {
-        title: "Github",
-        path: "https://github.com/enyosolutions-team/vue-awesome-components/"
-      }
     ],
   }
 };

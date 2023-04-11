@@ -1,23 +1,15 @@
 <template>
-  <article v-if="merged && merged.name" class=" aw-propdoc propdoc">
+  <article v-if="merged && merged.name" class="aw-propdoc propdoc">
     <table v-if="merged.props" class="props">
       <tr class="proprow labels header">
         <th class="propcol name required">
           name
           <span>(required)</span>
         </th>
-        <th class="propcol type">
-          type
-        </th>
-        <th class="propcol default">
-          Possible values
-        </th>
-        <th class="propcol default">
-          default
-        </th>
-        <th class="propcol notes">
-          notes
-        </th>
+        <th class="propcol type">type</th>
+        <th class="propcol default">Possible values</th>
+        <th class="propcol default">default</th>
+        <th class="propcol notes">notes</th>
       </tr>
       <tr
         v-for="(propinfo, propname) in merged.props"
@@ -28,7 +20,7 @@
         <td class="propcol name" :class="{ required: propinfo.required }">
           <a :href="'#comp-prop-' + propinfo.name" class="prop-anchor"><i class="fa fa-link"></i></a>
           <span>{{ propinfo.name }}</span>
-          <span v-if="propinfo.required" style="color:red; font-weight:bold">*</span>
+          <span v-if="propinfo.required" style="color: red; font-weight: bold">*</span>
         </td>
         <td class="propcol type">
           {{ propinfo.type }}
@@ -47,7 +39,7 @@
         </td>
         <td class="propcol default">
           <!--optionally you can output this: {{ propinfo.defaultTypeStr }} -->
-          <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap;">{{
+          <code v-if="typesForCodeTag.includes(propinfo.defaultTypeStr)" style="white-space: pre-wrap">{{
             propinfo.default
           }}</code>
           <span v-else>{{ propinfo.default }}</span>
@@ -110,10 +102,15 @@ export default {
       }
       const m = this.merge(_component, documentation);
       if (m.token) m.token = this.sanitize(m.token);
-      if (m.description) m.description = marked(m.description);
-      if (!(ignoreMixins || this.ignoreMixins)) {
-        console.log('component', component, m.mixins);
-        if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
+      try {
+        console.log('m.description', m.description);
+        if (m.description) m.description = marked(m.description);
+        if (!(ignoreMixins || this.ignoreMixins)) {
+          console.log('component', component, m.mixins);
+          if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props);
+        }
+      } catch (err) {
+        console.error('err', err);
       }
       if (m.props) {
         m.props = this.processProps(m.props);
@@ -234,10 +231,7 @@ export default {
 };
 
 function getTypeString(variable) {
-  return Object.prototype.toString
-    .call(variable)
-    .slice(8, -1)
-    .toLowerCase();
+  return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
 }
 </script>
 
