@@ -143,6 +143,7 @@
                 <i class="fa fa-th-large"></i>
                 {{ $t('AwesomeCrud.buttons.openEditLayoutMode') }}
               </button>
+              <slot name="top-more-actions"></slot>
             </template>
 
             <!-- END OF ARRAY -->
@@ -261,6 +262,7 @@
                 <i class="fa fa-file-excel" />
                 {{ $t('AwesomeCrud.buttons.excel-template') }}
               </button>
+              <slot name="top-more-actions"></slot>
             </template>
             <template v-slot:list-items="{ items, itemsPerRow, columns }">
               <slot name="list-items" :items="items" :itemsPerRow="itemsPerRow" :columns="columns"></slot>
@@ -359,6 +361,7 @@
                 <i class="fa fa-file-excel" />
                 {{ $t('AwesomeCrud.buttons.excel-template') }}
               </button>
+              <slot name="top-more-actions"></slot>
             </template>
             <slot name="top-actions2">
               <template slot="top-actions">

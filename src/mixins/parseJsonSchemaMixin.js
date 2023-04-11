@@ -422,7 +422,7 @@ export default {
           prop.column.visible = true;
         }
         // if the column is nested and has the type 'nestedColumn' then parse the columns of the nested object and push them to the columns
-        if (prop.column?.type === 'nestedColumn') {
+        if (prop.column && prop.column.type === 'nestedColumn') {
           const nestedColumns = this.parseColumns(prop.properties, { ...options, prefix: `${key}.` });
           nestedColumns.forEach((nestedColumn) => {
             newcolumns.push(nestedColumn);
