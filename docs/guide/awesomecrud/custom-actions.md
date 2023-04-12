@@ -180,6 +180,48 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
 
 ---
 
+## fields available in the action configuration
+
+Each action has acces to various fields that can be used to customize the action. They vary depending on the location of the action.
+
+| Field name     | Description                                                                                    | Location   |
+|----------------|------------------------------------------------------------------------------------------------|------------|
+| `name`         | The name of the action                                                                         | `all`      |
+| `label`        | The label of the action                                                                        | `all`      |
+| `title`        | The title of the action                                                                        | `all`      |
+| `icon`         | The icon of the action                                                                         | `all`      |
+| `classes`      | The classes of the action                                                                      | `all`      |
+| `visible`      | Whether the action is visible or not (boolean / Function / template )                           | `all`      |
+| `disabled`     | Whether the action is disabled or not (boolean / Function / template )                          | `all`      |
+| `action`       | A function you want to trigger when an action on element is fired                              | `all`      |
+| `children`     | An array of actions that will be displayed in a dropdown when the action is clicked            | `dropdown` |
+| `type`         | The type of the action. Can be `button`, `dropdown`, `filter` or `input`                        | `all`      |
+| `filter`       | The filter you want to use for the action. Can be `text`, `select`, `date`, `datetime`, `time`  | `filter`   |
+| `filterConfig` | The configuration of the filter. See [AwesomeFilter](../awesome-filter) for more informations. | `filter`   |
+| `dropdownDirection` | The direction of the dropdown. Can be `dropup`, `dropdown`, `dropleft`, `dropright` | `dropdown` |
+
+
+
+
+## fields available in the action functions
+
+Each action function has acces to various fields that can be used to customize the callback behavior. exemple send the selected item to the api, or decide to execute or not the action.
+
+They vary depending on the location of the action.
+
+| Field name | Description                                                                                   |  Location |
+| ---------- | --------------------------------------------------------------------------------------------- | --------- |
+| `item`     | The current item of the action                                                                | `inline`  |
+| `items`    | The current items of the action                                                               | `bulk`    |
+| `action`   | The action object                                                                             | `all`     |
+| `location` | The location of the action                                                                    | `all`     |
+| `props`    | The props of the action                                                                       | `all`     |
+| `id`       | The id of the action                                                                          | `all`     |
+| `context`  | The context of the action. It contains the current component and the current component context | `all`     |
+| `index`    | The index of the action                                                                       | `inline`  |
+| `dropdownItem` | The selected dropdown item of the action                                                               | `dropdown`|
+
+
 ## Examples
 
 ```javascript
@@ -254,6 +296,7 @@ Eg: For a model `residences` that in relation with `produits` and a model `dispo
     class: 'btn btn-sm btn-simple btn-awtable-inline-action btn-icon ml-2',
     icon: 'fa fa-phone',
     type: 'dropdown',
+    dropdownDirection: 'bottom',
     children: ['send-mail', 'send-sms', 'send-whatsapp'],
     // you can also use objects like so:
     //children: [{id: 'send-mail', label: 'some label'}, {id: 'send-sms'}, {id: 'send-whatsapp', label: 'send whatsapp'}],

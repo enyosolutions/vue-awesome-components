@@ -23,7 +23,7 @@
       >
         <a
           v-for="(child, idx) in children"
-          :key="child.id || child || idx"
+          :key="idx"
           class="dropdown-item"
           @click="
             $emit('customAction', {
