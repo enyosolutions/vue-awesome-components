@@ -522,7 +522,7 @@
                           {{ $t('AwesomeCrud.buttons.edit') }}
                         </button>
 
-                        <template v-if="customInlineActions">
+                        <template v-if="customInlineActions && customInlineActions.length">
                           <AwesomeActionList
                             :actions="customInlineActions"
                             :parentDisplayMode="mode"
