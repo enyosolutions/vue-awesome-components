@@ -2,7 +2,7 @@
   <div class="btn-group aw-list-mode-selector">
     <button
       v-if="!enabledModes || enabledModes.includes('table')"
-      class="btn btn-link pl-0 pr-2 pv-2"
+      class="btn btn-link p-1"
       @click.prevent="$emit('input', 'table')"
       title="table"
       type="button"
@@ -11,7 +11,7 @@
     </button>
     <button
       v-if="!enabledModes || enabledModes.includes('list')"
-      class="btn btn-link p-2"
+      class="btn btn-link p-1"
       @click.prevent="$emit('input', 'list')"
       title="list"
       type="button"
@@ -20,7 +20,7 @@
     </button>
     <button
       v-if="!enabledModes || enabledModes.includes('kanban')"
-      class="btn btn-link p-2"
+      class="btn btn-link p-1"
       @click.prevent="$emit('input', 'kanban')"
       title="kanban"
       type="button"

@@ -14,7 +14,13 @@
     <div class="float-right text-right col-12 col-md-6 pl-0 pr-0">
       <slot name="list-header-right"></slot>
     </div>
-    <div class="card aw-list-card aw-list-component awesome-list">
+    <div
+      class="card aw-list-card aw-list-component awesome-list"
+      :class="{
+        'aw-list-mode-grid': itemsPerRow > 1,
+        'aw-list-mode-list': itemsPerRow == 1
+      }"
+    >
       <div
         class="card-header"
         v-if="showHeader"
@@ -37,7 +43,7 @@
                 :auto-refresh-interval="autoRefreshInterval"
               />
               <template v-if="actions && actions.changeItemsPerRow">
-                <div class="btn-group ml-3" role="group">
+                <div class="btn-group ml-3 aw-list-items-per-row" role="group">
                   <button
                     class="btn btn-sm btn-sm"
                     @click="setListMode()"

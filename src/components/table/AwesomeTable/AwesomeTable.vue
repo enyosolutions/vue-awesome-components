@@ -777,7 +777,8 @@ export default {
         newcolumns.push({
           field: '__ACTIONS',
           label: 'Actions',
-          filterOptions: { enabled: false }
+          filterOptions: { enabled: false },
+          sortable: false
         });
         // eslint-disable-next-line
         this.columnsState.__ACTIONS = true;

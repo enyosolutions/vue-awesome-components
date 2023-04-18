@@ -470,7 +470,8 @@ export default {
           label: 'Actions',
           type: 'ACTIONS',
           filterable: false,
-          enabled: false
+          enabled: false,
+          sortable: false,
         });
       }
       return newcolumns;
