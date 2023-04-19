@@ -335,6 +335,7 @@
               <template v-else>
                 <div class="aw-table-router-link" v-if="props.column.field !== '__ACTIONS'">
                   <awesome-display
+                    location="table"
                     v-bind="props.column"
                     :schema="props.column"
                     :model="props.row"

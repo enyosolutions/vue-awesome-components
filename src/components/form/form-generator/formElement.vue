@@ -7,6 +7,7 @@
       </label>
       <template v-if="isViewMode">
         <awesome-display
+          location="form"
           v-if="field.displayOptions"
           v-bind="field.displayOptions"
           :type="viewFieldType"

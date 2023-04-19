@@ -116,6 +116,7 @@
                       <div v-for="(itemData, key) in getAllowedData(data)" :key="key">
                         {{ key }} :
                         <AwesomeDisplay
+                          location="kanban"
                           :type="getField(key).type"
                           :value="itemData"
                           :relation="getField(key).relation"

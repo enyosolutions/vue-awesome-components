@@ -252,6 +252,7 @@
                       ></h4>
                       <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)">
                         <AwesomeDisplay
+                          location="list"
                           v-bind="getField(subtitleField)"
                           :value="getItemProperty(item, subtitleField)"
                           :model="item"
@@ -269,6 +270,7 @@
 
                       <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
                         <AwesomeDisplay
+                          location="list"
                           v-bind="getField(descriptionField)"
                           :value="getItemProperty(item, descriptionField)"
                           :model="item"
@@ -288,6 +290,7 @@
                           <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small
                           ><br />
                           <AwesomeDisplay
+                            location="list"
                             v-bind="getField(key)"
                             :value="itemData"
                             :relation="getField(key).relation"

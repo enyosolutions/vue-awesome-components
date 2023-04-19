@@ -50,6 +50,10 @@ export default {
     label: String,
     styles: String,
     classes: String,
+    location: {
+      String,
+      values: ['table', 'list', 'form', 'kanban', 'filter'],
+    },
     imageClasses: [String, Array, Object],
     imageStyles: [String, Array, Object],
     isSafe: { type: Boolean, default: false },

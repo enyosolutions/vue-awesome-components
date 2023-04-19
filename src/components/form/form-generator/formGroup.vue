@@ -12,7 +12,7 @@
         v-if="group && group.collapsible"
         class="btn text-info"
         type="button"
-        style="position: absolute; right: 0"
+        style="position: absolute; right: 0; top: 15px; padding: 1px"
         @click="toggleCollapse"
       >
         {{ collapsed ? '[+]' : '[-]' }}

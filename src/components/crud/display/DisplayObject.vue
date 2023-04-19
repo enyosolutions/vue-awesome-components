@@ -8,10 +8,12 @@
   >
     <div :class="$props.classes" :style="$props.styles">
       <template v-if="!_useArrayMode && !multiple">
-        {{ _value }}
+        <div>
+          {{ _value }}
+        </div>
       </template>
       <template v-else>
-        <template v-for="(value, key) of $props.value" class="label label-info">
+        <template v-for="(value, key) of $props.value">
           <div :key="key" class="badge badge-info aw-display-object-item mr-1">
             <template>
               {{ getValue(value) }}

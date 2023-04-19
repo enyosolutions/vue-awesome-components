@@ -186,6 +186,9 @@ export default {
     },
 
     getApiUrl(field) {
+      if (!field) {
+        return '';
+      }
       return this[field] ||
         (this.mergedOptions && this.mergedOptions[field]) ||
         (this.options && this.options[field]) ||

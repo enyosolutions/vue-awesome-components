@@ -89,6 +89,7 @@
               <template v-for="(value, index) in filter.value">
                 <span :key="index" v-if="filter.field.type === 'relation'">
                   <AwesomeDisplay
+                    location="filter"
                     :field="filter.field.field"
                     :schema="filter.field"
                     type="relation"
@@ -104,6 +105,7 @@
               <span v-if="filter.valueLabel"> {{ filter.valueLabel }}</span>
               <span v-else-if="filter.field.type === 'relation' && canShowValue(filter.filter)">
                 <AwesomeDisplay
+                  location="filter"
                   :field="filter.field.field"
                   :schema="filter.field"
                   type="relation"
