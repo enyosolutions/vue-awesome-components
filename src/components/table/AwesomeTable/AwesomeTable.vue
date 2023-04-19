@@ -259,7 +259,8 @@
               pageLabel: this.$t('AwesomeTable.page'),
               allLabel: this.$t('AwesomeTable.all'),
               perPage: perPageComputed,
-              setCurrentPage: parseInt(serverParams.page) || undefined
+              setCurrentPage: parseInt(serverParams.page) || undefined,
+              mode: 'pages'
             }"
             :select-options="{
               enabled: true,

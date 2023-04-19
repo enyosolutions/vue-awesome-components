@@ -103,7 +103,7 @@
                     <p class="card-text" v-if="getItemProperty(data, descriptionField)">
                       {{ getItemProperty(data, descriptionField) }}
                     </p>
-                    <div v-if="getLabelsProperty(data, labelsField)" class="pull-right tags-field">
+                    <div v-if="getLabelsProperty(data, labelsField)" class="text-right tags-field">
                       <small
                         v-for="(label, idx) in getItemProperty(data, labelsField)"
                         :key="idx"

@@ -277,7 +277,7 @@
                           :schema="getField(subtitleField)"
                         />
                       </p>
-                      <div v-if="getLabelsProperty(item, labelsField)" class="pull-right tags-field">
+                      <div v-if="getLabelsProperty(item, labelsField)" class="tags-field">
                         <small
                           v-for="(label, idx) in getItemProperty(item, labelsField)"
                           :key="idx"

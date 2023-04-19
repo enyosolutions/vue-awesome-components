@@ -61,8 +61,8 @@ export default {
     tagsToKeep: { type: Array, default: () => ['br', 'p'], description: 'tags to keep the html' },
     embed: { type: Boolean, default: false, description: 'Embed the target content into an iframe' },
     displayExpandButton: { type: Boolean, default: true, description: 'Display a button to expand the size of the iframe' },
-    model: { default: {}, description: 'The full object that is being displayed' },
-    schema: { type: Object, default: {}, description: 'The params of the item being displayed' },
+    model: { default: () => { }, description: 'The full object that is being displayed' },
+    schema: { type: Object, default: () => { }, description: 'The params of the item being displayed' },
   },
   data() {
     return {
