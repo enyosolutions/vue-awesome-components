@@ -2,13 +2,13 @@
   <div class="text-avoid-overflow" :class="$props.classes" :style="$props.styles" v-bind="$props">
     <a
       v-if="$props.value"
-      :href="$props.value"
+      :href="clickTarget"
       target="_blank"
       class="ajax-table-href"
       :class="embed ? 'pull-right' : ''"
     >
       <span v-if="!embed">
-        {{ $props.label || $props.value }}
+        {{ $props.urlLabel || $props.value }}
       </span>
       <i class="fa fa-external-link"></i>
     </a>
@@ -29,7 +29,15 @@
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 export default {
   name: 'DisplayUrl',
-  mixins: [awesomeDisplayMixin]
+  mixins: [awesomeDisplayMixin],
+  computed: {
+    clickTarget() {
+      if (!this.$props.value) {
+        return '';
+      }
+      return `${this.$props.prefix || ''}${this.$props.value}${this.$props.suffix}`;
+    }
+  }
 };
 </script>
 

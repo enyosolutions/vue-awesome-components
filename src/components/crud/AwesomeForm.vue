@@ -1152,10 +1152,21 @@ export default {
           cols: group.type === 'tab' ? 12 : group.cols,
           fieldOptions: group.fieldOptions || {},
           // select fields that are in this group.fields or starts with the name of the group
-          fields: this.formSchema.fields.filter(
-            (f) =>
-              group.fields.includes(f?.model) || (['group', 'tab'].includes(f.type) && group.fields.includes(f?.id))
-          ),
+          fields: group.fields
+            .map((f) => {
+              const field = this.formSchema.fields.find(
+                (field) => field.model === f || (['group', 'tab'].includes(field.type) && field.id === f)
+              );
+              if (field) {
+                return field;
+              }
+              return false;
+            })
+            .filter((f) => f),
+          // fields: this.formSchema.fields.filter(
+          //   (f) =>
+          //     group.fields.includes(f?.model) || (['group', 'tab'].includes(f.type) && group.fields.includes(f?.id))
+          // ),
           headerClasses: `${group.headerClasses || ''}`,
           id: group.id || group.title || group.legend,
           legend: group.legend || group.title,

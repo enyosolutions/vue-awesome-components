@@ -48,6 +48,7 @@ export default {
     prefix: String,
     suffix: String,
     label: String,
+    urlLabel: String,
     styles: String,
     classes: String,
     location: {
