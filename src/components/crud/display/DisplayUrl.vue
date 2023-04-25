@@ -35,7 +35,7 @@ export default {
       if (!this.$props.value) {
         return '';
       }
-      return `${this.$props.prefix || ''}${this.$props.value}${this.$props.suffix}`;
+      return `${this.$props.prefix || ''}${this.$props.value}${this.$props.suffix || ''}`;
     }
   }
 };
