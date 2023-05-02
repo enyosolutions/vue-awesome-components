@@ -145,7 +145,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { filter, pick } from 'lodash';
 import Vue from 'vue';
 import ClickOutside from 'vue-click-outside';
 import i18nMixin from '../../mixins/i18nMixin';
@@ -274,7 +274,7 @@ export default {
       Object.keys(data).forEach((key) => {
         this.columns.forEach((column) => {
           if (column.field === key) {
-            allowData = Object.assign(allowData, _.pick(data, [key]));
+            allowData = Object.assign(allowData, pick(data, [key]));
           }
         });
       });
@@ -282,7 +282,7 @@ export default {
     },
 
     getField(key) {
-      const field = _.filter(this.columns, ['field', key]);
+      const field = filter(this.columns, ['field', key]);
       return field[0] ? field[0] : field;
     },
 

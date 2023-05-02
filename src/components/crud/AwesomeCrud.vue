@@ -513,7 +513,17 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import {
+  cloneDeep,
+  debounce,
+  filter,
+  findIndex,
+  flatten,
+  get,
+  merge,
+  sortBy,
+  startCase,
+} from 'lodash';
 import Qs from 'qs';
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';
@@ -897,13 +907,13 @@ export default {
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
           ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
+          : startCase(this._model.singularName);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
@@ -930,24 +940,24 @@ export default {
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
 
     _namePlural() {
       if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
       }
 
       if (this.namePlural) {
-        return this.$te(this.namePlural) ? this.$t(this.namePlural) : _.startCase(this.namePlural);
+        return this.$te(this.namePlural) ? this.$t(this.namePlural) : startCase(this.namePlural);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
@@ -976,9 +986,9 @@ export default {
       let columns = [];
       if (this.listOptions && Array.isArray(this.listOptions.fields)) {
         this.listOptions.fields.forEach((field) => {
-          columns.push(_.filter(allColumns, ['field', field]));
+          columns.push(filter(allColumns, ['field', field]));
         });
-        columns = _.flatten(columns);
+        columns = flatten(columns);
         return columns;
       }
 
@@ -991,9 +1001,9 @@ export default {
       // If we provided an array of fields to display
       if (this._kanbanOptions && Array.isArray(this._kanbanOptions.fields)) {
         this._kanbanOptions.fields.forEach((field) => {
-          columns.push(_.filter(allColumns, ['field', field]));
+          columns.push(filter(allColumns, ['field', field]));
         });
-        columns = _.flatten(columns);
+        columns = flatten(columns);
         return columns;
       }
       return allColumns;
@@ -1007,7 +1017,7 @@ export default {
       if (!columns) {
         return [];
       }
-      return _.sortBy(columns, ['field', 'order']);
+      return sortBy(columns, ['field', 'order']);
     },
 
     tableColumnsComputed() {
@@ -1051,7 +1061,7 @@ export default {
     },
 
     _actions() {
-      const actions = _.cloneDeep(this._actionsBeforeCalculation);
+      const actions = cloneDeep(this._actionsBeforeCalculation);
 
       Object.entries(actions).forEach(([field, fieldData]) => {
         if (typeof fieldData !== 'boolean') {
@@ -1062,7 +1072,7 @@ export default {
     },
 
     _actionsBeforeCalculation() {
-      return _.merge(
+      return merge(
         {},
         defaultActions,
         this.actions || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
@@ -1070,7 +1080,7 @@ export default {
     },
 
     _customFormTopActions() {
-      return _.merge(
+      return merge(
         [],
         (this.customFormTopActions.length && this.customFormTopActions) ||
           (this.mergedOptions && this.mergedOptions.customFormTopActions) // old location kept
@@ -1078,7 +1088,7 @@ export default {
     },
 
     _customInlineActions() {
-      return _.merge(
+      return merge(
         [],
         (this.customInlineActions.length && this.customInlineActions) ||
           (this.mergedOptions && this.mergedOptions.customInlineActions) // old location kept
@@ -1086,7 +1096,7 @@ export default {
     },
 
     _customTopRightActions() {
-      return _.merge(
+      return merge(
         [],
         (this.customTopRightActions.length && this.customTopRightActions) ||
           (this.mergedOptions && this.mergedOptions.customTopRightActions) // old location kept
@@ -1094,7 +1104,7 @@ export default {
     },
 
     _customTableTopActions() {
-      return _.merge(
+      return merge(
         [],
         (this.customTableTopActions.length && this.customTableTopActions) ||
           (this.mergedOptions && this.mergedOptions.customTableTopActions) // old location kept
@@ -1102,11 +1112,11 @@ export default {
     },
 
     _customTitleBarActions() {
-      return _.merge([], this.customTitleBarActions.length && this.customTitleBarActions);
+      return merge([], this.customTitleBarActions.length && this.customTitleBarActions);
     },
 
     _customBulkActions() {
-      return _.merge(
+      return merge(
         [],
         (this.customBulkActions.length && this.customBulkActions) ||
           (this.mergedOptions && this.mergedOptions.customBulkActions) // old location kept
@@ -1129,7 +1139,7 @@ export default {
     },
 
     _kanbanOptions() {
-      const merged = _.merge({}, defaultKanbanOptions, this._model && this._model.kanbanOptions, this.kanbanOptions);
+      const merged = merge({}, defaultKanbanOptions, this._model && this._model.kanbanOptions, this.kanbanOptions);
       if (merged.splittingField && (!merged.splittingValues || !merged.splittingValues.length)) {
         if (this.tableColumnsComputed) {
           const field = this.tableColumnsComputed.find((f) => f.field === this.segmentField);
@@ -1180,10 +1190,7 @@ export default {
       return (
         this.itemsList &&
         this.selectedItem &&
-        _.findIndex(
-          this.itemsList,
-          (data) => data[this.primaryKeyFieldCpt] == this.selectedItem[this.primaryKeyFieldCpt]
-        )
+        this.itemsList.findIndex((data) => data[this.primaryKeyFieldCpt] == this.selectedItem[this.primaryKeyFieldCpt])
       );
     },
 
@@ -1268,15 +1275,9 @@ export default {
 
     mergedOptions: {
       get() {
-        let options = _.merge(
-          {},
-          defaultOptions,
-          this._model && this._model.options,
-          this.options,
-          this.internalOptions
-        );
+        let options = merge({}, defaultOptions, this._model && this._model.options, this.options, this.internalOptions);
         if (this.$route && this.$route.query && this.$route.query.filters) {
-          options.queryParams = _.merge(
+          options.queryParams = merge(
             this.internalOptions.queryParams,
             { filters: this.$route.query.filters },
             { fields: this.$route.query.fields }
@@ -1326,7 +1327,7 @@ export default {
     listingDisplayMode: 'onlistingDisplayModeChanged'
   },
   created() {
-    this.setDisplayMode = _.debounce(this.setDisplayModeFresh, 500, { leading: true });
+    this.setDisplayMode = debounce(this.setDisplayModeFresh, 500, { leading: true });
   },
   mounted() {
     // allow old property names to still work
@@ -1345,7 +1346,7 @@ export default {
       console.warn('Intitial display mode is not in the list of enabled modes', this.mergedOptions.initialDisplayMode);
       this.mergedOptions.initialDisplayMode = this.enabledListingModes[0];
     }
-    this.internalOptions = _.cloneDeep(this.mergedOptions);
+    this.internalOptions = cloneDeep(this.mergedOptions);
     this.loadModel();
     if (!this.displayMode) {
       this.displayMode = this.mergedOptions.initialDisplayMode;
@@ -1589,7 +1590,7 @@ export default {
               .then((res) => {
                 const data =
                   this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-                    ? _.get(res, this.apiResponseConfig.dataPath)
+                    ? get(res, this.apiResponseConfig.dataPath)
                     : res.data;
                 if (matched.path.indexOf('/edit') !== -1) {
                   this.setDisplayMode('edit', data);
@@ -1623,7 +1624,7 @@ export default {
       if (['edit', 'view'].indexOf(mode) > -1) {
         this.$awEmit('aw-form-open');
         const { ...data } = item;
-        this.itemIndex = _.findIndex(this.itemList, data);
+        this.itemIndex = findIndex(this.itemList, data);
       }
       this.previousDisplayMode = this.displayMode || this.mergedOptions.initialDisplayMode;
 
@@ -1666,7 +1667,7 @@ export default {
       }
 
       if (this.$route.query.item) {
-        this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+        this.selectedItem = merge(this.selectedItem, this.$route.query.item);
       }
       // if (this.displayMode !== 'create') {
       this.setDisplayMode('create', this.selectedItem);
@@ -1777,7 +1778,7 @@ export default {
         .then((res) => {
           this.selectedItem =
             this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-              ? _.get(res, this.apiResponseConfig.dataPath)
+              ? get(res, this.apiResponseConfig.dataPath)
               : res.data;
           this.nestedCrudNeedsRefresh = true;
         })
@@ -2103,7 +2104,7 @@ export default {
         .get(`${this._url}`)
         .then((res) => {
           this.selectedItem =
-            this.responseField && this.responseField != false ? _.get(res.data, this.responseField) : res.data;
+            this.responseField && this.responseField != false ? get(res.data, this.responseField) : res.data;
         })
         .catch(this.apiErrorCallback)
         .finally(() => {
@@ -2171,7 +2172,7 @@ export default {
         if (this.$route.params.id && (this.$route.path.endsWith('/create') || this.$route.path.endsWith('/new'))) {
           delete this.$route.params.id;
           if (this.$route.query.item) {
-            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+            this.selectedItem = merge(this.selectedItem, this.$route.query.item);
           }
           this.goToCreatePage({ reset: false });
 
@@ -2183,7 +2184,7 @@ export default {
         } else {
           this.selectedItem = { [this.primaryKeyFieldCpt]: this.$route.params.id };
           if (this.$route.query.item) {
-            this.selectedItem = _.merge(this.selectedItem, this.$route.query.item);
+            this.selectedItem = merge(this.selectedItem, this.$route.query.item);
           }
         }
       }

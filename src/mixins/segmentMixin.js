@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isString, startCase } from 'lodash';
 
 export const segmentMixin = {
   methods: {
@@ -13,7 +13,7 @@ export const segmentMixin = {
       if (typeof segment === 'string' && segment.indexOf('|') > -1) {
         return segment.split('|')[1];
       }
-      return _.startCase(segment.field || segment.name || (_.isString(segment) ? segment : this.getSegmentKey(segment)));
+      return startCase(segment.field || segment.name || (isString(segment) ? segment : this.getSegmentKey(segment)));
     },
 
     getSegmentKey(segment) {

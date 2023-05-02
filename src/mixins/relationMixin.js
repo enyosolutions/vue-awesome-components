@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 export default {
   props: {
     modelsStorePath: {
@@ -21,7 +21,7 @@ export default {
         // if we have path
         if (modelsStorePath) {
           // we should search every where not just in the state. This is for backward compatibility
-          const models = _.get(this.$store, modelsStorePath) || _.get(this.$store.state, modelsStorePath);
+          const models = get(this.$store, modelsStorePath) || get(this.$store.state, modelsStorePath);
           // if we have a list
           if (models) {
             if (Array.isArray(models)) {

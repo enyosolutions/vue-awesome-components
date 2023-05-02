@@ -23,7 +23,7 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import { get } from 'lodash';
 
 import i18nMixin from '../../../mixins/i18nMixin';
 import awEmitMixin from '../../../mixins/awEmitMixin';
@@ -89,10 +89,10 @@ export default {
   computed: {
     _segmentsList() {
       const configSegments =
-        _.get(this.field, 'fieldOptions.filterDropdownItems') ||
-        _.get(this.field, 'enum') ||
-        _.get(this.field, 'fieldOptions.values') ||
-        _.get(this.field, 'fieldOptions.option');
+        get(this.field, 'fieldOptions.filterDropdownItems') ||
+        get(this.field, 'enum') ||
+        get(this.field, 'fieldOptions.values') ||
+        get(this.field, 'fieldOptions.option');
       if (configSegments && configSegments.length) {
         return configSegments;
       }
@@ -154,7 +154,7 @@ export default {
       }
       this.$awApi
         .get(`${this.dataUrl}${this.dataUrl.indexOf('?') === -1 ? '?' : '&'}perPage=100`, {
-          params: { ..._.get(this.field, 'fieldOptions.queryParams') }
+          params: { ...get(this.field, 'fieldOptions.queryParams') }
         })
         .then((res) => {
           this.segmentOptions = this.getData(res);
@@ -167,7 +167,7 @@ export default {
     getData(res) {
       const data =
         this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-          ? _.get(res, this.apiResponseConfig.dataPath)
+          ? get(res, this.apiResponseConfig.dataPath)
           : res.data;
       if (Array.isArray(data)) {
         return data.map((item) => {

@@ -2,7 +2,7 @@
  * Mixin for components that talks to apis
  */
 
-import _ from 'lodash';
+import { merge, get } from 'lodash';
 import templatingMixin from './templatingMixin';
 
 export default {
@@ -96,7 +96,7 @@ export default {
     },
 
     opts() {
-      return _.merge(this.defaultOptions, this.options);
+      return merge(this.defaultOptions, this.options);
     },
 
 
@@ -167,7 +167,7 @@ export default {
       return this.apiResponseConfig &&
         this.apiResponseConfig.dataPath &&
         this.apiResponseConfig.dataPath != false
-        ? _.get(res, this.apiResponseConfig.dataPath)
+        ? get(res, this.apiResponseConfig.dataPath)
         : res.data;
     },
 
@@ -175,13 +175,13 @@ export default {
       return this.apiResponseConfig &&
         this.apiResponseConfig.totalCountPath &&
         this.apiResponseConfig.totalCountPath != false
-        ? _.get(res, this.apiResponseConfig.totalCountPath)
+        ? get(res, this.apiResponseConfig.totalCountPath)
         : res.data.totalCount
     },
 
     mergeSelectedItemWithRequestProps() {
       if (this.apiRequestPermanentBodyParams) {
-        this.selectedItem = _.merge(this.selectedItem, this.apiRequestPermanentBodyParams);
+        this.selectedItem = merge(this.selectedItem, this.apiRequestPermanentBodyParams);
       }
     },
 

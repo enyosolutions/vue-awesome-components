@@ -130,7 +130,13 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  has,
+  cloneDeep,
+  flattenDeep,
+  merge,
+  without
+} from 'lodash';
 import AwesomeDisplay from '../crud/display/AwesomeDisplay.vue';
 import AwesomeFilterOperator from './AwesomeFilter/AwesomeFilterOperator.vue';
 import AwesomeFilterValue from './AwesomeFilter/AwesomeFilterValue.vue';
@@ -284,11 +290,11 @@ export default {
     },
     editFilter(item) {
       this.$emit('toggle-edit', item);
-      // this.selectedFilters = _.without(this.selectedFilters, item);
+      // this.selectedFilters = without(this.selectedFilters, item);
       // this.parseFilter(this.selectedFilters);
     },
     removeFilter(item) {
-      this.selectedFilters = _.without(this.selectedFilters, item);
+      this.selectedFilters = without(this.selectedFilters, item);
       this.parseFilter(this.selectedFilters);
     },
 
@@ -299,24 +305,24 @@ export default {
         if (
           !this.permanentFilter &&
           !this.permanentInput &&
-          _.has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)
+          has(advancedFilters, `${filter.field.field}.${filter.filter.value}`)
         ) {
-          advancedFilters[filter.field.field][filter.filter.value] = _.flattenDeep([
+          advancedFilters[filter.field.field][filter.filter.value] = flattenDeep([
             advancedFilters[filter.field.field][filter.filter.value],
             filter.value
           ]);
-        } else if (_.has(advancedFilters, `${filter.field.field}`) || _.has(advancedFilters, '$relation')) {
+        } else if (has(advancedFilters, `${filter.field.field}`) || has(advancedFilters, '$relation')) {
           advancedFilters = parsedFilter;
         } else {
-          _.merge(advancedFilters, parsedFilter);
+          merge(advancedFilters, parsedFilter);
         }
         if (this.permanentInput) {
           if (filter.field.field.split('.').length > 1) {
             advancedFilters = {
-              $relation: _.cloneDeep(advancedFilters)
+              $relation: cloneDeep(advancedFilters)
             };
           } else {
-            _.merge(advancedFilters, parsedFilter);
+            merge(advancedFilters, parsedFilter);
           }
         }
       });

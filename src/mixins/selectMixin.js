@@ -1,5 +1,5 @@
 /* eslint-disable */
-import _ from 'lodash';
+import { get } from 'lodash';
 
 export default {
   props: {
@@ -114,7 +114,7 @@ export default {
         promise.then(res => {
           this.apiOptions = this.apiResponseConfig &&
             this.apiResponseConfig.dataPath
-            ? _.get(res, this.apiResponseConfig.dataPath)
+            ? get(res, this.apiResponseConfig.dataPath)
             : res.data.body;
           this.isLoading = false;
           /* eslint-disable-next-line */

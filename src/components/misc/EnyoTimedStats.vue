@@ -53,7 +53,7 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import { debounce } from 'lodash';
 
 export default {
   name: 'EnyoTimedStats',
@@ -88,8 +88,8 @@ export default {
   },
   beforeDestroy() {},
   methods: {
-    getStats: _.debounce(
-      function() {
+    getStats: debounce(
+      function () {
         this.$awApi
           .get(this.url, {})
           .then((res) => {

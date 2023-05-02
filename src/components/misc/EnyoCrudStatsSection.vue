@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import { debounce, get } from 'lodash';
 import apiConfigMixin from '../../mixins/apiConfigMixin';
 import awEmitMixin from '../../mixins/awEmitMixin';
 
@@ -61,15 +61,15 @@ export default {
   },
   beforeDestroy() {},
   methods: {
-    getStats: _.debounce(
-      function() {
+    getStats: debounce(
+      function () {
         this.$awApi
           .get(this.url, {})
           .then((res) => {
             if (res && res.data) {
               const data =
                 this.apiResponseConfig && this.apiResponseConfig.dataPath
-                  ? _.get(res, this.apiResponseConfig.dataPath)
+                  ? get(res, this.apiResponseConfig.dataPath)
                   : res.data;
               this.stats = data;
               if (!Array.isArray(data)) {

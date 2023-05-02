@@ -29,7 +29,7 @@
 <script>
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
-import _ from 'lodash';
+import { merge, uniqueId } from 'lodash';
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
 
@@ -45,12 +45,12 @@ export default {
   },
   props: {},
   mounted() {
-    this.inputId = _.uniqueId('datetime_');
+    this.inputId = uniqueId('datetime_');
   },
   computed: {
     fieldOptions() {
       const options = this.schema && this.schema.fieldOptions ? this.schema && this.schema.fieldOptions : {};
-      return _.merge(
+      return merge(
         {
           timePicker: true,
           datePicker: true,

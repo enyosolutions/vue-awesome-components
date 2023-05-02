@@ -41,22 +41,6 @@
                 <div class="btn-group btn-group-sm float-right awesome-list-buttons">
                   <slot name="top-actions" class />
                   <div class="btn-group" role="group">
-                    <button
-                      v-if="actions.filter && actions.advancedFiltering"
-                      slot="reference"
-                      type="button"
-                      class="btn btn-simple btn-sm"
-                      :class="{
-                        'btn-primary': displayAwFilter || advancedFiltersCount,
-                        'btn-default': !advancedFiltersCount
-                      }"
-                      @click="displayAwFilter = !displayAwFilter"
-                    >
-                      <i class="fa fa-filter" />
-                      {{ $t('AwesomeTable.buttons.filters') }}
-                      {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
-                    </button>
-
                     <popper
                       trigger="clickToOpen"
                       :options="{
@@ -81,6 +65,22 @@
                         </button>
                       </div>
                     </popper>
+
+                    <button
+                      v-if="actions.filter && actions.advancedFiltering"
+                      slot="reference"
+                      type="button"
+                      class="btn btn-simple btn-sm"
+                      :class="{
+                        'btn-primary': displayAwFilter || advancedFiltersCount,
+                        'btn-default': !advancedFiltersCount
+                      }"
+                      @click="displayAwFilter = !displayAwFilter"
+                    >
+                      <i class="fa fa-filter" />
+                      {{ $t('AwesomeTable.buttons.filters') }}
+                      {{ advancedFiltersCount ? `(${advancedFiltersCount})` : '' }}
+                    </button>
                   </div>
                 </div>
               </h3>
@@ -196,7 +196,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { cloneDeep, debounce, filter,  startCase, some, orderBy, remove, flatten } from 'lodash';
 import Popper from 'vue-popperjs';
 
 import i18nMixin from '../../mixins/i18nMixin';
@@ -330,7 +330,7 @@ export default {
       /* eslint-disable-next-line */
       console.error('`Draggable` is missing. Please install `vuedraggable` and register the component globally!');
     }
-    this.reorderListItemsDebounced = _.debounce(this.reorderListItems, 200);
+    this.reorderListItemsDebounced = debounce(this.reorderListItems, 200);
   },
   mounted() {
     this.handleLists();
@@ -359,23 +359,23 @@ export default {
       }
 
       if (this._model && this._model.namePlural) {
-        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : _.startCase(this._model.namePlural);
+        return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
           ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
+          : startCase(this._model.singularName);
       }
 
       if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+        return this.$te(this._model.name) ? this.$t(this._model.name) : startCase(this._model.name);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
@@ -447,7 +447,7 @@ export default {
   methods: {
     addList() {
       if (this.newListName) {
-        if (!_.some(this.localLists, { title: this.newListName })) {
+        if (!some(this.localLists, { title: this.newListName })) {
           this.localLists.push({
             id: this.newListName,
             title: this.newListName,
@@ -471,7 +471,7 @@ export default {
 
     onRemoveList(list) {
       /* LOCAL REMOVE */
-      this.localLists = _.filter(this.localLists, (item) => {
+      this.localLists = filter(this.localLists, (item) => {
         return item.title !== list;
       });
       this.$emit('removeList', list);
@@ -504,7 +504,7 @@ export default {
 
     handleLists() {
       if (this.lists && this.lists.length) {
-        this.localLists = _.cloneDeep(this.lists);
+        this.localLists = cloneDeep(this.lists);
       } else {
         //  if (this.data && Array.isArray(this.data)) {
         const list = this.displayOrphansList
@@ -516,7 +516,7 @@ export default {
               }
             ]
           : [];
-        this.localLists = _.cloneDeep(list);
+        this.localLists = cloneDeep(list);
         //  }
       }
       this.splitItemsInLists();
@@ -543,21 +543,21 @@ export default {
           }
           let content = [];
           if (this.data) {
-            content = _.filter(this.data, [this.splittingField, id]);
+            content = filter(this.data, [this.splittingField, id]);
             if (id === 'unsorted') {
               content = content.push(...this.data.filter((item) => item[this.splittingField] == id));
             }
           } else {
             this.localLists.forEach((localList) => {
-              content.push(_.filter(localList.content, [this.splittingField, id]));
-              _.remove(localList.content, (obj) => {
+              content.push(filter(localList.content, [this.splittingField, id]));
+              remove(localList.content, (obj) => {
                 return obj[this.splittingField] === id;
               });
             });
-            content = _.flatten([...content]);
+            content = flatten([...content]);
           }
 
-          if (!_.some(this.localLists, { id, title })) {
+          if (!some(this.localLists, { id, title })) {
             this.localLists.push({ id, title, content });
           }
         });
@@ -569,7 +569,7 @@ export default {
       if (this.sortField) {
         this.localLists.forEach((localList) => {
           if (localList.content.length > 1) {
-            localList.content = _.orderBy(
+            localList.content = orderBy(
               localList.content,
               (item) => {
                 return item[this.sortField];

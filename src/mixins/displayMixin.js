@@ -47,7 +47,7 @@ export default {
     tag: { type: [String, Object], default: 'div' },
     prefix: String,
     suffix: String,
-    label: String,
+    label: [String, Boolean],
     urlLabel: String,
     styles: String,
     classes: String,

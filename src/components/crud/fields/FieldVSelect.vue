@@ -123,7 +123,7 @@
 <script>
 /* eslint-disable */
 import vSelect from 'vue-select';
-import _ from 'lodash';
+import { debounce, templateSettings, kebabCase, template, isString, isFunction, isNumber, get } from 'lodash';
 import Popper from 'vue-popperjs';
 import VueFormGenerator from '../../form/form-generator';
 import selectMixin from '../../../mixins/selectMixin';
@@ -291,15 +291,15 @@ export default {
     }
   },
   created() {
-    this.apiRequestDebounced = _.debounce((value) => {
+    this.apiRequestDebounced = debounce((value) => {
       return this.loadRemoteEntities(value);
     }, 200);
   },
 
   methods: {
-    get: _.get,
-    kebabCase: _.kebabCase,
-    isFunction: _.isFunction,
+    get: get,
+    kebabCase: kebabCase,
+    isFunction: isFunction,
     addTag(newTag, id) {
       const onNewTag = this.fieldOptions.onNewTag;
       if (typeof onNewTag === 'function') {
@@ -421,7 +421,7 @@ export default {
         });
     },
 
-    searchDebounced: _.debounce((loading, search, vm) => {
+    searchDebounced: debounce((loading, search, vm) => {
       vm.$awApi
         .get(vm.dataUrl, {
           params: {
@@ -441,13 +441,13 @@ export default {
     }, 150),
 
     templateParser(source, data) {
-      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-      const compiled = _.template(source);
+      templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+      const compiled = template(source);
       return compiled(data);
     },
 
     formatLabel(item) {
-      if (_.isString(item) || _.isNumber(item)) {
+      if (isString(item) || isNumber(item)) {
         return item;
       }
       let label;
@@ -471,7 +471,7 @@ export default {
     },
 
     reduce(item) {
-      if (_.isString(item) || _.isNumber(item)) {
+      if (isString(item) || isNumber(item)) {
         return item;
       }
       if (this.fieldOptions.taggable) {
@@ -482,7 +482,7 @@ export default {
 
     getData(res) {
       return this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-        ? _.get(res, this.apiResponseConfig.dataPath)
+        ? get(res, this.apiResponseConfig.dataPath)
         : res.data;
     },
 
@@ -490,7 +490,7 @@ export default {
       return this.apiResponseConfig &&
         this.apiResponseConfig.totalCountPath &&
         this.apiResponseConfig.totalCountPath != false
-        ? _.get(res, this.apiResponseConfig.totalCountPath)
+        ? get(res, this.apiResponseConfig.totalCountPath)
         : res.data.totalCount;
     },
 

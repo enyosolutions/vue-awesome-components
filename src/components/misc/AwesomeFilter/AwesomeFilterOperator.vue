@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import _ from 'lodash';
 import i18nMixin from '../../../mixins/i18nMixin';
 
 export default {
@@ -162,10 +161,11 @@ export default {
   computed: {
     _getFilters() {
       if (this.currentField && Object.keys(this.currentField).length) {
-        const filters = _.filter(this.filters, (filter) => {
-          if (_.includes(this.rules[this.currentField.type], filter.value)) {
-            return filter;
-          }
+        const filters = this.filters.filter((filter) => {
+          return (
+            Array.isArray(this.rules[this.currentField.type]) &&
+            this.rules[this.currentField.type].includes(filter.value)
+          );
         });
         if (filters.length) {
           return filters;

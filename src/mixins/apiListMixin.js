@@ -4,7 +4,7 @@
 
 import Qs from 'qs';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import { cloneDeep, debounce, merge, get, startCase } from 'lodash';
 import apiConfigMixin from './apiConfigMixin';
 import componentStateMixin from './componentStateMixin';
 import awEmitMixin from './awEmitMixin';
@@ -108,13 +108,13 @@ export default {
     },
 
     opts() {
-      return _.merge(this.defaultOptions, this.options);
+      return merge(this.defaultOptions, this.options);
     },
 
     _translatedServerParams() {
       const translatedParams = {};
       this.injectSegmentFilter(this.segmentQueryField, this.segmentValue);
-      const serverParams = _.merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
+      const serverParams = merge({}, this.serverParams, this.apiQueryParams, this.apiRequestPermanentQueryParams);
 
 
       Object.keys(serverParams).forEach(field => {
@@ -132,7 +132,7 @@ export default {
     },
 
     _actions() {
-      const actions = _.cloneDeep(this._actionsBeforeCalculation);
+      const actions = cloneDeep(this._actionsBeforeCalculation);
 
       Object.entries(actions).forEach(([field, fieldData]) => {
         if (typeof fieldData !== 'boolean') {
@@ -144,7 +144,7 @@ export default {
 
 
     _actionsBeforeCalculation() {
-      return _.merge(
+      return merge(
         {},
         this.actions
         || (this.mergedOptions && this.mergedOptions.actions) // old location kept for BC
@@ -171,7 +171,7 @@ export default {
     },
     /*
         serverParams2() {
-          const params = _.merge({}, this.apiQueryParams, this.apiRequestPermanentQueryParams);
+          const params = merge({}, this.apiQueryParams, this.apiRequestPermanentQueryParams);
           Object.keys(params).forEach(field => {
             if (params[field] === undefined) {
               delete params[field];
@@ -196,7 +196,7 @@ export default {
           // eslint-disable-next-line
           console.log('apiQueryParams refreshed', newValue, oldValue);
         }
-        this.serverParams = _.merge({}, this.apiQueryParams, this.serverParams);
+        this.serverParams = merge({}, this.apiQueryParams, this.serverParams);
         this.getItems({ useSkeleton: true, source: '[apiListMixin] apiQueryParams' });
       },
     },
@@ -220,10 +220,10 @@ export default {
 
   mounted() {
     this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', this.refreshLocalData);
-    this.onSearch = _.debounce(this.onSearchFresh, 300);
+    this.onSearch = debounce(this.onSearchFresh, 300);
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
-    this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+    this.serverParams = merge({}, this.serverParams, this.apiQueryParams);
     this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
   },
 
@@ -232,7 +232,7 @@ export default {
   },
 
   methods: {
-    startCase: _.startCase,
+    startCase: startCase,
 
     // eslint-disable-next-line
     async refreshLocalData(changed) {
@@ -242,7 +242,7 @@ export default {
       }
       if (this._url && this.mode !== 'local') {
         //   this.data = [];
-        this.serverParams = _.merge({}, this.serverParams, this.apiQueryParams);
+        this.serverParams = merge({}, this.serverParams, this.apiQueryParams);
         await this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
       } else {
         this.data = this.rows;
@@ -300,13 +300,13 @@ export default {
           this.data =
             this.apiResponseConfig &&
               this.apiResponseConfig.dataPath
-              ? _.get(res, this.apiResponseConfig.dataPath)
+              ? get(res, this.apiResponseConfig.dataPath)
               : res.data;
 
           this.totalCount =
             this.apiResponseConfig &&
               this.apiResponseConfig.totalCountPath
-              ? _.get(res, this.apiResponseConfig.totalCountPath)
+              ? get(res, this.apiResponseConfig.totalCountPath)
               : res.data.totalCount;
           this.$emit('crud-list-updated', this.data); // @deprecated
           this.$emit('afterRefresh', this.data);
@@ -402,7 +402,7 @@ export default {
         })
       }
 
-      this.serverParams = _.merge(
+      this.serverParams = merge(
         {},
         this.serverParams,
         newProps,
@@ -524,7 +524,7 @@ export default {
         if (options.query.sort) {
           this.routeQueryParams.sort = options.query.sort;
         }
-        this.routeQueryParams = _.merge(this.routeQueryParams, options.query);
+        this.routeQueryParams = merge(this.routeQueryParams, options.query);
       }
       console.warn('pushChangesToRouter', this.routeQueryParams)
       this.saveComponentState();

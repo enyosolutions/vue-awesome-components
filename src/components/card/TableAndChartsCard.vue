@@ -12,15 +12,9 @@
       :actions="tableActions"
     >
       <template slot="table-top-actions">
-        <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">
-          Barres
-        </button>
-        <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">
-          Graphe
-        </button>
-        <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">
-          Camembert
-        </button>
+        <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">Barres</button>
+        <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">Graphe</button>
+        <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">Camembert</button>
         <button
           type="button"
           class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
@@ -48,15 +42,9 @@
         <h4 class="mt-0 mb-0">
           {{ title }}
           <div class="btn-group btn-group-sm float-right">
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">
-              Liste
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">
-              Graphe
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">
-              Camembert
-            </button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">Liste</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">Graphe</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">Camembert</button>
             <button
               type="button"
               class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
@@ -85,15 +73,9 @@
         <h4 class="mt-0 mb-0">
           {{ title }}
           <div class="btn-group btn-group-sm float-right">
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">
-              Liste
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">
-              Barres
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">
-              Camembert
-            </button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">Liste</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">Barres</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('pie')">Camembert</button>
             <button
               type="button"
               class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
@@ -123,15 +105,9 @@
         <h4 class="mt-0 mb-0">
           {{ title }}
           <div class="btn-group btn-group-sm float-right">
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">
-              Liste
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">
-              Barres
-            </button>
-            <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">
-              Graphe
-            </button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('table')">Liste</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('bar')">Barres</button>
+            <button type="button" class="btn btn-simple btn-primary" @click="setTab('line')">Graphe</button>
             <button
               type="button"
               class="btn btn-simple btn-primary card-stats-fullscreen-button pr-0"
@@ -149,7 +125,7 @@
 <script>
 import EnyoChartCard from './EnyoChartCard.vue';
 import AwesomeTable from '../table/AwesomeTable/AwesomeTable.vue';
-import _ from 'lodash';
+import { get } from 'lodash';
 
 export default {
   name: 'TableAndChartsCard',
@@ -236,7 +212,7 @@ export default {
   },
   methods: {
     selectProp(objArray, prop) {
-      return objArray.map((o) => _.get(o, prop));
+      return objArray.map((o) => get(o, prop));
     },
     setTab(tab) {
       this.currentState = tab;

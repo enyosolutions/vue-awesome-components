@@ -21,6 +21,7 @@ export const defaultActions = {
   pagination: true,
   refresh: true,
   search: true,
+  sort: true,
   tableConfiguration: true,
   view: true,
 };

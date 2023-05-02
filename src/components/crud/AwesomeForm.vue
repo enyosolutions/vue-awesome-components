@@ -1264,7 +1264,7 @@ export default {
     item: {
       deep: true,
       handler(newValue, oldValue) {
-        this.refreshComponent(newValue, oldValue);
+        this.refreshComponent(newValue, oldValue, false);
       }
     }
   },
@@ -1364,11 +1364,11 @@ export default {
     $alert: Swal,
     startCase,
     upperFirst: (str) => upperFirst(str),
-    refreshComponent(newVal, preVal) {
+    refreshComponent(newVal, preVal, force = false) {
       if (!newVal || newVal === false) {
         return;
       }
-      if (this.identity) {
+      if (this.identity && force) {
         this.loadModel();
       }
       this.selectedItem = {
@@ -1414,10 +1414,10 @@ export default {
       }
     },
 
-    loadModel() {
+    loadModel(newVal, oldVal) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line
-        console.count('Loaded Model: ' + this.identity);
+        console.count('Load Model called: ' + this.identity, newVal, oldVal, this.displayedFields);
       }
       this.mergeOptions();
       setTimeout(() => {

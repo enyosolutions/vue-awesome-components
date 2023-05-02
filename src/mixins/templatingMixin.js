@@ -1,7 +1,6 @@
-import { templateSettings, template, isString, isFunction, merge } from 'lodash';
+import { templateSettings, template, isString, isFunction, merge, get } from 'lodash';
 import rolesMixin from './rolesMixin';
 import dayjs from 'dayjs';
-import _ from 'lodash';
 
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 dayjs.extend(customParseFormat);
@@ -125,7 +124,7 @@ export default {
         let result = this.templateParseText(path, { ...item, currentItem: item });
         return result;
       }
-      return _.get(item, path);
+      return get(item, path);
     },
 
     getLabelsProperty(data, labelsField) {

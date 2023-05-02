@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { get, kebabCase, isFunction, isObject } from 'lodash';
 
 import awesomeDisplayMixin from '../../../mixins/displayMixin';
 import apiErrorsMixin from '../../../mixins/apiErrorsMixin';
@@ -133,8 +133,8 @@ export default {
         this.goToRelation(this.value);
       }
     },
-    kebabCase: _.kebabCase,
-    isFunction: _.isFunction,
+    kebabCase: kebabCase,
+    isFunction: isFunction,
     getLabel(value) {
       if (typeof value === 'object') {
         return this.formatLabel(value);
@@ -147,7 +147,7 @@ export default {
 
     goToRelation(value) {
       if (value && this.onClickUrl) {
-        if (_.isFunction(this.onClickUrl)) {
+        if (isFunction(this.onClickUrl)) {
           return this.onClickUrl(value);
         }
         return this.$router.push(this._parsedClickUrl);
@@ -163,7 +163,7 @@ export default {
       if (field.indexOf('{{') > -1) {
         label = this.templateParser(field, item);
       } else {
-        label = _.get(item, field, '');
+        label = get(item, field, '');
       }
       return label;
     },
@@ -178,11 +178,11 @@ export default {
       }
 
       // no store found and no storepath found
-      if (!this.store && !(this.storePath && this.$store && _.get(this.$store.state, this.storePath))) {
+      if (!this.store && !(this.storePath && this.$store && get(this.$store.state, this.storePath))) {
         return;
       }
 
-      const $store = this.store ? this.store : this.$store && _.get(this.$store.state, this.storePath);
+      const $store = this.store ? this.store : this.$store && get(this.$store.state, this.storePath);
       if (!$store) {
         return;
       }
@@ -202,7 +202,7 @@ export default {
     getApiLabel(value) {
       if (!this.relationUrl && value && this.relationLabel) {
         const computedLocalValue =
-          _.isObject(value) && this.relationLabel
+          isObject(value) && this.relationLabel
             ? value[this.relationLabel] || this.templatingMixin(this.relationLabel, value)
             : null;
         if (computedLocalValue) {
@@ -225,7 +225,7 @@ export default {
         .then((res) => {
           const data =
             this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
-              ? _.get(res, this.apiResponseConfig.dataPath)
+              ? get(res, this.apiResponseConfig.dataPath)
               : res.data;
           if (res.data.totalCount) {
             this.totalCount = res.data.totalCount;

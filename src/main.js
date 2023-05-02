@@ -27,7 +27,7 @@ import App from './App.vue';
 import VueEnyoComponents from './plugin';
 
 // Importing Lodash
-import _ from 'lodash';
+import { values } from 'lodash';
 
 
 // Vue Use and Components
@@ -39,7 +39,7 @@ Vue.component('vue-form-generator', FormGenerator, []);
 Vue.mixin(notificationsMixin);
 
 Vue.use(FormGenerator, {
-  fields: _.values(FormGenerator.fieldsLoader)
+  fields: values(FormGenerator.fieldsLoader)
 });
 
 

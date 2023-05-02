@@ -72,13 +72,44 @@
               <div class="btn-group float-right aw-list-buttons">
                 <slot name="top-actions" class />
 
-                <div class="btn-group" role="group" v-if="_actions.sort">
+                <div class="btn-group" role="group">
+                  <popper
+                    trigger="clickToOpen"
+                    :options="{
+                      placement: 'bottom',
+                      modifiers: { offset: { offset: '0,10px' } }
+                    }"
+                    ref="filterPopover"
+                  >
+                    <button slot="reference" type="button" class="btn btn-simple dropdown-toggle btn-sm">
+                      {{ $t('AwesomeTable.more') }}
+                    </button>
+
+                    <div class="popper card mt-0" style="z-index: 1">
+                      <slot name="top-more-actions" />
+                      <button
+                        v-if="actions && actions.export"
+                        class="btn btn-sm btn-success btn-simple btn-block"
+                        @click="exportCallBack"
+                      >
+                        <i class="fa fa-file-excel" />
+                        {{ $t('common.buttons.excel') }}
+                      </button>
+
+                      <button class="btn btn-sm btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel">
+                        <i class="fa fa-file-excel" />
+                        {{ $t('common.buttons.excel-currentpage') }}
+                      </button>
+                    </div>
+                  </popper>
+
                   <popper
                     trigger="clickToOpen"
                     :options="{
                       placement: 'top'
                     }"
                     ref="sortPopover"
+                    v-if="_actions.sort"
                   >
                     <button
                       slot="reference"
@@ -106,38 +137,6 @@
                         <span v-if="columnSortState === col.field" class="pull-right">
                           {{ columnSortDirection === 'asc' ? '⬆️' : '⬇️' }}</span
                         >
-                      </button>
-                    </div>
-                  </popper>
-                </div>
-                <div class="btn-group" role="group">
-                  <popper
-                    trigger="clickToOpen"
-                    :options="{
-                      placement: 'bottom',
-                      modifiers: { offset: { offset: '0,10px' } }
-                    }"
-                    ref="filterPopover"
-                    v-if="actions && (actions.export || actions.import)"
-                  >
-                    <button slot="reference" type="button" class="btn btn-simple dropdown-toggle btn-sm">
-                      {{ $t('AwesomeTable.more') }}
-                    </button>
-
-                    <div class="popper card mt-0" style="z-index: 1">
-                      <slot name="top-more-actions" />
-                      <button
-                        v-if="actions && actions.export"
-                        class="btn btn-sm btn-success btn-simple btn-block"
-                        @click="exportCallBack"
-                      >
-                        <i class="fa fa-file-excel" />
-                        {{ $t('common.buttons.excel') }}
-                      </button>
-
-                      <button class="btn btn-sm btn-default btn-simple btn-block" @click="exportCurrentArrayToExcel">
-                        <i class="fa fa-file-excel" />
-                        {{ $t('common.buttons.excel-currentpage') }}
                       </button>
                     </div>
                   </popper>
@@ -343,7 +342,7 @@
 <script>
 import Popper from 'vue-popperjs';
 import Paginate from 'vuejs-paginate';
-import _ from 'lodash';
+import { cloneDeep, isString, pick, startCase, find, sortBy } from 'lodash';
 import apiErrors from '../../mixins/apiErrorsMixin';
 import i18nMixin from '../../mixins/i18nMixin';
 import apiListMixin from '../../mixins/apiListMixin';
@@ -504,23 +503,23 @@ export default {
       }
 
       if (this._model && this._model.pluralName) {
-        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : _.startCase(this._model.pluralName);
+        return this.$te(this._model.pluralName) ? this.$t(this._model.pluralName) : startCase(this._model.pluralName);
       }
 
       if (this._model && this._model.singularName) {
         return this.$te(this._model.singularName)
           ? this.$t(this._model.singularName)
-          : _.startCase(this._model.singularName);
+          : startCase(this._model.singularName);
       }
 
       if (this._model && this._model.name) {
-        return this.$te(this._model.name) ? this.$t(this._model.name) : _.startCase(this._model.name);
+        return this.$te(this._model.name) ? this.$t(this._model.name) : startCase(this._model.name);
       }
 
       if (this.identity) {
         return this.$te(`app.labels.${this.identity}`)
           ? this.$t(`app.labels.${this.identity}`)
-          : _.startCase(this.identity);
+          : startCase(this.identity);
       }
       return '';
     },
@@ -530,7 +529,7 @@ export default {
       if (!height) {
         return 'auto';
       }
-      return _.isString(height) ? height : height + 'px';
+      return isString(height) ? height : height + 'px';
     },
 
     _pageCount() {
@@ -651,7 +650,7 @@ export default {
         .forEach((key) => {
           this.columns.forEach((column) => {
             if (column.field === key) {
-              fields = Object.assign(fields, _.pick(item, [key]));
+              fields = Object.assign(fields, pick(item, [key]));
             }
           });
         });
@@ -659,7 +658,7 @@ export default {
     },
 
     getField(key) {
-      return _.find(this.columns, ['field', key]) || {};
+      return find(this.columns, ['field', key]) || {};
     },
     resetItemsPerRow() {
       this.itemsPerRow = this.perRow;
@@ -703,8 +702,8 @@ export default {
 
     advancedFiltering(parsedFilters, filters) {
       this.updateParams({
-        advancedFilters: _.cloneDeep(filters),
-        parsedAdvancedFilters: _.cloneDeep(parsedFilters),
+        advancedFilters: cloneDeep(filters),
+        parsedAdvancedFilters: cloneDeep(parsedFilters),
         page: 0
       });
       this.getItems({ useSkeleton: true });
@@ -743,7 +742,7 @@ export default {
       if (!this.columnSortState) {
         return filteredList;
       }
-      filteredList = _.sortBy(filteredList, this.columnSortState);
+      filteredList = sortBy(filteredList, this.columnSortState);
 
       if (this.columnSortDirection === 'asc') {
         return filteredList;

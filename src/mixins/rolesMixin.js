@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 
 export default {
   props: {
@@ -22,14 +22,14 @@ export default {
   methods: {
     userIs(role, $store = null) {
       $store = this.$store || $store;
-      const roles = _.get($store, this.rolesStorePath) || _.get($store.state, this.rolesStorePath);
+      const roles = get($store, this.rolesStorePath) || get($store.state, this.rolesStorePath);
       return roles && Array.isArray(roles)
         && roles.indexOf(role) > -1;
     },
 
     userHasRole(role, $store = null) {
       $store = this.$store || $store;
-      const userExtendedRoles = _.get($store, this.rolesStorePath) || _.get($store.state, this.rolesStorePath);
+      const userExtendedRoles = get($store, this.rolesStorePath) || get($store.state, this.rolesStorePath);
       return userExtendedRoles && Array.isArray(userExtendedRoles)
         && userExtendedRoles.indexOf(role) > -1;
     }

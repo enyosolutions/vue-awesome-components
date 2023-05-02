@@ -1,5 +1,5 @@
 import axios from 'axios';
-import _ from 'lodash'
+import { merge, values } from 'lodash'
 import VModal from 'vue-js-modal';
 
 import FieldEnyoSelect from './components/crud/fields/FieldEnyoSelect.vue';
@@ -52,23 +52,23 @@ const install = (Vue, options = {}) => {
     };
 
     if (options.config) {
-      Vue.prototype.awComponentsConfig = _.merge(Vue.prototype.awComponentsConfig, options.config);
+      Vue.prototype.awComponentsConfig = merge(Vue.prototype.awComponentsConfig, options.config);
     }
 
     if (options['AwesomeCrud'] && options['AwesomeCrud'].props) {
-      AwesomeCrud.props = _.merge(AwesomeCrud.props, options['AwesomeCrud'].props);
+      AwesomeCrud.props = merge(AwesomeCrud.props, options['AwesomeCrud'].props);
     }
     if (options['AwesomeForm'] && options['AwesomeForm'].props) {
-      AwesomeForm.props = _.merge(AwesomeForm.props, options['AwesomeForm'].props);
+      AwesomeForm.props = merge(AwesomeForm.props, options['AwesomeForm'].props);
     }
     if (options['AwesomeList'] && options['AwesomeList'].props) {
-      AwesomeList.props = _.merge(AwesomeList.props, options['AwesomeList'].props);
+      AwesomeList.props = merge(AwesomeList.props, options['AwesomeList'].props);
     }
     if (options['AwesomeTable'] && options['AwesomeTable'].props) {
-      AwesomeTable.props = _.merge(AwesomeTable.props, options['AwesomeTable'].props);
+      AwesomeTable.props = merge(AwesomeTable.props, options['AwesomeTable'].props);
     }
     if (options['FieldVSelect'] && options['FieldVSelect'].props) {
-      FieldVSelect.props = _.merge(FieldVSelect.props, options['FieldVSelect'].props);
+      FieldVSelect.props = merge(FieldVSelect.props, options['FieldVSelect'].props);
     }
 
   }
@@ -76,7 +76,7 @@ const install = (Vue, options = {}) => {
   Vue.use(VModal);
 
   Vue.use(FormGenerator, {
-    fields: _.values(FormGenerator.fieldsLoader),
+    fields: values(FormGenerator.fieldsLoader),
     options,
   });
 
