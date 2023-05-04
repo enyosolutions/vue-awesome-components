@@ -513,17 +513,7 @@
   </div>
 </template>
 <script>
-import {
-  cloneDeep,
-  debounce,
-  filter,
-  findIndex,
-  flatten,
-  get,
-  merge,
-  sortBy,
-  startCase,
-} from 'lodash';
+import { cloneDeep, debounce, filter, findIndex, flatten, get, merge, sortBy, startCase } from 'lodash';
 import Qs from 'qs';
 import parseJsonSchema from '../../mixins/parseJsonSchemaMixin';
 import apiErrorsMixin from '../../mixins/apiErrorsMixin';

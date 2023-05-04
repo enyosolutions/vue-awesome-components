@@ -1054,7 +1054,7 @@ export default {
       let mergedOptions = merge({}, defaultOptions, this.options, this._model ? this._model.options : {});
       if (this.options !== defaultOptions) {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('options are diffrent from the basics', this.options);
+          console.warn('options are diffrent from the basics', this.options, defaultOptions);
         }
         mergedOptions = merge(mergedOptions, this.options);
       }
@@ -1263,9 +1263,19 @@ export default {
     selectedItem: 'onChange',
     item: {
       deep: true,
+      /**
+       * reload the component when the item id hanges
+       */
       handler(newValue, oldValue) {
-        this.refreshComponent(newValue, oldValue, false);
+        this.selectedItem = newValue;
+        const force = !oldValue || !newValue || newValue[this.primaryKeyFieldCpt] !== oldValue[this.primaryKeyFieldCpt];
+        this.refreshComponent(newValue, oldValue, force);
       }
+    },
+    /** reload the component when the item id hanges
+     */
+    itemId(newValue, oldValue) {
+      this.loadModel();
     }
   },
   created() {},
