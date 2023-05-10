@@ -13,7 +13,7 @@
         aria-expanded="false"
       >
         <i v-if="icon" :class="icon"></i>
-        <span>{{ title ? $t(title) : '' }}</span>
+        <span>{{ label || title ? $t(label || title) : '' }}</span>
       </button>
       <div
         v-if="children && children.length"

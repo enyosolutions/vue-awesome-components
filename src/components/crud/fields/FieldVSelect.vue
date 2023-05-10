@@ -213,7 +213,7 @@ export default {
       let url =
         this.url || this.fieldOptions?.url || this.schema?.relationUrl || this.schema?.fieldOptions?.relationUrl;
       if (url && url.indexOf('{{') > -1) {
-        url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model, context: this });
+        url = this.templateParser(url, { ...this.$props.model, currentItem: this.$props.model });
       }
       return url;
     },
@@ -443,7 +443,12 @@ export default {
     templateParser(source, data) {
       templateSettings.interpolate = /{{([\s\S]+?)}}/g;
       const compiled = template(source);
-      return compiled(data);
+      return compiled({
+        context: this,
+        $t: this.$t,
+        $te: this.$te,
+        ...data
+      });
     },
 
     formatLabel(item) {
@@ -460,7 +465,9 @@ export default {
       } else {
         label = this.get(item, this._labelField, '');
       }
-
+      if (this.$te(label)) {
+        label = this.$t(label);
+      }
       if (this.fieldOptions.taggable) {
         return label || item;
       }

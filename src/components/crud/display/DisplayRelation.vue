@@ -15,24 +15,26 @@
             <span v-if="value" class="copy-link" @click="copy(value)">
               &nbsp;<i class="fa fa-clone text-info"></i>
             </span>
-            <router-link
+            <a
               v-if="value && !onClickUrl"
-              :to="'/app/' + kebabCase(relation) + '/' + getKey(value)"
+              :href="'/app/' + kebabCase(relation) + '/' + getKey(value)"
+              target="_blank"
               class="external-link"
             >
               &nbsp;<i class="fa fa-external-link text-info"></i>
-            </router-link>
+            </a>
 
             <div v-if="value && onClickUrl && isFunction(onClickUrl)" @click="onClickUrl(value)" class="external-link">
               &nbsp;<i class="fa fa-external-link text-info"></i>
             </div>
-            <router-link
+            <a
               v-if="value && onClickUrl && !isFunction(onClickUrl)"
-              :to="_parsedClickUrl"
+              :href="_parsedClickUrl"
               class="external-link"
+              target="_blank"
             >
               &nbsp;<i class="fa fa-external-link text-info"></i>
-            </router-link>
+            </a>
           </template>
         </div>
       </template>
@@ -123,15 +125,19 @@ export default {
       if (!this._relationIsClickable) {
         return;
       }
-      if (!this.timeoutId) {
-        this.timeoutId = setTimeout(() => {
-          this.timeoutId = null;
-        }, 200); //tolerance in ms
-      } else {
-        clearTimeout(this.timeoutId);
-        this.timeoutId = null;
-        this.goToRelation(this.value);
-      }
+      this.goToRelation(this.value);
+      // @deprecate
+      // double click system
+      // if (!this.timeoutId) {
+      //   this.goToRelation(this.value);
+      //   this.timeoutId = setTimeout(() => {
+      //     this.timeoutId = null;
+      //   }, 200); //tolerance in ms
+      // } else {
+      //   clearTimeout(this.timeoutId);
+      //   this.timeoutId = null;
+      //   this.goToRelation(this.value);
+      // }
     },
     kebabCase: kebabCase,
     isFunction: isFunction,

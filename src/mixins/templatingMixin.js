@@ -23,6 +23,11 @@ export default {
         componentMode: this.mode || this.displayMode,
         moment: dayjs,
         dayjs,
+        $t: this.$t || (data && data.$t),
+        $te: this.$te || (data && data.$te),
+        $tc: this.$tc || (data && data.$tc),
+        $d: this.$d || (data && data.$d),
+
       }, data);
     },
 

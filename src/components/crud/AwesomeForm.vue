@@ -436,7 +436,8 @@
                                 :key="nm.$id"
                                 class="tab-pane nested-tab fade"
                                 :class="{
-                                  'active show in': activeNestedTab === nm.identity || nestedLayoutMode === 'list'
+                                  'active show in': activeNestedTab === nm.identity || nestedLayoutMode === 'list',
+                                  ['nested-tab-' + nm.identity]: 1
                                 }"
                               >
                                 <template v-if="nestedLayoutMode === 'list'">
