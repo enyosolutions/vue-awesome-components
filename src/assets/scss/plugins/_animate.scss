@@ -211,7 +211,7 @@ Copyright (c) 2015 Daniel Eden
   max-height: 100vh;
   height: 100%;
   transition: all linear 250ms;
-  overflow: auto;
+  overflow: visible;
 
   &.collapsed {
     max-height: 0px;

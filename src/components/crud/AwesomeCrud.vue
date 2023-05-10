@@ -106,6 +106,7 @@
               </div>
             </template>
             <template slot="table-top-actions">
+              <slot name="table-top-actions"></slot>
               <template v-if="_customTitleBarActions">
                 <AwesomeActionList
                   :actions="_customTitleBarActions"
@@ -265,10 +266,23 @@
               <slot name="top-more-actions"></slot>
             </template>
             <template v-slot:list-items="{ items, itemsPerRow, columns }">
-              <slot name="list-items" :items="items" :itemsPerRow="itemsPerRow" :columns="columns"></slot>
+              <slot
+                name="list-items"
+                :items="items"
+                :itemsPerRow="itemsPerRow"
+                :columns="columns"
+                :onClick="onListItemClicked"
+              ></slot>
             </template>
             <template v-slot:list-item="{ item, itemsPerRow, columns, index }">
-              <slot name="list-item" :item="item" :itemsPerRow="itemsPerRow" :columns="columns" :index="index"></slot>
+              <slot
+                name="list-item"
+                :item="item"
+                :itemsPerRow="itemsPerRow"
+                :columns="columns"
+                :index="index"
+                :onClick="onListItemClicked"
+              ></slot>
             </template>
           </AwesomeList>
           <AwesomeKanban
@@ -1560,7 +1574,6 @@ export default {
       if (this.useRouterMode) {
         if (this.$route && this.$route.params) {
           // if it's a create url
-
           if (this.$route.path.endsWith('/create') || this.$route.path.endsWith('/new')) {
             delete this.$route.params.id;
             this.setDisplayMode('create');
@@ -2147,8 +2160,12 @@ export default {
     onRouteIdChanged(newVal, previousVal) {
       if (this.useRouterMode) {
         // in case we navigate for one detail page to another.
-        if (newVal && previousVal && previousVal !== newVal) {
-          this.setDisplayMode(this.displayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
+        if (newVal && previousVal !== newVal) {
+          const nextDisplayMode =
+            this.displayMode && this.displayMode !== this.listingDisplayMode
+              ? this.displayMode
+              : this.tableRowClickAction || 'view';
+          this.setDisplayMode(nextDisplayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });
         }
         //  else {
         //   this.setDisplayMode(this.listingDisplayMode, { [this.primaryKeyFieldCpt]: this.$route.params.id });

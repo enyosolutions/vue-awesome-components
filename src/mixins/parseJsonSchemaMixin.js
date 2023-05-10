@@ -305,7 +305,7 @@ export default {
             field.values = [
               { id: true, label: 'Yes' },
               { id: false, label: 'No' },
-              { id: '', label: '-' }
+              { id: '', label: '--' }
             ];
           }
           // datetime picker icons

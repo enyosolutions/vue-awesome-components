@@ -73,6 +73,7 @@
                 <slot name="top-actions" class />
 
                 <div class="btn-group" role="group">
+                  <slot name="list-top-actions"></slot>
                   <popper
                     trigger="clickToOpen"
                     :options="{
