@@ -13,7 +13,7 @@
         aria-expanded="false"
       >
         <i v-if="icon" :class="icon"></i>
-        <span>{{ label || title ? $t(label || title) : '' }}</span>
+        <span>{{ actionDropdownTitleComputed }}</span>
       </button>
       <div
         v-if="children && children.length"
@@ -226,6 +226,17 @@ export default {
     state: {},
     isDropdownOpened: false
   }),
+  computed: {
+    actionDropdownTitleComputed() {
+      if (this.label) {
+        return this.$te(this.label) ? this.$t(this.label) : this.label;
+      }
+      if (this.title) {
+        return this.$te(this.title) ? this.$t(this.title) : this.title;
+      }
+      return '';
+    }
+  },
   watch: {},
   methods: {
     permanentFiltering(parsedFilters, filters) {

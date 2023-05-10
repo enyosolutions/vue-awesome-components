@@ -309,6 +309,8 @@
             :options="_kanbanOptions.options"
             :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
+            :segment="segment"
+            :segmentField="segmentField"
             :title="_listingComponentTitle"
             :url="_url"
             :useRouterMode="useRouterMode"
@@ -1238,7 +1240,8 @@ export default {
       const values =
         (field.fieldOptions &&
           (field.fieldOptions.filterDropdownItems || field.fieldOptions.values || field.fieldOptions.options)) ||
-        field.enum;
+        field.enum ||
+        field.values;
       return Array.isArray(values) ? values : [];
     },
 
