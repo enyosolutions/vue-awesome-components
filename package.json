@@ -5,7 +5,7 @@
     "Julien Martin"
   ],
   "license": "MIT",
-  "version": "1.63.3",
+  "version": "1.64.0",
   "main": "lib/vac.common.js",
   "module": "src/index.js",
   "files": [
