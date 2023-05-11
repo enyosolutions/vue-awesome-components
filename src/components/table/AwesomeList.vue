@@ -230,6 +230,9 @@
               >
                 <slot name="list-item" :item="item" :itemsPerRow="itemsPerRow" :index="index">
                   <div
+                    :is="itemComponent || 'div'"
+                    :item="itemComponent ? item : null"
+                    :index="index"
                     class="card mb-3 aw-list-item flex-fill"
                     :class="itemClasses"
                     :style="{ 'flex-direction': itemsPerRow < 2 ? 'row' : 'column', height: _itemHeight }"
@@ -425,6 +428,10 @@ export default {
     displayedFields: {
       type: Array,
       description: 'The fields to display on the card'
+    },
+    itemComponent: {
+      type: String,
+      description: 'The component to use for the item'
     },
     translations: {
       type: Object,
