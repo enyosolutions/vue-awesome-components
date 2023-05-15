@@ -935,6 +935,11 @@ export default {
       type: String,
       default: 'horizontal',
       note: 'How do i organise the tabs ? horizontaly or vertically'
+    },
+    fetchDisabled: {
+      type: Boolean,
+      default: false,
+      note: 'Controls if we should fetch the data from the server'
     }
   },
   data() {
@@ -1268,18 +1273,29 @@ export default {
        * reload the component when the item id hanges
        */
       handler(newValue, oldValue) {
+        // if (this.itemId) {
+        //   if (!this.oldValue) {
+        //     this.selectedItem = newValue;
+        //   }
+        //   return;
+        // }
         this.selectedItem = newValue;
+        // if we are fetchiing the item, don't refresh the component from the outside
         const force = !oldValue || !newValue || newValue[this.primaryKeyFieldCpt] !== oldValue[this.primaryKeyFieldCpt];
+        // console.log('item changed', newValue, oldValue, force);
         this.refreshComponent(newValue, oldValue, force);
       }
     },
     /** reload the component when the item id hanges
      */
     itemId(newValue, oldValue) {
-      this.loadModel();
+      this.refreshComponent(newValue, oldValue, true);
     }
   },
-  created() {},
+  created() {
+    this.loadModel = debounce(this.loadModelFresh, 300, { leading: true });
+    this.fetchItem = debounce(this.fetchItemFresh, 1000, { leading: true });
+  },
   mounted() {
     this.openModalDebounced = debounce(this.openModal, 300, { leading: true });
     // @deprecated
@@ -1426,9 +1442,14 @@ export default {
     },
 
     loadModel(newVal, oldVal) {
+      // debounced
+    },
+
+    loadModelFresh(newVal, oldVal) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line
         console.count('Load Model called: ' + this.identity, newVal, oldVal, this.displayedFields);
+        // console.trace('Load Model called: ' + this.identity + ' ' + this.uuid);
       }
       this.mergeOptions();
       setTimeout(() => {
@@ -1458,7 +1479,13 @@ export default {
       }
 
       // todo call only if
-      if (this.itemIdComputed) {
+      this.fetchItem();
+    },
+    fetchItem() {
+      // debounced
+    },
+    fetchItemFresh() {
+      if (this.itemIdComputed && this._selectedItemUrl && !this.isRefreshing && !this.fetchDisabled) {
         this.$awApi
           .get(`${this._selectedItemUrl}`, { params: this.apiQueryParams })
           .then((res) => {

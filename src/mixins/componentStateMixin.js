@@ -16,7 +16,7 @@ export default {
       return this.saveColumnsState || this.savePaginationState;
     },
     _saveStateKey() {
-      return `${this.identity}-${this.$options.name}-${window.location.pathname}-state`;
+      return `${this.identity}-${this.$options.name}-state`;
     }
   },
 
