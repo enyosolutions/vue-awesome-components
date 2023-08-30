@@ -52,6 +52,9 @@
         </div>
       </div>
       <div class="list-cards">
+        <div class="btn btn-outline-info<" @click="addButtonClicked($event)" v-if="allowAddingCard">
+          <i class="fa fa-plus"></i> {{ $t('AwesomeKanban.labels.add') }}
+        </div>
         <Draggable
           class="draggable-card"
           :list="items"
@@ -236,6 +239,10 @@ export default {
       type: Boolean,
       default: false
     },
+    allowAddingCard: {
+      type: Boolean,
+      default: false
+    },
     cardClickResolver: Function
   },
   created() {
@@ -342,6 +349,9 @@ export default {
     },
     onUnChoose($event) {
       this.$emit('unchoose', $event);
+    },
+    addButtonClicked() {
+      this.$emit('onAddButtonPressed', { id: this.id, title: this.title });
     }
   },
   computed: {

@@ -237,84 +237,23 @@
                     :class="itemClasses"
                     :style="{ 'flex-direction': itemsPerRow < 2 ? 'row' : 'column', height: _itemHeight }"
                   >
-                    <i v-if="_isDraggable" class="draggable-icon fa fa-list"></i>
-                    <img
-                      class="card-img-top"
-                      v-if="imageField && getItemProperty(item, imageField)"
-                      :src="getItemProperty(item, imageField)"
-                      :alt="getItemProperty(item, titleField)"
-                      :class="imageClasses"
-                      :style="imageStyles"
+                    <ListItem
+
+                      :actions="actions"
+                      :columns="columns"
+                      :descriptionField="descriptionField"
+                      :displayedFields="displayedFields"
+                      :imageClasses="imageClasses"
+                      :imageField="imageField"
+                      :imageStyles="imageStyles"
+                      :item="item"
+                      :labelsField="labelsField"
+                      :subtitleField="subtitleField"
+                      :titleField="titleField"
+                      :usersField="usersField"
+                      @itemButtonClicked="(item) => $emit('itemButtonClicked', item)"
+                      @itemClicked="(item) => $emit('itemClicked', item)"
                     />
-                    <div class="card-body">
-                      <h4
-                        class="card-title aw-list-item-title"
-                        style=""
-                        v-if="getItemProperty(item, titleField)"
-                        v-html="getItemProperty(item, titleField)"
-                      ></h4>
-                      <h6 class="card-title aw-list-item-subtitle" v-if="getItemProperty(item, subtitleField)">
-                        <AwesomeDisplay
-                          location="list"
-                          v-bind="getField(subtitleField)"
-                          :value="getItemProperty(item, subtitleField)"
-                          :model="item"
-                          :schema="getField(subtitleField)"
-                        />
-                      </h6>
-
-                      <h3
-                        class="card-title aw-list-item-title"
-                        style=""
-                        v-if="!_useClassicLayout && _modelDisplayField && item[_modelDisplayField]"
-                      >
-                        {{ item[_modelDisplayField] }}
-                      </h3>
-
-                      <p class="card-text aw-list-item-description" v-if="getItemProperty(item, descriptionField)">
-                        <AwesomeDisplay
-                          location="list"
-                          v-bind="getField(descriptionField)"
-                          :value="getItemProperty(item, descriptionField)"
-                          :model="item"
-                          :schema="getField(subtitleField)"
-                        />
-                      </p>
-                      <div v-if="getLabelsProperty(item, labelsField)" class="tags-field">
-                        <small
-                          v-for="(label, idx) in getItemProperty(item, labelsField)"
-                          :key="idx"
-                          class="badge badge-primary list-item-label"
-                          >{{ label }}</small
-                        >
-                      </div>
-                      <template v-if="columns && columns.length && !_useClassicLayout">
-                        <div v-for="(itemData, key) in getAllowedFields(item)" :key="key">
-                          <small class="aw-list-item-field-label text-info">{{ getField(key).label || key }}</small
-                          ><br />
-                          <AwesomeDisplay
-                            location="list"
-                            v-bind="getField(key)"
-                            :value="itemData"
-                            :relation="getField(key).relation"
-                            :relation-label="getField(key).relationLabel"
-                            :relation-url="getField(key).relationUrl"
-                            :relation-key="getField(key).relationKey"
-                            :model="item"
-                            :schema="getField(subtitleField)"
-                          />
-                        </div>
-                      </template>
-                      <div class="aw-list-item-action pl-3 pr-3" v-if="actions.itemButton">
-                        <button
-                          @click="handleItemButtonClick($event, item)"
-                          class="btn btn-primary btn-sm"
-                          :class="itemsPerRow > 1 ? 'btn-block' : ''"
-                        >
-                          {{ $t('AwesomeList.buttons.itemAction') }}
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </slot>
               </div>
@@ -359,6 +298,7 @@ import AwesomeFilter from '../misc/AwesomeFilter.vue';
 import AwesomeSegments from './parts/AwesomeSegments.vue';
 import AutoRefreshButton from './parts/AutoRefreshButton.vue';
 import ProgressBar from './parts/ProgressBar.vue';
+import ListItem from './parts/ListItem.vue';
 
 export default {
   name: 'AwesomeList',
@@ -369,7 +309,8 @@ export default {
     AwesomeSegments,
     Paginate,
     popper: Popper,
-    ProgressBar
+    ProgressBar,
+    ListItem
   },
   mixins: [i18nMixin, apiErrors, apiListMixin, relationMixin, awEmitMixin, templatingMixin],
   props: {

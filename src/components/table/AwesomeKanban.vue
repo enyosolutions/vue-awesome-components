@@ -129,14 +129,16 @@
           >
             <KanbanList
               v-for="(list, index) in localLists"
+              :allowAddingCard="actions && actions.create"
+              :allowRemovingList="actions.removeList"
               :animation="options.animation"
+              :card-click-resolver="cardClickResolver"
               :columns="columns"
               :custom-list-actions="customListActions"
               :descriptionField="descriptionField"
               :disabled="!options.moveCard"
               :display-labels-cache="displayLabelsCache"
               :fields="options.fields"
-              :card-click-resolver="cardClickResolver"
               :id="list.id"
               :imageField="imageField"
               :items="list.content"
@@ -151,7 +153,6 @@
               :usersField="usersField"
               :userTitleField="userTitleField"
               group="card"
-              :allowRemovingList="actions.removeList"
               @remove-list="onRemoveList"
               @customListAction="onCustomListAction"
               @change="onCardChanged"
@@ -161,6 +162,7 @@
               @cardMoved="onCardMoved"
               @choose="onChoose"
               @unchoose="onUnChoose"
+              @onAddButtonPressed="onAddButtonPress(list)"
             >
               <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
                 ><slot :name="slot" v-bind="scope"
@@ -196,7 +198,7 @@
 </template>
 
 <script>
-import { cloneDeep, debounce, filter,  startCase, some, orderBy, remove, flatten } from 'lodash';
+import { cloneDeep, debounce, filter, startCase, some, orderBy, remove, flatten } from 'lodash';
 import Popper from 'vue-popperjs';
 
 import i18nMixin from '../../mixins/i18nMixin';
@@ -510,7 +512,7 @@ export default {
         const list = this.displayOrphansList
           ? [
               {
-                id: 'unsorted',
+                id: '',
                 title: this.$t('AwesomeKanban.labels.unsorted'),
                 content: this.data ? this.data.filter((item) => item[this.splittingField] == undefined) : []
               }
@@ -544,7 +546,7 @@ export default {
           let content = [];
           if (this.data) {
             content = filter(this.data, [this.splittingField, id]);
-            if (id === 'unsorted') {
+            if (id === '') {
               content = content.push(...this.data.filter((item) => item[this.splittingField] == id));
             }
           } else {
@@ -596,7 +598,7 @@ export default {
     },
 
     async changeItemSplittingValue({ element, newIndex }, targetList, orderedList) {
-      element[this.splittingField] = targetList.id === 'unsorted' || targetList.id === undefined ? null : targetList.id;
+      element[this.splittingField] = targetList.id === '' || targetList.id === undefined ? null : targetList.id;
       if (this.sortField) {
         delete element[this.sortField];
       }
@@ -648,6 +650,10 @@ export default {
     },
     onUnChoose($event) {
       document.removeEventListener('dragover', this.onMouseMove);
+    },
+
+    onAddButtonPress(list) {
+      this.$emit('addButtonPressed', list);
     }
   }
 };

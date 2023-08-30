@@ -224,6 +224,7 @@ export default {
     this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.serverParams = merge({}, this.serverParams, this.apiQueryParams);
+    this.getItemsDebounced = debounce(this.getItems, 500, { head: true })
     this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
   },
 
@@ -264,6 +265,9 @@ export default {
       this.$emit('after-local-refresh', { data: this.data });
     },
 
+    getItemsDebounced(options = { useSkeleton: false }) {
+
+    },
     /** GET ENTITY ITEMS */
     getItems(options = { useSkeleton: false }) {
 

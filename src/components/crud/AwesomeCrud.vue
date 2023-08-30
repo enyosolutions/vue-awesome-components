@@ -327,6 +327,7 @@
             @before-refresh="before_refresh"
             @afterRefresh="afterRefresh"
             @after-refresh="after_refresh"
+            @addButtonPressed="onKanbanlistAddButtonPressed"
           >
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
               ><slot :name="slot" v-bind="scope"
@@ -1934,11 +1935,11 @@ export default {
         } else if (previousDisplayMode === 'edit' && item && item[this.primaryKeyFieldCpt]) {
           this.goToEditPage(item);
         } else {
-          let url = this.parentPath
-            .replace('/edit', '')
-            .replace('/view', '')
-            .replace('/:id', '')
-            .replace(`${item ? item[this.primaryKeyFieldCpt] : ''}`, '');
+          let url = this.parentPath.replace('/edit', '').replace('/view', '').replace('/:id', '');
+          // @fixme bug when using nested paths
+          if (item && item[this.primaryKeyFieldCpt]) {
+            url = url.replace(`/${item[this.primaryKeyFieldCpt]}`, '');
+          }
 
           this.$router.push(url);
         }
@@ -2188,10 +2189,7 @@ export default {
           this.goToCreatePage({ reset: false });
 
           // this.parentPath = matched.path;
-          this.parentPath = this.parentPath
-            .replace('/edit', '')
-            .replace(`/${this.$route.params.id}`, '')
-            .replace('/:id', '');
+          this.parentPath = this.parentPath.replace('/edit', '');
         } else {
           this.selectedItem = { [this.primaryKeyFieldCpt]: this.$route.params.id };
           if (this.$route.query.item) {
@@ -2314,6 +2312,12 @@ export default {
     onModelUpdated(value, field) {
       this.$emit('modelUpdated', value, field);
       this.$emit('model-updated', value, field);
+    },
+
+    onKanbanlistAddButtonPressed(list) {
+      this.selectedItem.status = list.id;
+      //this.goToCreatePage({ reset: false });
+      this.setDisplayMode('create', this.selectedItem);
     }
   }
 };

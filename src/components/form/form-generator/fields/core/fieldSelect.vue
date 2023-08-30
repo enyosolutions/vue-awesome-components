@@ -10,18 +10,18 @@
     v-attributes="'input'"
     :multiple="schema.multiple || schema.multi"
   >
-    <option v-if="!fieldOptions.hideNoneSelectedText" :disabled="schema.required" :value="null">
-      {{ fieldOptions.noneSelectedText || '&lt;Nothing selected&gt;' }}
+    <option v-if="!fieldOptions.hideNoneSelectedText" :disabled="schema.required" selected>
+      {{ fieldOptions.noneSelectedText || placeholder || '&lt;Nothing selected&gt;' }}
     </option>
 
     <template v-for="item in items">
       <optgroup v-if="item && item.group" :label="getGroupName(item)" :key="getItemValue(item)">
         <template v-if="item.ops">
-          <option v-for="i in item.ops" :value="getItemValue(i)" :key="getItemValue(i)"> {{ getItemName(i) }}</option>
+          <option v-for="i in item.ops" :value="getItemValue(i)" :key="getItemValue(i)">{{ getItemName(i) }}</option>
         </template>
       </optgroup>
 
-      <option v-if="!item.group" :value="getItemValue(item)" :key="getItemValue(item)"> {{ getItemName(item) }}</option>
+      <option v-if="!item.group" :value="getItemValue(item)" :key="getItemValue(item)">{{ getItemName(item) }}</option>
     </template>
   </select>
 </template>
