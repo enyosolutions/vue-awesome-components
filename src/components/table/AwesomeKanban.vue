@@ -547,7 +547,14 @@ export default {
           if (this.data) {
             content = filter(this.data, [this.splittingField, id]);
             if (id === '') {
-              content = content.push(...this.data.filter((item) => item[this.splittingField] == id));
+              content = content.push(
+                ...this.data.filter(
+                  (item) =>
+                    item[this.splittingField] == id ||
+                    item[this.splittingField] === undefined ||
+                    item[this.splittingField] === null
+                )
+              );
             }
           } else {
             this.localLists.forEach((localList) => {
