@@ -445,6 +445,7 @@
             :layout="viewPageLayoutComputed"
             :mode="displayMode"
             :model="_model"
+            :nestedModels="_model.nestedModels"
             :needs-refresh.sync="awesomeEditNeedsRefresh"
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :parent="parent"
