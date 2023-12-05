@@ -22,8 +22,8 @@
           <AwesomeTable
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
-              dataPaginationModeComputed
+                (displayMode === 'table' || (_displayModeHasPartialDisplay && listingDisplayMode === 'table')) &&
+                dataPaginationModeComputed
             "
             ref="awesomeTable"
             v-bind="$props"
@@ -50,6 +50,7 @@
             :options="mergedOptions"
             :saveColumnsState="saveColumnsState"
             :savePaginationState="savePaginationState"
+            :searchInputValue="searchInputValue"
             :segment="segment"
             :segmentField="segmentField"
             :title="_listingComponentTitle"
@@ -152,7 +153,7 @@
           <AwesomeList
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
+                (displayMode === 'list' || (_displayModeHasPartialDisplay && listingDisplayMode === 'list'))
             "
             ref="awesomeList"
             v-bind="listOptions"
@@ -178,6 +179,7 @@
             :nested-crud-needs-refresh.sync="nestedCrudNeedsRefresh"
             :options="mergedOptions"
             :perPage="listOptions && listOptions.perPage ? listOptions.perPage : 20"
+            :searchInputValue="searchInputValue"
             :segment="segment"
             :segmentField="segmentField"
             :styles="{
@@ -288,7 +290,7 @@
           <AwesomeKanban
             v-if="
               !_isANestedDetailView &&
-              (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
+                (displayMode === 'kanban' || (_displayModeHasPartialDisplay && listingDisplayMode === 'kanban'))
             "
             ref="awesomeKanban"
             v-bind="_kanbanOptions"
@@ -309,6 +311,7 @@
             :options="_kanbanOptions.options"
             :splittingField="_kanbanOptions.splittingField"
             :splittingValues="_splittingValuesComputed"
+            :searchInputValue="searchInputValue"
             :segment="segment"
             :segmentField="segmentField"
             :title="_listingComponentTitle"
@@ -630,13 +633,15 @@ export default {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
+      note:
+        'The object that will be used for managing the component. it contains the schema along with some other options. If no provided i can be reconstructed if we have the schema prop.'
     },
     schema: {
       type: Object,
       required: false,
       default: undefined,
-      note: 'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
+      note:
+        'The json schema that represent the object to display. this is used to create. Must be provided if no model definition is available'
     },
     layout: {
       type: [Object, Array],
@@ -705,14 +710,16 @@ export default {
       type: String,
       required: false,
       values: ['view', 'edit', 'object', 'table'],
-      note: 'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note:
+        'In case of a nested schema, this parameter determines whether the component should be rendered as a list or a form. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     nestedLayoutMode: {
       type: String,
       required: false,
       default: 'horizontal-tabs',
       values: ['horizontal-tabs', 'vertical-tabs', 'list'],
-      note: 'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
+      note:
+        'In case of a nested schema, this parameter determines how the nested the models should be rendered. Exemple a list of posts with a comments as a nested should display a table, whereas the author info should display as an object...'
     },
     parent: {
       type: Object,
@@ -873,7 +880,7 @@ export default {
       default: 'remote'
     }
   },
-  data() {
+  data () {
     return {
       parentPath: '',
       selectedItem: {},
@@ -899,7 +906,7 @@ export default {
     };
   },
   computed: {
-    _title() {
+    _title () {
       // @deprecated
       if (this._model && this._model.pageTitle) {
         return this.$te(this._model.pageTitle) ? this.$t(this._model.pageTitle) : this._model.pageTitle;
@@ -926,7 +933,7 @@ export default {
       return '';
     },
 
-    _listingComponentTitle() {
+    _listingComponentTitle () {
       if (this.title === false) {
         return false;
       }
@@ -937,7 +944,7 @@ export default {
       return this.$t('AwesomeCrud.labels.manageTitle') + ' ' + this._namePlural;
     },
 
-    _name() {
+    _name () {
       if (this._model && this._model.name) {
         return this.$te(this._model.name) ? this.$t(this._model.name) : this._model.name;
       }
@@ -953,7 +960,7 @@ export default {
       return '';
     },
 
-    _namePlural() {
+    _namePlural () {
       if (this._model && this._model.namePlural) {
         return this.$te(this._model.namePlural) ? this.$t(this._model.namePlural) : startCase(this._model.namePlural);
       }
@@ -970,18 +977,18 @@ export default {
       return '';
     },
 
-    _model() {
+    _model () {
       return this.model || this.getModelFromStore(this.identity);
     },
 
     // _url() see apiConfigMixin
     // _selectedItemUrl() see apiConfigMixin
 
-    schemaComputed() {
+    schemaComputed () {
       return this.schema || (this._model && this._model.schema);
     },
 
-    formSchema() {
+    formSchema () {
       if (!this.schemaComputed) {
         return [];
       }
@@ -989,7 +996,7 @@ export default {
       return parsedFormSchema;
     },
 
-    listFieldsComputed() {
+    listFieldsComputed () {
       const allColumns = this.allColumnsComputed;
       let columns = [];
       if (this.listOptions && Array.isArray(this.listOptions.fields)) {
@@ -1003,7 +1010,7 @@ export default {
       return allColumns;
     },
 
-    kanbanFieldsComputed() {
+    kanbanFieldsComputed () {
       const allColumns = this.allColumnsComputed;
       let columns = [];
       // If we provided an array of fields to display
@@ -1017,7 +1024,7 @@ export default {
       return allColumns;
     },
 
-    allColumnsComputed() {
+    allColumnsComputed () {
       if (!this.schemaComputed) {
         return [];
       }
@@ -1028,39 +1035,39 @@ export default {
       return sortBy(columns, ['field', 'order']);
     },
 
-    tableColumnsComputed() {
+    tableColumnsComputed () {
       if (!this.schemaComputed) {
         return [];
       }
       return this.parseColumns(this.schemaComputed.properties);
     },
 
-    _layout() {
+    _layout () {
       return this.detailPageLayout || (this._model && this._model.formOptions && this._model.formOptions.layout);
     },
-    _createFormLayout() {
+    _createFormLayout () {
       return (this._model && this._model.formOptions && this._model.formOptions.createLayout) || this._layout;
     },
 
-    _editFormLayout() {
+    _editFormLayout () {
       return (this._model && this._model.formOptions && this.model.editLayout) || this._layout;
     },
 
-    createPageLayoutComputed() {
+    createPageLayoutComputed () {
       return (
         this.createPageLayout ||
         (this._model && this._model.formOptions && this._model.formOptions.createLayout) ||
         this._layout
       );
     },
-    viewPageLayoutComputed() {
+    viewPageLayoutComputed () {
       return (
         this.viewPageLayout ||
         (this._model && this._model.formOptions && this._model.formOptions.viewPageLayout) ||
         this._layout
       );
     },
-    editPageLayoutComputed() {
+    editPageLayoutComputed () {
       return (
         this.editPageLayout ||
         (this._model && this._model.formOptions && this._model.formOptions.editPageLayout) ||
@@ -1068,7 +1075,7 @@ export default {
       );
     },
 
-    _actions() {
+    _actions () {
       const actions = cloneDeep(this._actionsBeforeCalculation);
 
       Object.entries(actions).forEach(([field, fieldData]) => {
@@ -1079,7 +1086,7 @@ export default {
       return actions;
     },
 
-    _actionsBeforeCalculation() {
+    _actionsBeforeCalculation () {
       return merge(
         {},
         defaultActions,
@@ -1087,7 +1094,7 @@ export default {
       );
     },
 
-    _customFormTopActions() {
+    _customFormTopActions () {
       return merge(
         [],
         (this.customFormTopActions.length && this.customFormTopActions) ||
@@ -1095,7 +1102,7 @@ export default {
       );
     },
 
-    _customInlineActions() {
+    _customInlineActions () {
       return merge(
         [],
         (this.customInlineActions.length && this.customInlineActions) ||
@@ -1103,7 +1110,7 @@ export default {
       );
     },
 
-    _customTopRightActions() {
+    _customTopRightActions () {
       return merge(
         [],
         (this.customTopRightActions.length && this.customTopRightActions) ||
@@ -1111,7 +1118,7 @@ export default {
       );
     },
 
-    _customTableTopActions() {
+    _customTableTopActions () {
       return merge(
         [],
         (this.customTableTopActions.length && this.customTableTopActions) ||
@@ -1119,11 +1126,11 @@ export default {
       );
     },
 
-    _customTitleBarActions() {
+    _customTitleBarActions () {
       return merge([], this.customTitleBarActions.length && this.customTitleBarActions);
     },
 
-    _customBulkActions() {
+    _customBulkActions () {
       return merge(
         [],
         (this.customBulkActions.length && this.customBulkActions) ||
@@ -1131,7 +1138,7 @@ export default {
       );
     },
 
-    _displayModeHasPartialDisplay() {
+    _displayModeHasPartialDisplay () {
       return (
         [
           'modal',
@@ -1146,7 +1153,7 @@ export default {
       );
     },
 
-    _kanbanOptions() {
+    _kanbanOptions () {
       const merged = merge({}, defaultKanbanOptions, this._model && this._model.kanbanOptions, this.kanbanOptions);
       if (merged.splittingField && (!merged.splittingValues || !merged.splittingValues.length)) {
         if (this.tableColumnsComputed) {
@@ -1169,14 +1176,14 @@ export default {
       return merged;
     },
 
-    canShowCreateButton() {
+    canShowCreateButton () {
       return (
         this._actions.create &&
         !(['view', 'edit', 'create'].indexOf(this.displayMode) > -1 && this._detailPageMode === 'page')
       );
     },
 
-    showEditFormComputed() {
+    showEditFormComputed () {
       return (
         this.identity &&
         (this.displayMode === 'edit' ||
@@ -1186,15 +1193,15 @@ export default {
       );
     },
 
-    showViewFormComputed() {
+    showViewFormComputed () {
       return this.identity && this.displayMode === 'view';
     },
 
-    showItemsListSectionComputed() {
+    showItemsListSectionComputed () {
       return this.supportedListingDisplayModes.indexOf(this.displayMode) > -1 || this._detailPageMode !== 'page';
     },
 
-    currentItemIndex() {
+    currentItemIndex () {
       return (
         this.itemsList &&
         this.selectedItem &&
@@ -1202,19 +1209,19 @@ export default {
       );
     },
 
-    hasPrevious() {
+    hasPrevious () {
       return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex - 1];
     },
 
-    hasNext() {
+    hasNext () {
       return this.currentItemIndex > -1 && !!this.itemsList[this.currentItemIndex + 1];
     },
 
-    dataPaginationModeComputed() {
+    dataPaginationModeComputed () {
       return this.dataPaginationMode || this.mergedOptions.dataPaginationMode || this.mergedOptions.mode;
     },
 
-    segmentFieldDefinitionComputed() {
+    segmentFieldDefinitionComputed () {
       if (!this.segmentField) {
         return '';
       }
@@ -1234,7 +1241,7 @@ export default {
       return '';
     },
 
-    segmentFieldPossibleValues() {
+    segmentFieldPossibleValues () {
       const field = this.segmentFieldDefinitionComputed;
       if (!field) {
         return [];
@@ -1247,33 +1254,33 @@ export default {
       return Array.isArray(values) ? values : [];
     },
 
-    showStatsSectionComputed() {
+    showStatsSectionComputed () {
       return this.showItemsListSectionComputed && this.mergedOptions.stats;
     },
 
-    isDetailPageModeCpt() {
+    isDetailPageModeCpt () {
       return this.displayMode === 'create' || this.displayMode === 'view' || this.displayMode === 'edit';
     },
 
-    displaySideFormContent() {
+    displaySideFormContent () {
       return this._detailPageMode === 'sideform' && this.isDetailPageModeCpt;
     },
 
-    displayBottomFormContent() {
+    displayBottomFormContent () {
       return this._detailPageMode === 'bottomform';
     },
 
-    _detailPageMode() {
+    _detailPageMode () {
       return this.detailPageMode || this.mergedOptions.detailPageMode;
     },
 
-    detailPageModeCpt() {
+    detailPageModeCpt () {
       return this._detailPageMode === 'sideform' || this._detailPageMode === 'bottomform'
         ? 'page'
         : this._detailPageMode;
     },
 
-    shouldShowCreateButtonCpt() {
+    shouldShowCreateButtonCpt () {
       return (
         this.canShowCreateButton &&
         !this._isANestedDetailView &&
@@ -1283,7 +1290,7 @@ export default {
     },
 
     mergedOptions: {
-      get() {
+      get () {
         let options = merge({}, defaultOptions, this._model && this._model.options, this.options, this.internalOptions);
         if (this.$route && this.$route.query && this.$route.query.filters) {
           options.queryParams = merge(
@@ -1294,18 +1301,18 @@ export default {
         }
         return options;
       },
-      set(data) {
+      set (data) {
         this.internalOptions = data;
       }
     },
 
-    _splittingValuesComputed() {
+    _splittingValuesComputed () {
       return this._kanbanOptions.splittingValues && this._kanbanOptions.splittingValues.length
         ? this._kanbanOptions.splittingValues
         : this.segmentFieldPossibleValues;
     },
 
-    importButtonConfig() {
+    importButtonConfig () {
       return {
         upload: true,
         targetUrl: `${this._url}/import`,
@@ -1317,11 +1324,14 @@ export default {
       };
     },
 
-    formOptionsComputed() {
+    formOptionsComputed () {
       return {
         ...this.$props,
         ...this.formOptions
       };
+    },
+    searchInputValue () {
+      return this.useRouterMode ? this.$route.query.search : '';
     }
   },
   watch: {
@@ -1335,10 +1345,10 @@ export default {
     displayMode: 'onDisplayModeChanged',
     listingDisplayMode: 'onlistingDisplayModeChanged'
   },
-  created() {
+  created () {
     this.setDisplayMode = debounce(this.setDisplayModeFresh, 500, { leading: true });
   },
-  mounted() {
+  mounted () {
     // allow old property names to still work
     if (!this.identity) {
       throw new Error('missing_required_props_identity');
@@ -1383,20 +1393,24 @@ export default {
     }
 
     this.parentPath = this.$route.path;
-    this.parentPath = this.parentPath.replace('/view', '').replace('/edit', '').replace('/new', '').replace('/:id', '');
+    this.parentPath = this.parentPath
+      .replace('/view', '')
+      .replace('/edit', '')
+      .replace('/new', '')
+      .replace('/:id', '');
 
     this.$forceUpdate();
     // const matched = this.$route.matched[this.$route.matched.length - 1];
     this.initializeSelectedItem();
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     // eslint-disable-next-line
     next((vm) => {});
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     next((vm) => {});
   },
-  beforeRouteUpdate(to, from, next) {
+  beforeRouteUpdate (to, from, next) {
     // if we are on the same component and coming from a detail list
     if (this.useRouterMode && from.params.id && !to.params.id) {
       //this.onViewDisplayCancelled();
@@ -1407,14 +1421,14 @@ export default {
     next();
   },
 
-  beforeDestroy() {
+  beforeDestroy () {
     this.$awEventBus && this.$awEventBus.$off('aw-table-needs-refresh');
     this.scrollTarget.removeEventListener('scroll', this.handleScroll);
   },
 
   methods: {
     $alert: Swal,
-    refreshComponent(newVal, preVal) {
+    refreshComponent (newVal, preVal) {
       if (!newVal || newVal === false || newVal === preVal) {
         return;
       }
@@ -1445,13 +1459,13 @@ export default {
       }, 100);
     },
 
-    onTableRefresh() {
+    onTableRefresh () {
       this.statsNeedsRefresh = true;
     },
 
-    callbackFunctionForBAse64(e) {},
+    callbackFunctionForBAse64 (e) {},
 
-    importFailedResponse(err) {
+    importFailedResponse (err) {
       Swal.fire({
         title: this.$t('common.messages.not_imported', {
           title: this._name
@@ -1461,7 +1475,7 @@ export default {
       });
     },
 
-    importResponse(e) {
+    importResponse (e) {
       // swal({title: this.$t('common.messages.successfullyImported',{title: this.name}), type: 'success'})
       if ((!e.improperData || e.improperData.length === 0) && (!e.properData || e.properData.length === 0)) {
         Swal.fire({
@@ -1505,7 +1519,7 @@ export default {
       this.$forceUpdate();
     },
 
-    exportTemplateCallBack() {
+    exportTemplateCallBack () {
       if (!this.mergedOptions.importUrl) {
         this.$awNotify({ title: '[WARN] missing export template url', type: 'warning' });
         return;
@@ -1524,7 +1538,7 @@ export default {
         .catch(this.apiErrorCallback);
     },
 
-    loadModel() {
+    loadModel () {
       if (!this._model && !this.schema) {
         console.warn('AWESOME CRUD ERROR', `model ${this.identity} not found`);
         return;
@@ -1616,14 +1630,14 @@ export default {
       }
     },
 
-    setDisplayMode() {},
+    setDisplayMode () {},
     /** @param mode: string */
-    setDisplayModeFresh(mode, item, options = { refresh: true }) {
+    setDisplayModeFresh (mode, item, options = { refresh: true }) {
       if (
         mode === this.displayMode &&
         (!item ||
           item === this.selectedItem ||
-          item[this.primaryKeyFieldCpt] === this.selectedItem[this.primaryKeyFieldCpt])
+          `${item[this.primaryKeyFieldCpt]}` === `${this.selectedItem[this.primaryKeyFieldCpt]}`)
         // !(options && options.refresh)
       ) {
         console.warn('warning duplicate setDisplayMode called');
@@ -1660,7 +1674,7 @@ export default {
       }
     },
 
-    goToCreatePage(options = { reset: true, editLayoutMode: false }) {
+    goToCreatePage (options = { reset: true, editLayoutMode: false }) {
       if (this.mergedOptions.createPath) {
         if (this.mergedOptions.createPath.includes('{{') && this.mergedOptions.createPath.includes('}}')) {
           return this.$router.push(this.parseUrl(this.mergedOptions.createPath));
@@ -1687,14 +1701,14 @@ export default {
       return;
     },
 
-    goToBulkEditPage(items, options = { reset: true }) {
+    goToBulkEditPage (items, options = { reset: true }) {
       if (this.mergedOptions.bulkEditPath) {
         return this.$router.push(this.mergedOptions.bulkEditPath);
       }
       this.setDisplayMode('bulkEdit', items);
     },
 
-    goToDeletePage(item) {
+    goToDeletePage (item) {
       if (this.mergedOptions.createPath) {
         return this.$router.push(
           this.mergedOptions.deletePath
@@ -1707,11 +1721,11 @@ export default {
       return;
     },
 
-    goToBulkDeletePage(items) {
+    goToBulkDeletePage (items) {
       this.bulkDeleteFunction(items);
     },
 
-    goToEditPage(item, event) {
+    goToEditPage (item, event) {
       if (this.mergedOptions.editPath) {
         if (this.mergedOptions.editPath.includes(':id') && item && item[this.primaryKeyFieldCpt]) {
           return this.$router.push(this.mergedOptions.editPath.replace(':id', item[this.primaryKeyFieldCpt]));
@@ -1732,7 +1746,7 @@ export default {
       this.setDisplayMode('edit', item, event);
     },
 
-    goToViewPage(item, event) {
+    goToViewPage (item, event) {
       if (!item) {
         return;
       }
@@ -1754,7 +1768,7 @@ export default {
       }
     },
 
-    getViewPageUrl(item, event) {
+    getViewPageUrl (item, event) {
       if (!item) {
         return '';
       }
@@ -1779,7 +1793,7 @@ export default {
       return;
     },
 
-    nestedViewFunction() {
+    nestedViewFunction () {
       this.displayMode = 'view';
       this.$awApi
         .get(`${this._url}`)
@@ -1796,7 +1810,7 @@ export default {
         });
     },
 
-    bulkEditFunction(item) {
+    bulkEditFunction (item) {
       this.$awApi
         .put(`${this._url}/${item[this.primaryKeyFieldCpt]}`, item)
         .then((res) => {
@@ -1817,7 +1831,7 @@ export default {
         });
     },
 
-    bulkDeleteFunction(items) {
+    bulkDeleteFunction (items) {
       Swal.fire({
         title: this.$t('AwesomeDefault.messages.are_you_sure'),
         text: this.$t('AwesomeDefault.messages.wont_be_able_recover'),
@@ -1854,7 +1868,7 @@ export default {
         .finally(() => (this.selectedItem = null));
     },
 
-    deleteFunction(item) {
+    deleteFunction (item) {
       this.selectedItem = item;
       Swal.fire({
         title: this.$t('AwesomeDefault.messages.are_you_sure'),
@@ -1896,26 +1910,26 @@ export default {
         .finally(() => (this.selectedItem = null));
     },
 
-    onCustomBulkAction(body) {
+    onCustomBulkAction (body) {
       const { action } = body;
       this.$emit(this.identity + '-custom-bulk-action', action);
       return action && action.action && action.action(body, this);
     },
 
-    onCustomListAction(body) {
+    onCustomListAction (body) {
       const { action } = body;
       this.$emit(this.identity + '-custom-list-action', action);
       return action && action.action && action.action(body, this);
     },
 
-    onRemoveList(body) {},
+    onRemoveList (body) {},
 
-    onListChanged(item) {},
+    onListChanged (item) {},
 
-    onCardChanged(item, list) {},
-    onCardAdded({ element, newIndex }, list) {},
+    onCardChanged (item, list) {},
+    onCardAdded ({ element, newIndex }, list) {},
 
-    onCardClicked(item, $event) {
+    onCardClicked (item, $event) {
       this.$emit('on-kanban-item-clicked', item, $event);
       if (this.getViewPageUrl && this.getViewPageUrl(item)) {
         return;
@@ -1927,7 +1941,7 @@ export default {
      * @param item object
      * @param options = {context = create | edit }
      */
-    onEditDisplayCancelled(item, { context }) {
+    onEditDisplayCancelled (item, { context }) {
       const previousDisplayMode = this.getPreviousDisplayMode(context);
       if (this.useRouterMode) {
         if (previousDisplayMode === 'view' && item && item[this.primaryKeyFieldCpt]) {
@@ -1935,7 +1949,10 @@ export default {
         } else if (previousDisplayMode === 'edit' && item && item[this.primaryKeyFieldCpt]) {
           this.goToEditPage(item);
         } else {
-          let url = this.parentPath.replace('/edit', '').replace('/view', '').replace('/:id', '');
+          let url = this.parentPath
+            .replace('/edit', '')
+            .replace('/view', '')
+            .replace('/:id', '');
           // @fixme bug when using nested paths
           if (item && item[this.primaryKeyFieldCpt]) {
             url = url.replace(`/${item[this.primaryKeyFieldCpt]}`, '');
@@ -1948,7 +1965,7 @@ export default {
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 
-    onViewDisplayCancelled(item) {
+    onViewDisplayCancelled (item) {
       if (this.useRouterMode) {
         let url = this.parentPath
           .replace('/edit', '')
@@ -1964,38 +1981,38 @@ export default {
       this.setDisplayMode(previousDisplayMode, item, { refresh: false });
     },
 
-    onItemsBulkEdited(item) {
+    onItemsBulkEdited (item) {
       this.bulkEditFunction(item);
     },
 
-    onItemCreated(item) {
+    onItemCreated (item) {
       this.$awEmit('aw-table-needs-refresh');
       //   this.setDisplayMode(this.mergedOptions.initialDisplayMode, item);
     },
 
-    onItemEdited(...args) {
+    onItemEdited (...args) {
       // eslint-disable-next-line
       this.$awEmit('aw-table-needs-refresh');
     },
-    onItemDeleted(...args) {
+    onItemDeleted (...args) {
       // eslint-disable-next-line
     },
-    onItemViewed(...args) {
+    onItemViewed (...args) {
       // eslint-disable-next-line
     },
-    onItemValidated(...args) {
+    onItemValidated (...args) {
       // eslint-disable-next-line
     },
-    onItemValidationFailed(...args) {
+    onItemValidationFailed (...args) {
       // eslint-disable-next-line
     },
 
-    onListUpdated(datas) {
+    onListUpdated (datas) {
       this.$emit('list-updated', datas);
       this.$emit(this.identity + '-list-updated', datas);
     },
 
-    onTableRowClicked(props, $event) {
+    onTableRowClicked (props, $event) {
       const { column, row, event } = props; // rowIndex and event are also available
       if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
         return;
@@ -2005,7 +2022,7 @@ export default {
       this.listItemClickedHandler(row, event || $event);
     },
 
-    onTableRowDoubleClicked(props, $event) {
+    onTableRowDoubleClicked (props, $event) {
       const { column, row, event } = props; // rowIndex and event are also available
       if (column && (['url', 'relation', 'ACTIONS'].indexOf(column.type) > -1 || column.field === '__ACTIONS')) {
         return;
@@ -2015,46 +2032,46 @@ export default {
       this.listItemDoubleClickedHandler(row, event || $event);
     },
 
-    onDataChanged(items) {
+    onDataChanged (items) {
       if (process.env.NODE_ENV === 'development') {
         //  console.log('onDataChanged', items);
       }
       this.itemsList = items.data;
     },
 
-    updateAutoRefresh(value) {
+    updateAutoRefresh (value) {
       this.mergedOptions.autoRefresh = value;
     },
 
-    onListItemClicked(item, event) {
+    onListItemClicked (item, event) {
       // this._actions && this._actions.view && this.$emit("view", row);
       this.$emit('on-list-item-clicked', item);
       this.listItemClickedHandler(item, event);
     },
 
     // @deprecated use directly $awConfirm
-    confirm(message) {
+    confirm (message) {
       console.warn('confirm method is @deprecated => use $awConfirm');
       return this.$awConfirm(message);
     },
 
-    onLayoutUpdated(items) {
+    onLayoutUpdated (items) {
       this.$emit('layout-updated', items);
     },
 
-    onLayoutFieldsUpdated(items) {
+    onLayoutFieldsUpdated (items) {
       this.$emit('layout-fields-updated', items);
     },
 
-    onOpenEditLayoutMode() {
+    onOpenEditLayoutMode () {
       this.editLayoutMode = true;
     },
 
-    onCloseEditLayoutMode() {
+    onCloseEditLayoutMode () {
       this.editLayoutMode = false;
     },
 
-    selectPreviousItem() {
+    selectPreviousItem () {
       if (this.hasPrevious && this.itemsList[this.currentItemIndex - 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex - 1];
         if (this.useRouterMode) {
@@ -2065,7 +2082,7 @@ export default {
       }
     },
 
-    selectNextItem() {
+    selectNextItem () {
       if (this.hasNext && this.itemsList[this.currentItemIndex + 1]) {
         this.selectedItem = this.itemsList[this.currentItemIndex + 1];
         if (this.useRouterMode) {
@@ -2076,7 +2093,7 @@ export default {
       }
     },
 
-    onCustomAction(body) {
+    onCustomAction (body) {
       const { action } = body;
       this.$emit(this.identity + '-custom-action', action);
       if (action) {
@@ -2107,7 +2124,7 @@ export default {
       }
     },
 
-    getNestedItem() {
+    getNestedItem () {
       return this.$awApi
         .get(`${this._url}`)
         .then((res) => {
@@ -2120,7 +2137,7 @@ export default {
         });
     },
 
-    listItemClickedHandler(row, $event) {
+    listItemClickedHandler (row, $event) {
       switch (this.tableRowClickAction) {
         case 'edit':
           if (this._actions && !this._actions.edit) {
@@ -2140,7 +2157,7 @@ export default {
       }
     },
 
-    listItemDoubleClickedHandler(row, event) {
+    listItemDoubleClickedHandler (row, event) {
       switch (this.tableRowDoubleClickAction) {
         case 'edit':
           if (this._actions && !this._actions.edit) {
@@ -2162,7 +2179,7 @@ export default {
       }
     },
 
-    onRouteIdChanged(newVal, previousVal) {
+    onRouteIdChanged (newVal, previousVal) {
       if (this.useRouterMode) {
         // in case we navigate for one detail page to another.
         if (newVal && previousVal !== newVal) {
@@ -2178,7 +2195,7 @@ export default {
       }
     },
 
-    initializeSelectedItem() {
+    initializeSelectedItem () {
       if (this.$route.params.id) {
         this.parentPath = this.parentPath.replace(`/${this.$route.params.id}`, '').replace('/:id', '');
         if (this.$route.params.id && (this.$route.path.endsWith('/create') || this.$route.path.endsWith('/new'))) {
@@ -2199,8 +2216,8 @@ export default {
       }
     },
 
-    onSegmentChange() {},
-    handleScroll(event) {
+    onSegmentChange () {},
+    handleScroll (event) {
       if (this._detailPageMode !== 'sideform' || !this.scrollTarget) {
         return;
       }
@@ -2219,7 +2236,7 @@ export default {
       }
     },
 
-    onDisplayModeChanged(mode, oldMode) {
+    onDisplayModeChanged (mode, oldMode) {
       if (mode !== oldMode) {
         if (this.supportedListingDisplayModes.includes(mode)) {
           if (this.enabledListingModes && !this.enabledListingModes.includes(mode)) {
@@ -2233,14 +2250,14 @@ export default {
         }
       }
     },
-    onlistingDisplayModeChanged(mode, oldMode) {
+    onlistingDisplayModeChanged (mode, oldMode) {
       if (mode !== oldMode) {
         this.displayMode = mode;
         this.saveComponentState();
       }
     },
 
-    getPreviousDisplayMode(context) {
+    getPreviousDisplayMode (context) {
       const displayMode =
         this.previousDisplayMode &&
         this.previousDisplayMode !== context &&
@@ -2277,27 +2294,27 @@ export default {
       return displayMode;
     },
 
-    afterRefresh(...args) {
+    afterRefresh (...args) {
       this.$emit('afterRefresh', ...args);
     },
 
-    after_refresh(...args) {
+    after_refresh (...args) {
       this.$emit('after-refresh', ...args);
     },
 
-    beforeRefresh(...args) {
+    beforeRefresh (...args) {
       this.$emit('beforeRefresh', ...args);
     },
 
-    before_refresh(...args) {
+    before_refresh (...args) {
       this.$emit('before-refresh', ...args);
     },
 
-    beforeCreate(...args) {
+    beforeCreate (...args) {
       this.$emit('beforeCreate', ...args);
     },
 
-    async onListReordered(items) {
+    async onListReordered (items) {
       if (this.listOptions && this.listOptions.sortField && items) {
         const promises = items.map((item, index) => {
           const urlparts = this._url.split('?');
@@ -2309,12 +2326,12 @@ export default {
       this.$emit('reorder', items);
     },
 
-    onModelUpdated(value, field) {
+    onModelUpdated (value, field) {
       this.$emit('modelUpdated', value, field);
       this.$emit('model-updated', value, field);
     },
 
-    onKanbanlistAddButtonPressed(list) {
+    onKanbanlistAddButtonPressed (list) {
       this.selectedItem.status = list.id;
       //this.goToCreatePage({ reset: false });
       this.setDisplayMode('create', this.selectedItem);

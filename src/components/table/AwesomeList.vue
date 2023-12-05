@@ -168,7 +168,7 @@
             <input
               v-if="actions.search"
               type="text"
-              v-model="search"
+              v-model="searchInput"
               placeholder="Rechercher"
               class="form-control aw-search-input"
             />
@@ -436,7 +436,7 @@ export default {
       page: 0,
       data: [],
       advancedFilters: [],
-      search: '',
+      searchInput: '',
       displayAwFilter: false,
       columnSortState: '',
       columnSortDirection: 'asc'
@@ -519,10 +519,10 @@ export default {
         }
         return this.mode === 'remote'
           ? this.data
-          : this.localSearch(this.data, this.search).slice(startIndex, startIndex + perPage);
+          : this.localSearch(this.data, this.searchInput).slice(startIndex, startIndex + perPage);
       },
       set(d) {
-        if (!this.search) {
+        if (!this.searchInput) {
           this.data = d;
           this.onListReordered(d);
         }
@@ -567,7 +567,7 @@ export default {
     },
 
     _isDraggable() {
-      return this.actions.reorder && !this.search;
+      return this.actions.reorder && !this.searchInput;
     },
 
     perPageComputed() {
@@ -577,7 +577,7 @@ export default {
   watch: {
     perRow: 'resetItemsPerRow',
     rows: 'refreshLocalData',
-    search(newVal) {
+    searchInput(newVal) {
       this.onSearch({ searchTerm: newVal });
     }
   },
@@ -677,11 +677,11 @@ export default {
 
     localSearch(items, search) {
       let filteredList = items.filter((item) => {
-        if (!this.search) {
+        if (!this.searchInput) {
           return true;
         }
         try {
-          return JSON.stringify(Object.values(item)).match(new RegExp(this.search, 'i'));
+          return JSON.stringify(Object.values(item)).match(new RegExp(this.searchInput, 'i'));
         } catch (err) {
           console.warn('err', err);
         }

@@ -89,7 +89,7 @@
               <input
                 v-if="actions.search"
                 type="text"
-                v-model="search"
+                v-model="searchInput"
                 class="form-control aw-search-input"
                 :placeholder="$t('AwesomeTable.searchInput')"
               />
@@ -326,7 +326,7 @@ export default {
     cardClickResolver: Function
   },
 
-  created() {
+  created () {
     // Check if the component is loaded globally
     if (!this.$root.$options.components.Draggable) {
       /* eslint-disable-next-line */
@@ -334,7 +334,7 @@ export default {
     }
     this.reorderListItemsDebounced = debounce(this.reorderListItems, 200);
   },
-  mounted() {
+  mounted () {
     this.handleLists();
     if (this.serverParams && this.serverParams.page > 1) {
       this.updateParams({ page: 0 });
@@ -352,10 +352,10 @@ export default {
   },
 
   computed: {
-    _model() {
+    _model () {
       return this.model || this.getModelFromStore(this.identity);
     },
-    titleComputed() {
+    titleComputed () {
       if (this.title) {
         return this.$te(this.title) ? this.$t(this.title) : this.title;
       }
@@ -381,12 +381,12 @@ export default {
       }
       return '';
     },
-    splittingValuesComputed() {
+    splittingValuesComputed () {
       return this.splittingValues && Array.isArray(this.splittingValues) && this.splittingValues.length
         ? this.splittingValues
         : this.splittingFieldApiValues;
     },
-    segmentFieldDefinitionComputed() {
+    segmentFieldDefinitionComputed () {
       if (!this.splittingField) {
         return '';
       }
@@ -399,7 +399,7 @@ export default {
       return '';
     },
 
-    _filterableColumns() {
+    _filterableColumns () {
       return this.columns.map((col) => {
         if (col.filterOptions) {
           col.filterOptions.enabled =
@@ -412,25 +412,25 @@ export default {
   },
 
   watch: {
-    lists() {
+    lists () {
       this.handleLists();
     },
-    data() {
+    data () {
       this.handleLists();
     },
-    splittingField() {
+    splittingField () {
       this.handleLists();
     },
-    splittingValuesComputed() {
+    splittingValuesComputed () {
       this.handleLists();
     },
-    'options.sortField'() {
+    'options.sortField' () {
       this.orderCardInLists();
     },
-    'options.sortOrder'() {
+    'options.sortOrder' () {
       this.orderCardInLists();
     },
-    search(newVal) {
+    searchInput (newVal) {
       this.onSearch({ searchTerm: newVal });
     }
   },
@@ -442,12 +442,12 @@ export default {
     displayLabelsCache: {},
     splittingFieldApiValues: [],
     displayAwFilter: false,
-    search: '',
+    searchInput: '',
     scrollBox: {}
   }),
 
   methods: {
-    addList() {
+    addList () {
       if (this.newListName) {
         if (!some(this.localLists, { title: this.newListName })) {
           this.localLists.push({
@@ -462,16 +462,16 @@ export default {
       }
     },
 
-    clearForm() {
+    clearForm () {
       this.isAddingList = false;
       this.newListName = '';
     },
 
-    editForm() {
+    editForm () {
       this.isAddingList = true;
     },
 
-    onRemoveList(list) {
+    onRemoveList (list) {
       /* LOCAL REMOVE */
       this.localLists = filter(this.localLists, (item) => {
         return item.title !== list;
@@ -480,31 +480,31 @@ export default {
       this.$awEmit('aw-kanban-list-removed', list);
     },
 
-    listChanged(item) {
+    listChanged (item) {
       this.$emit('listChanged', item);
       this.$awEmit('aw-kanban-list-changed', item, this.localLists);
     },
 
-    onCardChanged(item, targetList, orderedListItems) {
+    onCardChanged (item, targetList, orderedListItems) {
       this.$emit('cardChanged', item, targetList, orderedListItems);
       this.reorderListItemsDebounced(orderedListItems);
     },
-    onCardRemoved(item, list) {
+    onCardRemoved (item, list) {
       this.$emit('cardRemoved', item, list);
     },
-    onCardAdded(payload, list, orderedListItems) {
+    onCardAdded (payload, list, orderedListItems) {
       this.$emit('cardAdded', payload, list, orderedListItems);
       this.changeItemSplittingValue(payload, list, orderedListItems);
     },
-    onCardMoved(item, list) {
+    onCardMoved (item, list) {
       this.$emit('cardAdded', item, list);
     },
 
-    onCardClicked(item, $event) {
+    onCardClicked (item, $event) {
       this.$emit('cardClicked', item, $event);
     },
 
-    handleLists() {
+    handleLists () {
       if (this.lists && this.lists.length) {
         this.localLists = cloneDeep(this.lists);
       } else {
@@ -526,7 +526,7 @@ export default {
     },
 
     // split items in lists
-    splitItemsInLists() {
+    splitItemsInLists () {
       if (this.splittingField && this.splittingValuesComputed && Array.isArray(this.splittingValuesComputed)) {
         this.splittingValuesComputed.forEach((filterValue) => {
           let id = filterValue,
@@ -573,7 +573,7 @@ export default {
       }
     },
 
-    orderCardInLists() {
+    orderCardInLists () {
       const sortOrder = this.sortOrder ? this.sortOrder.toLowerCase() : 'asc';
       if (this.sortField) {
         this.localLists.forEach((localList) => {
@@ -590,11 +590,11 @@ export default {
       }
     },
 
-    onCustomListAction(body) {
+    onCustomListAction (body) {
       this.$emit('customListAction', body);
     },
 
-    getSegmentValues(field) {
+    getSegmentValues (field) {
       return (
         field &&
         ((field.fieldOptions && field.fieldOptions.filterDropdownItems) ||
@@ -604,7 +604,7 @@ export default {
       );
     },
 
-    async changeItemSplittingValue({ element, newIndex }, targetList, orderedList) {
+    async changeItemSplittingValue ({ element, newIndex }, targetList, orderedList) {
       element[this.splittingField] = targetList.id === '' || targetList.id === undefined ? null : targetList.id;
       if (this.sortField) {
         delete element[this.sortField];
@@ -614,7 +614,7 @@ export default {
       await this.$awApi.put(urlparts.join('?'), element);
     },
 
-    async reorderListItems(orderedList) {
+    async reorderListItems (orderedList) {
       if (this.sortField && orderedList) {
         const promises = orderedList.map((item, index) => {
           const urlparts = this._url.split('?');
@@ -626,11 +626,11 @@ export default {
       }
     },
 
-    onSegmentListChanged(values) {
+    onSegmentListChanged (values) {
       this.splittingFieldApiValues = values;
     },
 
-    onMouseMove(event) {
+    onMouseMove (event) {
       const scrollDiv = this.$refs.scrollableDiv;
       // (1) prepare to moving: make absolute and on top by z-index
 
@@ -651,15 +651,15 @@ export default {
         scrollDiv.scrollLeft -= 10;
       }
     },
-    onChoose($event) {
+    onChoose ($event) {
       this.scrollBox = this.$refs.scrollableDiv.getBoundingClientRect();
       document.addEventListener('dragover', this.onMouseMove);
     },
-    onUnChoose($event) {
+    onUnChoose ($event) {
       document.removeEventListener('dragover', this.onMouseMove);
     },
 
-    onAddButtonPress(list) {
+    onAddButtonPress (list) {
       this.$emit('addButtonPressed', list);
     }
   }
