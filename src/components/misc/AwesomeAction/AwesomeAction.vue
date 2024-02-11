@@ -227,7 +227,7 @@ export default {
     isDropdownOpened: false
   }),
   computed: {
-    actionDropdownTitleComputed() {
+    actionDropdownTitleComputed () {
       if (this.label) {
         return this.$te(this.label) ? this.$t(this.label) : this.label;
       }
@@ -239,15 +239,15 @@ export default {
   },
   watch: {},
   methods: {
-    permanentFiltering(parsedFilters, filters) {
+    permanentFiltering (parsedFilters, filters) {
       this.$emit('permanent-filtering', parsedFilters, filters);
     },
 
-    permanentSearching(parsedFilters) {
+    permanentSearching (parsedFilters) {
       this.$emit('permanent-searching', parsedFilters);
     },
 
-    computeActionField(field) {
+    computeActionField (field) {
       if (field !== undefined) {
         if (typeof field === 'function') {
           return field({ item: this.item, items: this.items, parent: this.parent }, this);
@@ -260,7 +260,7 @@ export default {
       return '';
     },
 
-    toggleDropdown(value) {
+    toggleDropdown (value) {
       if (value !== undefined) {
         this.isDropdownOpened = value;
       } else {
@@ -268,7 +268,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     if ((this.type === 'filter' || this.type === 'input') && !this.field) {
       console.warn('[AwesomeAction]', 'You forget to set `field` for this type:', this.type);
     }

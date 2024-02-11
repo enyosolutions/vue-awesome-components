@@ -49,12 +49,12 @@
                     }"
                     v-if="
                       _actions &&
-                      _actions.tableConfiguration &&
-                      (_actions.export ||
-                        _actions.exportLocal ||
-                        _actions.import ||
-                        _actions.columnsFilters ||
-                        _actions.dropdownActions)
+                        _actions.tableConfiguration &&
+                        (_actions.export ||
+                          _actions.exportLocal ||
+                          _actions.import ||
+                          _actions.columnsFilters ||
+                          _actions.dropdownActions)
                     "
                   >
                     <button
@@ -131,8 +131,19 @@
                       {{ $t('AwesomeTable.columns') }}
                     </button>
                     <div class="popper card mt-0" style="z-index: 1">
+                      <h6 class="pt-1 pl-3 pr-3 pb-0">{{ $t('AwesomeTable.columns') }}</h6>
+                      <div class="m-2">
+                        <input
+                          type="text"
+                          class="form-control"
+                          :placeholder="$t('AwesomeTable.buttons.filters')"
+                          style="height: 30px"
+                          v-model="columnDropdownFilterInput"
+                        />
+                      </div>
+
                       <button
-                        v-for="(col, index) in sortedColumns"
+                        v-for="(col, index) in dropdownColumns"
                         :key="index"
                         class="dropdown-item col"
                         type="button"
@@ -494,7 +505,8 @@ export default {
     entity: {
       type: String,
       default: '',
-      note: 'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
+      note:
+        'Unique name of the currently displayed list. This serve to retrieve and display titles from the vue-i8n translations'
     },
     name: { type: String, default: '' },
     namePlural: { type: String, default: '' },
@@ -591,13 +603,15 @@ export default {
       type: Function
     }
   },
-  data() {
+  data () {
     return {
       totalCount: 0,
       columnsFilterState: null,
       isRefreshing: false,
       columnsState: {},
-      defaultStartDate: dayjs().subtract(7, 'days').format('YYYY-MM-DD'),
+      defaultStartDate: dayjs()
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
       defaultEndDate: dayjs().format('YYYY-MM-DD'),
       serverParams: {
         // a map of column filters example: {name: 'john', age: '20'}
@@ -629,15 +643,16 @@ export default {
       displayLabelCache: {},
       clickTimeout: null,
       displayAwFilter: false,
-      searchInput: ''
+      searchInput: '',
+      columnDropdownFilterInput: ''
     };
   },
   computed: {
-    optionsComputed() {
+    optionsComputed () {
       return merge(this.defaultOptions, this.options);
     },
 
-    _tableTitle() {
+    _tableTitle () {
       if (this.title === false) {
         return '';
       }
@@ -649,7 +664,7 @@ export default {
       return (title || '').trim();
     },
 
-    formattedColumns() {
+    formattedColumns () {
       if (!this.columns) {
         // eslint-disable-next-line
         console.error('AwesomeTable MISSING COLUMNS');
@@ -788,10 +803,10 @@ export default {
       return newcolumns;
     },
 
-    canHideColumns() {
+    canHideColumns () {
       return this.formattedColumns.length > this.columnsDisplayed;
     },
-    displayedColumns() {
+    displayedColumns () {
       this.columnsState;
       if (this.canHideColumns) {
         const cols = this.formattedColumns.filter((col) => this.columnsState[col.field]);
@@ -810,7 +825,7 @@ export default {
       return this.formattedColumns;
     },
 
-    initialSortBy() {
+    initialSortBy () {
       if (this.serverParams.sort) {
         const entries = Object.entries(this.serverParams.sort);
         if (entries.length) {
@@ -822,19 +837,19 @@ export default {
       return undefined;
     },
 
-    advancedFiltersCount() {
+    advancedFiltersCount () {
       return (this.advancedFilters && this.advancedFilters.length) || 0;
     },
 
-    advancedFiltersFormated() {
+    advancedFiltersFormated () {
       return AwesomeFilter.methods.parseFilter(this.advancedFilters, { dispatch: false });
     },
 
-    perPageComputed() {
+    perPageComputed () {
       return this.mode === 'remote' ? parseInt(this.serverParams.perPage) : this.perPage;
     },
 
-    canFilterByColumnsCpt() {
+    canFilterByColumnsCpt () {
       return (
         this._actions.columnsFilters &&
         this.options &&
@@ -842,8 +857,15 @@ export default {
       );
     },
 
-    sortedColumns() {
+    sortedColumns () {
       return sortBy(this.formattedColumns, ['field', 'order']);
+    },
+    dropdownColumns () {
+      return this.sortedColumns.filter(
+        (col) =>
+          col.field.match(new RegExp(this.columnDropdownFilterInput, 'i')) ||
+          col.label.match(new RegExp(this.columnDropdownFilterInput, 'i'))
+      );
     }
   },
   watch: {
@@ -851,7 +873,7 @@ export default {
     /**
      * @deprecated
      */
-    params() {
+    params () {
       // this.serverParams = merge({}, this.serverParams, this.params);
       // this.getItems({ source: "awTable_params()" });
     },
@@ -859,7 +881,7 @@ export default {
     // store: changed => {},
     rows: 'refreshLocalData'
   },
-  created() {
+  created () {
     if (!this.$t) {
       this.$t = (str) => {
         /*
@@ -874,11 +896,11 @@ export default {
       this.$te = (str) => !!this.translations[str];
     }
   },
-  beforeMount() {
+  beforeMount () {
     const userLang = window.navigator ? navigator.language || navigator.userLanguage : 'en';
     dayjs().locale(userLang);
   },
-  mounted() {
+  mounted () {
     if (this.refresh || this.store) {
       return;
     }
@@ -910,7 +932,7 @@ export default {
     }
     // this.refreshLocalData();
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.refreshHandle);
   },
 
@@ -944,7 +966,7 @@ export default {
     //   this.$awEmit('filter', { filters: this.serverParams.filters, rawFilters: filters });
     // },
 
-    doRefresh() {
+    doRefresh () {
       this.$awEmit('refresh', { filters: this.serverParams.filters });
 
       if (this.mode == 'remote') {
@@ -952,7 +974,7 @@ export default {
       }
     },
 
-    toggleFilter() {
+    toggleFilter () {
       this.columnsFilterState = !this.columnsFilterState;
 
       if (!this.columnsFilterState) {
@@ -972,7 +994,7 @@ export default {
       this.saveComponentState();
     },
 
-    toggleAdvancedFilters() {
+    toggleAdvancedFilters () {
       this.displayAwFilter = !this.displayAwFilter;
       if (this.displayAwFilter) {
         this.columnsFilterState = false;
@@ -986,7 +1008,7 @@ export default {
     },
     // editItem(item) {},
 
-    clickOnLine(props, props2) {
+    clickOnLine (props, props2) {
       if (this.singleClickFunction) {
         return;
       }
@@ -1008,7 +1030,7 @@ export default {
       });
     },
 
-    getLovValue(item, listName) {
+    getLovValue (item, listName) {
       if (!item || !this.$store.state.listOfValues[listName]) {
         return item;
       }
@@ -1022,7 +1044,7 @@ export default {
       return value.label || value.code || value;
     },
 
-    getDataValue(item, listName) {
+    getDataValue (item, listName) {
       if (!item || !this.$store.state.data[listName]) {
         return item;
       }
@@ -1036,12 +1058,12 @@ export default {
       return value.label || value.title || value.name || value.code || value;
     },
 
-    toggleColumn(colName) {
+    toggleColumn (colName) {
       this.$set(this.columnsState, colName, !this.columnsState[colName]);
       this.pushChangesToRouter(undefined, true);
     },
 
-    onColumnFilter(params) {
+    onColumnFilter (params) {
       if (this.mode !== 'remote') {
         return;
       }
@@ -1052,7 +1074,7 @@ export default {
       this.getItems({ useSkeleton: true });
     },
 
-    onSortChange(params) {
+    onSortChange (params) {
       // second param is a deprecated one
       const fieldIndex = params[0].field || params[0].columnIndex;
       const field = this.columns.find((c) => c.field === fieldIndex);
@@ -1077,7 +1099,7 @@ export default {
       this.getItems({ useSkeleton: true });
     },
 
-    onDateFilter(value) {
+    onDateFilter (value) {
       if (!value) {
         return;
       }
@@ -1086,11 +1108,11 @@ export default {
       this.getItems({ useSkeleton: true });
     },
 
-    hasValue(item, column) {
+    hasValue (item, column) {
       return item[column.toLowerCase()] !== 'undefined';
     },
 
-    itemValue(item, column) {
+    itemValue (item, column) {
       return item[column.toLowerCase()];
     },
 

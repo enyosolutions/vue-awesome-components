@@ -55,23 +55,23 @@ export default {
   name: 'DisplayRelation',
   mixins: [awesomeDisplayMixin, apiConfigMixin, apiErrorsMixin, i18nMixin],
   computed: {
-    _relationUrl() {
+    _relationUrl () {
       return this.relationUrl || this.relation;
     },
 
-    _relationLabel() {
+    _relationLabel () {
       return this.relationLabel || 'label';
     },
 
-    _relationKey() {
+    _relationKey () {
       return this.relationKey || this.primaryKeyField || this.primaryKey || 'id';
     },
 
-    _label() {
+    _label () {
       return this.storePath || this.store ? this.getStoreLabel(this.value) : this.getApiLabel(this.value);
     },
 
-    _displayLabelCache() {
+    _displayLabelCache () {
       return (
         this.displayLabelCache ||
         (this.awComponentsConfig && this.awComponentsConfig.displayLabelsCache) ||
@@ -80,48 +80,48 @@ export default {
       );
     },
 
-    _values() {
+    _values () {
       if (!this.$props.value) {
         return this.$props.value;
       }
       return Array.isArray(this.$props.value) ? this.$props.value : [this.$props.value];
     },
 
-    _relationIsClickable() {
+    _relationIsClickable () {
       return (
         this.isClickable ||
         (this.isClickable === undefined && this.awComponentsConfig && this.awComponentsConfig.relationsAreClickable)
       );
     },
 
-    _parsedClickUrl() {
+    _parsedClickUrl () {
       return this.parseUrl(this.onClickUrl, {
         [this.relationKey || this.primaryKeyField || this.primaryKey || 'id']: this.value,
         [this.field]: this.value
       });
     }
   },
-  mounted() {
+  mounted () {
     if (this.relationUrl && this.value) {
       this.$awEventBus &&
         this.$awEventBus.$on(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     this.$awEventBus &&
       this.$awEventBus.$off(`displayRelation-${this.relationUrl}-${this.value}`, this.updateComponent);
   },
   watch: {
-    relationUrl(newValue) {}
+    relationUrl (newValue) {}
   },
-  data() {
+  data () {
     return {
       internalCache: {},
       timeoutId: null
     };
   },
   methods: {
-    onClick() {
+    onClick () {
       if (!this._relationIsClickable) {
         return;
       }
@@ -141,17 +141,17 @@ export default {
     },
     kebabCase: kebabCase,
     isFunction: isFunction,
-    getLabel(value) {
+    getLabel (value) {
       if (typeof value === 'object') {
         return this.formatLabel(value);
       }
       return this.storePath || this.store ? this.getStoreLabel(value) : this.getApiLabel(value);
     },
-    getKey(value) {
+    getKey (value) {
       return typeof value === 'object' ? value[this._relationKey] : value;
     },
 
-    goToRelation(value) {
+    goToRelation (value) {
       if (value && this.onClickUrl) {
         if (isFunction(this.onClickUrl)) {
           return this.onClickUrl(value);
@@ -163,7 +163,7 @@ export default {
       return;
     },
 
-    formatLabel(item, passedLabel = null) {
+    formatLabel (item, passedLabel = null) {
       let field = passedLabel || this._relationLabel;
       let label = '';
       if (field.indexOf('{{') > -1) {
@@ -174,7 +174,7 @@ export default {
       return label;
     },
 
-    getStoreLabel(value) {
+    getStoreLabel (value) {
       if (!value) {
         return;
       }
@@ -205,7 +205,7 @@ export default {
       return result || value;
     },
 
-    getApiLabel(value) {
+    getApiLabel (value) {
       if (!this.relationUrl && value && this.relationLabel) {
         const computedLocalValue =
           isObject(value) && this.relationLabel
@@ -233,9 +233,6 @@ export default {
             this.apiResponseConfig && this.apiResponseConfig.dataPath && this.apiResponseConfig.dataPath != false
               ? get(res, this.apiResponseConfig.dataPath)
               : res.data;
-          if (res.data.totalCount) {
-            this.totalCount = res.data.totalCount;
-          }
 
           const result = `${this.formatLabel(data, this.relationLabel)}`;
           if (result) {
@@ -254,7 +251,7 @@ export default {
 
       return this._displayLabelCache[url];
     },
-    copyToClipboard(str) {
+    copyToClipboard (str) {
       const el = document.createElement('textarea');
       el.value = str;
       el.setAttribute('readonly', '');
@@ -266,7 +263,7 @@ export default {
       document.body.removeChild(el);
     },
 
-    copy(value) {
+    copy (value) {
       this.copyToClipboard(`${this.getLabel(value)}`);
       if (this.$awNotify) {
         this.$awNotify(
@@ -275,7 +272,7 @@ export default {
       }
     },
 
-    updateComponent() {
+    updateComponent () {
       this.$forceUpdate();
     }
   }

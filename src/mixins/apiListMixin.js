@@ -67,6 +67,11 @@ export default {
     },
     savePaginationState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation page, perPage' },
     saveColumnsState: { type: Boolean, default: false, description: 'Whether we should save the state of the navigation (columns, sort etc' },
+    searchInputValue: {
+      type: String,
+      title: 'The value of the search input',
+      description: ''
+    },
     segmentField: {
       type: String,
       title: 'The field to use for segmenting the lists',
@@ -221,11 +226,12 @@ export default {
   mounted() {
     this.$awEventBus && this.$awEventBus.$on('aw-table-needs-refresh', this.refreshLocalData);
     this.onSearch = debounce(this.onSearchFresh, 300);
-    this.restoreComponentState();
+   // this.restoreComponentState();
     this.connectRouteToPagination(this.$route);
     this.serverParams = merge({}, this.serverParams, this.apiQueryParams);
     this.getItemsDebounced = debounce(this.getItems, 500, { head: true })
     this.getItems({ useSkeleton: true, source: '[apiListMixin] refreshLocalData' });
+    this.searchInput = this.searchInputValue;
   },
 
   beforeDestroy() {
