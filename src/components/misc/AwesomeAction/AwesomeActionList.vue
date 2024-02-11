@@ -131,21 +131,21 @@ export default {
     }
   },
   computed: {
-    foldableActions() {
+    foldableActions () {
       return this.actions.filter((a) => !a.type || (a.type === 'button' && !a.sticky));
     },
 
-    unFoldableActions() {
+    unFoldableActions () {
       return this.actions.filter((a) => (a.type && a.type !== 'button') || a.sticky);
     }
   },
-  data() {
+  data () {
     return {
       state: {}
     };
   },
   methods: {
-    shouldDisplayAction(action) {
+    shouldDisplayAction (action) {
       this.mode = this.parentDisplayMode;
       // legacy, use visible
       if (action.canDisplay !== undefined) {
@@ -156,7 +156,7 @@ export default {
       }
       return true;
     },
-    computeActionField(action, field) {
+    computeActionField (action, field) {
       if (action[field] !== undefined) {
         if (typeof action[field] === 'function') {
           return action[field]({ item: this.item, items: this.items, parent: this.parent }, this);

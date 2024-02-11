@@ -1372,7 +1372,7 @@ export default {
       this.displayMode = this.mergedOptions.initialDisplayMode;
     }
     this.listingDisplayMode = this.mergedOptions.initialDisplayMode;
-    this.restoreComponentState();
+    // this.restoreComponentState();
     if (this._isNested && this.nestedDisplayMode) {
       this.displayMode = this.nestedDisplayMode;
     }
@@ -1586,7 +1586,7 @@ export default {
           }
         });
       }
-      this.restoreComponentState();
+      // this.restoreComponentState();
       if (!this._url) {
         return;
       }
